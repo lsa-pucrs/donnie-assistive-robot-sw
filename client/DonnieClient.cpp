@@ -5,7 +5,6 @@ using namespace std;
 using namespace PlayerCc;
 
 
-
 DonnieClient::DonnieClient()
 {
   robot = new PlayerClient("localhost",6665);
@@ -99,34 +98,28 @@ float DonnieClient::GetPos(int arg)
 
 void DonnieClient::ParaFrente(float arg)
 {
-	vector<PathNodes> path;
+	vector<float> path;
 
 	robot->Read();
 	double yaw = p2dProxy->GetYaw();    //Angulo do robo
 	double posxi = p2dProxy->GetXPos();   //Posicao inicial X do robo
 	double posyi = p2dProxy->GetYPos();   //Posicao inicial Y do robo
 
-	PathNodes Point;
 
 	for(int i = 1; i <= (int)arg; i++)
 	{
-	  Point.posx = posxi + (cos(yaw)*i);
-	  Point.posy = posyi + (sin(yaw)*i);
 
-	  path.push_back(Point);
+	  path.push_back((float)i);
 	}
 
 	float fltPart = arg - (int)arg;
 
 	if(fltPart > 0)
 	{
-	  Point.posx = posxi + (cos(yaw)*fltPart);
-	  Point.posy = posyi + (sin(yaw)*fltPart);
-
-	  path.push_back(Point);
+	  path.push_back(fltPart);
 	}
 
-	int Npassos = arg;
+	float Npassos = arg;
 	int passos = 0;
 
 	bool obstacle = false;
@@ -146,6 +139,7 @@ void DonnieClient::ParaFrente(float arg)
 	while(!stop)
 	{
 
+		cout << passos << " > " << Npassos << endl;
 	  if(passos > Npassos )
 	  {
 	  	p2d_headProxy->SetSpeed(0,0);
@@ -160,7 +154,7 @@ void DonnieClient::ParaFrente(float arg)
 	    p2dProxy->SetSpeed(0,0);
 	    stop = true;
 	    andou = sqrt(pow((p2dProxy->GetXPos() - posxi),2) + pow((p2dProxy->GetYPos() - posyi),2));
-	    erro = andou - trunc(andou);
+	    erro = andou - (int)andou;
 	    break;
 	  }
 	    
@@ -170,59 +164,67 @@ void DonnieClient::ParaFrente(float arg)
 	    Npassos = passos;
 	    obstacle = true;
 	  }
+
+	  robot->ReadIfWaiting();
+	  if(hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) > path[passos] - 0.15)
+	  {
+	  		passos++;
+	  }
 	    
-	  if(yaw >= 0)
-	  {
-	    if(yaw < M_PI/2)
-	    {
-	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetXPos() >= path[passos].posx - 0.07 and p2dProxy->GetYPos() >= path[passos].posy - 0.07)
-	      {
-	        passos++;
-	      }
-	    }
-	    else
-	    {
-	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetXPos() <= path[passos].posx + 0.07 and p2dProxy->GetYPos() >= path[passos].posy - 0.07)
-	      {
-	        passos++;
-	      }
-	    } 
-	  }
-	  else
-	  {
-	    if(yaw > -M_PI/2)
-	    {
-	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetXPos() >= path[passos].posx - 0.07 and p2dProxy->GetYPos() <= path[passos].posy + 0.07)
-	      {
-	        passos++;
-	      }
-	    }
-	    else
-	    {
-	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetXPos() <= path[passos].posx + 0.07 and p2dProxy->GetXPos() <= path[passos].posy + 0.07)
-	      {
-	        passos++;
-	      }
-	    }  
-	  }
+	  //if(yaw >= 0)
+	  //{
+	  //  if(yaw < M_PI/2)
+	  //  {
+	  //    robot->ReadIfWaiting();
+	  //    if(p2dProxy->GetXPos() >= path[passos].posx and p2dProxy->GetYPos() >= path[passos].posy)
+	  //    {
+	  //      passos++;
+	  //    }
+	  //  }
+	  //  else
+	  //  {
+	  //    robot->ReadIfWaiting();
+	  //    if(p2dProxy->GetXPos() <= path[passos].posx and p2dProxy->GetYPos() >= path[passos].posy)
+	  //    {
+	  //      passos++;
+	  //    }
+	  //  } 
+	  //}
+	  //else
+	  //{
+	  //  if(yaw > -M_PI/2)
+	  //  {
+	  //    robot->ReadIfWaiting();
+	  //    if(p2dProxy->GetXPos() >= path[passos].posx and p2dProxy->GetYPos() <= path[passos].posy)
+	  //    {
+	  //      passos++;
+	  //    }
+	  //  }
+	  //  else
+	  //  {
+	  //    robot->ReadIfWaiting();
+	  //    if(p2dProxy->GetXPos() <= path[passos].posx and p2dProxy->GetXPos() <= path[passos].posy)
+	  //    {
+	  //      passos++;
+	  //    }
+	  //  }  
+	  //}
 	}
 
 	if(stop = true and erro < 0.8 and erro > 0.2)
 	{
-		cout << "!" << endl;
+		cout << "!"  << erro << endl;
 		this->ParaTras(erro);
 	}
-	robot->Read();
-	cout << p2dProxy->GetXPos() << ", " << p2dProxy->GetYPos() << endl;
+
+	path.clear();
+	//robot->Read();
+	//cout << p2dProxy->GetXPos() << ", " << p2dProxy->GetYPos() << endl;
 }
 
 void DonnieClient::ParaTras(float arg)
 {
-	vector<PathNodes> path;
+	vector<float> path;
 
 	robot->Read();
 	double yaw = p2dProxy->GetYaw();    //Angulo do robo
@@ -231,25 +233,22 @@ void DonnieClient::ParaTras(float arg)
 
 	PathNodes Point;
 
-	for(int i = 1; i <= arg; i++)
+	for(int i = 1; i <= (int)arg; i++)
 	{
-	  Point.posx = posxi - (cos(yaw)*i);
-	  Point.posy = posyi - (sin(yaw)*i);
 
-	  path.push_back(Point);
+	  path.push_back((float)i);
+	  cout << path[i] << endl;
 	}
 
 	float fltPart = arg - (int)arg;
 
 	if(fltPart > 0)
 	{
-	  Point.posx = posxi - (cos(yaw)*fltPart);
-	  Point.posy = posyi - (sin(yaw)*fltPart);
-
-	  path.push_back(Point);
+	  path.push_back(fltPart);
+	  cout << path[0];
 	}
 
-	int Npassos = arg;
+	float Npassos = arg;
 	int passos = 0;
 
 	bool obstacle = false;
@@ -280,7 +279,7 @@ void DonnieClient::ParaTras(float arg)
 	    p2dProxy->SetSpeed(0,0);
 	    stop = true;
 	    andou = sqrt(pow((p2dProxy->GetXPos() - posxi),2) + pow((p2dProxy->GetYPos() - posyi),2));
-	    erro = andou - trunc(andou);
+	    erro = andou - (int)andou;
 	    break;
 	  }
 	    
@@ -290,54 +289,62 @@ void DonnieClient::ParaTras(float arg)
 	    Npassos = passos;
 	    obstacle = true;
 	  }
+
+	  robot->ReadIfWaiting();
+	  if(hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) > path[passos] - 0.15)
+	  {
+	  		passos++;
+	  }
 	    
-	  if(yaw > 0)
-	  {
-	    if(yaw < M_PI/2)
-	    {
-	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetXPos() <= path[passos].posx + 0.05 and p2dProxy->GetYPos() <= path[passos].posy + 0.05)
-	      {
-	        passos++;
-	      }
-	    }
-	    else
-	    {
-	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetXPos() >= path[passos].posx - 0.05 and p2dProxy->GetYPos() <= path[passos].posy + 0.05)
-	      {
-	        passos++;
-	      }
-	    } 
-	  }
-	  else
-	  {
-	    if(yaw > -M_PI/2)
-	    {
-	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetXPos() <= path[passos].posx + 0.05 and p2dProxy->GetYPos() >= path[passos].posy - 0.05)
-	      {
-	        passos++;
-	      }
-	    }
-	    else
-	    {
-	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetXPos() >= path[passos].posx - 0.05 and p2dProxy->GetYPos() >= path[passos].posy - 0.05)
-	      {
-	        passos++;
-	      }
-	    }  
-	  }
+	  //if(yaw > 0)
+	  //{
+	  //  if(yaw < M_PI/2)
+	  //  {
+	  //    robot->ReadIfWaiting();
+	  //    if(p2dProxy->GetXPos() <= path[passos].posx and p2dProxy->GetYPos() <= path[passos].posy)
+	  //    {
+	  //      passos++;
+	  //    }
+	  //  }
+	  //  else
+	  //  {
+	  //    robot->ReadIfWaiting();
+	  //    if(p2dProxy->GetXPos() >= path[passos].posx and p2dProxy->GetYPos() <= path[passos].posy)
+	  //    {
+	  //      passos++;
+	  //    }
+	  //  } 
+	  //}
+	  //else
+	  //{
+	  //  if(yaw > -M_PI/2)
+	  //  {
+	  //    robot->ReadIfWaiting();
+	  //    if(p2dProxy->GetXPos() <= path[passos].posx and p2dProxy->GetYPos() >= path[passos].posy)
+	  //    {
+	  //      passos++;
+	  //    }
+	  //  }
+	  //  else
+	  //  {
+	  //    robot->ReadIfWaiting();
+	  //    if(p2dProxy->GetXPos() >= path[passos].posx and p2dProxy->GetYPos() >= path[passos].posy)
+	  //    {
+	  //      passos++;
+	  //    }
+	  //  }  
+	  //}
 	}
 
 	if(stop = true and erro < 0.8 and erro > 0.2)
 	{
-		cout << "!" << endl;
+		cout << "!"  << endl<< endl;
 		this->ParaFrente(erro);
 	}
-	robot->Read();
-	cout << p2dProxy->GetXPos() << ", " << p2dProxy->GetYPos() << endl;
+
+	path.clear();
+	//robot->Read();
+	//cout << p2dProxy->GetXPos() << ", " << p2dProxy->GetYPos() << endl;
 }
 
 void DonnieClient::ParaDireita(float arg)
