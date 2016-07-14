@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string>
 #include <iostream>
+#include <cmath>
 #include "utils.h"
 #include <libplayerc++/playerc++.h>
 
@@ -13,6 +14,8 @@ struct PathNodes
 {
   double posx, posy;
 };
+
+
 
 class DonnieClient
 {
