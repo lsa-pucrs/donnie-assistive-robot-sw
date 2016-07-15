@@ -21,19 +21,19 @@ class DonnieClient
 {
 
   PlayerClient *robot;
-  PlayerClient *head;
+  //PlayerClient *head;
 
   Position2dProxy *p2dProxy;
-  Position2dProxy *p2d_headProxy;
+  //Position2dProxy *p2d_headProxy;
 
   BumperProxy *bpProxy;
 
-  BlobfinderProxy *BfinderProxy;
+  //BlobfinderProxy *BfinderProxy;
 
   RangerProxy *sonarProxy;
-  RangerProxy *SHProxy;
+  //RangerProxy *SHProxy;
 
-  SpeechProxy *speech;
+  //SpeechProxy *speech;
 
   int FrontBumper();
   int BackBumper();

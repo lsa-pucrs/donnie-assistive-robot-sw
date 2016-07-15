@@ -274,7 +274,7 @@ define plantpot position
 define sofa_small position
 (
  fiducial_return 4
-  size [1 1 1]	
+  size [0.12794 0.12794 ]	
    block #BASE
    (
       points 8

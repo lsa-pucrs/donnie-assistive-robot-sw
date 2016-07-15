@@ -23,49 +23,49 @@ window
 floorplan
 ( 
   name "cave"
-  #size [10.000 10.000 1.000]
-  pose [100.000 0.000 0.000 0.000]
+  size [2.200 2.200 0.240]
+  pose [0.830 0.830 0.000 0.000]
   
-	#block
-	#(
-	#points 4
-	#point[3] [0 0]
-	#point[2] [0 0.05]
-	#point[1] [1 0.05]
-	#point[0] [1 0]
-	#z [0 1.5]
-	#)
-	#
-	#block
-	#(
-	#points 4
-	#point[3] [0.3 0]
-	#point[2] [0.3 0.4]
-	#point[1] [0.35 0.4]
-	#point[0] [0.35 0]
-	#z [0 1.5]
-	#)	
-	#
-	#block
-	#(
-	#points 4
-	#point[3] [1 0]
-	#point[2] [1 1]
-	#point[1] [1.05 1]
-	#point[0] [1.05 0]
-	#z [0 1.5]
-	#)
-	#
-	#block
-	#(
-	#points 4
-	#point[3] [-0.05 0]
-	#point[2] [-0.05 1]
-	#point[1] [0 1]
-	#point[0] [0 0]
-	#z [0 1.5]
-	#)
-	#
+	block
+	(
+	points 4
+	point[3] [-1 -1]
+	point[2] [-1.1 -1.1]
+	point[1] [1.1 -1.1]
+	point[0] [1 -1]
+	z [0 1.5]
+	)
+	
+	block
+	(
+	points 4
+	point[3] [-1 -1]
+	point[2] [-1.1 -1.1]
+	point[1] [-1.1 1.1]
+	point[0] [-1 1]
+	z [0 1.5]
+	)	
+	
+	block
+	(
+	points 4
+	point[3] [-1 1]
+	point[2] [-1.1 1.1]
+	point[1] [1.1 1.1]
+	point[0] [1 1]
+	z [0 1.5]
+	)
+	
+	block
+	(
+	points 4
+	point[3] [1 1]
+	point[2] [1.1 1.1]
+	point[1] [1.1 -1.1]
+	point[0] [1 -1]
+	z [0 1.5]
+	)
+	
 	#block
 	#(
 	#points 4
@@ -83,7 +83,7 @@ floorplan
 donnie_head
 (
 	name "donnie_head"
-	pose [ -3.25 -3 1.03 90]
+	pose [ -3.25 -3 0.120 90]
 	#pose [ 10 -3.25 1.03 90]
 	# pose [ -3.05 -5.72 0.000 88.43] #gripper test pose
 	color "green"
