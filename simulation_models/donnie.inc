@@ -43,7 +43,7 @@ define donnie_bumper bumper
 define donnie position
 (
 	# actual size
-	size [1.000 1.000 1.000]
+	size [0.12794 0.12794 0.120]
 	# centre of rotation offset
 	origin [0.000 0.000 0.000 0.000]
 	blob_return -1
@@ -52,14 +52,14 @@ define donnie position
 	block
 	(
 		points 8
-		point[7] [0 2.8284]
-		point[6] [0 6.8284]
-		point[5] [2.8284 9.6568]
-		point[4] [6.8284 9.6568]
-		point[3] [9.6568 6.8284]
-		point[2] [9.6568 2.8284]
-		point[1] [6.8284 0]
-		point[0] [2.8284 0]
+		point[7] [0 0.03747]
+		point[6] [0 0.09047]
+		point[5] [0.03747 0.12794]
+		point[4] [0.09047 0.12794]
+		point[3] [0.12794 0.09047]
+		point[2] [0.12794 0.03747]
+		point[1] [0.09047 0]
+		point[0] [0.03747 0]
 		z [0 1]
 	)
 	obstacle_return 0
@@ -92,21 +92,21 @@ define donnie_HS ranger
 define donnie_head position
 (
 	# actual size
-	size [0.500 0.500 0.300]
+	size [0.06397 0.06397 0.069]
 	# centre of rotation offset
 	origin [0.000 0.000 0.000 0.000]
 
 	block
 	(
 		points 8
-		point[7] [0 2.8284]
-		point[6] [0 6.8284]
-		point[5] [2.8284 9.6568]
-		point[4] [6.8284 9.6568]
-		point[3] [9.6568 6.8284]
-		point[2] [9.6568 2.8284]
-		point[1] [6.8284 0]
-		point[0] [2.8284 0]
+		point[7] [0 0.03747]
+		point[6] [0 0.09047]
+		point[5] [0.03747 0.12794]
+		point[4] [0.09047 0.12794]
+		point[3] [0.12794 0.09047]
+		point[2] [0.12794 0.03747]
+		point[1] [0.09047 0]
+		point[0] [0.03747 0]
 		z [0 1]
 	)
 
