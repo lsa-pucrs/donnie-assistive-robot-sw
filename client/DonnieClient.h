@@ -24,7 +24,9 @@ class DonnieClient
   //PlayerClient *head;
 
   Position2dProxy *p2dProxy;
-  //Position2dProxy *p2d_headProxy;
+  Position2dProxy *p2d_headProxy;
+
+  //ActArrayProxy *actuator;
 
   BumperProxy *bpProxy;
 

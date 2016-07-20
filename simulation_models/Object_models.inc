@@ -4,7 +4,7 @@
 define chair position
 (
 
-  size [0.4 0.4 0.8]	
+  size [0.18 0.18 0.20]	
    block #TABLE
    (
       points 4
@@ -72,7 +72,7 @@ define human position
    fiducial_return 10
    object_return 1
    gripper_return 1
-   size [0.12 0.47 1.7]	
+   size [0.05 0.16 0.4]	
    block #LEG
    (
       points 12
@@ -230,7 +230,7 @@ define maniqui position
 #################plantpot#################
 define plantpot position
 (
-  size [.5 0.5 1]	
+  size [0.125 0.125 0.200]	
    block #BASE
    (
       points 8
@@ -274,7 +274,7 @@ define plantpot position
 define sofa_small position
 (
  fiducial_return 4
-  size [0.12794 0.12794 ]	
+  size [0.25 0.25 0.250]	
    block #BASE
    (
       points 8
@@ -333,7 +333,7 @@ define sofa_small position
 ################sofa_large################
 define sofa_large position
 (
-  size [2 1 1]	
+  size [0.5 0.25 0.25]	
    block #BASE
    (
       points 8
@@ -390,7 +390,7 @@ define sofa_large position
 #################table####################
 define table position
 (
-  size [1.5 0.75 0.8]	
+  size [0.5 0.25 0.125]	
    block #TABLE
    (
       points 4
@@ -444,7 +444,7 @@ define table position
 #############table_circular###############
 define table_circular position
 (
-  size [1.4 1.4 0.8]	
+  size [0.25 0.25 0.15]	
    block #table
    (
       points 12
@@ -470,7 +470,7 @@ define table_circular position
 ###############trash_bin##################
 define trash_bin position
 (
-  size [0.4 0.4 0.4]	
+  size [0.125 0.125 0.125]	
    block #trash bin
    (
       points 12

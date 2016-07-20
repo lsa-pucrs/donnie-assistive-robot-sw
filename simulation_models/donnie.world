@@ -77,37 +77,34 @@ floorplan
 	#)
 	
   #bitmap "bitmaps/cave.png"
-  #obstacle_return 1
+  obstacle_return 0
 )
 
-donnie_head
-(
-	name "donnie_head"
-	pose [ -3.25 -3 0.120 90]
-	#pose [ 10 -3.25 1.03 90]
-	# pose [ -3.05 -5.72 0.000 88.43] #gripper test pose
-	color "green"
-)
+#donnie_head
+#(
+#	name "donnie_head"
+#	pose [0 0 0.120 0]
+#	#pose [ 10 -3.25 1.03 90]
+#	# pose [ -3.05 -5.72 0.000 88.43] #gripper test pose
+#	color "green"
+#)
 
 donnie
 (
 		  name "donnie"
 		  pose [0 0 0 0]
-		  #pose [ -3.25 -3 0 90]
-		  #pose [ 10 -3.25 0 0]
-	    # pose [ -3.05 -5.72 0.000 88.43] #gripper test pose
 		  color "green"
 )
 
 
 
-chair(name "chair1" pose [3 -3.3 0 0])
-sofa_small(name "sofa2" pose [4 3 0 -90])
-sofa_large(name "sofa1" pose [0 4 0 0])
-plantpot(name "plant" pose [4 2 0 0])
-plantpot(name "plant2" pose [-4 4 0 0])
-table(name "table" pose [3 -4 0 0])
-table_circular(name "table2" pose [1.5 0.5 0 0])
-trash_bin(name "trash" pose [1 -4 0 0])
-human(name "people" pose [-2.5 3 0 90])
+chair(name "chair1" pose [1.5 1.25 0 90])
+sofa_small(name "sofa2" pose [-0.03 1.41 0 90])
+sofa_large(name "sofa1" pose [0.40 1.7 0 0])
+plantpot(name "plant" pose [-0.10 1.16 0 0])
+plantpot(name "plant2" pose [1.76 1.76 0 0])
+table(name "table" pose [1.7 1.26 0 90])
+table_circular(name "table2" pose [0.5 0.98 0 0])
+trash_bin(name "trash" pose [1.74 0.91 0 0])
+human(name "people" pose [1.76 0.19 0 0])
 
