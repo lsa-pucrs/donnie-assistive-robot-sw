@@ -7,11 +7,14 @@ using namespace PlayerCc;
 
 DonnieClient::DonnieClient()
 {
-  robot = new PlayerClient("192.168.0.103",6665);
+  robot = new PlayerClient("localhost",6665);
   //head = new PlayerClient("localhost",6666);
 
   p2dProxy = new Position2dProxy(robot,0);
-  //p2d_headProxy = new Position2dProxy(head,1);
+
+  //p2d_headProxy = new Position2dProxy(robot,1);
+
+  //actuator = new ActArrayProxy(robot,0);
 
   bpProxy = new BumperProxy(robot,0);
 
@@ -82,6 +85,7 @@ float DonnieClient::GetRange(int arg)
 float DonnieClient::GetPos(int arg)
 {
 	robot->Read();
+
 	switch(arg)
 	{
 		case 0:
@@ -93,6 +97,7 @@ float DonnieClient::GetPos(int arg)
 		case 2:
 			return radTOdeg(p2dProxy->GetYaw());
 	}
+
 }
 
 
