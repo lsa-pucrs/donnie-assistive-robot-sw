@@ -1,0 +1,2 @@
+/usr/local/lib64/libgoogletts.so
+/usr/lib/libbass.so
