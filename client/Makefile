@@ -6,5 +6,8 @@ CC = g++
 	
 all:Logo
 
+clean: 
+	rm Logo
+
 
 
