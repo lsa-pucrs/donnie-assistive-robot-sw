@@ -539,6 +539,8 @@ void DonnieClient::ParaEsquerda(float arg)
 	double yawd;  //Angulo de destino do robo
 	yawi = radTOrad(yawf);
 
+	cout << yawi << endl;
+
 	/////////////////Calculo para determinar angulo que o robo deve chegar////////////////////////////////
 	if(yawi + degTOrad(arg) > 3*M_PI)
 	  yawd = (yawi + degTOrad(arg)) - 4*M_PI;
@@ -546,6 +548,8 @@ void DonnieClient::ParaEsquerda(float arg)
 	  yawd = (yawi + degTOrad(arg)) - 2*M_PI;
 	else
 	  yawd = yawi + degTOrad(arg);
+
+	cout << yawd << endl;
 
 	//p2d_headProxy->SetSpeed(0,0.5);
 	p2dProxy->SetSpeed(0,0.5);
@@ -696,6 +700,9 @@ void DonnieClient::ParaEsquerda(float arg)
 	}
 	//p2d_headProxy->SetSpeed(0,0);
 	p2dProxy->SetSpeed(0,0);
+
+	robot->Read();
+	cout << p2dProxy->GetYaw() << endl;
 }
 
 
