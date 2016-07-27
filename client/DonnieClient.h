@@ -9,6 +9,8 @@
 using namespace std;
 using namespace PlayerCc;
 
+//function to get donnie host by environment variable
+string GetEnv( const string & var );
 
 struct PathNodes
 {

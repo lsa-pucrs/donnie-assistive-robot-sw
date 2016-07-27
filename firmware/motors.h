@@ -7,7 +7,8 @@
 
 
 //?to daniel: tem algum motivo de nao comecar tudo setado em zero ??
-int motorsDefaultSpeed=195;
+int motorsDefaultSpeed = 195;
+int motorsDefaultAngularSpeed = 60;
 int motorRActive=0;
 int motorRspeed=motorsDefaultSpeed;//setado a 195
 int motorRTurn=0;
@@ -388,13 +389,13 @@ void Motors::control_movement()
 	  }
 	  else if(motorLTurn==1 && motorRTurn==1)//turn right
 	  {
-	    turn_right(150,150);
+	    turn_right(motorsDefaultAngularSpeed,motorsDefaultAngularSpeed);
 	    //counterL=0;
 	    //counterR=0;
 	  }
 	  else if(motorLTurn==0 && motorRTurn==0)//turn left
 	  {
-	    turn_left(150,150);
+	    turn_left(motorsDefaultAngularSpeed,motorsDefaultAngularSpeed);
 	    //counterL=0;
 	    //counterR=0;
 	  }
