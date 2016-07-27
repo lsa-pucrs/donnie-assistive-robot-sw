@@ -153,7 +153,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case PF:
           {
 
-            cout << "PF: " << run(getChild(tree,0)) << endl;
+            //cout << "PF: " << run(getChild(tree,0)) << endl;
             Donnie->ParaFrente((float)run(getChild(tree,0)));
             //Para_Frente(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
@@ -162,7 +162,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case PT:
           {
 
-            cout << "PT: " << run(getChild(tree,0)) << endl;
+            //cout << "PT: " << run(getChild(tree,0)) << endl;
             Donnie->ParaTras((float)run(getChild(tree,0)));
             //Para_Tras(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
@@ -171,7 +171,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case PD:
           {
 
-            cout << "PD: " << run(getChild(tree,0)) << endl;
+            //cout << "PD: " << run(getChild(tree,0)) << endl;
             Donnie->ParaDireita((float)run(getChild(tree,0)));
             //Para_Direita(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
@@ -180,7 +180,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case PE:
           {
 
-            cout << "PE: " << run(getChild(tree,0)) << endl;
+            //cout << "PE: " << run(getChild(tree,0)) << endl;
             Donnie->ParaEsquerda((float)run(getChild(tree,0)));
             //Para_Esquerda(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
