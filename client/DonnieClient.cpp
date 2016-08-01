@@ -12,7 +12,7 @@ DonnieClient::DonnieClient()
 
   p2dProxy = new Position2dProxy(robot,0);
 
-  //p2d_headProxy = new Position2dProxy(robot,1);
+  p2d_headProxy = new Position2dProxy(robot,1);
 
   //actuator = new ActArrayProxy(robot,0);
 
