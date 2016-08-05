@@ -72,7 +72,7 @@ int ExprTreeEvaluator::scriptMode(char* fileIn)
 
   this->parser(input);
 
-  return done;
+  return 0;
 
 }
 
@@ -263,19 +263,26 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case COMENT:
           {
-            cout << "COMMENT: " << endl; 
-            cout << getText(tree) << endl;
+            //cout << "COMMENT: " << endl; 
+            //cout << getText(tree) << endl;
             break;
           }
 
           case PRINTE:
           {
-            cout << "PRINTE: " << endl; 
+            cout << "PRINT: " << endl; 
             //cout << "TIPE: " << tree->getToken(getChild(tree,0))->type << endl;
             if(tree->getToken(getChild(tree,0))->type == STRINGE)         // Caso seja string informa texto do filho caso contrario executa o filho
               cout << getText(getChild(tree,0)) << endl;
             else
               cout << run(getChild(tree,0)) << endl;
+            break;
+          }
+
+          case ESPERA:
+          {
+            cout << "ESPERAR: " << endl;
+            sleep(run(getChild(tree,0)));
             break;
           }
 
@@ -357,9 +364,11 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             break;
           }
 
-          //case THEN:
-          //case ELSEE:
-          case BLOCK:
+          case THEN:
+          case ELSEE:
+          case FORB:
+          case REPTB:
+          case PROCB:
           {
             for (int f = 0; f < tree->getChildCount(tree); f++)
               {

@@ -1,17 +1,18 @@
 criar a = 4
 
-aprenda quadrado: a
-[
-	para [criar b = 0; b<a; b = b + 1]
-	[
-		pf 4
-		gd 90
-	]
-]
+--aprender quadrado: a
+--inicio
+--	para criar b = 0; b<a; b = b + 1 
+--	faça
+--		pf 4
+--		gd 90
+--	fimpara
+--fimaprender
 
+se a > 3 então falar "oi" fimse
 
 pt 2
 
-quadrado(a)
+--quadrado[a]
 
 pt 1
