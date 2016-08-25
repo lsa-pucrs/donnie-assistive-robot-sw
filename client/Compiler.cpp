@@ -51,6 +51,7 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
 
 int ExprTreeEvaluator::terminalMode(char* textIn)
 {
+  mode = TERMINAL;
 
   uint8_t* bufferData = (uint8_t*)textIn;
     
@@ -68,6 +69,8 @@ int ExprTreeEvaluator::terminalMode(char* textIn)
 
 int ExprTreeEvaluator::scriptMode(char* fileIn)
 {
+  mode = SCRIPT;
+
   pANTLR3_INPUT_STREAM input = antlr3AsciiFileStreamNew((pANTLR3_UINT8)fileIn);       //  Utilizar para modo script
 
   this->parser(input);
@@ -332,6 +335,25 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             break;
           }
 
+          case WHILEE:
+          {
+            cout << "while" << endl;
+
+            int a = run(getChild(tree,0));                      // Retorna o valor das variáveis na condição
+            int b = run(getChild(tree,2));                      // #
+            string c = (string)getText(getChild(tree,1));       // Retorna operador de condição
+
+            bool ok = compare(a,b,c);       // Compara variaveis
+
+            while (ok == true)  
+            { 
+              run(getChild(tree,3));                                        //Executa bloco
+              ok = compare(run(getChild(tree,0)),run(getChild(tree,2)),c);  //Realiza comparação novamente
+            }
+
+            break;
+          }
+
           case REPEAT:
           {
             for (int r = 0; r < run(getChild(tree,0)); r++)
@@ -366,12 +388,14 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case THEN:
           case ELSEE:
-          case FORB:
+          case FACA:
           case REPTB:
           case PROCB:
           {
+            cout << "N Fi: " << tree->getChildCount(tree) << endl;
             for (int f = 0; f < tree->getChildCount(tree); f++)
               {
+                cout << getText(getChild(tree,f)) << endl;
                 run(getChild(tree,f));
               }
             break;
@@ -430,6 +454,12 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case PROCINV:
           {
+            if(mode == TERMINAL)
+            {
+              cout << "Procedimentos não são aceitos no modo terminal" << endl;
+              break;
+            }
+
             char* name = (char*)getText(getChild(tree,0));
 
             mem local;                                      // Inicia dicionário local
@@ -450,11 +480,16 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case PROCDEC:
           {
+            if(mode == TERMINAL)
+            {
+              cout << "Procedimentos não são aceitos no modo terminal" << endl;
+              break;
+            }
 
             char* name = (char*)getText(getChild(tree,0));
-
+  
             int childNum = tree->getChildCount(tree);
-
+  
             if(childNum < 3)
             {
               proc[name].argNum = 0;                    // Caso procedimento não apresente parametros salva bloco do procedimento
@@ -464,11 +499,10 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             {
               for(int f = 1; f < childNum - 1; f++)
                 proc[name].args.push_back(getText(getChild(tree,f)));   // Caso tenha parametros salva numa lista 
-
+  
               proc[name].argNum = childNum - 2;
               proc[name].node = getChild(tree,childNum - 1);      // Salva bloco do procedimento
             }
-
             break;
           }
 

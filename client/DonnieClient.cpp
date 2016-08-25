@@ -13,28 +13,32 @@ using namespace PlayerCc;
 
 DonnieClient::DonnieClient()
 {
-  string host = GetEnv("DONNIE_HOST");
-  int port = atoi(GetEnv("DONNIE_PORT").c_str());
-  if(host.size()==0) host = "localhost";
-  if(port==0) port = 6665;
+	string host = GetEnv("DONNIE_HOST");
+	int port = atoi(GetEnv("DONNIE_PORT").c_str());
+	if(host.size()==0) host = "localhost";
+	if(port==0) port = 6665;
 
-  robot = new PlayerClient(host,port);
-  //head = new PlayerClient("localhost",6666);
+	robot = new PlayerClient(host,port);
 
-  p2dProxy = new Position2dProxy(robot,0);
+	//head = new PlayerClient("localhost",6666);
 
-  //p2d_headProxy = new Position2dProxy(robot,1);
+	p2dProxy = new Position2dProxy(robot,0);
 
-  //actuator = new ActArrayProxy(robot,0);
+	//p2d_headProxy = new Position2dProxy(robot,1);
 
-  bpProxy = new BumperProxy(robot,0);
+	//actuator = new ActArrayProxy(robot,0);
 
-  //BfinderProxy = new BlobfinderProxy(head,0);
+	bpProxy = new BumperProxy(robot,0);
 
-  sonarProxy = new RangerProxy(robot,0);
-  //SHProxy = new RangerProxy(head,3);
+	//BfinderProxy = new BlobfinderProxy(head,0);
 
-  //speech = new SpeechProxy(robot,0);
+	sonarProxy = new RangerProxy(robot,0);
+
+	//SHProxy = new RangerProxy(head,3);
+
+	//speech = new SpeechProxy(robot,0);
+
+	robot->StartThread();
 
 }
 
@@ -145,11 +149,11 @@ void DonnieClient::ParaFrente(float arg)
 	float andou;
 
 	robot->Read();
-	if(sonarProxy->GetRange(1) > 0.2)
+	if(sonarProxy->GetRange(1) > 0.15)
 	{
 	  stop = false;
 	  //p2d_headProxy->SetSpeed(1,0);
-	  p2dProxy->SetSpeed(1,0);
+	  p2dProxy->SetSpeed(0.05,0);
 	}
 
 	robot->Read();
@@ -176,7 +180,7 @@ void DonnieClient::ParaFrente(float arg)
 	  }
 	    
 	  robot->ReadIfWaiting();
-	  if(sonarProxy->GetRange(1) < 0.2 and !obstacle)
+	  if(sonarProxy->GetRange(1) < 0.15 and !obstacle)
 	  {
 	    Npassos = passos;
 	    obstacle = true;
@@ -235,6 +239,8 @@ void DonnieClient::ParaFrente(float arg)
 	}
 
 	path.clear();
+
+	cout << "Andou: " << passos << endl;
 	//robot->Read();
 	//cout << p2dProxy->GetXPos() << ", " << p2dProxy->GetYPos() << endl;
 }
@@ -277,7 +283,7 @@ void DonnieClient::ParaTras(float arg)
 	{
 	  stop = false;
 	  //p2d_headProxy->SetSpeed(-1,0);
-	  p2dProxy->SetSpeed(-1,0);
+	  p2dProxy->SetSpeed(-0.05,0);
 	}
 
 	while(!stop)
