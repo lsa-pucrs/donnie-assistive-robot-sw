@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <iconv.h>
 #include <cassert>
 #include <cstring>
 #include <map>
@@ -20,6 +21,9 @@ using std::stack;
 using std::string;
 using std::cout;
 using std::endl;
+
+#define TERMINAL 1
+#define SCRIPT 0
 
 
 struct mem
@@ -55,7 +59,7 @@ class ExprTreeEvaluator
     int memFlag;                    // Flag de indicação variáves globais/locais
     bool for_itFlag;
     char* for_it;
-
+    int mode;
     bool done;
 
     DonnieClient *Donnie;

@@ -18,7 +18,6 @@ struct PathNodes
 };
 
 
-
 class DonnieClient
 {
 

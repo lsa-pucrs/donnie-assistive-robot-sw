@@ -20,6 +20,7 @@ cmd	:	arg
 		|ife
 		|fore
 		|repeat
+		|whilee
 		|assign
 		|printe
 		|comentario
@@ -55,7 +56,10 @@ then	:	THEN^ line;
 elsee	:	ELSEE^ line;
 
 
-forblock	:	FORB^ cmd ( SEMICOLON!? cmd)* SEMICOLON!? FIMFOR!;
+forblock	:	FACA^ cmd ( SEMICOLON!? cmd)* SEMICOLON!? FIMFOR!;
+
+
+whileblock	:	FACA^ cmd ( SEMICOLON!? cmd)* SEMICOLON!? FIMWHILE!;
 
 
 reptblock	:	REPTB^ cmd ( SEMICOLON!? cmd)* SEMICOLON!? FIMREPT!;
@@ -68,6 +72,9 @@ ife	:	IFE^  comparison then elsee? FIMIF!;
 
 
 fore	:	FORE^ (make|assign) SEMICOLON! comparison SEMICOLON! assign forblock;
+
+
+whilee	:	WHILEE^ comparison whileblock ;
 
 
 repeat	:	REPEAT^ expression reptblock;
@@ -108,7 +115,7 @@ PROCINV	:	'[';
 PROCDEC	:	(('A'|'a')('P'|'p')('R'|'r')('E'|'e')('N'|'n')('D'|'d')('E'|'e')('R'|'r'))
 		;
 		
-PROCB	:	(('I'|'i')('N'|'n')('I'|'i')('C'|'c')('I'|'i')('O'|'o'))
+PROCB	:	(('I'|'i')('N'|'n')('Í'|'í')('C'|'c')('I'|'i')('O'|'o'))
 		;
 		
 FIMPROC	:	(('F'|'f')('I'|'i')('M'|'m')(' ')('A'|'a')('P'|'p')('R'|'r')('E'|'e')('N'|'n')('D'|'d')('E'|'e')('R'|'r'))
@@ -118,11 +125,18 @@ FIMPROC	:	(('F'|'f')('I'|'i')('M'|'m')(' ')('A'|'a')('P'|'p')('R'|'r')('E'|'e')(
 FORE	:	(('P'|'p')('A'|'a')('R'|'r')('A'|'a')(' ')?)
 		;
 		
-FORB	:	(('F'|'f')('A'|'a')('Ç'|'ç')('A'|'a'))
+FACA	:	(('F'|'f')('A'|'a')('Ç'|'ç')('A'|'a'))
 		;
 
 FIMFOR	:	(('F'|'f')('I'|'i')('M'|'m')(' ')('P'|'p')('A'|'a')('R'|'r')('A'|'a'))
 		;
+		
+WHILEE	:	(('E'|'e')('N'|'n')('Q'|'q')('U'|'u')('A'|'a')('N'|'n')('T'|'t')('O'|'o'))
+		;
+		
+FIMWHILE	:	(('F'|'f')('I'|'i')('M'|'m')(' ')('E'|'e')('N'|'n')('Q'|'q')('U'|'u')('A'|'a')('N'|'n')('T'|'t')('O'|'o'))
+		;
+		
 
 PRINTE	:	(('F'|'f')('A'|'a')('L'|'l')('A'|'a')('R'|'r'))
 		;
