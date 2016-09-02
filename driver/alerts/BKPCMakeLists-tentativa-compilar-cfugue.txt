@@ -1,0 +1,39 @@
+CMAKE_MINIMUM_REQUIRED (VERSION 2.4 FATAL_ERROR)
+PROJECT (alerts)
+
+# Include this CMake module to get most of the settings needed to build
+SET (CMAKE_MODULE_PATH "/usr/local/share/cmake/Modules")
+INCLUDE (UsePlayerPlugin)
+
+
+SET (CFUGUE_INCLUDE_DIR -I/home/lsa/Desktop/tone-generator-test/CFugue/include 
+						-I/home/lsa/Desktop/tone-generator-test/CFugue/include/common 
+						-I/home/lsa/Desktop/tone-generator-test/CFugue/test/../include 
+						-I/home/lsa/Desktop/tone-generator-test/CFugue/test/../include/Common 
+						-I/home/lsa/Desktop/tone-generator-test/CFugue/test/../src 
+						-I/home/lsa/Desktop/tone-generator-test/CFugue/test/../src/QtVuMeter 
+						-I/home/lsa/Desktop/tone-generator-test/CFugue/build/test 
+						-I/home/lsa/Desktop/tone-generator-test/CFugue/test/../src/3rdparty/tse3/src)
+						
+SET (CFUGUE_CFLAGS -std=gnu++11 -rdynamic /usr/local/lib/libCFuguedu.a /usr/local/lib/libjdkmididu.a -DUNICODE -D_UNICODE -D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_BIND_TO_CURRENT_CRT_VERSION)
+SET (CFUGUE_LINKFLAGS -lasound -lpthread) 
+
+
+
+PLAYER_ADD_PLUGIN_DRIVER (alerts SOURCES alerts.cc CFLAGS ${CFUGUE_CFLAGS} INCLUDEDIRS ${CFUGUE_INCLUDE_DIR} LINKFLAGS ${CFUGUE_LINKFLAGS}) #source files list
+# SOURCES <source file list>
+# INCLUDEDIRS <include directories list>
+# LIBDIRS <library directories list>
+# LINKFLAGS <link flags list>
+# CFLAGS <compile flags list>
+
+#TARGET_LINK_LIBRARIES (${THE_TARGET})
+#INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR}) #source files list
+#LINK_DIRECTORIES () #libraries directories files list
+#TARGET_LINK_LIBRARIES () #libraries list ex: -ld
+
+#INSTALL (FILES ${CMAKE_CURRENT_SOURCE_DIR}/alerts.cfg DESTINATION /usr/local/share/player/config/)
+#INSTALL (FILES ${CMAKE_CURRENT_SOURCE_DIR}/client/alerts.cc      DESTINATION /usr/local/share/player/examples/libplayerc++/alerts/)
+#INSTALL (FILES ${CMAKE_CURRENT_SOURCE_DIR}/client/CMakeLists.txt DESTINATION /usr/local/share/player/examples/libplayerc++/alerts/)
+#INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib${THE_TARGET}.so DESTINATION ${PLUGIN_PLAYERC_LIBRARY_DIRS})  #instala na pasta /usr/local/lib64
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/libalerts.so DESTINATION /usr/local/lib64/) 
