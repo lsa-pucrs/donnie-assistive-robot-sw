@@ -1,1 +1,0 @@
-repita 4 [pf 20; gd 45;]

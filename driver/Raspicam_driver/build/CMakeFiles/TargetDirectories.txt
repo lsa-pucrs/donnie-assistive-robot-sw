@@ -1,1 +1,0 @@
-/home/pi/player-3.0.2/examples/plugins/Raspicam_driver/build/CMakeFiles/Raspicam_driver.dir
