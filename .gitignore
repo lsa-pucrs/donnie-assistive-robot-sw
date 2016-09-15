@@ -1,0 +1,46 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+#*.slo
+#*.lo
+#*.o
+#*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+#*.lai
+#*.la
+#*.a
+#*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Gedit hidden files
+*~
+
+# drivers compiled files dir
+build/
+
+# gtts resource
+download.mp3
+
+# binaries
+client-test
+Blobfindertest
+main

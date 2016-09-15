@@ -1,0 +1,428 @@
+diff -ruN orig-player-3.0.2/client_libs/libplayerc/CMakeLists.txt player-3.0.2/client_libs/libplayerc/CMakeLists.txt
+--- orig-player-3.0.2/client_libs/libplayerc/CMakeLists.txt	2009-07-20 02:17:23.000000000 -0300
++++ player-3.0.2/client_libs/libplayerc/CMakeLists.txt	2016-09-14 18:53:31.229101000 -0300
+@@ -54,7 +54,9 @@
+                     dev_stereo.c
+                     dev_vectormap.c
+                     dev_wifi.c
+-                    dev_wsn.c)
++                    dev_wsn.c
++                    dev_sound.c
++                    )
+ IF (NOT HAVE_GETTIMEOFDAY)
+     SET (playerreplaceLib playerreplace)
+ ENDIF (NOT HAVE_GETTIMEOFDAY)
+diff -ruN orig-player-3.0.2/client_libs/libplayerc/dev_sound.c player-3.0.2/client_libs/libplayerc/dev_sound.c
+--- orig-player-3.0.2/client_libs/libplayerc/dev_sound.c	1969-12-31 21:00:00.000000000 -0300
++++ player-3.0.2/client_libs/libplayerc/dev_sound.c	2016-09-12 21:07:46.807067000 -0300
+@@ -0,0 +1,128 @@
++/*
++ *  libplayerc : a Player client library
++ *  Copyright (C) Andrew Howard 2002-2003
++ *
++ *  This program is free software; you can redistribute it and/or
++ *  modify it under the terms of the GNU General Public License
++ *  as published by the Free Software Foundation; either version 2
++ *  of the License, or (at your option) any later version.
++ *
++ *  This program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *  GNU General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License
++ *  along with this program; if not, write to the Free Software
++ *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
++ *
++ */
++/*
++ *  Player - One Hell of a Robot Server
++ *  Copyright (C) Andrew Howard 2003
++ *
++ *
++ *  This library is free software; you can redistribute it and/or
++ *  modify it under the terms of the GNU Lesser General Public
++ *  License as published by the Free Software Foundation; either
++ *  version 2.1 of the License, or (at your option) any later version.
++ *
++ *  This library is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ *  Lesser General Public License for more details.
++ *
++ *  You should have received a copy of the GNU Lesser General Public
++ *  License along with this library; if not, write to the Free Software
++ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ */
++/*  sound Proxy for libplayerc library.
++ *  Structure based on the rest of libplayerc.
++ */
++#include <assert.h>
++#include <math.h>
++#include <stdlib.h>
++#include <string.h>
++
++#include "playerc.h"
++#include "error.h"
++
++
++// Local declarations
++void playerc_sound_putmsg(playerc_sound_t *device,
++                           player_msghdr_t *header,
++                           player_sound_cmd_t *data,
++                           size_t len);
++
++
++// Create a new sound proxy
++playerc_sound_t *playerc_sound_create(playerc_client_t *client, int index)
++{
++  playerc_sound_t *device;
++
++  device = malloc(sizeof(playerc_sound_t));
++  memset(device, 0, sizeof(playerc_sound_t));
++  playerc_device_init(&device->info, client, PLAYER_SOUND_CODE, index,
++                      (playerc_putmsg_fn_t) playerc_sound_putmsg);
++
++  return device;
++}
++
++// Destroy a sound proxy
++void playerc_sound_destroy(playerc_sound_t *device)
++{
++  playerc_device_term(&device->info);
++  free(device);
++}
++
++// Subscribe to the sound device
++int playerc_sound_subscribe(playerc_sound_t *device, int access)
++{
++  return playerc_device_subscribe(&device->info, access);
++}
++
++// Un-subscribe from the sound device
++int playerc_sound_unsubscribe(playerc_sound_t *device)
++{
++  return playerc_device_unsubscribe(&device->info);
++}
++
++int playerc_sound_play(playerc_sound_t *device, char *filename)
++{
++  player_sound_cmd_t cmd;
++  memset(&cmd, 0, sizeof(cmd));
++
++  strcpy(cmd.filename,filename);
++
++  return playerc_client_write(device->info.client,
++    &device->info, PLAYER_SOUND_CMD_VALUES,&cmd,NULL);
++}
++
++
++// Process incoming data
++void playerc_sound_putmsg(playerc_sound_t *device, player_msghdr_t *header,
++                            player_sound_cmd_t *data, size_t len)
++{
++  if((header->type == PLAYER_MSGTYPE_DATA) &&
++     (header->subtype == PLAYER_SOUND_CMD_VALUES))
++  {
++    /*device->count = data->count;
++    device->digin = data->bits;*/
++  }
++}
++
++/* Set the output for the sound device. *//*
++int playerc_sound_set_output(playerc_sound_t *device, uint8_t output_count, uint32_t bits)
++{
++  player_sound_data_t cmd;
++
++  memset(&cmd, 0, sizeof(cmd));
++
++  cmd.count = output_count;
++  cmd.bits = bits;
++
++  return playerc_client_write(device->info.client,
++    &device->info, PLAYER_SOUND_CMD_VALUES,&cmd,NULL);
++}
++
++*/
+\ No newline at end of file
+diff -ruN orig-player-3.0.2/client_libs/libplayerc/playerc.h player-3.0.2/client_libs/libplayerc/playerc.h
+--- orig-player-3.0.2/client_libs/libplayerc/playerc.h	2009-08-04 04:25:00.000000000 -0300
++++ player-3.0.2/client_libs/libplayerc/playerc.h	2016-09-14 19:03:04.237084000 -0300
+@@ -3653,6 +3653,48 @@
+ /** @} */
+ /***************************************************************************/
+ 
++/**************************************************************************/
++/** @ingroup playerc_proxies
++ * @defgroup playerc_proxy_sound sound
++
++The sound proxy provides an interface to the digital input/output sensors.
++
++@{
++*/
++
++/** Sound proxy data. */
++typedef struct
++{
++  /** Device info; must be at the start of all device structures. */
++  playerc_device_t info;
++
++    uint16_t frequency;
++
++    uint32_t duration;
++
++} playerc_sound_t;
++
++
++
++/** Create a sound proxy. */
++PLAYERC_EXPORT playerc_sound_t *playerc_sound_create(playerc_client_t *client, int index);
++
++/** Destroy a sound proxy. */
++PLAYERC_EXPORT void playerc_sound_destroy(playerc_sound_t *device);
++
++/** Subscribe to the sound device. */
++PLAYERC_EXPORT int playerc_sound_subscribe(playerc_sound_t *device, int access);
++
++/** Un-subscribe from the sound device. */
++PLAYERC_EXPORT int playerc_sound_unsubscribe(playerc_sound_t *device);
++
++/** Play a sound file by name. */
++PLAYERC_EXPORT int playerc_sound_play(playerc_sound_t *device, char *filename);
++
++
++/** @} */
++/***************************************************************************/
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff -ruN orig-player-3.0.2/client_libs/libplayerc++/CMakeLists.txt player-3.0.2/client_libs/libplayerc++/CMakeLists.txt
+--- orig-player-3.0.2/client_libs/libplayerc++/CMakeLists.txt	2016-09-14 18:16:19.985167000 -0300
++++ player-3.0.2/client_libs/libplayerc++/CMakeLists.txt	2016-09-14 18:56:13.181096000 -0300
+@@ -255,7 +255,8 @@
+                         speechrecognitionproxy.cc
+                         vectormapproxy.cc
+                         wifiproxy.cc
+-                        wsnproxy.cc)
++                        wsnproxy.cc
++                        soundproxy.cc)
+ 
+     IF (NOT HAVE_NANOSLEEP)
+         SET (playerreplaceLib playerreplace)
+diff -ruN orig-player-3.0.2/client_libs/libplayerc++/Oldsoundproxy.cc player-3.0.2/client_libs/libplayerc++/Oldsoundproxy.cc
+--- orig-player-3.0.2/client_libs/libplayerc++/Oldsoundproxy.cc	1969-12-31 21:00:00.000000000 -0300
++++ player-3.0.2/client_libs/libplayerc++/Oldsoundproxy.cc	2007-07-10 06:01:53.000000000 -0300
+@@ -0,0 +1,54 @@
++/*
++ *  Player - One Hell of a Robot Server
++ *  Copyright (C) 2000-2003
++ *     Brian Gerkey, Kasper Stoy, Richard Vaughan, & Andrew Howard
++ *
++ *
++ *  This program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; either version 2 of the License, or
++ *  (at your option) any later version.
++ *
++ *  This program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *  GNU General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License
++ *  along with this program; if not, write to the Free Software
++ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ */
++/********************************************************************
++ *
++ *  This library is free software; you can redistribute it and/or
++ *  modify it under the terms of the GNU Lesser General Public
++ *  License as published by the Free Software Foundation; either
++ *  version 2.1 of the License, or (at your option) any later version.
++ *
++ *  This library is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ *  Lesser General Public License for more details.
++ *
++ *  You should have received a copy of the GNU Lesser General Public
++ *  License along with this library; if not, write to the Free Software
++ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ ********************************************************************/
++
++/*
++ * $Id: soundproxy.cc 4100 2007-07-10 09:01:53Z thjc $
++ */
++
++#include "playerc++.h"
++
++int
++SoundProxy::Play(int index)
++{
++  player_sound_cmd_t cmd;
++
++  cmd.index = htons(index);
++
++  return(client->Write(m_device_id,(const char*)&cmd,sizeof(cmd)));
++}
+diff -ruN orig-player-3.0.2/client_libs/libplayerc++/playerc++.h player-3.0.2/client_libs/libplayerc++/playerc++.h
+--- orig-player-3.0.2/client_libs/libplayerc++/playerc++.h	2009-08-04 04:25:00.000000000 -0300
++++ player-3.0.2/client_libs/libplayerc++/playerc++.h	2016-09-14 19:05:03.261080000 -0300
+@@ -2612,6 +2612,29 @@
+     void DataFreq(int nodeID, int groupID, float frequency);
+ };
+ 
++/**
++The @p SoundProxy class is used to read from a @ref interface_sound
++audio file device.
++*/
++class PLAYERCC_EXPORT SoundProxy : public ClientProxy
++{
++  private:
++
++    void Subscribe(uint32_t aIndex);
++    void Unsubscribe();
++
++    // libplayerc data structure
++    playerc_sound_t *mDevice;
++
++  public:
++    /// constructor
++    SoundProxy(PlayerClient *aPc, uint32_t aIndex=0);
++    /// destructor
++    ~SoundProxy();
++
++    void play(char *filename);
++};
++
+ /** @} (proxies)*/
+ }
+ 
+@@ -2663,6 +2686,7 @@
+   PLAYERCC_EXPORT std::ostream& operator << (std::ostream& os, const PlayerCc::WiFiProxy& c);
+   PLAYERCC_EXPORT std::ostream& operator << (std::ostream& os, const PlayerCc::RFIDProxy& c);
+   PLAYERCC_EXPORT std::ostream& operator << (std::ostream& os, const PlayerCc::WSNProxy& c);
++  PLAYERCC_EXPORT std::ostream& operator << (std::ostream& os, const PlayerCc::SoundProxy& c);
+ }
+ 
+ #endif
+diff -ruN orig-player-3.0.2/client_libs/libplayerc++/soundproxy.cc player-3.0.2/client_libs/libplayerc++/soundproxy.cc
+--- orig-player-3.0.2/client_libs/libplayerc++/soundproxy.cc	2007-07-10 06:01:53.000000000 -0300
++++ player-3.0.2/client_libs/libplayerc++/soundproxy.cc	2016-09-14 18:57:37.533093000 -0300
+@@ -19,36 +19,53 @@
+  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  *
+  */
+-/********************************************************************
+- *
+- *  This library is free software; you can redistribute it and/or
+- *  modify it under the terms of the GNU Lesser General Public
+- *  License as published by the Free Software Foundation; either
+- *  version 2.1 of the License, or (at your option) any later version.
+- *
+- *  This library is distributed in the hope that it will be useful,
+- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- *  Lesser General Public License for more details.
+- *
+- *  You should have received a copy of the GNU Lesser General Public
+- *  License along with this library; if not, write to the Free Software
+- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+- *
+- ********************************************************************/
+-
+-/*
+- * $Id: soundproxy.cc 4100 2007-07-10 09:01:53Z thjc $
+- */
+ 
+ #include "playerc++.h"
+ 
+-int
+-SoundProxy::Play(int index)
++using namespace PlayerCc;
++
++SoundProxy::SoundProxy(PlayerClient *aPc, uint32_t aIndex)
++  : ClientProxy(aPc, aIndex),
++  mDevice(NULL)
+ {
+-  player_sound_cmd_t cmd;
++  Subscribe(aIndex);
++  // how can I get this into the clientproxy.cc?
++  // right now, we're dependent on knowing its device type
++  mInfo = &(mDevice->info);
++}
+ 
+-  cmd.index = htons(index);
++SoundProxy::~SoundProxy()
++{
++  Unsubscribe();
++}
++
++void
++SoundProxy::Subscribe(uint32_t aIndex)
++{
++  scoped_lock_t lock(mPc->mMutex);
++  mDevice = playerc_sound_create(mClient, aIndex);
++  if (NULL==mDevice)
++    throw PlayerError("SoundProxy::SoundProxy()", "could not create");
++
++  if (0 != playerc_sound_subscribe(mDevice, PLAYER_OPEN_MODE))
++    throw PlayerError("SoundProxy::SoundProxy()", "could not subscribe");
++}
+ 
+-  return(client->Write(m_device_id,(const char*)&cmd,sizeof(cmd)));
++void
++SoundProxy::Unsubscribe()
++{
++  assert(NULL!=mDevice);
++  scoped_lock_t lock(mPc->mMutex);
++  playerc_sound_unsubscribe(mDevice);
++  playerc_sound_destroy(mDevice);
++  mDevice = NULL;
++}
++
++void
++SoundProxy::play(char *filename)
++{
++  scoped_lock_t lock(mPc->mMutex);
++  if (0 != playerc_sound_play(mDevice, filename))
++    throw PlayerError("SoundProxy::play()", "error playing file");
++  return;
+ }
+diff -ruN orig-player-3.0.2/libplayerinterface/CMakeLists.txt player-3.0.2/libplayerinterface/CMakeLists.txt
+--- orig-player-3.0.2/libplayerinterface/CMakeLists.txt	2009-08-11 00:44:43.000000000 -0300
++++ player-3.0.2/libplayerinterface/CMakeLists.txt	2016-09-14 18:51:33.125104000 -0300
+@@ -45,7 +45,8 @@
+                     interfaces/062_ranger.def
+                     interfaces/063_vectormap.def
+                     interfaces/064_blackboard.def
+-                    interfaces/065_stereo.def)
++                    interfaces/065_stereo.def
++                    interfaces/066_sound.def)
+ 
+ INCLUDE (${PLAYER_CMAKE_DIR}/internal/ProcessInterfaces.cmake)
+ 
+diff -ruN orig-player-3.0.2/libplayerinterface/interfaces/066_sound.def player-3.0.2/libplayerinterface/interfaces/066_sound.def
+--- orig-player-3.0.2/libplayerinterface/interfaces/066_sound.def	1969-12-31 21:00:00.000000000 -0300
++++ player-3.0.2/libplayerinterface/interfaces/066_sound.def	2016-09-14 18:50:38.213106000 -0300
+@@ -0,0 +1,17 @@
++description{
++@brief Interface to an audio system in a simple way
++
++The @p audio interface is used to control sound hardware.
++}
++
++/** Cmd subtype: play file command */
++message { CMD, VALUES, 1, player_sound_cmd_t };
++
++
++/** @brief Command: audio file
++ * Send a @ref PLAYER_SOUND_CMD_VALUES cmd to play an audio file
++ **/
++typedef struct player_sound_cmd
++{
++  char filename[PLAYER_MAX_DRIVER_STRING_LEN];
++} player_sound_cmd_t;
