@@ -1,3 +1,9 @@
-# to install the sound proxy
-just put "instalationSoundProxy.patch" it in the player's directory and apply it with the following:  
-$ patch -p1 -i intalationProxySound.patch
+# The Sound Player Proxy
+
+This proxy enables Donnie to play audio files formats such as wav, mp3, among others.
+
+# Installation
+
+This patch must be added to Player BEFORE compiling the Donnie's drivers.
+Just move this patch file to player's home directory and run:
+$ patch -p1 -i instalationProxySound.patch
