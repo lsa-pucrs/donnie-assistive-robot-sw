@@ -19,6 +19,7 @@ organize:
 	rm -f $(SOURCE).out
 	rm -f $(SOURCE).bbl
 	rm -f $(SOURCE).blg
+	rm -f $(SOURCE).toc
 
 clean: organize
 	rm -f $(SOURCE).pdf
