@@ -5,5 +5,9 @@ Once Player and Donnie's drivers were compiled, one can try out the Donnie's sim
 # Simulation Execution
 
 ```bash
-player donnie.cfg
+player $DONNIE_PATH/test/player/ donnie.cfg
 ```
+
+The following simulation screen will appear.
+
+TODO colocar screenshot do Stage

@@ -1,5 +1,6 @@
 CMAKE_MINIMUM_REQUIRED (VERSION 2.4 FATAL_ERROR)
 PROJECT (client_donnie)
+#SET(LIBDEST "$ENV{DONNIE_PATH}/test/player/")
 
 # Include this CMake module to get most of the settings needed to build
 SET (CMAKE_MODULE_PATH "/usr/local/share/cmake/Modules")
