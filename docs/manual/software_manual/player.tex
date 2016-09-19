@@ -1,0 +1,54 @@
+
+\chapter{Player}
+
+\section{Player Introduction}
+\label{sec:player_intro}
+
+
+\section{Donnie Driver}
+\label{sec:player_donnie}
+
+This driver does the interface the physical Donnie and Player. This is not required to run Donnie in Stage simulation.
+
+{\bf TODO}: descrever cfg, interfaces, parametros, aplicacao de teste.
+
+
+\section{Raspicam Driver}
+\label{sec:player_raspicam}
+
+Donnie's brain is a Raspberry Pi 2 embedded computer running Linux. Donnie see things with a \href{https://www.raspberrypi.org/documentation/hardware/camera/README.md}{RaspCAM v1}, so driver depends on the \href{https://www.raspberrypi.org/documentation/raspbian/applications/camera.md}{RaspCAM driver} and OpenCV for image processing. 
+
+{\bf TODO}: descrever cfg, interfaces, parametros, aplicacao de teste
+
+
+\section{Blobfinder Driver}
+\label{sec:player_blob}
+
+This driver enables Donnie to see colors. It receives image frames from the Raspicam Driver, process the frame with OpenCV, and publish the blobs in the XXXX interface.
+
+{\bf TODO}: descrever cfg, interfaces, parametros, aplicacao de teste
+
+\section{GTTS Driver}
+\label{sec:player_gtts}
+
+This driver enables Donnie to speak text. It is based on \href{https://en.wikipedia.org/wiki/Google_Text-to-Speech}{Google Text-to-Speech} to convert the text into a MP3 file which is played by the Sound Driver. 
+
+This driver requires Internet connection. If this is not possible, Player also supports \href{http://playerstage.sourceforge.net/doc/Player-svn/player/group__driver__festival.html}{Festival TTS} and Linux has several other TTS (\url{http://elinux.org/RPi_Text_to_Speech_(Speech_Synthesis)}).
+
+{\bf TODO}: descrever cfg, interfaces, parametros, aplicacao de teste
+
+\section{Sound Driver}
+\label{sec:player_sound}
+
+This driver enables Donnie to play sounds of different file formats. It is based on \href{http://sox.sourceforge.net/libsox.html}{SoX Library} and it is used by all other drivers that generate sounds.
+
+{\bf TODO}: descrever cfg, interfaces, parametros, aplicacao de teste
+
+\section{Alert Client}
+\label{sec:player_alert}
+
+
+This software generates specific sound alerts such as step sound, low battery, wall hit. 
+
+{\bf TODO}: descrever cfg, interfaces, parametros, aplicacao de teste
+
