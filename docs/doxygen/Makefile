@@ -1,24 +1,13 @@
-FOLDER := .
-SOURCE := main
-FILENAME := main
+.PHONY: all
 
-compile: clean
-	pdflatex $(FOLDER)/$(SOURCE).tex 
-	#bibtex $(SOURCE).aux
-	pdflatex $(FOLDER)/$(SOURCE).tex 
-	pdflatex $(FOLDER)/$(SOURCE).tex
-	rm -f ../$(FILENAME).pdf
-	cp $(SOURCE).pdf ../$(FILENAME).pdf
+all: 
+	doxygen doxy.conf
 
 display:
-	gnome-open $(SOURCE).pdf
+	firefox html/html/index.html
 
-organize:
-	rm -f $(SOURCE).log
-	rm -f $(SOURCE).aux
-	rm -f $(SOURCE).out
-	rm -f $(SOURCE).bbl
-	rm -f $(SOURCE).blg
+clean: 
+	rm -rf html *.txt
 
-clean: organize
-	rm -f $(SOURCE).pdf
+install:
+	cd html/latex/; make; sudo cp -f refman.pdf ${DONNIE_PATH}/docs/doxygen.pdf

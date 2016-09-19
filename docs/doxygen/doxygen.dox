@@ -7,7 +7,7 @@ program file and the functions in that file.
 what is in the file, then place it here (after the first statement)
 and it will appear in the detailed description section of the HTML
 output description for the file.
-@date Monday, September 19, 2011
+@date Monday, September 19, 2016
 */
 
 /**
@@ -17,31 +17,5 @@ how the doxygen comments must appear
 - for documenting a file, and in particular
 - for documenting functions
 
-
-  \defgroup slave_kernel_group Slave Kernel
-  @{
-  @}
-  \brief brief descrition
-  
-  detailed descrition of the slave module.
-
-
-
-
-  \defgroup master_kernel_group Master Kernel
-  @{
-  @}
-  \brief brief descrition
-  
-  detailed descrition of the master module.
-
-
-
-  \defgroup app_api_group User Level API
-  @{
-  @}
-  \brief brief descrition
-  
-  detailed descrition of the master module.
 
 */
