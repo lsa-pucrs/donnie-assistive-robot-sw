@@ -1,5 +1,6 @@
 CMAKE_MINIMUM_REQUIRED (VERSION 2.4 FATAL_ERROR)
 PROJECT (donnie)
+#SET(LIBDEST "$ENV{DONNIE_PATH}/lib/player/")
 
 # Include this CMake module to get most of the settings needed to build
 SET (CMAKE_MODULE_PATH "/usr/local/share/cmake/Modules")
@@ -16,3 +17,6 @@ INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR}) #source files list
 #INSTALL (FILES ${CMAKE_CURRENT_SOURCE_DIR}/client/CMakeLists.txt DESTINATION /usr/local/share/player/examples/libplayerc++/donnie/)
 #INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib${THE_TARGET}.so DESTINATION ${PLUGIN_PLAYERC_LIBRARY_DIRS})  #instala na pasta /usr/local/lib64
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/libdonnie.so DESTINATION /usr/local/lib64/) 
+# usar ${LIBDEST}${THE_TARGET} como os outros drivers. 
+
+### TODO: LIMPAR ESTE ARQUIVO !!!!

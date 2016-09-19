@@ -8,3 +8,6 @@ all:clean Logo
 
 clean: 
 	rm -f Logo
+
+# TODO mudar o nome dos arquivos p GoDonnie 
+# TODO: fazer uma regra make install que coloque os programas de teste no dir DONNIE_PATH/test/GoDonnie
