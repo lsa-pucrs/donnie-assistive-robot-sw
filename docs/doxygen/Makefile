@@ -10,4 +10,4 @@ clean:
 	rm -rf html *.txt
 
 install:
-	cd html/latex/; make; sudo cp -f refman.pdf ${DONNIE_PATH}/docs/doxygen.pdf
+	cd html/latex/; make; sudo cp -f refman.pdf $(DONNIE_PATH)/docs/doxygen.pdf
