@@ -7,8 +7,6 @@ compile: clean
 	bibtex   $(FOLDER)/$(SOURCE).bib
 	pdflatex $(FOLDER)/$(SOURCE).tex 
 	pdflatex $(FOLDER)/$(SOURCE).tex
-	rm -f ../$(FILENAME).pdf
-	cp $(SOURCE).pdf ../$(FILENAME).pdf
 
 display:
 	gnome-open $(SOURCE).pdf
@@ -22,3 +20,6 @@ organize:
 
 clean: organize
 	rm -f $(SOURCE).pdf
+
+install:
+	sudo cp -f  $(SOURCE).pdf $(DONNIE_PATH)/docs/$(FILENAME).pdf
