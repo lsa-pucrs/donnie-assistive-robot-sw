@@ -1,0 +1,106 @@
+\documentclass[11pt,a4paper,final]{report}
+
+% required for portuguese
+%\usepackage[latin1]{inputenc}
+%\usepackage[utf8]{inputenc}
+%\usepackage[brazil]{babel} 
+\usepackage{fancyvrb}
+\usepackage[dvipsnames]{xcolor}
+%\usepackage{rotating}
+% C code
+\usepackage{listings}
+% %\lstset{language=C, tabsize=4, basicstyle=\ttfamily}
+\usepackage{color}
+% link creation
+\usepackage[bookmarks,pdftitle={Donnie Hardware Manual}, pdfauthor={PUCRS/LSA - 2016}]{hyperref}
+% para fazer tabelas bonitas
+\usepackage{booktabs}
+\usepackage{subfigure}
+\usepackage{rotating}
+\usepackage{pdflscape}
+\usepackage{longtable}
+\usepackage{multirow}
+%\usepackage{xcolor}
+%\usepackage[table]{xcolor}
+\usepackage{colortbl}
+\usepackage{placeins}
+\usepackage{pbox}
+% C code
+\usepackage{listings}
+% Tikz drawings
+\usepackage{tikz}
+\usetikzlibrary{arrows, automata, calc, positioning}
+
+\lstset{language=C, tabsize=4, basicstyle=\ttfamily, commentstyle=\color{cyan}, stringstyle=\color{blue}, 
+keywordstyle=\color{magenta}, morekeywords= {uint16\_t, uint32\_t, size\_t, class}}
+% adjust size of margins
+\usepackage[left=2cm, right=2cm]{geometry}
+\geometry{margin=2cm}
+
+\author{PUCRS/LSA - 2016}
+\title{Donnie Hardware Manual}
+\date{\today\\v0.1}
+
+% TC counter
+\newcounter{tcnum}
+\setcounter{tcnum}{0}
+
+% TODO notes
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+
+
+\begin{document}
+
+\pagestyle{empty}
+
+\maketitle 
+
+\tableofcontents
+
+
+\chapter{Introduction}
+
+If you are reading the manual is because you want to build your own Donnie robot.
+Please, follow the steps suggested in this manual to give birth to your Donnie.
+
+In order to proceed, you are going to need the following resources:
+
+\begin{enumerate}
+\item Access to a 3D printer or a 3D printing service;
+\item 1Kg of PLA filament for the printing;
+\item The nuts and bolts listed in the \nameref{sec:mech_bom};
+\item Plier and screwdriver;
+\item The electronic components listed in the \nameref{sec:elet_bom};
+\item The soldering iron;
+\end{enumerate}
+
+
+\input{3d.tex}
+\input{elet.tex}
+\input{prog.tex}
+\input{test.tex}
+
+
+\begin{landscape}
+%##############################
+%##############################
+\chapter{History}
+\label{sec:history}
+%##############################
+%##############################
+
+% remove page number
+\thispagestyle{empty}
+
+\begin{tabular}{p{1.5cm}p{3cm}p{12cm}p{6cm}}
+	\toprule
+	 \textbf{Version} & \textbf{Date} & \textbf{Description}  & \textbf{Authors}\\
+	\midrule
+v0.2 & Sept/20/2016 & some nice comment here & Fulano da Silva and Ciclano de Souza  \\
+v0.1 & Sept/19/2016 & initial document structure is created & Alexandre Amory  \\
+	\bottomrule
+\end{tabular}
+
+\end{landscape}
+
+\end{document}

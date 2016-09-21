@@ -1,0 +1,377 @@
+\begin{landscape}
+\appendices
+\section{Lista de comandos do GoDonnie}
+
+% Imprime uma página indicando o início dos apêndices
+% ----------------------------------------------------------
+
+\begin{small}
+\begin{longtable}{ p{3cm} p{3cm} p{8cm} p{8cm}}
+\\
+\label{tab:donnie-cmd}\\
+\toprule
+    \textbf{Comando} 
+    & \textbf{Argumentos}  
+    & \textbf{Explicação}  
+    &\textbf{Exemplo}
+\\ \hline
+    \textbf{PF n}
+    & n é o número de passos
+    & Anda n passos para frente
+    & PF 5 
+    \newline
+
+O robô andará 5 passos para frente. Supondo que o robô está na posição 0, 0 e virado para o norte, o comando PF 5 colocará o robô na posição 5, 0, mantendo a direção para o norte. 
+\\ \hline
+    \textbf{PT n}
+    & n é o número de passos  
+    & Anda n passos para trás. É como se andasse de ré.  
+    & PT 5 
+    \newline
+    
+    O robô andará 5 passos para trás. Supondo que o robô está na posição 5, 0 e virado para o norte, o comando PT 5 colocará o robô na posição 0, 0, mantendo a direção para o norte.  
+\\ \hline
+    \textbf{GD x}
+    & x é número de graus 
+    & Gira x graus para direita. Não há deslocamento do robô. 
+    & GD 90
+    \newline
+
+    O robô irá girar 90 graus para direita. Supondo que o robô está virado para o norte, o comando GD 90 irá girar o robô 90 graus para a direita, mantendo-o na  direção leste.  
+\\ \hline
+    \textbf{GE x} 
+    & x é número de graus 
+    & Gira x graus para esquerda. Não há deslocamento do robô. 
+    & GE 90
+\newline
+
+    O robô irá girar 90 graus para esquerda. Supondo que o robô está virado para o leste, o comando GE 90 irá girar o robô 90 graus para a esquerda, mantendo-o na  direção norte. 
+\\ \hline
+    \textbf{ESPIAR}
+    & nenhum 
+    & Retorna a identificação do objeto, um ângulo aproximado e a distância aproximada de colisão entre o robô e o objeto identificado. 
+    \newline 
+    O rastreamento para identificação dos objetos ocorre a 90º graus a esquerda e a direita da frente do robô. 
+    & Supondo que o robô está na posição 2,3, virado para o norte, e que há um obstáculo verde na posição 0,5 e outro obstáculo vermelho na posição 6,3.
+    \newline
+
+    ESPIAR
+    Resposta: verde, 40º a esquerda, 2 passos, vermelho, 90º a direita, 4 passos 
+\\ \hline
+    \textbf{DISTÂNCIA d}
+    & d é a direção (f - frontal; fd - frontal direita; d - direita;  td - traseiro direito; t - traseiro; te - traseiro esquerda; e - esquerda; fe - frontal esquerda) 
+    & Retorna a quantidade de passos do sensor do robô até um obstáculo, de acordo com a direção escolhida.
+    \newline
+
+    Distância F retorna o número de passos do robô até um objeto que foi detectado pelo sensor da parte da frente do robô. 
+    \newline
+
+    Distância FD retorna o número de passos do robô até um objeto que foi detectado pelo sensor da parte da frente lateral direita do robô. 
+    \newline
+
+    Distância TD retorna o número de passos do robô até um objeto que foi detectado pelo sensor da parte da trás lateral direita do robô.
+    \newline
+
+    Distância T retorna o número de passos do robô até um objeto que foi detectado pelo sensor da parte da traseira do robô. E, assim, sucessivamente.
+    \newline
+
+    Não havendo obstáculos, retorna a quantidade de passos que o sensor consegue identificar.
+    &  
+    DISTÂNCIA F
+    DISTÂNCIA FD
+    DISTÂNCIA FE
+    DISTÂNCIA T
+    DISTÂNCIA TE
+    DISTÂNCIA TD
+    \newline
+    
+    Supondo que o robô está na posição 0,0, virado para o norte e há obstáculos nas seguintes posições, o resultado será:
+    \newline
+
+    Obstáculo em 0, 3: 
+    DISTÂNCIA F
+
+    Resposta: 3 passos
+\\ \hline
+    \textbf{ESTADO}
+    & nenhum & Informa a posição x e Y do robô no eixo cartesiano e último comando digitado, antes de Estado. 
+    & PF 3 ESTADO
+    \newline
+
+    Supondo que o robô estava em 0,0. O robô andará 3 passos para frente e informará 0 3 PF 3.
+    \newline
+
+    Não havendo obstáculos, converter a distância máxima (3 metros) em passos. 
+\\ \hline
+    \textbf{CRIAR x}
+    & x é uma variável que será criada 
+    & Cria uma variável igual a um valor ou a uma expressão. Lembrar que ao criar uma variável novamente, ela irá sobrescrever o valor anterior. 
+    & Exemplo 1: CRIAR A
+    Cria uma variável chamada A.
+    \newline
+
+    A = 2
+    Tendo sido criada a variável, pode atribuir um valor diretamente. A variável chamada A armazena 2.
+    \newline
+
+    CRIAR B =5
+    Cria uma variável chamada B, que armazena o valor 5
+    \newline
+
+    CRIAR C = A + B
+    Cria uma variável chamada C, que recebe o valor da variável A somado ao valor da variável chamada B. O resultado da variável C é 7.
+    \newline
+    
+    C = 1
+    Altera o valor da variável C e armazena o valor 1, perdendo o valor anterior.
+    \newline
+
+    D = 5
+    Retornará erro porque a variável D ainda não foi criada. 
+\\ \hline
+
+    \textbf{POS k} 
+    & k é um eixo do plano cartesiano (X ou Y) ou ângulo (A). 
+    & Retorna a posição atual do robô no eixo X ou no eixo Y ou o ângulo atual do robô. & Supondo que o robô está na posição 0,0 virado para o norte:
+    \newline
+    
+    PF 2
+
+    GE 90
+
+    PF 5
+
+    POS X (retornará -5)
+
+    POS Y (retornará 2)
+
+    POS A (retornará 270)
+
+    GD 90
+
+    POS A (retornará 0) 
+
+    GD 90 
+
+    POS A (retornará 90)
+\\ \hline
+    \textbf{PARA inicialização; expressão operador lógico expressão; incremento ou decremento 
+    FAÇA comandos FIM PARA}
+    & Inicialização: variável  = algum valor inteiro
+
+    variável ou Expressão operador lógico variável ou expressão:
+    variável ou expressão - operador lógico - variável ou expressão
+    
+    Incremento: variável + constante ou variável + variável
+    
+    Decremento: variável - constante ou variável - variável & Repete os comandos enquanto  a Expressão-operador lógico-expressão for verdadeira. & Supondo que o robô está na posição 0,0, virado para o norte e precise fazer um quadrado de tamanho de lado 3.
+    \newline
+
+    PARA 
+    
+    a=1; a<=4; a=a+1 
+    
+    FAÇA  
+    
+    PF 3 GD 90 
+    
+    FIM PARA
+    \newline
+
+    Supondo que o robô comece na posição 0,0. A variável a começará com o valor 1 e repetirá os comandos PF 3 e GD 90 enquanto a variável a for menor ou igual a 4. Ao final, o robô terá feito um trajeto similar a um quadrado e finalizará na posição 0,0 virado para o norte. 
+\\ \hline
+    \textbf{REPITA n VEZES comandos FIM REPITA}
+    & n é o número de vezes que os comandos serão repetidos.
+    & Repete os comandos n vezes. 
+    & 
+    REPITA 4 VEZES 
+    
+    GD 90 
+    
+    PF 2 
+    
+    FIM REPITA
+    \newline
+    
+    Supondo que o robô comece na posição 0,0. Os comandos PF 3  GD 90 serão repetidos 4 vezes. Ao final, o robô terá feito um trajeto similar a um quadrado e finalizará na posição 0,0 virado para o norte.
+\\ \hline
+    \textbf{SE expressão operador lógico expressão 
+    ENTÃO comandos SENÃO comandos FIM SE}& expressão = variável ou expressão. 
+    & Testa se uma condição é verdadeira e, em caso afirmativo, executa os primeiros comandos. Caso contrário, executa os comandos da expressão Senão. 
+    & Supondo que, se a variável a for menor do que 4 o robô tenha que andar para frente 5 passos e caso contrário tenha que girar 45 graus para esquerda:
+    \newline
+    
+    SE a\textless 4 
+    
+    ENTÃO PF 5 
+    
+    SENÃO GE 45
+    
+    FIM SE  
+\\ \hline
+    \textbf{BIP n, d}
+    & n é a nota musical e d é a duração em segundos (do, ré, mi, fá, sol, lá, si) 
+    & Faz o robô emitir um som de acordo com a nota musical que durará d segundos. Este som é emitido pelo robô ou pelo ambiente virtual, dependendo de quem estará ativo. 
+    & 
+    BIP do, 3
+    
+    BIP ré, 1
+    
+    BIP mi, 6
+    
+    BIP fá, 7
+    
+    BIP sol, 3
+    
+    BIP lá, 4
+    
+    BIP si, 9   
+\\ \hline
+    \textbf{SOM a}
+    & a é o estado do áudio, que pode estar ligado ou desligado. 
+    & Comando que liga ou desliga o áudio do recurso que estiver ativo, que poderá ser o robô ou o ambiente virtual. 
+    & SOM LIGAR
+
+    SOM DESLIGAR 
+\\ \hline
+    \textbf{APRENDER nome: variável1, variável2, variável3, … INICIO comandos FIM APRENDER}
+    & nome é o nome da função e variavel1, variavel2, variavel3  são os argumentos da mesma 
+    & É utilizado para “ensinar” comandos ao robô. &  O robô precisa executar vários retângulos de tamanhos diferentes. Para isso, pode ser criado um procedimento chamado RETÂNGULO que teria duas variáveis, uma para receber o tamanho da altura e outro o tamanho da base.  
+    \newline   
+       
+    APRENDER RETÂNGULO: base, altura
+    
+    FAÇA
+    
+    PF base GD 90 
+    
+    PF altura
+    
+    GD 90 
+    
+    PF base 
+    
+    GD 90 
+    
+    PF altura 
+    
+    GD 90 
+    
+    FIM APRENDER
+    \newline
+    
+    retângulo 5,3
+    
+    retângulo 8,4
+    
+    retângulo 9,5  
+\\ \hline
+    \textbf{FALAR x}
+    &  x é uma palavra ou frase
+    & Fala a palavra ou frase contida em x.  Este som é emitido pelo robô ou pelo ambiente virtual, dependendo de quem estará ativo.
+    & FALAR “oi”
+\\ \hline
+    \textbf{ESPERAR x}
+    & x é o tempo em segundos 
+    & Espera x segundos para executar o próximo comando. 
+    & Se o robô deve andar para frente 2 passos, esperar 3 segundos e andar mais 4 passos:
+    \newline
+        
+    PF 2 
+    
+    ESPERAR 3
+    
+    PF 4 
+\\ \hline
+    \textbf{SAIR}
+    & nenhum
+    & Fecha o ambiente de programação. Só pode ser usado no terminal. 
+    & SAIR
+\\ \hline
+    \textbf{HISTÓRICO}
+    & nenhum
+    & Lê o que está na tela. É possível navegar usando P, para ir para a próxima linha, A, para ir para a linha Anterior, ou pode pular para uma linha determinada. Para sair do histórico usa-se a tecla ESC.
+    & Supondo que tenham sido escritos os seguintes comandos:
+    \newline
+        
+    PF 3
+    
+    GD 45
+    
+    PF 6
+    
+    GD 45
+    
+    PF 3
+    \newline
+    
+    HISTÓRICO
+    
+    “O programa tem 5 linhas. Você está na linha 6. Digite o número da linha desejada ou P para ir para a próxima linha ou A para ir para a linha Anterior ou ESC para sair do histórico".
+    \newline
+    
+    P
+    “Não existe comandos”
+    
+    A
+    
+    será falado PF 3
+    
+    A
+    
+    será falado GD 45
+    
+    1
+    
+    será falado PF 3
+    
+    ESC
+    
+    sairá do histórico
+\\ \hline
+    \textbf{CORES c}
+    & c é a cor desejada (azul; vermelho; verde)
+    & Verifica quantos objetos de determinada cor o robô consegue identificar na sua frente.
+    & Supondo que há 1 objeto vermelho e 2 azuis
+    \newline
+    
+    CORES vermelho
+    
+    será falado 1
+    
+    CORES azul
+    
+    será falado 2
+\\ \hline
+    \textbf{Operadores lógicos}
+    &  
+    + soma
+    
+    - subtração
+    
+    * multiplicação
+    
+    / divisão
+    
+    \textless\textgreater diferente
+    
+    == igual comparação
+    
+    = atribuição
+    
+    \textless menor
+    
+    \textgreater maior
+    
+    \textless= menor ou igual
+    
+    \textgreater= maior ou igual
+
+    &  Operadores para comparar valores ou expressões.
+    & 
+\\ 
+\bottomrule
+\end{longtable}
+\end{small}
+
+\end{landscape}

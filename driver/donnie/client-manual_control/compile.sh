@@ -3,4 +3,5 @@ mkdir -p build # no error if existing
 cd build/
 cmake ../
 make
-mv client_donnie ../
+#mv client_donnie ../
+#TODO colocar regras make install no cMAKE. revisar p q todos drivers tenham isso.

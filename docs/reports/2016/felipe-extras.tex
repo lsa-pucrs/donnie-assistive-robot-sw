@@ -1,0 +1,183 @@
+%!TEX root = projeto-pve-robots-scerri.tex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Packages I like
+%\usepackage{lmodern}
+%\usepackage[british]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+
+
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amstext}
+\usepackage{amsmath}
+
+%\usepackage[usenames]{color}
+%\usepackage{color,soul}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Hyphenation corrections
+\hyphenation{Agent-Speak}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Cheating on space
+\newcommand\cheat{\vspace{-3mm}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Marginpar redefinition
+\setlength{\marginparwidth}{1.2in}
+\let\oldmarginpar\marginpar
+\renewcommand\marginpar[1]{\-\oldmarginpar[\raggedleft\footnotesize #1]%
+{\raggedright\footnotesize #1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Macros for figure placement
+\newenvironment{fig}[3][1]
+{
+    \begin{figure}[htp]
+    \begin{center}
+    \includegraphics[width=#1\textwidth]{./fig/#2}
+    \end{center}
+    \caption{#3}
+    \label{fig:#2}
+    \end{figure}
+}
+
+\newenvironment{figstar}[3][1]
+{
+    \begin{figure*}[tp]
+    \begin{center}
+    \includegraphics[width=#1\textwidth]{./fig/#2}
+    \end{center}
+    \caption{#3}
+    \label{fig:#2}
+    \end{figure*}
+}
+
+\newenvironment{figu}[2]
+{
+    \begin{figure}[!htp]
+    \begin{center}
+    \includegraphics{./fig/#1}
+    \end{center}
+    \caption{#2}
+    \label{fig:#1}
+    \end{figure}
+}
+
+\newenvironment{figw}[4][1]
+{
+  \begin{wrapfigure}{#2}{#1\textwidth}
+    \includegraphics[width=#1\textwidth]{./fig/#3}
+    \caption{#4}
+    \label{fig:#3}
+  \end{wrapfigure}
+}
+
+\newenvironment{plot}[2]
+{
+    \begin{figure}[!ht]
+    \begin{center}
+    \includegraphics{./plot/#1}
+    \end{center}
+    \caption{#2}
+    \label{plot:#1}
+    \end{figure}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Definitions for comments
+\usepackage{mparhack}
+\setlength{\marginparsep}{0.2cm}
+\setlength{\marginparwidth}{2.0 cm}
+\newenvironment{comment}[2][Note]{\dag\marginpar{\tiny{\textbf{#1:} {#2}}}}
+%\newenvironment{comment}[2][Note]{}
+%\newenvironment{comment}[2][Note]{\footnote{\textbf{#1:} #2}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Commenting Macros
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifx\final\undefined
+	% 
+	\ifx\todo\undefined
+	\newcommand\todo[1]{~\newline{\color{red}\framebox[\columnwidth]{\parbox{.95\linewidth}{TODO: #1}}}~\newline}
+	\fi
+	% 
+	\newcommand{\rev}[1]{\noindent\fbox{\parbox{.98\linewidth}{\underline{NEEDS REFINING:}\\#1}}\\}
+	\newcommand{\ask}[2]{\noindent{\bf (@#1:}~#2{\bf)}}
+	\newcommand{\say}[2]{\noindent\fbox{\parbox{.98\linewidth}{\noindent{\sc #1:}\\#2}}\\}
+\else
+	\newcommand{\rev}[1]{}
+	\newcommand{\ask}[2]{}
+	\newcommand{\say}[2]{}
+	\newcommand\todo[1]{}
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Definitions for formatting AgentSpeak code
+\usepackage{float}
+\floatstyle{boxed}
+\newfloat{asplan}{tbp}{lop}
+\floatname{asplan}{Listing}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% More definitions for formatting AgentSpeak code
+\usepackage{listings}
+\newenvironment{aslisting}
+               {\begin{asplan}\fontsize{9}{10}\selectfont\vspace{-.8em}}
+               {\vspace{-1.0em}\end{asplan}\vspace{-0em}}
+
+\lstdefinelanguage
+{AgentSpeak}[]{Prolog}
+{alsoletter={:,!,?,+,-,<-}, morekeywords={:,!,?,+,-,<-}}
+
+\lstdefinestyle{as}{
+%\lstset{
+    basicstyle=\fontsize{7.3}{8}\tt\selectfont,                      % print whole listing small
+    keywordstyle=\bfseries,                                        % underlined bold black keywords
+    %identifierstyle=\ttfamily,              % nothing happens
+    commentstyle=\it,             % italic comments
+    language=AgentSpeak,
+    fontadjust,
+    numbers=left,
+    breaklines,
+    columns=flexible,
+    showstringspaces=false                 % no special string spaces
+%}
+}
+
+\lstdefinelanguage
+{Motivations}[]{AgentSpeak}
+{morekeywords={Motivation,Threshold,IntensityUpdate,GoalGeneration,Mitigation,->}}
+
+\lstdefinestyle{mot}{
+    basicstyle=\fontsize{8}{9}\sf\selectfont,                      % print whole listing small
+    keywordstyle=\bfseries,                                        % underlined bold black keywords
+    language=Motivations,
+    fontadjust,
+    breaklines,
+    numbers=left,
+    showstringspaces=false                 % no special string spaces
+}
+
+\lstset{style=as}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%\newtheorem{definition}{Definition}
+
+%----------------------------------------------------------------------
+\newcommand{\idest}{{\it i.e.\ }}
+\newcommand{\exempli}{{\it e.g.\ }}
+\newcommand{\etal}{{\it et al.}}
+\newcommand{\quodvide}{{\it q.v.\ }}
+
