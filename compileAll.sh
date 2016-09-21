@@ -28,19 +28,35 @@ NC='\033[0m' # No Color
 # TODO:  fazer grep recursivo por TODO para consertar as pendencias
 # TODO:  nenhum CFG pode ter caminho absoluto. todos devem apontar para o diretorio DONNIE_PATH/lib/player/
 
+
+
+
+
 echo -e "Compiling ${GREEN}Donnie Driver${NC} ..."
 cd driver/donnie
 # pegar o codigo de retorno p saber se foi executado corretamente
 ./compile.sh
 cd ../../
 
-cd driver/driver-sound
+#to compile soxplayer driver
+sudo apt-get install -y sox
+sudo apt-get install -y libsox-dev 
+sudo apt-get install -y libsox-fmt-all
+#to compile gtts driver
+sudo apt-get install -y curl
+sudo apt-get install -y libcurl4-openssl-dev
+#to compile Logo Client
+sudo apt-get install -y libreadline-dev
+sudo apt-get install -y libantlr3c-dev
+
+
+cd driver/soxplayer
 ./compile.sh
 cd client-test
 ./compile.sh
 cd ../../../
 
-cd driver/driver-tts
+cd driver/gtts
 ./compile.sh
 cd client-test
 ./compile.sh
