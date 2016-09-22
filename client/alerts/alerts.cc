@@ -59,28 +59,30 @@ void DonnieClient::setPos(double x, double y, double a){
 void DonnieClient::checkDir(){
     robot->ReadIfWaiting();
 
-    /*system("clear");
-    cout << "==================" << endl;
-    cout << "POS(" << p2d->GetXPos() << ", " 
-                    << p2d->GetYPos() << ", "
-                    << radTOdeg(p2d->GetYaw()) << ")" << endl;*/
+
+    /*
+    cout << "VEL("
+    << p2d->GetXSpeed() << ", "
+    << p2d->GetYSpeed () << ", "
+    << p2d->GetYawSpeed() << ")" << endl << endl;
+    */
 
     translation = hypotf(p2d->GetXPos() - pos.x, p2d->GetYPos() - pos.y) - translation;
     //cout << "translation:" << translation << endl;
     //cout << "steps:" << steps << endl;
     
     if(translation>=STEP_LENGHT){  //if(translation>(steps+1)*STEP_LENGHT){
-        if(p2d->GetXPos()>pos.x){
+        if(p2d->GetXSpeed()>0){
             steps++;
             sound->play(SSTEP);
-            cout << "forward:" << translation << endl;
-            cout << "steps:" << steps << endl << endl;
+            //cout << "forward:" << translation << endl;
+            //cout << "steps:" << steps << endl << endl;
         }
-        else{
+        else if(p2d->GetXSpeed()<0){
             steps--;
             sound->play(SSBACK);
-            cout << "backward:" << translation << endl;
-            cout << "steps:" << steps << endl << endl;
+            //cout << "backward:" << translation << endl;
+            //cout << "steps:" << steps << endl << endl;
         }
         setPos(p2d->GetXPos(),p2d->GetYPos(),pos.y);
         translation=0; 
@@ -90,16 +92,16 @@ void DonnieClient::checkDir(){
 
 
     //cout << "Yaw:" << radTOdeg(p2d->GetYaw()) << endl << endl;
-    if((p2d->GetYaw()>pos.a)){ //ge
+    if(p2d->GetYawSpeed()>0){ //ge
         if(radTOdeg(p2d->GetYaw() - pos.a)>STEP_YAW){
-            cout << "ge Yaw-a:" << radTOdeg(p2d->GetYaw() - pos.a) << endl << endl;
+            //cout << "ge Yaw-a:" << radTOdeg(p2d->GetYaw() - pos.a) << endl << endl;
             setPos(pos.x,pos.y,p2d->GetYaw());
             sound->play(STLEFT);
         }
     }
-    else{ //gd
+    else if(p2d->GetYawSpeed()<0){ //gd
         if(radTOdeg(pos.a - p2d->GetYaw())>STEP_YAW){
-            cout << "gd Yaw-a:" << radTOdeg(pos.a - p2d->GetYaw()) << endl << endl;
+            //cout << "gd Yaw-a:" << radTOdeg(pos.a - p2d->GetYaw()) << endl << endl;
             setPos(pos.x,pos.y,p2d->GetYaw());
             sound->play(STRIGHT);
         }
