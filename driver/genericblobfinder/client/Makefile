@@ -1,5 +1,6 @@
 CXXFLAGS = `pkg-config --cflags playerc++ ` -g
 CFLAGS = `pkg-config --cflags playerc ` -g
-LDLIBS = `pkg-config --libs playerc++` -std=c++0x -lboost_system
+#LDLIBS = `pkg-config --libs playerc++` -std=c++0x -lboost_system
+LDLIBS = `pkg-config --libs playerc++`
 CC = g++
 all: Blobfindertest

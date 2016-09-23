@@ -1,6 +1,16 @@
 /*
-Based on playerjoy.cc Author: Richard Vaughan. Available in the player 3.0.2 source code.
+* Desc: Donnie's Player-based driver test application.
+* Author: Guilherme Marques - 
+* Date:  August 2016
+* Laboratório de Sistemas Autônomos 
+*  - https://lsa.pucrs.br/
+*  - https://github.com/lsa-pucrs
+* Faculdade de Informática - PUCRS  
+*  - www.inf.pucrs.br
 */
+
+//TODO: Marques, colocar um breve manual de como usar esta aplicacao. pode ser em portugues
+// dar uma comentada e limpada no codigo
 
 #include <strings.h>
 #include <iostream>

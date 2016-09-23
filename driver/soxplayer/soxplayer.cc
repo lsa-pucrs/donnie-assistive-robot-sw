@@ -1,7 +1,12 @@
 /*
 * Desc: A robot Soxplayer. Player for many Audio files formats.
-* Author: Guilherme Marques
+* Author: Guilherme Marques - 
 * Date:  August 2016
+* Laboratório de Sistemas Autônomos 
+*  - https://lsa.pucrs.br/
+*  - https://github.com/lsa-pucrs
+* Faculdade de Informática - PUCRS  
+*  - www.inf.pucrs.br
 */
 
 
@@ -15,7 +20,7 @@ driver
 )
 */
 
-
+// TODO: separar a definicao da classe em um .h para gerar documentacao automatica com doxygen
 
 #include <libplayercore/playercore.h>
 

@@ -1,7 +1,12 @@
 /*
- * Desc: A robot Gtts handle
+ * Desc: A robot Google Text-to-Speech handle
  * Author: Guilherme Marques
  * Date:  August 2016
+ * Laboratório de Sistemas Autônomos 
+ *  - https://lsa.pucrs.br/
+ *  - https://github.com/lsa-pucrs
+ * Faculdade de Informática - PUCRS  
+ *  - www.inf.pucrs.br
  */
 
 /*
@@ -23,7 +28,8 @@ driver
 
 */
 
-
+// TODO:  colocar um parametro p definir o idioma. deixar pt-br como default
+// TODO: separar a definicao da classe em um .h para gerar documentacao automatica com doxygen
 
 #include <libplayercore/playercore.h>
 
