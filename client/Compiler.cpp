@@ -22,15 +22,15 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
 {
 	assert(input != NULL);
                                    
-  	plogoLexer lex = logoLexerNew(input);
+  	pGoDonnieLexer lex = GoDonnieLexerNew(input);
   	assert(lex != NULL);
   	pANTLR3_COMMON_TOKEN_STREAM tokens = antlr3CommonTokenStreamSourceNew(ANTLR3_SIZE_HINT, TOKENSOURCE(lex));
   	assert(tokens != NULL);
 
-  	plogoParser parser = logoParserNew(tokens);
+  	pGoDonnieParser parser = GoDonnieParserNew(tokens);
   	assert(parser != NULL);
 
-  	logoParser_prog_return r = parser->prog(parser);
+  	GoDonnieParser_prog_return r = parser->prog(parser);
 
   	pANTLR3_BASE_TREE tree = r.tree;
 

@@ -1,5 +1,5 @@
-#include "logoLexer.h"
-#include "logoParser.h"
+#include "GoDonnieLexer.h"
+#include "GoDonnieParser.h"
 
 #include <stdio.h>
 #include <stdlib.h>

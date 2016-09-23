@@ -1,4 +1,4 @@
-grammar logo;
+grammar GoDonnie;
 
 options
 {
