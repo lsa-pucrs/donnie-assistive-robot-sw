@@ -7,11 +7,8 @@ CC = g++
 all:clean grammar GoDonnie
 
 clean: 
-	rm -f GoDonnie
+	rm -f GoDonnie*
 
-#GoDonnie: $(OBJS)
-#	$(CC) $(OBJS) $(LDLIBS) $(CXXFLAGS) -o GoDonnie
-	
 grammar: GoDonnie.g
 	java -jar Antlr/antlr-3.2.jar GoDonnie.g
 	
