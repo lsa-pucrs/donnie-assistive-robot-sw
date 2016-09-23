@@ -1,13 +1,19 @@
-CXXFLAGS = `pkg-config --cflags playerc++ ` -g
-CFLAGS = `pkg-config --cflags playerc ` -g
-OBJS = utils.cpp DonnieClient.cpp Compiler.cpp logoLexer.c logoParser.c
+CXXFLAGS = `pkg-config --cflags playerc++ ` -g -I.
+CFLAGS = `pkg-config --cflags playerc ` -g -I.
+OBJS = utils.cpp DonnieClient.cpp Compiler.cpp GoDonnieLexer.c GoDonnieParser.c
 LDLIBS = $(OBJS) `pkg-config --libs playerc++` -fexec-charset=iso-8859-1 -std=c++0x -lreadline -ltermcap  -lantlr3c -pthread
 CC = g++ 
 	
-all:clean Logo
+all:clean grammar GoDonnie
 
 clean: 
-	rm -f Logo
+	rm -f GoDonnie
 
-# TODO mudar o nome dos arquivos p GoDonnie 
-# TODO: fazer uma regra make install que coloque os programas de teste no dir DONNIE_PATH/test/GoDonnie
+#GoDonnie: $(OBJS)
+#	$(CC) $(OBJS) $(LDLIBS) $(CXXFLAGS) -o GoDonnie
+	
+grammar: GoDonnie.g
+	java -jar Antlr/antlr-3.2.jar GoDonnie.g
+	
+install:
+	sudo cp $(DONNIE_PATH)/lib

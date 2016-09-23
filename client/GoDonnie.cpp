@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
   char *temp, *prompt;
 
   temp = (char *)NULL;
-  prompt = (char*)"Logo$ ";
+  prompt = (char*)"GoDonnie$ ";
 
   do
   {
