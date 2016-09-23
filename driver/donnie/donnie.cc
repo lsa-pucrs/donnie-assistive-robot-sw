@@ -35,6 +35,26 @@
 #include <config.h>
 */
 
+/*
+* Desc: Donnie's Player-based driver.
+* Author: Guilherme Marques - 
+* Date:  August 2016
+* Laboratório de Sistemas Autônomos 
+*  - https://lsa.pucrs.br/
+*  - https://github.com/lsa-pucrs
+* Faculdade de Informática - PUCRS  
+*  - www.inf.pucrs.br
+*/
+
+
+/*
+cfg example:
+
+TODO:  colocar exemplo c todos os parametros
+
+*/
+
+// TODO: separar a definicao da classe em um .h para gerar documentacao automatica com doxygen
 
 #include <unistd.h>
 #include <netinet/in.h>

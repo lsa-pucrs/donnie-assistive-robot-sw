@@ -1,3 +1,15 @@
+/*
+* Desc: Player-based blobfinder using OpenCV2.
+* Author: Daniel Einloft
+* Date:  August 2016
+* Laboratório de Sistemas Autônomos 
+*  - https://lsa.pucrs.br/
+*  - https://github.com/lsa-pucrs
+* Faculdade de Informática - PUCRS  
+*  - www.inf.pucrs.br
+*/
+
+
 /* GenericBlobfinder configuration file sintaxe:
 
 driver
@@ -20,6 +32,9 @@ driver
 /*
 #include <config.h>
 */
+
+// TODO: separar a definicao da classe em um .h para gerar documentacao automatica com doxygen
+// TODO: remover todas as referencias a raspicam pois este modulo nao depende dela
 
 #if !defined (WIN32)
   #include <unistd.h>
