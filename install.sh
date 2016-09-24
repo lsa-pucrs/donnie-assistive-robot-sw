@@ -152,6 +152,9 @@ git clone https://github.com/lsa-pucrs/Player.git
 echo -e "${GREEN}Downloading Stage source code from GitHub... ${NC}\n"
 git clone https://github.com/lsa-pucrs/Stage.git
 
+echo -e "${GREEN}Downloading Raspicam source code from GitHub... ${NC}\n"
+git clone https://github.com/lsa-pucrs/raspicam.git
+
 echo -e "${GREEN}Downloading Donnie source code from GitHub... ${NC}\n"
 git clone -b devel https://github.com/lsa-pucrs/donnie-assistive-robot-sw.git
 
@@ -192,6 +195,7 @@ make
 make install
 echo -e "${GREEN}Stage installed !!!! ${NC}\n"
 
+
 ##################################################
 # install Donnie depedencies
 # compile and install Donnie
@@ -210,8 +214,11 @@ sudo apt-get install -y libreadline-dev
 sudo apt-get install -y oracle-java8-installer
 sudo apt-get install -y libantlr3c-dev
 #to compile docs
+# uses 3.058 MB in disk - not recommended for VMs
 #sudo apt-get install -y texlive-full
-#sudo apt-get install -y doxygen
+# uses 494MB in disk
+sudo apt-get install -y texlive texlive-lang-english texlive-lang-portuguese
+sudo apt-get install -y doxygen
 
 cd ../../donnie-assistive-robot-sw
 mkdir build
