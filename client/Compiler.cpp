@@ -11,7 +11,8 @@ using std::endl;
 ExprTreeEvaluator::ExprTreeEvaluator()
 {
 
-	Donnie = new DonnieClient();
+	//Donnie = new DonnieClient();
+	*Donnie = DonnieClient::getInstance();
 
   	memFlag = 0;
   	for_itFlag = 0;
