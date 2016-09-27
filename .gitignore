@@ -65,6 +65,7 @@ build/
 download.mp3
 
 # binaries
+client_test
 client-test
 Blobfindertest
 main
@@ -73,3 +74,11 @@ alerts
 
 #compiled .pdf tex files
 main.pdf
+
+#GoDonnie client generated files
+GoDonnie
+GoDonnie.tokens
+GoDonnieLexer.c
+GoDonnieLexer.h
+GoDonnieParser.c
+GoDonnieParser.h

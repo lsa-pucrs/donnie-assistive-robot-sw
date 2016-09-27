@@ -1,4 +1,4 @@
-rm -f client_donnie # no error if not existing
+rm -f client-donnie # no error if not existing
 mkdir -p build # no error if existing
 cd build/
 cmake ../
