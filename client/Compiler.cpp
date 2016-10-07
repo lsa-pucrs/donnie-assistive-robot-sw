@@ -7,11 +7,9 @@ using std::string;
 using std::cout;
 using std::endl;
 
-
 ExprTreeEvaluator::ExprTreeEvaluator()
 {
 
-	//Donnie = new DonnieClient();
 	*Donnie = DonnieClient::getInstance();
 
   	memFlag = 0;
@@ -79,7 +77,6 @@ int ExprTreeEvaluator::scriptMode(char* fileIn)
   return 0;
 
 }
-
 
 int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 {
@@ -286,7 +283,12 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case ESPERA:
           {
             cout << "ESPERAR: " << endl;
-            sleep(run(getChild(tree,0)));
+            if(tree->getToken(getChild(tree,0))->type == STRINGE)	
+				cout << getText(getChild(tree,0)) << endl;
+			else
+				sleep(run(getChild(tree,0)));
+			
+				
             break;
           }
 
@@ -575,6 +577,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           }
   
           default:
+			//Throw Exception?
               cout << "Unhandled token: #" << tok->type << '\n';
                break;
         }
@@ -599,7 +602,6 @@ const char* getText(pANTLR3_BASE_TREE tree)
 {
     return (const char*) tree->getText(tree)->chars;
 }
-
 
 bool compare (int a, int b, string comp)
 {
@@ -631,8 +633,7 @@ bool compare (int a, int b, string comp)
   {
     cout << "null comp" << endl;
     return false;
-  }
-    
+  } 
 }
 
 
