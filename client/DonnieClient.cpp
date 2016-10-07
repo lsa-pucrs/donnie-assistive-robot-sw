@@ -5,15 +5,11 @@ using namespace std;
 using namespace PlayerCc;
 
 //Trocar por const
-//#define STEP_LENGHT 0.05
-//#define SIDE_RANGER 0.05
-//#define FRONT_RANGER 0.06
-//#define BACK_RANGER 0.05
-
 const double STEP_LENGHT = 0.05;
 const double  SIDE_RANGER = 0.05;
 const double  FRONT_RANGER = 0.06;
 const double  BACK_RANGER = 0.05;
+
 
 //Historic
 Historic Historic::singleton = Historic();
@@ -22,9 +18,7 @@ Historic::Historic()
 	 this->commandsList = list<Command>(); 
 	 this->iterator = commandsList.begin();
 }
-
 Historic::~Historic(){}
-
 Historic& Historic::getHistoric()
 {
 	return singleton;
@@ -207,6 +201,8 @@ int DonnieClient::BackBumper()
 
 }
 
+
+DonnieClient::~DonnieClient(){}
 float DonnieClient::GetRange(int arg)
 {
 	robot->Read();
