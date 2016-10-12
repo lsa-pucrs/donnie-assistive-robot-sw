@@ -1,0 +1,17 @@
+#!/bin/sh
+# http://wiki.osdev.org/Cross-Porting_Software#pkg-config
+# https://autotools.io/pkgconfig/cross-compiling.html?utm_source=www.flameeyes.eu&utm_medium=url&utm_campaign=vanitydomainssite
+
+# Fill these in appropriately:
+export PKG_CONFIG_SYSROOT_DIR=$RPI_ROOT_PATH
+export PKG_CONFIG_LIBDIR=$RPI_ROOT_PATH/usr/lib/pkgconfig
+# TODO: If it works this should probably just be set to the empty string.
+#export PKG_CONFIG_PATH=$PKG_CONFIG_LIBDIR
+# when cross compiling, pkg config must point the to the RPI root dir, not the normal / root dir
+export PKG_CONFIG_PATH=$SYSROOT/usr/lib/arm-linux-gnueabihf/pkgconfig/:$SYSROOT/usr/lib/pkgconfig/:$SYSROOT/usr/lib/openmpi/lib/pkgconfig/:$SYSROOT/usr/share/pkgconfig/:$SYSROOT/usr/local/lib/pkgconfig/
+
+# Use --static here if your OS only has static linking.
+# TODO: Perhaps it's a bug in the libraries if their pkg-config files doesn't
+#       record that only static libraries were built.
+#exec pkg-config --static "$@"
+exec pkg-config "$@"
