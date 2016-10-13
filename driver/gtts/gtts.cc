@@ -203,7 +203,9 @@ void Gtts::ProcessSpeechCmd(player_msghdr_t* hdr, player_speech_cmd_t &data){
     strcpy(cmdcurl,"wget -q -U Mozilla -O download.mp3 \"");
     strcat(cmdcurl,url);
     strcat(cmdcurl,"\"");
-    system(cmdcurl);
+	if (system(cmdcurl) == -1){
+		std::cout << "ERROR: cannot execute wget" << std::endl;
+	}
     //printf("%s\n", cmdcurl);
     Play("download.mp3");
 }

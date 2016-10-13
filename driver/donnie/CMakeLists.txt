@@ -5,7 +5,7 @@
 	SET (DRIVERNAME "donnie")
 	PROJECT (${DRIVERNAME})
 
-	message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+	message(STATUS "Configuring '${DRIVERNAME}'")
 
 	#########
 	# check DONNIE_PATH

@@ -2,14 +2,14 @@ CMAKE_MINIMUM_REQUIRED (VERSION 2.4 FATAL_ERROR)
 SET (DRIVERNAME "gtts")
 PROJECT (${DRIVERNAME})
 
-message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "Configuring '${DRIVERNAME}'")
 
 #########
 # check DONNIE_PATH
 #########
 if(DEFINED ENV{DONNIE_PATH})
    SET(DONNIE_PATH "$ENV{DONNIE_PATH}")
-   message(STATUS "DONNIE_PATH = ${DONNIE_PATH}")
+   #message(STATUS "DONNIE_PATH = ${DONNIE_PATH}")
 else()
    message(FATAL_ERROR "DONNIE_PATH is NOT defined")
 endif()
