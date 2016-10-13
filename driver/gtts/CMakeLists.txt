@@ -4,6 +4,10 @@ PROJECT (${DRIVERNAME})
 
 message(STATUS "Configuring '${DRIVERNAME}'")
 
+IF (POLICY CMP0048) # in CMake 3.0.0+
+  CMAKE_POLICY (SET CMP0048 OLD) # keep PROJECT() from clearing VERSION variables
+ENDIF (POLICY CMP0048)
+
 #########
 # check DONNIE_PATH
 #########
