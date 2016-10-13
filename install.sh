@@ -1,4 +1,17 @@
 #!/bin/bash
+#####################
+# Author: Alexandre Amory
+# Date: September/2016
+# Laboratorio de Sistemas Autonomos - FACIN - PUCRS University
+# Description:
+#   This script installs Donnie software in the host computer (Player, Stage, Donnie drivers).
+# How to Execute (host computer):
+# go to Donnie source code dir
+#   $ cd <donnie source>
+# run this script
+#   $ sudo ./install.sh <parameters>
+# parameters:
+#   SIMULATION_ONLY= 1 / 0 # set to 1 if you dont have Donnie robot
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -20,18 +33,19 @@ echo -e "DONNIE_PATH=${DONNIE_PATH}\n"
 ##################################################
 OS=$(lsb_release -si)
 VER=$(lsb_release -sr)
+OSNAME=$(lsb_release -sc)
 
 case ${OS} in 
 	Ubuntu )
 		echo -e "${ORANGE}WARNING:{NC} Ubuntu is only recommended for Destop computer, not VMs, and not Raspberry Pi\n"
 		case ${VER} in 
 			14.04 )
-				echo -e "${GREEN}NOTE:{NC} ${OS} - ${VER} is the recommended OS version.\n"
+				echo -e "${GREEN}NOTE:{NC} ${OS} - ${VER} (${OSNAME} is the recommended OS version.\n"
 				;;
 			* )
 				# Handle other OS versions here
-				echo -e "${ORANGE}WARNING:{NC} ${OS} - ${VER} is not a recommended OS version. You might get errors and some programming experience is required to compile Donnie. \n"
-				echo -e "${GREEN}NOTE:{NC} Version 14.04 is the recommended version for ${OS}\n"
+				echo -e "${ORANGE}WARNING:{NC} ${OS} - ${VER} (${OSNAME} is not a recommended OS version. You might get errors and some programming experience is required to compile Donnie. \n"
+				echo -e "${GREEN}NOTE:{NC} Ubuntu 14.04 (trusty) is the recommended version for ${OS}\n"
 				exit 1;
 			 ;;
 		esac		
@@ -40,32 +54,19 @@ case ${OS} in
 		echo -e "${ORANGE}WARNING:{NC} Lubuntu is recommended for both Destop computers and VMs, but not for Raspberry Pi\n"
 		case ${VER} in 
 			14.04 )
-				echo -e "${GREEN}NOTE:{NC} ${OS} - ${VER} is the recommended OS version.\n"
+				echo -e "${GREEN}NOTE:{NC} ${OS} - ${VER} (${OSNAME} is the recommended OS version.\n"
 				;;
 			* )
 				# Handle other OS versions here
-				echo -e "${ORANGE}WARNING:{NC} ${OS} - ${VER} is not a recommended OS version. You might get errors and some programming experience is required to compile Donnie. \n"
-				echo -e "${GREEN}NOTE:{NC} Version 14.04 is the recommended version for ${OS}\n"
+				echo -e "${ORANGE}WARNING:{NC} ${OS} - ${VER} (${OSNAME} is not a recommended OS version. You might get errors and some programming experience is required to compile Donnie. \n"
+				echo -e "${GREEN}NOTE:{NC} Lubuntu 14.04 (trusty) is the recommended version for ${OS}\n"
 				exit 1;
 			 ;;
-		esac		
-	Rasbian )
-		echo -e "${ORANGE}WARNING:{NC} Rasbian is recommended only for Raspberry Pi\n"
-		case ${VER} in 
-			14.04 )
-				echo -e "${GREEN}NOTE:{NC} ${OS} - ${VER} is the recommended OS version.\n"
-				;;
-			* )
-				# Handle other OS versions here
-				echo -e "${ORANGE}WARNING:{NC} ${OS} - ${VER} is not a recommended OS version. You might get errors and some programming experience is required to compile Donnie. \n"
-				echo -e "${GREEN}NOTE:{NC} Version 14.04 is the recommended version for ${OS}\n"
-				exit 1;
-			 ;;
-		esac		
+		esac			
 	* )
      # Handle other distributions here
-		echo -e "${RED}ERROR:{NC} ${OS} is not a supported OS\n"
-		echo -e "${GREEN}NOTE:{NC} Lubuntu is recommended for VMs or Desktops. Raspbian is recommended for Donnie's computer (Raspberry Pi)\n"
+		echo -e "${RED}ERROR:{NC} ${OS} - ${VER} (${OSNAME} is not a supported OS\n"
+		echo -e "${GREEN}NOTE:{NC}Lubuntu 14.04 (trusty) is recommended OS for Donnie's host computer\n"
 		exit 1;
      ;;
 esac
@@ -167,8 +168,8 @@ cd Player
 echo -e "${GREEN}Patching Player for Lubuntu 14.04 ... ${NC}\n"
 patch -p1 < patch/festival/festival.patch
 patch -p1 < patch/install/player_3.0.2_14.04.patch
-echo -e "${GREEN}Patching Player for Donnie ... ${NC}\n"
 patch -p1 < ../donnie-assistive-robot-sw/proxies/instalationSoundProxy.patch
+echo -e "${GREEN}Patching Player for Donnie ... ${NC}\n"
 mkdir build
 cd build
 # Mandatory
@@ -214,11 +215,16 @@ sudo apt-get install -y libreadline-dev
 sudo apt-get install -y oracle-java8-installer
 sudo apt-get install -y libantlr3c-dev
 #to compile docs
+sudo apt-get install -y doxygen
 # uses 3.058 MB in disk - not recommended for VMs
 #sudo apt-get install -y texlive-full
 # uses 494MB in disk
 sudo apt-get install -y texlive texlive-lang-english texlive-lang-portuguese
-sudo apt-get install -y doxygen
+# uses 558MB in disk
+sudo apt-get install -y texlive-latex-extra
+# saves some 700MB in disk by removing docs
+sudo apt-get --purge remove tex.\*-doc$
+
 
 cd ../../donnie-assistive-robot-sw
 mkdir build

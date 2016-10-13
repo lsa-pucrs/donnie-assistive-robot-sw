@@ -21,8 +21,13 @@ MESSAGE( STATUS "Build type ${CMAKE_BUILD_TYPE}" )
 
 # Monolithic version
 add_subdirectory(driver)
-add_subdirectory(client)
-add_subdirectory(docs)
+
+# those are not required on RPi board, so they are not compiled
+# during crosss compilation mode
+IF(NOT CMAKE_CROSSCOMPILING)
+	add_subdirectory(client)
+	add_subdirectory(docs)
+ENDIF()
 
 
 ######################################
