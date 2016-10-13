@@ -143,9 +143,9 @@ class Donnie : public ThreadedDriver{
 		void FloatToBytes(float value, uint8_t *data);
 		void Uint16_tToBytes(uint16_t value, uint8_t *data);
 		void Uint32_tToBytes(uint32_t value, uint8_t *data);
-		void ProcessBeepCmd(player_msghdr_t* hdr, player_beep_cmd_t &data);
+		//void ProcessBeepCmd(player_msghdr_t* hdr, player_beep_cmd_t &data);
 
-		void Beep(uint16_t frequency,uint32_t duration);
+		//void Beep(uint16_t frequency,uint32_t duration);
 		void MotorsOff();
 
 
@@ -185,7 +185,7 @@ class Donnie : public ThreadedDriver{
 		// My power interface
 		player_devaddr_t power_addr;
 		// My Odometry interface
-		player_devaddr_t m_beep_addr;
+		//player_devaddr_t m_beep_addr;
 		//My Beep interface
 
 		//Odometry data
@@ -339,7 +339,7 @@ Donnie::Donnie(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 	  	this->SetError (-1);
 	  	return;
 	}
-	// Create my beep interface
+	/*// Create my beep interface
 	if (cf->ReadDeviceAddr(&(this->m_beep_addr), section, "provides", PLAYER_BEEP_CODE, -1, NULL)){
 			PLAYER_ERROR("Could not read BEEP ");
 			SetError(-1);
@@ -349,7 +349,7 @@ Donnie::Donnie(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 			PLAYER_ERROR("Could not add dio interface ");
 			SetError(-1);
 			return;
-	 }
+	 }*/
 	 
 	port = cf->ReadString (section, "port", "/dev/ttyACM0");
 	robot_width = cf->ReadFloat(section, "width", 0.2);    // [m]
@@ -415,7 +415,7 @@ void Donnie::MainQuit(){
 	 if (arduino)
 	 {
 			MotorsOff();
-	 		Beep(1000,1000);
+	 		//Beep(1000,1000);
 			arduino->closePort(); // it will reset arduino after each client disconect the robot
 			arduino = NULL;
 	 }
@@ -510,12 +510,12 @@ int Donnie::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, void 
 			ProcessPos2dGeomReq(hdr);
 			return(0);
 	 }
-	 if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_CMD, PLAYER_BEEP_CMD_VALUES, m_beep_addr)){
+	 /*if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_CMD, PLAYER_BEEP_CMD_VALUES, m_beep_addr)){
 			ProcessBeepCmd(hdr, *reinterpret_cast<player_beep_cmd_t*>(data));
 			
 
 			return 0;
-	 }
+	 }*/
 
 	
 
@@ -1074,7 +1074,7 @@ void Donnie::Uint32_tToBytes(uint32_t value, uint8_t *data){
     data[3] = u.b[0];
 }
 
-void Donnie::ProcessBeepCmd(player_msghdr_t* hdr, player_beep_cmd_t &data){
+/*void Donnie::ProcessBeepCmd(player_msghdr_t* hdr, player_beep_cmd_t &data){
 
 	uint16_t frequency = data.frequency;
 	uint32_t duration = data.duration;
@@ -1094,15 +1094,15 @@ void Donnie::ProcessBeepCmd(player_msghdr_t* hdr, player_beep_cmd_t &data){
 	tx_data[6]=converted[3];
 	arduino->writeData(tx_data,tx_data_count);
 	//PLAYER_MSG0(0, "Beep sent");
-}
+}*/
 
-void Donnie::Beep(uint16_t frequency,uint32_t duration){
+/*void Donnie::Beep(uint16_t frequency,uint32_t duration){
 	player_beep_cmd_t data;
 	data.frequency = frequency;
 	data.duration = duration;
 
 	ProcessBeepCmd(NULL,data);
-}
+}*/
 
 void Donnie::MotorsOff(){
 	tx_data_count=5;
