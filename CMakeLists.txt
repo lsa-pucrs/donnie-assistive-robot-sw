@@ -1,60 +1,121 @@
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 2.8)
 
-project(Foo VERSION 1.2.3)
+project(Donnie)
+set(PROJECT_VERSION "0.1")
+
+#########
+# check DONNIE_PATH
+#########
+if(DEFINED ENV{DONNIE_PATH})
+   SET(DONNIE_PATH "$ENV{DONNIE_PATH}")
+   message(STATUS "DONNIE_PATH = ${DONNIE_PATH}")
+else()
+   message(FATAL_ERROR "DONNIE_PATH is NOT defined")
+endif()
 
 #####################################
 # cmake options
 OPTION (BUILD_DOCS "Build Documents" OFF)
 OPTION (BUILD_EXAMPLES "Build Examples" OFF)
+# if you dont have the robot and are going to use the simulation, this remains OFF
 OPTION (BUILD_DONNIE_DRIVER "Build Drivers (only if the robot is available)" OFF)
 
 
 #####################################
 # Set the default build type
 IF (NOT CMAKE_BUILD_TYPE)
-  SET (CMAKE_BUILD_TYPE "release" CACHE STRING 
-    "Choose the type of build, options are: release (default) debug profile" FORCE)
+  SET (CMAKE_BUILD_TYPE "Release" CACHE STRING 
+    "Choose the type of build, options are: Release (default) Debug Profile" FORCE)
 ENDIF (NOT CMAKE_BUILD_TYPE)
 STRING(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
 MESSAGE( STATUS "Build type ${CMAKE_BUILD_TYPE}" )
 
-# Monolithic version
-add_subdirectory(driver)
+MESSAGE( STATUS "System type ${CMAKE_SYSTEM_NAME}" )
+MESSAGE( STATUS "Processor type ${CMAKE_SYSTEM_PROCESSOR}" )
 
-# those are not required on RPi board, so they are not compiled
-# during crosss compilation mode
-IF(NOT CMAKE_CROSSCOMPILING)
-	add_subdirectory(client)
-	add_subdirectory(docs)
-ENDIF()
+#####################################
+# some modules are required only for the robot computer, other only for the desktop.
+# this variable is used to detect if it is the robot or desktop computer.
+
+if (${CMAKE_CROSSCOMPILING} OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
+    SET (ROBOT_COMPUTER TRUE)
+else ()
+    SET (ROBOT_COMPUTER FALSE)
+endif ()
+
+MESSAGE( STATUS "Robot Computer type ${ROBOT_COMPUTER}" )
+
+# important varaiable used to find packages 
+SET (PKG_CONFIG_PATH $ENV{PKG_CONFIG_PATH})
+MESSAGE(STATUS "PKG_CONFIG_PATH = $ENV{PKG_CONFIG_PATH}")
+SET (CMAKE_MODULE_PATH $ENV{CMAKE_MODULE_PATH})
+MESSAGE(STATUS "CMAKE_MODULE_PATH = $ENV{CMAKE_MODULE_PATH}")
+
+#TODO : pesquisar https://cmake.org/cmake/help/v3.0/module/ProcessorCount.html
+
+#IF(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+#    # Mac OS X specific code
+#    SET(OperatingSystem "Mac OS X")
+#
+#    IF(${CMAKE_SYSTEM_PROCESSOR } MATCHES "Intel")
+#        # Intel Mac OS X specific code
+#        SET(Processor "Intel")
+#    ENDIF(${CMAKE_SYSTEM_PROCESSOR } MATCHES "Intel")
+#
+#ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+
 
 
 ######################################
 # Externally Compile/Install Player
 ######################################
 # http://mirkokiefer.com/blog/2013/03/cmake-by-example/
-
-ExternalProject_Add(project_docs
-  URL http://luajit.org/download/LuaJIT-2.0.1.tar.gz
-  PREFIX ${CMAKE_CURRENT_BINARY_DIR}/luajit-2.0.1
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND make
-  INSTALL_COMMAND make install PREFIX=${CMAKE_CURRENT_BINARY_DIR}/luajit-2.0.1
-)
-
-ExternalProject_Get_Property(project_luajit install_dir)
-
-
-add_library(luajit STATIC IMPORTED)
-set_property(TARGET luajit PROPERTY IMPORTED_LOCATION ${install_dir}/lib/libluajit-5.1.a)
-add_dependencies(luajit project_luajit)
-
-add_executable(myapp main.c)
-
-include_directories(${install_dir}/include/luajit-2.0)
-target_link_libraries(myapp luajit)
+# TODO: exemplo p chamar outros makefiles ou cmakes externos
+#ExternalProject_Add(project_docs
+#  URL http://luajit.org/download/LuaJIT-2.0.1.tar.gz
+#  PREFIX ${CMAKE_CURRENT_BINARY_DIR}/luajit-2.0.1
+#  CONFIGURE_COMMAND ""
+#  BUILD_COMMAND make
+#  INSTALL_COMMAND make install PREFIX=${CMAKE_CURRENT_BINARY_DIR}/luajit-2.0.1
+#)
+#
+#ExternalProject_Get_Property(project_luajit install_dir)
+#
+#
+#add_library(luajit STATIC IMPORTED)
+#set_property(TARGET luajit PROPERTY IMPORTED_LOCATION ${install_dir}/lib/libluajit-5.1.a)
+#add_dependencies(luajit project_luajit)
+#
+#add_executable(myapp main.c)
+#
+#include_directories(${install_dir}/include/luajit-2.0)
+#target_link_libraries(myapp luajit)
 
 ######################################
 # Externally Compile/Install Stage
 ######################################
+#IF(NOT ROBOT_COMPUTER)
+#	# compile only for the desktop computer, not for RPi
+#	add_subdirectory(stage)
+#ENDIF()
+
+######################################
+# Externally Compile/Install Raspicam
+######################################
+#IF(ROBOT_COMPUTER)
+#	# compile only for the RPi, not for desktop computer
+#	add_subdirectory(raspicam)
+#ENDIF()
+
+######################################
+# Compile/Install Donnie
+######################################
+add_subdirectory(client)
+add_subdirectory(docs)
+add_subdirectory(driver)
+
+
+# Install resources to the DONNIE_PATH
+INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/resources DESTINATION ${DONNIE_PATH}) 
+

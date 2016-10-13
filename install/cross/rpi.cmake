@@ -30,5 +30,6 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 # add new lib dirs
+# TODO amory.  acho q posso remover isso
 link_directories(${PIROOT}/usr/lib/arm-linux-gnueabihf/)
 

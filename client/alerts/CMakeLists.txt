@@ -1,11 +1,36 @@
 CMAKE_MINIMUM_REQUIRED (VERSION 2.4 FATAL_ERROR)
-PROJECT (alerts)
+SET (CLIENTNAME "alerts")
+PROJECT (${CLIENTNAME})
+
+message(STATUS "Configuring '${CLIENTNAME}'")
+
+#########
+# check depedencies - libsox
+#########
+find_path( LSOX_INCLUDE_DIR sox.h DOC "Libsox include dir" )
+find_library( LSOX_LIB 
+	NAMES sox 
+	HINTS /usr/lib/x86_64-linux-gnu/
+	DOC "Libsox lib" REQUIRED)
+
+IF( NOT LSOX_LIB )
+  MESSAGE( FATAL_ERROR "libSoX not found. Please install 'sudo apt-get install libsox-dev'. aborting" )
+ENDIF()
+message(STATUS "SoX Library -- ${LSOX_LIB}")
+message(STATUS "SoX Include -- ${LSOX_INCLUDE_DIR}")
 
 # Include this CMake module to get most of the settings needed to build
 SET (CMAKE_MODULE_PATH "/usr/local/share/cmake/Modules")
 
 INCLUDE (UsePlayerC++)
 
-PLAYER_ADD_PLAYERCPP_CLIENT (alerts 
-	SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/alerts.cc ${CMAKE_CURRENT_SOURCE_DIR}/utils.cpp
-	INCLUDEDIRS ${CMAKE_CURRENT_SOURCE_DIR}/alerts.h ${CMAKE_CURRENT_SOURCE_DIR}/utils.h)
+PLAYER_ADD_PLAYERCPP_CLIENT (${CLIENTNAME} 
+	SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/alerts.cc
+	INCLUDEDIRS ${CMAKE_CURRENT_SOURCE_DIR})
+
+TARGET_LINK_LIBRARIES (${CLIENTNAME} sox) 
+INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR} ${LSOX_INCLUDE_DIR})
+
+# Install library and example files
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${CLIENTNAME} DESTINATION ${DONNIE_PATH}/bin/${CLIENTNAME}) 
+#INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/test/* DESTINATION ${DONNIE_PATH}/test/${CLIENTNAME})

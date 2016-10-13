@@ -2,14 +2,14 @@ CMAKE_MINIMUM_REQUIRED (VERSION 2.4 FATAL_ERROR)
 SET (DRIVERNAME "GenericBlobfinder")
 PROJECT (${DRIVERNAME})
 
-message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "Configuring '${DRIVERNAME}'")
 
 #########
 # check DONNIE_PATH
 #########
 if(DEFINED ENV{DONNIE_PATH})
    SET(DONNIE_PATH "$ENV{DONNIE_PATH}")
-   message(STATUS "DONNIE_PATH = ${DONNIE_PATH}")
+   #message(STATUS "DONNIE_PATH = ${DONNIE_PATH}")
 else()
    message(FATAL_ERROR "DONNIE_PATH is NOT defined")
 endif()
@@ -18,7 +18,7 @@ endif()
 # normal cmake dir is /usr/share/cmake-2.8/Modules/
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/share/cmake-2.8/Modules/ /usr/local/lib/cmake/ /usr/local/share/cmake/Modules ${CMAKE_CURRENT_SOURCE_DIR})
 #SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
-MESSAGE(STATUS "CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
+#MESSAGE(STATUS "CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
 
 #########
 # check depedencies - opencv 2

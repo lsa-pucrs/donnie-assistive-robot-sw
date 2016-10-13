@@ -142,11 +142,16 @@ export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH
 # Player lib path
 export LD_LIBRARY_PATH=/usr/local/lib64/:$LD_LIBRARY_PATH
 # Player and Stage pkg-config
-export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig/:$PKG_CONFIG_PATH
+export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig/:/usr/lib/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig/:/usr/share/pkgconfig/:$PKG_CONFIG_PATH
+
+export CMAKE_MODULE_PATH=$CMAKE_MODULE_PATH:/usr/share/cmake-2.8/Modules/:/usr/share/cmake-2.8/Modules/Platform/:/usr/share/cmake-2.8/Modules/Compiler/:/usr/local/share/cm$
 
 
-echo -e "${GREEN}Downloading Player sou
-rce code from GitHub... ${NC}\n"
+##################################################
+# Donwloading source code 
+##################################################
+
+echo -e "${GREEN}Downloading Player source code from GitHub... ${NC}\n"
 cd Downloads
 git clone https://github.com/lsa-pucrs/Player.git
 
