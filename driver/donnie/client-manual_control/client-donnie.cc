@@ -383,7 +383,7 @@ int main(int argc, char** argv){
 	Position2dProxy neckServo(&robot, 0);
 	BumperProxy mybumper(&robot, 0);
 	PowerProxy mypower(&robot, 0);
-	BeepProxy mybeep(&robot, 0);
+	//BeepProxy mybeep(&robot, 0);
 	SpeechProxy myspeech(&robot, 0);
 
   cout << "Client starts! " << endl;
@@ -400,25 +400,25 @@ int main(int argc, char** argv){
 			if(cont.dirty){
 				switch(lastKey){
 					case 'C':
-						mybeep.playTone(NOTE_C6,200);
+						//mybeep.playTone(NOTE_C6,200);
 					break;
 					case 'D':
-						mybeep.playTone(NOTE_D6,200);
+						//mybeep.playTone(NOTE_D6,200);
 					break;
 					case 'E':
-						mybeep.playTone(NOTE_E6,200);
+						//mybeep.playTone(NOTE_E6,200);
 					break;
 					case 'F':
-						mybeep.playTone(NOTE_F6,200);
+						//mybeep.playTone(NOTE_F6,200);
 					break;
 					case 'G':
-						mybeep.playTone(NOTE_G6,200);
+						//mybeep.playTone(NOTE_G6,200);
 					break;
 					case 'A':
-						mybeep.playTone(NOTE_A6,200);
+						//mybeep.playTone(NOTE_A6,200);
 					break;
 					case 'B':
-						mybeep.playTone(NOTE_B6,200);
+						//mybeep.playTone(NOTE_B6,200);
 					break;
 					default:
 						float linear_default_vel = 0.04; //[m/s]
