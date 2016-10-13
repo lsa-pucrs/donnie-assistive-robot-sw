@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>  // getenv
+#include <string.h> // strcat
 #include <libplayerc++/playerc++.h>
  
 int main(int argc, char *argv[]){
@@ -13,9 +14,12 @@ int main(int argc, char *argv[]){
 	else {
 		if(const char* env_p = std::getenv("DONNIE_PATH")){
 			std::cout << "DONNIE_PATH is: " << env_p << '\n';
-			sound.play(env_p && "/resouces/step.wav");
+                        char buff[80];
+                        strcpy(buff, env_p);
+                        strcat(buff,"/resources/sounds/step.wav");
+			sound.play(buff);
 		}else{
-			std::cout << "variable DONNIE_PATH not defined. run 'export DONNIE_PATH=<path to donnie installation>'\n"
+			std::cout << "variable DONNIE_PATH not defined. run 'export DONNIE_PATH=<path to donnie installation>'\n";
 			return 1;
 		}
 	}
