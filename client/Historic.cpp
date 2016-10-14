@@ -1,3 +1,12 @@
+#include "DonnieClient.h"
+#include "Historic.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string>
+
+
+using namespace std;
+
 //Historic
 Historic Historic::singleton = Historic();
 Historic::Historic()
