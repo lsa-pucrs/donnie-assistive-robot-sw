@@ -117,7 +117,7 @@ MESSAGE (STATUS "----- Identification Done -----")
 # Compile/Install Donnie
 MESSAGE (STATUS)
 MESSAGE (STATUS "----- Processing client makefiles -----")
-#add_subdirectory(client)
+add_subdirectory(client)
 MESSAGE (STATUS "----- Client files Done -----")
 
 MESSAGE (STATUS)
