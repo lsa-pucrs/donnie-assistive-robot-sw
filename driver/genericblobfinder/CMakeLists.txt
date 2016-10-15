@@ -18,7 +18,8 @@ endif()
 
 
 # normal cmake dir is /usr/share/cmake-2.8/Modules/
-SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/share/cmake-2.8/Modules/ /usr/local/lib/cmake/ /usr/local/share/cmake/Modules ${CMAKE_CURRENT_SOURCE_DIR})
+#SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/share/cmake-2.8/Modules/ /usr/local/lib/cmake/ /usr/local/share/cmake/Modules ${CMAKE_CURRENT_SOURCE_DIR})
+SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/local/lib/cmake/ /usr/local/share/cmake/Modules)
 #SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
 #MESSAGE(STATUS "CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
 
