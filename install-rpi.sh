@@ -81,10 +81,26 @@ apt-get install -y geany
 #compilation utils
 echo -e "${GREEN}Installing Compilation Utils ... ${NC}\n"
 #apt-get install -y autoconf
-#apt-get install -y cmake
 #apt-get install -y cmake-curses-gui
 #apt-get install -y git
 sudo apt-get install -y pkg-config
+
+# Jessie installs cmake 3.0 by the default, but lubuntu 14.04 uses cmake 2.8
+# this gives some weird warnings when running cmake 3.0 on rpi.
+# so we downgraded the cmake to 2.8, used in wheezy
+# https://www.raspbian.org/RaspbianRepository
+wget https://archive.raspbian.org/raspbian.public.key -O - | sudo apt-key add -
+echo "deb http://archive.raspbian.org/raspbian wheezy main contrib non-free" >> /etc/apt/sources.list
+echo "deb-src http://archive.raspbian.org/raspbian wheezy main contrib non-free" >> /etc/apt/sources.list
+sudo apt-get update
+apt-cache madison cmake
+sudo apt-get install cmake-data=2.8.9-1
+sudo apt-get install cmake=2.8.9-1
+
+#apt-get install -y cmake
+
+
+
 
 ##################################################
 # set environment variables
