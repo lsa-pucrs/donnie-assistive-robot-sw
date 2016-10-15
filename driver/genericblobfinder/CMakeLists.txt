@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED (VERSION 2.4 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED (VERSION 2.8 FATAL_ERROR)
 SET (DRIVERNAME "GenericBlobfinder")
 PROJECT (${DRIVERNAME})
 
@@ -16,11 +16,8 @@ else()
    message(FATAL_ERROR "DONNIE_PATH is NOT defined")
 endif()
 
-
-# normal cmake dir is /usr/share/cmake-2.8/Modules/
-#SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/share/cmake-2.8/Modules/ /usr/local/lib/cmake/ /usr/local/share/cmake/Modules ${CMAKE_CURRENT_SOURCE_DIR})
+# add the cmake path for raspicam and player
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/local/lib/cmake/ /usr/local/share/cmake/Modules)
-#SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
 #MESSAGE(STATUS "CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
 
 #########
@@ -52,11 +49,7 @@ INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR})
 
 # Install library and example files
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib${DRIVERNAME}.so DESTINATION ${DONNIE_PATH}/lib/player/) 
-INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/client/Blobfindertest.cpp DESTINATION ${DONNIE_PATH}/test/${DRIVERNAME})
-INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/client/Makefile DESTINATION ${DONNIE_PATH}/test/${DRIVERNAME})
 INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/server_${DRIVERNAME}.cfg DESTINATION ${DONNIE_PATH}/test/${DRIVERNAME})
 
 # compile the driver example
-IF ( BUILD_EXAMPLES )
-  ADD_SUBDIRECTORY(client)
-ENDIF ()
+ADD_SUBDIRECTORY(client)
