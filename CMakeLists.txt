@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(Donnie)
-set(PROJECT_VERSION "0.1")
+#set(PROJECT_VERSION "0.1")
 
 #########
 # check DONNIE_PATH
@@ -46,11 +46,22 @@ endif ()
 
 MESSAGE( STATUS "Robot Computer type ${ROBOT_COMPUTER}" )
 
+
+
 # important varaiable used to find packages 
-SET (PKG_CONFIG_PATH $ENV{PKG_CONFIG_PATH})
-MESSAGE(STATUS "PKG_CONFIG_PATH = $ENV{PKG_CONFIG_PATH}")
-SET (CMAKE_MODULE_PATH $ENV{CMAKE_MODULE_PATH})
-MESSAGE(STATUS "CMAKE_MODULE_PATH = $ENV{CMAKE_MODULE_PATH}")
+if(DEFINED ENV{PKG_CONFIG_PATH})
+	SET (PKG_CONFIG_PATH $ENV{PKG_CONFIG_PATH})
+	MESSAGE(STATUS "PKG_CONFIG_PATH = $ENV{PKG_CONFIG_PATH}")
+else()
+   message(FATAL_ERROR "PKG_CONFIG_PATH is NOT defined. Set where to find the pkg-config files.")
+endif()
+
+if(DEFINED ENV{CMAKE_MODULE_PATH})
+	SET (CMAKE_MODULE_PATH $ENV{CMAKE_MODULE_PATH})
+	MESSAGE(STATUS "CMAKE_MODULE_PATH = $ENV{CMAKE_MODULE_PATH}")
+else()
+   message(FATAL_ERROR "CMAKE_MODULE_PATH is NOT defined. Set where to find the cmake files.")
+endif()
 
 #TODO : pesquisar https://cmake.org/cmake/help/v3.0/module/ProcessorCount.html
 
@@ -111,11 +122,26 @@ MESSAGE(STATUS "CMAKE_MODULE_PATH = $ENV{CMAKE_MODULE_PATH}")
 ######################################
 # Compile/Install Donnie
 ######################################
+MESSAGE (STATUS)
+MESSAGE (STATUS "----- Processing client makefiles -----")
 add_subdirectory(client)
-add_subdirectory(docs)
-add_subdirectory(driver)
+MESSAGE (STATUS "----- Client files Done -----")
 
+MESSAGE (STATUS)
+MESSAGE (STATUS "----- Processing driver makefiles -----")
+add_subdirectory(driver)
+MESSAGE (STATUS "----- Drivers Done -----")
+
+MESSAGE (STATUS)
+MESSAGE (STATUS "----- Processing doc makefiles -----")
+add_subdirectory(docs)
+MESSAGE (STATUS "----- Docs Done -----")
+
+MESSAGE (STATUS)
+MESSAGE (STATUS "----- Processing resources makefiles -----")
+add_subdirectory(resources)
+MESSAGE (STATUS "----- Resources Done -----")
 
 # Install resources to the DONNIE_PATH
-INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/resources DESTINATION ${DONNIE_PATH}) 
+#INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/resources DESTINATION ${DONNIE_PATH}) 
 

@@ -52,25 +52,27 @@ find_package(Java REQUIRED)
 INCLUDE (UsePlayerC++)
 
 # run antlr
-add_custom_target(GoDonnieParser 
-					# Java creates the files on wrong dir. So it is required to copy this file 
-					# otherwise the paser source codes will be created in the CMAKE_CURRENT_SOURCE_DIR
-                  COMMAND rsync --progress -r -u  ${CMAKE_CURRENT_SOURCE_DIR}/GoDonnie.g ${CMAKE_CURRENT_BINARY_DIR}
-                  COMMAND java -jar ${CMAKE_CURRENT_SOURCE_DIR}/Antlr/antlr-3.2.jar ${CMAKE_CURRENT_BINARY_DIR}/GoDonnie.g
-                  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-                  SOURCES ${CMAKE_CURRENT_BINARY_DIR}/GoDonnie.g)
+ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/GoDonnie.tokens
+  COMMAND java -jar ${CMAKE_CURRENT_SOURCE_DIR}/Antlr/antlr-3.2.jar -o ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/GoDonnie.g
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/GoDonnie.g
+)
+
+ADD_CUSTOM_TARGET(GoDonnieParser ALL
+   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/GoDonnie.tokens
+)
+
 
 # hack to break the depedency
 # https://samthursfield.wordpress.com/2015/11/21/cmake-dependencies-between-targets-and-files-and-custom-commands/
-set_source_files_properties(
-    ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieParser.c
-    PROPERTIES GENERATED TRUE
-    )
-    
-set_source_files_properties(
-    ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieLexer.c
-    PROPERTIES GENERATED TRUE
-    )
+#set_source_files_properties(
+#    ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieParser.c
+#    PROPERTIES GENERATED TRUE
+#    )
+#    
+#set_source_files_properties(
+#    ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieLexer.c
+#    PROPERTIES GENERATED TRUE
+#    )
     
 PLAYER_ADD_PLAYERCPP_CLIENT (${CLIENTNAME} 
 	SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Compiler.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/DonnieClient.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/GoDonnie.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/utils.cpp ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieLexer.c  ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieParser.c

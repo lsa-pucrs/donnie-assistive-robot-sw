@@ -2,6 +2,8 @@ CMAKE_MINIMUM_REQUIRED (VERSION 2.4 FATAL_ERROR)
 SET (DRIVERNAME "GenericBlobfinder")
 PROJECT (${DRIVERNAME})
 
+#set(PROJECT_VERSION "0.1.2")
+
 message(STATUS "Configuring '${DRIVERNAME}'")
 
 #########
