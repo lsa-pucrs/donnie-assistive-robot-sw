@@ -1,17 +1,14 @@
 
 cmake_minimum_required(VERSION 2.8)
-
-IF (POLICY CMP0048) # in CMake 3.0.0+
-  CMAKE_POLICY (SET CMP0048 OLD) # keep PROJECT() from clearing VERSION variables
-ENDIF (POLICY CMP0048)
-
-
 project(Donnie)
+
+#IF (POLICY CMP0048) # in CMake 3.0.0+
+#  CMAKE_POLICY (SET CMP0048 OLD) # keep PROJECT() from clearing VERSION variables
+#ENDIF (POLICY CMP0048)
 #set(PROJECT_VERSION "0.1")
 
-#########
+#####################################
 # check DONNIE_PATH
-#########
 if(DEFINED ENV{DONNIE_PATH})
    SET(DONNIE_PATH "$ENV{DONNIE_PATH}")
    message(STATUS "DONNIE_PATH = ${DONNIE_PATH}")
@@ -20,39 +17,6 @@ else()
 endif()
 
 #####################################
-# cmake options
-OPTION (BUILD_DOCS "Build Documents" OFF)
-OPTION (BUILD_EXAMPLES "Build Examples" OFF)
-# if you dont have the robot and are going to use the simulation, this remains OFF
-OPTION (BUILD_DONNIE_DRIVER "Build Drivers (only if the robot is available)" OFF)
-
-
-#####################################
-# Set the default build type
-IF (NOT CMAKE_BUILD_TYPE)
-  SET (CMAKE_BUILD_TYPE "Release" CACHE STRING 
-    "Choose the type of build, options are: Release (default) Debug Profile" FORCE)
-ENDIF (NOT CMAKE_BUILD_TYPE)
-STRING(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
-MESSAGE( STATUS "Build type ${CMAKE_BUILD_TYPE}" )
-
-MESSAGE( STATUS "System type ${CMAKE_SYSTEM_NAME}" )
-MESSAGE( STATUS "Processor type ${CMAKE_SYSTEM_PROCESSOR}" )
-
-#####################################
-# some modules are required only for the robot computer, other only for the desktop.
-# this variable is used to detect if it is the robot or desktop computer.
-
-if (${CMAKE_CROSSCOMPILING} OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
-    SET (ROBOT_COMPUTER TRUE)
-else ()
-    SET (ROBOT_COMPUTER FALSE)
-endif ()
-
-MESSAGE( STATUS "Robot Computer type ${ROBOT_COMPUTER}" )
-
-
-
 # important varaiable used to find packages 
 if(DEFINED ENV{PKG_CONFIG_PATH})
 	SET (PKG_CONFIG_PATH $ENV{PKG_CONFIG_PATH})
@@ -68,8 +32,38 @@ else()
    message(FATAL_ERROR "CMAKE_MODULE_PATH is NOT defined. Set where to find the cmake files.")
 endif()
 
-#TODO : pesquisar https://cmake.org/cmake/help/v3.0/module/ProcessorCount.html
+#####################################
+# cmake options
+OPTION (BUILD_DOCS "Build Documents" OFF)
+OPTION (BUILD_EXAMPLES "Build Examples" OFF)
 
+#####################################
+# Set the default build type
+IF (NOT CMAKE_BUILD_TYPE)
+  SET (CMAKE_BUILD_TYPE "Release" CACHE STRING 
+    "Choose the type of build, options are: Release (default) Debug Profile" FORCE)
+ENDIF (NOT CMAKE_BUILD_TYPE)
+STRING(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
+MESSAGE( STATUS "Build type ${CMAKE_BUILD_TYPE}" )
+
+#####################################
+# some modules are required only for the robot computer, other only for the desktop.
+# this variable is used to detect if it is the robot or desktop computer.
+MESSAGE (STATUS)
+MESSAGE (STATUS "----- Identifying OS and Processor -----")
+MESSAGE( STATUS "System type ${CMAKE_SYSTEM_NAME}" )
+MESSAGE( STATUS "Processor type ${CMAKE_SYSTEM_PROCESSOR}" )
+
+if (${CMAKE_CROSSCOMPILING} OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
+    SET (ROBOT_COMPUTER TRUE)
+else ()
+    SET (ROBOT_COMPUTER FALSE)
+endif ()
+
+MESSAGE( STATUS "Robot Computer type ${ROBOT_COMPUTER}" )
+MESSAGE (STATUS "----- Identification Done -----")
+
+#TODO : pesquisar https://cmake.org/cmake/help/v3.0/module/ProcessorCount.html
 #IF(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 #    # Mac OS X specific code
 #    SET(OperatingSystem "Mac OS X")
@@ -80,8 +74,6 @@ endif()
 #    ENDIF(${CMAKE_SYSTEM_PROCESSOR } MATCHES "Intel")
 #
 #ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-
-
 
 ######################################
 # Externally Compile/Install Player
@@ -98,7 +90,6 @@ endif()
 #
 #ExternalProject_Get_Property(project_luajit install_dir)
 #
-#
 #add_library(luajit STATIC IMPORTED)
 #set_property(TARGET luajit PROPERTY IMPORTED_LOCATION ${install_dir}/lib/libluajit-5.1.a)
 #add_dependencies(luajit project_luajit)
@@ -110,7 +101,6 @@ endif()
 
 ######################################
 # Externally Compile/Install Stage
-######################################
 #IF(NOT ROBOT_COMPUTER)
 #	# compile only for the desktop computer, not for RPi
 #	add_subdirectory(stage)
@@ -118,7 +108,6 @@ endif()
 
 ######################################
 # Externally Compile/Install Raspicam
-######################################
 #IF(ROBOT_COMPUTER)
 #	# compile only for the RPi, not for desktop computer
 #	add_subdirectory(raspicam)
@@ -126,10 +115,9 @@ endif()
 
 ######################################
 # Compile/Install Donnie
-######################################
 MESSAGE (STATUS)
 MESSAGE (STATUS "----- Processing client makefiles -----")
-add_subdirectory(client)
+#add_subdirectory(client)
 MESSAGE (STATUS "----- Client files Done -----")
 
 MESSAGE (STATUS)
@@ -146,7 +134,3 @@ MESSAGE (STATUS)
 MESSAGE (STATUS "----- Processing resources makefiles -----")
 add_subdirectory(resources)
 MESSAGE (STATUS "----- Resources Done -----")
-
-# Install resources to the DONNIE_PATH
-#INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/resources DESTINATION ${DONNIE_PATH}) 
-

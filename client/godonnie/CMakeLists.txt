@@ -61,18 +61,17 @@ ADD_CUSTOM_TARGET(GoDonnieParser ALL
    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/GoDonnie.tokens
 )
 
-
 # hack to break the depedency
 # https://samthursfield.wordpress.com/2015/11/21/cmake-dependencies-between-targets-and-files-and-custom-commands/
-#set_source_files_properties(
-#    ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieParser.c
-#    PROPERTIES GENERATED TRUE
-#    )
-#    
-#set_source_files_properties(
-#    ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieLexer.c
-#    PROPERTIES GENERATED TRUE
-#    )
+set_source_files_properties(
+    ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieParser.c
+    PROPERTIES GENERATED TRUE
+    )
+    
+set_source_files_properties(
+    ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieLexer.c
+    PROPERTIES GENERATED TRUE
+    )
     
 PLAYER_ADD_PLAYERCPP_CLIENT (${CLIENTNAME} 
 	SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Compiler.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/DonnieClient.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/GoDonnie.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/utils.cpp ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieLexer.c  ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieParser.c

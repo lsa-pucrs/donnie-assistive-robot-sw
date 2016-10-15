@@ -2,9 +2,9 @@ CMAKE_MINIMUM_REQUIRED (VERSION 2.8 FATAL_ERROR)
 SET (DRIVERNAME "soxplayer")
 #PROJECT (${DRIVERNAME})
 
-IF (POLICY CMP0048) # in CMake 3.0.0+
-  CMAKE_POLICY (SET CMP0048 OLD) # keep PROJECT() from clearing VERSION variables
-ENDIF (POLICY CMP0048)
+#IF (POLICY CMP0048) # in CMake 3.0.0+
+#  CMAKE_POLICY (SET CMP0048 OLD) # keep PROJECT() from clearing VERSION variables
+#ENDIF (POLICY CMP0048)
 
 message(STATUS "Configuring '${DRIVERNAME}'")
 
@@ -24,7 +24,7 @@ endif()
 find_path( LSOX_INCLUDE_DIR sox.h DOC "Libsox include dir" )
 find_library( LSOX_LIB 
 	NAMES sox 
-	HINTS /usr/lib/x86_64-linux-gnu/
+	HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/arm-linux-gnueabihf
 	DOC "Libsox lib" REQUIRED)
 
 IF( NOT LSOX_LIB )
@@ -36,7 +36,7 @@ message(STATUS "SoX Include -- ${LSOX_INCLUDE_DIR}")
 #########
 # set Player cmake modules
 #########
-# normal cmake dir is /usr/share/cmake-2.8/Modules/
+# add the cmake path for player
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "/usr/local/share/cmake/Modules")
 INCLUDE (UsePlayerPlugin)
 
