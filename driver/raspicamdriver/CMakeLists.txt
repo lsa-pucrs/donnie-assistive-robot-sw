@@ -7,6 +7,10 @@
 
 	message(STATUS "Configuring '${DRIVERNAME}'")
 
+IF (POLICY CMP0048) # in CMake 3.0.0+
+  CMAKE_POLICY (SET CMP0048 OLD) # keep PROJECT() from clearing VERSION variables
+ENDIF (POLICY CMP0048)
+
 	#########
 	# check DONNIE_PATH
 	#########
@@ -20,7 +24,8 @@
 
 	# normal cmake dir is /usr/share/cmake-2.8/Modules/
 	#SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/share/cmake-2.8/Modules/ /usr/local/lib/cmake/ /usr/local/share/cmake/Modules ${CMAKE_CURRENT_SOURCE_DIR})
-	SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/share/cmake-3.0/Modules/ /usr/local/lib/cmake/ /usr/local/share/cmake/Modules ${CMAKE_CURRENT_SOURCE_DIR})	#SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
+	SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/share/cmake-3.0/Modules/ /usr/local/lib/cmake/ /usr/local/share/cmake/Modules ${CMAKE_CURRENT_SOURCE_DIR})
+	#SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
 	#MESSAGE(STATUS "CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
 
 	#########
