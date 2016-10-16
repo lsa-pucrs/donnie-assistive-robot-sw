@@ -41,19 +41,18 @@ ENDIF()
 #message(STATUS "RASPICAM Library -- ${raspicam_CV_LIBS}")
 #message(STATUS "RASPICAM Include -- /usr/local/include")
 
-
-TARGET_LINK_LIBRARIES (${DRIVERNAME} ${OpenCV_LIBS} ${raspicam_CV_LIBS}) 
-# ${OpenCV_INCLUDE_DIRS} was already inserted. no need to do it again
-INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR})
-
 #########
 # set Player cmake modules
 #########
 INCLUDE (UsePlayerC++)
 
-PLAYER_ADD_PLAYERCPP_CLIENT (${DRIVERNAME} SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/main.ccp)
+PLAYER_ADD_PLAYERCPP_CLIENT (${DRIVERNAME} SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/main.cc)
+
+TARGET_LINK_LIBRARIES (${DRIVERNAME} ${OpenCV_LIBS} ${raspicam_CV_LIBS}) 
+# ${OpenCV_INCLUDE_DIRS} was already inserted. no need to do it again
+INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR})
 
 #install example files
-INSTALL(FILES ${DRIVERNAME}
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${DRIVERNAME}
         DESTINATION ${DONNIE_PATH}/test/Raspicam_driver
 )
