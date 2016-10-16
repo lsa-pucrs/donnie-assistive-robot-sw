@@ -13,15 +13,25 @@
 # Donnie Software Stack
 
 
+[Foo](#foo)
+
+[Getting Started](#getting-started)
+
+
+# Foo
+
 Contents
 --------
 
-1. `Getting Started`_
+1. [Getting Started](#Getting-Started)
 2. `Configuring Donnie`_
 3. `Contributors`_
 4. `Contributing`_
 5. `Papers`_
 
+
+## Getting Started
+---------------
 
 Getting Started
 ---------------
@@ -40,6 +50,15 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 ### Install Donnie Software on a Donnie's Embedded Computer (Raspberry Pi)
 
 	./install-rpi
+
+Features
+---------------
+
+* Robot programming environment for young students with or without visual impairment; 
+* Assistive programming language called GoDonnie;
+* Integration with a Arduino-based robot with Player robotic middleware;
+* Extension of Stage simulator to generate sound clues while the robot is moving;
+* Software developed for the simulated robot is compatible with the real Donnie robot;
 
 Configuring Donnie
 ---------------
