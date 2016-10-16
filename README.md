@@ -18,12 +18,22 @@ Contents
 
 1. `Getting Started`_
 2. `Configuring Donnie`_
+3. `Contributors`_
+4. `Contributing`_
+5. `Papers`_
 
 
 Getting Started
 ---------------
 
-### Install Donnie Software on a Desktop computer
+<!---
+TODO colocar um link do Donnie no youtube
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=YOUTUBE_VIDEO_ID_HERE
+" target="_blank"><img src="http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg" 
+alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
+-->
+
+### Install Donnie Software on a Desktop Computer
 
 	./install
 
@@ -73,25 +83,36 @@ Contributors
 
 We thank the following people for contributing to **Donnie**:
 
-* Alexandre Amory (`amamory`_): Hardware design, Embedded software, software stack, robotic middleware
-* Augusto Bergamin (`AugustoPB`_): Hardware design, Arduino programming, Embedded software, GoDonnie parser
-* Camila Kolling (`camilakolling`_): assistive evaluation, testing, testing with blind users
-* Daniel Einloft (`DanielEinlof`_): odometry, blobfinder, raspicam driver
-* Guilherme Marques (`marquesgh2m`_): Hardware design, Arduino programming, Embedded software, software stack, robotic middleware
-* Henry Nunes (`HenryNunes`_): assistive evaluation, testing, testing with blind users
-* Isabel Manssour (`isabelhm`_): Computer vision
-* Juliana Damasio (`julianadamasio`_): assistive evaluation, testing, testing with blind users
-* Joice Marek (`joiceMarek`_): visual odometry, raspicam driver
-* Marcia Campos (`marciabcampos`_): assistive evaluation, testing, testing with blind users
+* [Alexandre Amory](https://github.com/amamory): Hardware design, Embedded software, software stack, robotic middleware, build system
+* [Augusto Bergamin](https://github.com/AugustoPB): Hardware design, Arduino programming, Embedded software, GoDonnie parser
+* [Camila Kolling](https://github.com/camilakolling): assistive evaluation, testing, testing with blind users
+* [Daniel Einloft](https://github.com/DanielEinlof): odometry, blobfinder, raspicam driver
+* [Guilherme Marques](https://github.com/marquesgh2m): Hardware design, Arduino programming, Embedded software, software stack, robotic middleware
+* [Henry Nunes](https://github.com/HenryNunes): assistive evaluation, testing, testing with blind users
+* [Isabel Manssour](https://github.com/isabelhm): Computer vision
+* [Juliana Damasio](https://github.com/julianadamasio): assistive evaluation, testing, testing with blind users
+* [Joice Marek](https://github.com/joiceMarek): visual odometry, raspicam driver
+* [Marcia Campos](https://github.com/marciabcampos): assistive evaluation, testing, testing with blind users
 
-.. _isabelhm: https://github.com/isabelhm
-.. _julianadamasio: https://github.com/julianadamasio
-.. _marciabcampos: https://github.com/marciabcampos
-.. _marquesgh2m: https://github.com/marquesgh2m
-.. _AugustoPB: https://github.com/AugustoPB
-.. _camilakolling: https://github.com/camilakolling
-.. _DanielEinloft: https://github.com/DanielEinloft
-.. _HenryNunes: https://github.com/HenryNunes
-.. _joiceMarek: https://github.com/joiceMarek
-.. _amamory: https://github.com/amamory
+Contributing
+------------
+
+Donnie project has a small core team and it relies on external collaboration to continue developing this assistive system.
+This is a list of itens the core team wish to have some help:
+
+* Translattion to other languages. Both the GoDonnie commands and Donnie's documents have to be translated. In the near future we wish to support en, pt-br, es;
+* More documentation and tutorials. Currently we are building English docs;
+* More examples using GoDonnie language;
+* Porting to Windows. It currently works only on Linux, however, Windows has great assitive tools such as NVDA;
+* Integrate more assistive tools for blind users such as ORCA, NVDA, among others;
+* Feature requests and testing. Please use the Issue system to request new features and to report bugs;
+
+
+Papers
+------------
+
+If you are using Donnie on your research projects, please cite our papers:
+
+* To Appear
+
 
