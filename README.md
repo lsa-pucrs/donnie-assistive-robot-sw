@@ -12,6 +12,13 @@
 
 # Donnie Software Stack
 
+Robotics has been used to teach young students the basics of programming. However, 
+most of the programming environments for kids are high visual, based on grab and grag blocks.
+**Blind students or students with some visual disability cannot use these teaching resources**. 
+
+Donnie project proposes an inclusive robotic programming environment where all students 
+(with or without visual disabilities) can use. 
+
 Contents
 --------
 
@@ -35,9 +42,13 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
 ### Install Donnie Software on a Desktop Computer
 
+ On a Linux computer, download this software and type the following command.
+
 	./install
 
 ### Install Donnie Software on a Donnie's Embedded Computer (Raspberry Pi)
+
+ Logon the Donnie's embedded computer, download this software and type the following command.
 
 	./install-rpi
 
