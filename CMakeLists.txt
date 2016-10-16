@@ -131,6 +131,14 @@ MESSAGE (STATUS "----- Processing driver makefiles -----")
 add_subdirectory(driver)
 MESSAGE (STATUS "----- Drivers Done -----")
 
+# TODO compile Arduino firmware with CMake
+# https://github.com/queezythegreat/arduino-cmake
+# http://playground.arduino.cc/Code/CmakeBuild
+#MESSAGE (STATUS)
+#MESSAGE (STATUS "----- Processing Arduino firmware -----")
+#add_subdirectory(firmware)
+#MESSAGE (STATUS "----- Arduino Done -----")
+
 MESSAGE (STATUS)
 MESSAGE (STATUS "----- Processing doc makefiles -----")
 add_subdirectory(docs)
