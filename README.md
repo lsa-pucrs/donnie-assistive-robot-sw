@@ -12,15 +12,27 @@
 
 # Donnie Software Stack
 
-## Install Donnie Software on a Desktop computer
+
+Contents
+--------
+
+1. `Getting Started`_
+2. `Configuring Donnie`_
+
+
+Getting Started
+---------------
+
+### Install Donnie Software on a Desktop computer
 
 	./install
 
-## Install Donnie Software on a Donnie's Embedded Computer (Raspberry Pi)
+### Install Donnie Software on a Donnie's Embedded Computer (Raspberry Pi)
 
 	./install-rpi
 
-## Customizing Donnie Instalation
+Configuring Donnie
+---------------
 
 The installation scripts make a standard instalation we believe is the most appropriated for the average user.
 However, advanced parameters can be set if the user has experience with the appropriate tools.
@@ -55,4 +67,31 @@ The following list explains Donnie's main compilation parameters:
 	BUILD_MANUAL                     OFF    Build the manuals: software manual, hardware manual, user nanual
 	CMAKE_BUILD_TYPE                 Release 
 	DOC_LANGUAGE                     en     The language used to build documents and the GoDonnie interpreter. Future work !
+
+Contributors
+------------
+
+We thank the following people for contributing to **Donnie**:
+
+* Alexandre Amory (`amamory`_): Hardware design, Embedded software, software stack, robotic middleware
+* Augusto Bergamin (`AugustoPB`_): Hardware design, Arduino programming, Embedded software, GoDonnie parser
+* Camila Kolling (`camilakolling`_): assistive evaluation, testing, testing with blind users
+* Daniel Einloft (`DanielEinlof`_): odometry, blobfinder, raspicam driver
+* Guilherme Marques (`marquesgh2m`_): Hardware design, Arduino programming, Embedded software, software stack, robotic middleware
+* Henry Nunes (`HenryNunes`_): assistive evaluation, testing, testing with blind users
+* Isabel Manssour (`isabelhm`_): Computer vision
+* Juliana Damasio (`julianadamasio`_): assistive evaluation, testing, testing with blind users
+* Joice Marek (`joiceMarek`_): visual odometry, raspicam driver
+* Marcia Campos (`marciabcampos`_): assistive evaluation, testing, testing with blind users
+
+.. _isabelhm: https://github.com/isabelhm
+.. _julianadamasio: https://github.com/julianadamasio
+.. _marciabcampos: https://github.com/marciabcampos
+.. _marquesgh2m: https://github.com/marquesgh2m
+.. _AugustoPB: https://github.com/AugustoPB
+.. _camilakolling: https://github.com/camilakolling
+.. _DanielEinloft: https://github.com/DanielEinloft
+.. _HenryNunes: https://github.com/HenryNunes
+.. _joiceMarek: https://github.com/joiceMarek
+.. _amamory: https://github.com/amamory
 
