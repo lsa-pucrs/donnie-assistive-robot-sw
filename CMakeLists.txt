@@ -1,4 +1,3 @@
-
 cmake_minimum_required(VERSION 2.8)
 project(Donnie)
 
@@ -51,8 +50,8 @@ MESSAGE( STATUS "Build type ${CMAKE_BUILD_TYPE}" )
 # this variable is used to detect if it is the robot or desktop computer.
 MESSAGE (STATUS)
 MESSAGE (STATUS "----- Identifying OS and Processor -----")
-MESSAGE( STATUS "System type ${CMAKE_SYSTEM_NAME}" )
-MESSAGE( STATUS "Processor type ${CMAKE_SYSTEM_PROCESSOR}" )
+MESSAGE( STATUS "System type: ${CMAKE_SYSTEM_NAME}" )
+MESSAGE( STATUS "Processor type: ${CMAKE_SYSTEM_PROCESSOR}" )
 
 if (${CMAKE_CROSSCOMPILING} OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
     SET (ROBOT_COMPUTER TRUE)
@@ -60,10 +59,11 @@ else ()
     SET (ROBOT_COMPUTER FALSE)
 endif ()
 
-MESSAGE( STATUS "Robot Computer type ${ROBOT_COMPUTER}" )
+MESSAGE( STATUS "Robot Computer type: ${ROBOT_COMPUTER}" )
 MESSAGE (STATUS "----- Identification Done -----")
 
 #TODO : pesquisar https://cmake.org/cmake/help/v3.0/module/ProcessorCount.html
+#TODO: support multiple operating systems, like windows
 #IF(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 #    # Mac OS X specific code
 #    SET(OperatingSystem "Mac OS X")
@@ -133,4 +133,5 @@ MESSAGE (STATUS "----- Docs Done -----")
 MESSAGE (STATUS)
 MESSAGE (STATUS "----- Processing resources makefiles -----")
 add_subdirectory(resources)
+add_subdirectory(install)
 MESSAGE (STATUS "----- Resources Done -----")

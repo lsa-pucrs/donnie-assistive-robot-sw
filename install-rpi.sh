@@ -68,21 +68,21 @@ case ${OS} in
      ;;
 esac
 
-
 ##################################################
 # install commom packages
 ##################################################
 apt-get update
-#apt-get install -y build-essential
+sudo apt-get install -y build-essential
 
 # nice to have, not mandatory
-apt-get install -y geany
+sudo apt-get install -y geany
 
 #compilation utils
 echo -e "${GREEN}Installing Compilation Utils ... ${NC}\n"
-#apt-get install -y autoconf
-#apt-get install -y cmake-curses-gui
-#apt-get install -y git
+sudo apt-get install -y autoconf
+#sudo apt-get install -y cmake
+#sudo apt-get install -y cmake-curses-gui
+sudo apt-get install -y git
 sudo apt-get install -y pkg-config
 
 # Jessie installs cmake 3.0 by the default, but lubuntu 14.04 uses cmake 2.8
@@ -93,31 +93,16 @@ wget https://archive.raspbian.org/raspbian.public.key -O - | sudo apt-key add -
 echo "deb http://archive.raspbian.org/raspbian wheezy main contrib non-free" >> /etc/apt/sources.list
 echo "deb-src http://archive.raspbian.org/raspbian wheezy main contrib non-free" >> /etc/apt/sources.list
 sudo apt-get update
-apt-cache madison cmake
-sudo apt-get install cmake-data=2.8.9-1
-sudo apt-get install cmake=2.8.9-1
-
-#apt-get install -y cmake
-
-
-
+#apt-cache madison cmake
+sudo apt-get install -y cmake-data=2.8.9-1
+sudo apt-get install -y cmake=2.8.9-1
+sudo apt-get install -y cmake-curses-gui=2.8.9-1
 
 ##################################################
 # set environment variables
 ##################################################
-# TODO correct the path for RPI
-mkdir ${DONNIE_PATH}
-echo '# Donnie definitions' >> ~/.bashrc
-echo "alias ll='ls -lah'" >> ~/.bashrc
-echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DONNIE_PATH/lib/player:/usr/local/lib/' >> ~/.bashrc
-echo 'export LC_ALL=C' >> ~/.bashrc
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib:/usr/local/lib/:$DONNIE_PATH/lib/player
-# Player lib path are lacated in /usr/local/lib64/
-# run 'sudo find / -name "*.pc" -type f' to find all the .pc files for pkg-config
-echo 'export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib64/pkgconfig/:/usr/lib/pkgconfig/:/usr/lib/x86_64-linux-gnu/pkgconfig/:/usr/share/pkgconfig/' >> ~/.bashrc
-# run 'sudo find / -name "*.cmake" -type f' to find all the .cmake files for CMake
-echo 'export CMAKE_MODULE_PATH=$CMAKE_MODULE_PATH:/usr/share/OpenCV/:/usr/share/cmake-3.0/Modules/Compiler/:/usr/share/cmake-3.0/Modules/Platform/:/usr/share/cmake-3.0/Modules/:/usr/local/lib/cmake/:/usr/local/share/cmake/Modules/' >> ~/.bashrc
-
+source ./install/setup-rpi.sh
+echo "source $DONNIE_PATH/setup-rpi.sh" >> ~/.bashrc
 
 ##################################################
 # install Player depedencies
@@ -150,11 +135,9 @@ sudo apt-get install -y libasound2-dev
 # PostGIS for a Player driver
 sudo apt-get install -y libpq-dev libpqxx-dev
 
-
 ##################################################
 # install Donnie depedencies
 ##################################################
-
 # Donnie's depedencies
 echo -e "${GREEN}Installing Donnie Dependencies on RPi ... ${NC}\n"
 #to compile soxplayer driver
@@ -167,9 +150,8 @@ sudo apt-get install -y libcurl4-openssl-dev
 ##################################################
 # Donwloading source code 
 ##################################################
-
 echo -e "${GREEN}Downloading Player source code from GitHub... ${NC}\n"
-cd Downloads
+cd ~/Downloads
 git clone https://github.com/lsa-pucrs/Player.git
 
 echo -e "${GREEN}Downloading Raspicam source code from GitHub... ${NC}\n"
@@ -178,13 +160,11 @@ git clone https://github.com/lsa-pucrs/raspicam.git
 echo -e "${GREEN}Downloading Donnie source code from GitHub... ${NC}\n"
 git clone -b devel https://github.com/lsa-pucrs/donnie-assistive-robot-sw.git
 
-
 ##################################################
 # Compile and install Player
 ##################################################
-
 cd Player
-echo -e "${GREEN}Patching Player for Lubuntu 14.04 ... ${NC}\n"
+echo -e "${GREEN}Patching Player for Donnie ... ${NC}\n"
 patch -p1 < patch/festival/festival.patch
 patch -p1 < patch/install/player_3.0.2_14.04.patch
 echo -e "${GREEN}Patching Player for Donnie ... ${NC}\n"
@@ -284,10 +264,8 @@ cmake -DCMAKE_INSTALL_PREFIX=/usr/local \
 	.. 
 echo -e "${GREEN}Compiling Player ... ${NC}\n"
 make
-make install
+sudo make install
 echo -e "${GREEN}Player installed !!!! ${NC}\n"
-
-
 
 ##################################################
 # Compiling raspicam driver
@@ -301,14 +279,12 @@ cmake -DCMAKE_BUILD_TYPE=Release \
 	..
 echo -e "${GREEN}Compiling raspicam ... ${NC}\n"
 make
-make install
+sudo make install
 echo -e "${GREEN}Raspicam installed !!!! ${NC}\n"
-
 
 ##################################################
 # Compiling and installing Donnie
 ##################################################
-
 cd ../../donnie-assistive-robot-sw
 mkdir build
 cd build
@@ -319,23 +295,14 @@ cmake -DCMAKE_BUILD_TYPE=Release \
 	..
 echo -e "${GREEN}Compiling Donnie ... ${NC}\n"
 make
-make install
+sudo make install
 echo -e "${GREEN}Donnie installed !!!! ${NC}\n"
-
 
 ##################################################
 # uninstall all dev packages to save space
 ##################################################
-echo -e "${GREEN}Removing compilation tools and cleaning the cache ... ${NC}\n"
-#apt-get purge -y build-essential
-#apt-get purge -y autoconf
-#apt-get purge -y cmake
-#apt-get purge -y cmake-curses-gui
-#apt-get purge -y git
-#apt-get purge -y pkg-config
+echo -e "${GREEN}Cleaning the cache ... ${NC}\n"
 apt-get autoclean
 apt-get autoremove
 
 echo -e "${GREEN}End of installation !!!! ${NC}\n"
-
-

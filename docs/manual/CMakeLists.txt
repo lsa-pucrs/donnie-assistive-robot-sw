@@ -21,8 +21,9 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/user_manual/main.pdf
 )
 
 # the rule 'manual' executes all three manuals
-add_custom_target(manual
+add_custom_target(manual ALL
 	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/software_manual/main.pdf ${CMAKE_CURRENT_BINARY_DIR}/hardware_manual/main.pdf ${CMAKE_CURRENT_BINARY_DIR}/user_manual/main.pdf
+	COMMENT "Generating manuals with Latex"
 )
 
 # where the doc files are installed 

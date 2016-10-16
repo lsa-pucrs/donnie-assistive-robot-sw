@@ -31,23 +31,44 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexec-charset=iso-8859-1")
 SET (CMAKE_MODULE_PATH "/usr/local/share/cmake/Modules")
 
 #########
-# check depedencies - java -lreadline -ltermcap  -lantlr3c -pthread
+# check depedencies - java -lreadline -lantlr3c
 #########
 
 # required to run antlr
 find_package(Java REQUIRED)
-#include(UseJava)
 
-# https://raw.githubusercontent.com/opencv/opencv/2.4/cmake/OpenCVConfig.cmake
-#FIND_PACKAGE(OpenCV 2 REQUIRED)
-#MESSAGE(STATUS "OpenCV_DIR = ${OpenCV_DIR}")
-#IF(OpenCV_FOUND)
-#	MESSAGE(STATUS "OPENCV Found !")
-#ELSE()
-#	MESSAGE(FATAL_ERROR "OPENCV NOT FOUND IN YOUR SYSTEM")
-#ENDIF()
-#message(STATUS "OpenCV Library -- ${OpenCV_LIBS}")
-#message(STATUS "OpenCV Include -- ${OpenCV_INCLUDE_DIRS}")
+#########
+# check depedencies - readline
+#########
+find_path( LREADLINE_INCLUDE_DIR readline.h 
+	HINTS /usr/include/readline/ /usr/include/
+	DOC "Libreadline include dir" )
+find_library( LREADLINE_LIB 
+	NAMES readline 
+	HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/arm-linux-gnueabihf
+	DOC "Libreadline lib" REQUIRED)
+
+IF( NOT LREADLINE_LIB )
+  MESSAGE( FATAL_ERROR "Libreadline not found. Please install 'sudo apt-get install libreadline-dev'. aborting" )
+ENDIF()
+message(STATUS "Readline Library -- ${LREADLINE_LIB}")
+message(STATUS "Readline Include -- ${LREADLINE_INCLUDE_DIR}")
+
+#########
+# check depedencies - antlr3c
+#########
+find_path( LANTLR3_INCLUDE_DIR antlr3.h DOC "Libantlr3 include dir" )
+find_library( LANTLR3_LIB 
+	NAMES antlr3c
+	HINTS /usr/lib/x86_64-linux-gnu/ /usr/lib/arm-linux-gnueabihf
+	DOC "Liantlr3 lib" REQUIRED)
+
+IF( NOT LANTLR3_LIB )
+  MESSAGE( FATAL_ERROR "Liantlr3 not found. Please install 'sudo apt-get install libantlr3c-dev'. aborting" )
+ENDIF()
+message(STATUS "ANTLR3 Library -- ${LANTLR3_LIB}")
+message(STATUS "ANTLR3 Include -- ${LANTLR3_INCLUDE_DIR}")
+
 
 INCLUDE (UsePlayerC++)
 
@@ -55,13 +76,14 @@ INCLUDE (UsePlayerC++)
 ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/GoDonnie.tokens
   COMMAND java -jar ${CMAKE_CURRENT_SOURCE_DIR}/Antlr/antlr-3.2.jar -o ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/GoDonnie.g
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/GoDonnie.g
+  COMMENT "Generating GoDonnie parser"
 )
 
 ADD_CUSTOM_TARGET(GoDonnieParser ALL
    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/GoDonnie.tokens
 )
 
-# hack to break the depedency
+# hack to break the depedency. This is required if the file does not yet exist in compile time 
 # https://samthursfield.wordpress.com/2015/11/21/cmake-dependencies-between-targets-and-files-and-custom-commands/
 set_source_files_properties(
     ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieParser.c
@@ -77,8 +99,8 @@ PLAYER_ADD_PLAYERCPP_CLIENT (${CLIENTNAME}
 	SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Compiler.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/DonnieClient.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/GoDonnie.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/utils.cpp ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieLexer.c  ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieParser.c
 	INCLUDEDIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
-TARGET_LINK_LIBRARIES (${CLIENTNAME} readline termcap  antlr3c pthread) 
-INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR})
+TARGET_LINK_LIBRARIES (${CLIENTNAME} ${LREADLINE_LIB} ${LANTLR3_LIB}) 
+INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR} ${LANTLR3_INCLUDE_DIR} ${LREADLINE_INCLUDE_DIR} )
 
 # godonnie depends on GoDonnieParser
 add_dependencies(GoDonnie GoDonnieParser)

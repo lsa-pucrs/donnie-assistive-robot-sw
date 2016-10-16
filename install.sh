@@ -31,6 +31,8 @@ echo -e "DONNIE_PATH=${DONNIE_PATH}\n"
 ##################################################
 # check the supported OS version and distribution
 ##################################################
+#TODO compile Player for windows
+# https://models.slf.ch/p/meteoio/page/Compiling-MeteoIO/
 OS=$(lsb_release -si)
 VER=$(lsb_release -sr)
 OSNAME=$(lsb_release -sc)
@@ -71,46 +73,40 @@ case ${OS} in
      ;;
 esac
 
-
 ##################################################
 # install commom packages
 ##################################################
-
 # required to install Oracle's java
 sudo apt-add-repository ppa:webupd8team/java
-apt-get update
-apt-get install -y build-essential
+sudo apt-get update
+sudo apt-get install -y build-essential
 
 # update VBoX Additions
-apt-get install -y module-assistant
+sudo apt-get install -y module-assistant
+sudo apt-get install virtualbox-guest-dkms
 sudo m-a prepare
 
 # nice to have, not mandatory
-apt-get install -y geany
-apt-get install -y google-chrome-stable
-
+sudo apt-get install -y geany
+sudo apt-get install -y google-chrome-stable
 
 #compilation utils
 echo -e "${GREEN}Installing Compilation Utils ... ${NC}\n"
-apt-get install -y autoconf
-apt-get install -y cmake
-apt-get install -y cmake-curses-gui
-apt-get install -y git
+sudo apt-get install -y autoconf
+sudo apt-get install -y cmake
+sudo apt-get install -y cmake-curses-gui
+sudo apt-get install -y git
 sudo apt-get install -y pkg-config
 
 ##################################################
 # set environment variables
 ##################################################
-
-# run 'sudo find / -name "*.pc" -type f' to find all the pc files for pkg-config
-echo 'export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib64/pkgconfig/:/usr/lib/pkgconfig/:/usr/lib/x86_64-linux-gnu/pkgconfig/:/usr/share/pkgconfig/' >> ~/.bashrc
-# run 'sudo find / -name "*.cmake" -type f' to find all the pc files for pkg-config
-echo 'export CMAKE_MODULE_PATH=$CMAKE_MODULE_PATH:/usr/local/lib64/cmake/Stage/:/usr/local/share/cmake/Modules/:/usr/share/cmake-2.8/Modules/:/usr/share/OpenCV/' >> ~/.bashrc
+source ./install/setup.sh
+echo "source $DONNIE_PATH/setup.sh" >> ~/.bashrc
 
 ##################################################
 # install Player/Stage depedencies
 ##################################################
-
 echo -e "${GREEN}Installing Player/Stage Dependencies ... ${NC}\n"
 sudo apt-get install -y libfltk1.1-dev 
 sudo apt-get install -y freeglut3-dev 
@@ -136,23 +132,11 @@ sudo apt-get install -y python-dev swig
 # PostGIS for a Player driver
 sudo apt-get install -y libpq-dev libpqxx-dev
 
-export LD_LIBRARY_PATH=/usr/lib:/usr/local/lib/:$LD_LIBRARY_PATH
-# Opencv lib path
-export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH
-# Player lib path
-export LD_LIBRARY_PATH=/usr/local/lib64/:$LD_LIBRARY_PATH
-# Player and Stage pkg-config
-export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig/:/usr/lib/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig/:/usr/share/pkgconfig/:$PKG_CONFIG_PATH
-
-export CMAKE_MODULE_PATH=$CMAKE_MODULE_PATH:/usr/share/cmake-2.8/Modules/:/usr/share/cmake-2.8/Modules/Platform/:/usr/share/cmake-2.8/Modules/Compiler/:/usr/local/share/cm$
-
-
 ##################################################
 # Donwloading source code 
 ##################################################
-
 echo -e "${GREEN}Downloading Player source code from GitHub... ${NC}\n"
-cd Downloads
+cd ~/Downloads
 git clone https://github.com/lsa-pucrs/Player.git
 
 echo -e "${GREEN}Downloading Stage source code from GitHub... ${NC}\n"
@@ -164,11 +148,9 @@ git clone https://github.com/lsa-pucrs/raspicam.git
 echo -e "${GREEN}Downloading Donnie source code from GitHub... ${NC}\n"
 git clone -b devel https://github.com/lsa-pucrs/donnie-assistive-robot-sw.git
 
-
 ##################################################
 # Compile and install Player/Stage 
 ##################################################
-
 cd Player
 echo -e "${GREEN}Patching Player for Lubuntu 14.04 ... ${NC}\n"
 patch -p1 < patch/festival/festival.patch
@@ -186,7 +168,7 @@ echo -e "${GREEN}Configuring Player for Lubuntu 14.04 ... ${NC}\n"
 cmake -DCMAKE_BUILD_TYPE=Release -DDEBUG_LEVEL=NONE -BUILD_PYTHONC_BINDINGS:BOOL=ON ..
 echo -e "${GREEN}Compiling Player for Lubuntu 14.04 ... ${NC}\n"
 make
-make install
+sudo make install
 echo -e "${GREEN}Player installed !!!! ${NC}\n"
 
 cd ../../Stage
@@ -198,15 +180,13 @@ echo -e "${GREEN}Configuring Stage for Lubuntu 14.04 ... ${NC}\n"
 cmake -DCMAKE_BUILD_TYPE=Release ..
 echo -e "${GREEN}Compiling Stage for Lubuntu 14.04 ... ${NC}\n"
 make
-make install
+sudo make install
 echo -e "${GREEN}Stage installed !!!! ${NC}\n"
-
 
 ##################################################
 # install Donnie depedencies
 # compile and install Donnie
 ##################################################
-
 # Donnie's depedencies
 echo -e "${GREEN}Installing Donnie Dependencies ... ${NC}\n"
 #to compile soxplayer driver
@@ -235,10 +215,25 @@ cd ../../donnie-assistive-robot-sw
 mkdir build
 cd build
 echo -e "${GREEN}Configuring Donnie for Lubuntu 14.04 ... ${NC}\n"
-cmake -DCMAKE_BUILD_TYPE=Release ..
+cmake -DCMAKE_BUILD_TYPE=Release \
+	-DBUILD_EXAMPLES=ON \
+	-DBUILD_DOCS=ON  \
+	-DBUILD_DOXYGEN=ON \
+	-DBUILD_DOXYGEN_PDF=ON \
+	-DBUILD_MANUAL=ON \
+    ..
 echo -e "${GREEN}Compiling Donnie for Lubuntu 14.04 ... ${NC}\n"
 make
-make install
+sudo make install
 echo -e "${GREEN}Donnie installed !!!! ${NC}\n"
+
+echo -e "${GREEN}End of installation !!!! ${NC}\n"
+
+##################################################
+# uninstall all dev packages to save space
+##################################################
+echo -e "${GREEN}Cleaning the cache ... ${NC}\n"
+apt-get autoclean
+apt-get autoremove
 
 echo -e "${GREEN}End of installation !!!! ${NC}\n"
