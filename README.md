@@ -1,16 +1,21 @@
 
-# incluir travis
-#| Linux                           |
-#|---------------------------------|
-#| [![Build Status][master]][repo] |
-https://github.com/forexample/package-example/blob/master/CMakeLists.txt
+<!---
+[//]: # incluir travis
+[//]: #| Linux                           |
+[//]: #|---------------------------------|
+[//]: #| [![Build Status][master]][repo] |
+[//]: # https://github.com/forexample/package-example/blob/master/CMakeLists.txt
 
-#[master]: https://travis-ci.org/forexample/package-example.svg?branch=master
-#[repo]: https://travis-ci.org/forexample/package-example
+[//]: #[master]: https://travis-ci.org/forexample/package-example.svg?branch=master
+[//]: #[repo]: https://travis-ci.org/forexample/package-example
+-->
 
+# Donnie Software Stack
 
-# donnie-assistive-robot-sw
+1) Install Donnie software on a Desktop computer
 
-1) Install the files in proxy folder
+$ ./install
 
-2) Compile all drivers, but donnie if you will use only the simulated model.
+1) Install Donnie software on a Donnie`s embedded computer (Raspberry Pi)
+
+$ ./install-rpi

@@ -16,7 +16,7 @@ else()
    message(FATAL_ERROR "DONNIE_PATH is NOT defined")
 endif()
 
-# add the cmake path for raspicam and player
+# add the cmake path for player
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/local/lib/cmake/ /usr/local/share/cmake/Modules)
 #MESSAGE(STATUS "CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
 
@@ -52,4 +52,6 @@ INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib${DRIVERNAME}.so DESTINATION ${DONN
 INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/server_${DRIVERNAME}.cfg DESTINATION ${DONNIE_PATH}/test/${DRIVERNAME})
 
 # compile the driver example
-ADD_SUBDIRECTORY(client)
+IF ( BUILD_EXAMPLES )
+  ADD_SUBDIRECTORY(client)
+ENDIF ()

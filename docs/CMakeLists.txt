@@ -6,11 +6,6 @@ IF(NOT ROBOT_COMPUTER AND BUILD_DOCS)
 	option(BUILD_DOXYGEN_PDF "Create Doxygen Docs in PDF format. Requires Latex" OFF)
 	option(BUILD_MANUAL "Generates manual from Latex files " OFF)
 
-	# TODO: support multiple languages
-	SET (DOC_LANGUAGE "en" CACHE STRING "Define the language for the docs. The options are: en (default) pt-br es" FORCE)
-	STRING(TOUPPER ${DOC_LANGUAGE} DOC_LANGUAGE)
-	MESSAGE( STATUS "Document language: ${DOC_LANGUAGE}" )
-
 	# build doxygen documentation
 	if(BUILD_DOXYGEN OR BUILD_DOXYGEN_PDF)
 	  FIND_PACKAGE(Doxygen)

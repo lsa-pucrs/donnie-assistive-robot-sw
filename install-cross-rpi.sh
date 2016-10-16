@@ -1,4 +1,6 @@
 #!/bin/bash
+# TODO: This is a totally UNTESTED and BETA script for cross-compiling. 
+# Use it if you have some experience with cross-compiling.
 #####################
 # Author: Alexandre Amory
 # Date: September/2016

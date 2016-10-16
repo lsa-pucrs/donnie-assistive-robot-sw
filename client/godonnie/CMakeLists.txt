@@ -4,7 +4,6 @@ PROJECT (${CLIENTNAME})
 
 message(STATUS "Configuring '${CLIENTNAME}'")
 
-
 #########
 # check DONNIE_PATH
 #########
@@ -33,7 +32,6 @@ SET (CMAKE_MODULE_PATH "/usr/local/share/cmake/Modules")
 #########
 # check depedencies - java -lreadline -lantlr3c
 #########
-
 # required to run antlr
 find_package(Java REQUIRED)
 
@@ -69,10 +67,9 @@ ENDIF()
 message(STATUS "ANTLR3 Library -- ${LANTLR3_LIB}")
 message(STATUS "ANTLR3 Include -- ${LANTLR3_INCLUDE_DIR}")
 
-
-INCLUDE (UsePlayerC++)
-
+#########
 # run antlr
+#########
 ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/GoDonnie.tokens
   COMMAND java -jar ${CMAKE_CURRENT_SOURCE_DIR}/Antlr/antlr-3.2.jar -o ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/GoDonnie.g
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/GoDonnie.g
@@ -94,15 +91,21 @@ set_source_files_properties(
     ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieLexer.c
     PROPERTIES GENERATED TRUE
     )
-    
+
+#########
+# set Player
+#########
+INCLUDE (UsePlayerC++)
+
 PLAYER_ADD_PLAYERCPP_CLIENT (${CLIENTNAME} 
 	SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Compiler.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/DonnieClient.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/GoDonnie.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/utils.cpp ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieLexer.c  ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieParser.c
 	INCLUDEDIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
+# add the includes and libs to build it
 TARGET_LINK_LIBRARIES (${CLIENTNAME} ${LREADLINE_LIB} ${LANTLR3_LIB}) 
 INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR} ${LANTLR3_INCLUDE_DIR} ${LREADLINE_INCLUDE_DIR} )
 
-# godonnie depends on GoDonnieParser
+# godonnie depends on GoDonnieParser. This makes sure that the parser is built before the GoDonnie interpreter
 add_dependencies(GoDonnie GoDonnieParser)
 
 # Install library and example files

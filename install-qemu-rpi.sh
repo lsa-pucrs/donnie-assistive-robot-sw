@@ -1,4 +1,6 @@
 #!/bin/bash
+# TODO: This is a totally UNTESTED and BETA script for RPi emulating with qemu. 
+# Use it if you have some experience with qemu.
 #####################
 # Author: Alexandre Amory
 # Date: September/2016

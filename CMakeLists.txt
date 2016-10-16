@@ -46,6 +46,12 @@ STRING(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
 MESSAGE( STATUS "Build type ${CMAKE_BUILD_TYPE}" )
 
 #####################################
+# TODO: support multiple languages for for docs and GoDonnie Interpreter. It does not do anything yet
+SET (DONNIE_LANGUAGE "en" CACHE STRING "Define the language for Donnie`s docs and commands. The options are: en (default) pt-br es" FORCE)
+STRING(TOUPPER ${DONNIE_LANGUAGE} DONNIE_LANGUAGE)
+MESSAGE( STATUS "Donnie`s docs and commands language: ${DONNIE_LANGUAGE}" )
+
+#####################################
 # some modules are required only for the robot computer, other only for the desktop.
 # this variable is used to detect if it is the robot or desktop computer.
 MESSAGE (STATUS)
@@ -134,4 +140,5 @@ MESSAGE (STATUS)
 MESSAGE (STATUS "----- Processing resources makefiles -----")
 add_subdirectory(resources)
 add_subdirectory(install)
+add_subdirectory(simulation_models)
 MESSAGE (STATUS "----- Resources Done -----")
