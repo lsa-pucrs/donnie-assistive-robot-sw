@@ -12,28 +12,18 @@
 
 # Donnie Software Stack
 
-
-[Foo](#foo)
-
-[Getting Started](#getting-started)
-
-
-# Foo
-
 Contents
 --------
 
-1. [Getting Started](#Getting-Started)
-2. `Configuring Donnie`_
-3. `Contributors`_
-4. `Contributing`_
-5. `Papers`_
+1. [Getting Started](#getting-started)
+2. [Features](#features)
+3. [Configuring Donnie](#configuring-donnie)
+4. [Contributors](#contributors)
+5. [Contributing](#contributing)
+6. [Papers](#papers)
 
 
-## Getting Started
----------------
-
-Getting Started
+# Getting Started
 ---------------
 
 <!---
@@ -51,7 +41,7 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
 	./install-rpi
 
-Features
+# Features
 ---------------
 
 * Robot programming environment for young students with or without visual impairment; 
@@ -60,7 +50,7 @@ Features
 * Extension of Stage simulator to generate sound clues while the robot is moving;
 * Software developed for the simulated robot is compatible with the real Donnie robot;
 
-Configuring Donnie
+# Configuring Donnie
 ---------------
 
 The installation scripts make a standard instalation we believe is the most appropriated for the average user.
@@ -97,7 +87,7 @@ The following list explains Donnie's main compilation parameters:
 	CMAKE_BUILD_TYPE                 Release 
 	DOC_LANGUAGE                     en     The language used to build documents and the GoDonnie interpreter. Future work !
 
-Contributors
+# Contributors
 ------------
 
 We thank the following people for contributing to **Donnie**:
@@ -113,7 +103,7 @@ We thank the following people for contributing to **Donnie**:
 * [Joice Marek](https://github.com/joiceMarek): visual odometry, raspicam driver
 * [Marcia Campos](https://github.com/marciabcampos): assistive evaluation, testing, testing with blind users
 
-Contributing
+# Contributing
 ------------
 
 Donnie project has a small core team and it relies on external collaboration to continue developing this assistive system.
@@ -127,7 +117,7 @@ This is a list of itens the core team wish to have some help:
 * Feature requests and testing. Please use the Issue system to request new features and to report bugs;
 
 
-Papers
+# Papers
 ------------
 
 If you are using Donnie on your research projects, please cite our papers:
