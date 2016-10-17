@@ -40,13 +40,19 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
   	  return -1;
   	}
 
-  	this->run(tree);
-
+	//Tentando rodar o programa
+	try{
+		this->run(tree);
+	}
+	catch(exception& e)
+	{
+		cout e.what();
+	}
+	
   	parser->free(parser);
   	tokens->free(tokens);
   	lex->free(lex);
   	input->close(input);
-
 }
 
 int ExprTreeEvaluator::terminalMode(char* textIn)
@@ -574,7 +580,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           }
   
           default:
-              cout << "Unhandled token: #" << tok->type << '\n';
+              //cout << "Unhandled token: #" << tok->type << '\n';
+               throw sintaxeException();
                break;
         }
     }
