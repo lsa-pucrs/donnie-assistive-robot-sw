@@ -1,38 +1,57 @@
-SET(THE_TARGET "GenericBlobfinder")
-SET(LIBDEST "/opt/player-stage/src/player-3.0.2/build/examples/plugins/")
-#SET(LIBDEST "$ENV{DONNIE_PATH}/lib/player/")
+CMAKE_MINIMUM_REQUIRED (VERSION 2.8 FATAL_ERROR)
+SET (DRIVERNAME "GenericBlobfinder")
+PROJECT (${DRIVERNAME})
 
-CMAKE_MINIMUM_REQUIRED (VERSION 2.4 FATAL_ERROR)
-PROJECT (${THE_TARGET})
+#set(PROJECT_VERSION "0.1.2")
 
-SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/local/lib/cmake/)
-FIND_PACKAGE(raspicam REQUIRED)
-FIND_PACKAGE(OpenCV REQUIRED)
+message(STATUS "Configuring '${DRIVERNAME}'")
+
+#########
+# check DONNIE_PATH
+#########
+if(DEFINED ENV{DONNIE_PATH})
+   SET(DONNIE_PATH "$ENV{DONNIE_PATH}")
+   #message(STATUS "DONNIE_PATH = ${DONNIE_PATH}")
+else()
+   message(FATAL_ERROR "DONNIE_PATH is NOT defined")
+endif()
+
+# add the cmake path for player
+SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/local/lib/cmake/ /usr/local/share/cmake/Modules)
+#MESSAGE(STATUS "CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
+
+#########
+# check depedencies - opencv 2
+#########
+# https://raw.githubusercontent.com/opencv/opencv/2.4/cmake/OpenCVConfig.cmake
+FIND_PACKAGE(OpenCV 2 REQUIRED)
+MESSAGE(STATUS "OpenCV_DIR = ${OpenCV_DIR}")
+
 IF(OpenCV_FOUND)
 	MESSAGE(STATUS "OPENCV Found !")
 ELSE()
+	
 	MESSAGE(FATAL_ERROR "OPENCV NOT FOUND IN YOUR SYSTEM")
 ENDIF()
 
-IF(raspicam_CV_FOUND)
-	MESSAGE(STATUS "RASPICAM Found !")
-ELSE()
-	MESSAGE(FATAL_ERROR "RASPICAM NOT FOUND IN YOUR SYSTEM")
-ENDIF()
+message(STATUS "OpenCV Library -- ${OpenCV_LIBS}")
+message(STATUS "OpenCV Include -- ${OpenCV_INCLUDE_DIRS}")
 
-
-# Include this CMake module to get most of the settings needed to build
-SET (CMAKE_MODULE_PATH "@CMAKE_INSTALL_PREFIX@/share/cmake/Modules")
+#########
+# set Player cmake modules
+#########
 INCLUDE (UsePlayerPlugin)
 
-PLAYER_ADD_PLUGIN_DRIVER (${THE_TARGET} SOURCES ${THE_TARGET}.cc)
+PLAYER_ADD_PLUGIN_DRIVER (${DRIVERNAME} SOURCES ${DRIVERNAME}.cc) 
+TARGET_LINK_LIBRARIES (${DRIVERNAME} ${OpenCV_LIBS}) 
+# ${OpenCV_INCLUDE_DIRS} was already inserted. no need to do it again
+INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR})
 
-INCLUDE_DIRECTORIES (${PLAYERCORE_EXTRA_INCLUDE_DIRS})
-LINK_DIRECTORIES (${PLAYERCORE_EXTRA_LINK_DIRS})
-ADD_LIBRARY (${THE_TARGET} SHARED ${THE_TARGET}.cc)
-TARGET_LINK_LIBRARIES (${THE_TARGET} playercore ${OpenCV_LIBS})
+# Install library and example files
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib${DRIVERNAME}.so DESTINATION ${DONNIE_PATH}/lib/player/) 
+INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/server_${DRIVERNAME}.cfg DESTINATION ${DONNIE_PATH}/test/${DRIVERNAME})
 
-SET (exampleDestDir share/${PROJECT_NAME_LOWER}/examples/plugins/${THE_TARGET})
-INSTALL (FILES ${THE_TARGET}.cc DESTINATION ${exampleDestDir} COMPONENT examples)
-#INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib${THE_TARGET}.so DESTINATION ${PLUGIN_PLAYERC_LIBRARY_DIRS})  #instala na pasta /usr/local/lib64
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib${THE_TARGET}.so DESTINATION ${LIBDEST}${THE_TARGET}) 
+# compile the driver example
+IF ( BUILD_EXAMPLES )
+  ADD_SUBDIRECTORY(client)
+ENDIF ()

@@ -1,3 +1,15 @@
+/*
+* Desc: Player-based blobfinder using OpenCV2.
+* Author: Daniel Einloft
+* Date:  August 2016
+* Laboratório de Sistemas Autônomos 
+*  - https://lsa.pucrs.br/
+*  - https://github.com/lsa-pucrs
+* Faculdade de Informática - PUCRS  
+*  - www.inf.pucrs.br
+*/
+
+
 /* GenericBlobfinder configuration file sintaxe:
 
 driver
@@ -21,6 +33,9 @@ driver
 #include <config.h>
 */
 
+// TODO: separar a definicao da classe em um .h para gerar documentacao automatica com doxygen
+// TODO: remover todas as referencias a raspicam pois este modulo nao depende dela
+
 #if !defined (WIN32)
   #include <unistd.h>
 #endif
@@ -31,14 +46,14 @@ driver
 #include <iostream>
 #include <libplayercore/playercore.h>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/video/video.hpp>
-#include <opencv2/videoio/videoio.hpp>
+//#include <opencv2/core/core.hpp>
+//#include <opencv2/imgcodecs.hpp>
+//#include <opencv2/video/video.hpp>
+//#include <opencv2/videoio/videoio.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
-#include <opencv2/calib3d/calib3d.hpp>
-#include <opencv2/features2d/features2d.hpp>
+//#include <opencv2/calib3d/calib3d.hpp>
+//#include <opencv2/features2d/features2d.hpp>
 
 using namespace cv;
 using namespace std;

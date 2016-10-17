@@ -1,4 +1,17 @@
-	/*Para testar esse código, segue um exemplo de .cfg e .world:
+/*
+* Desc: Player-based blobfinder using OpenCV2.
+* Author: Daniel Einloft
+* Date:  August 2016
+* Laboratório de Sistemas Autônomos 
+*  - https://lsa.pucrs.br/
+*  - https://github.com/lsa-pucrs
+* Faculdade de Informática - PUCRS  
+*  - www.inf.pucrs.br
+*/
+
+// TODO: revisar comentarios e exemplo
+
+/*Para testar esse código, segue um exemplo de .cfg e .world:
 
 ----- no .world------
 
