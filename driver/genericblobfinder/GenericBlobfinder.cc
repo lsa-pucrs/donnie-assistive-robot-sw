@@ -58,7 +58,7 @@ driver
 using namespace cv;
 using namespace std;
 ////////////////////////////////////////////////////////////////////////////////
-// The class for the driver
+// The class for the driver GenericBlobfinder
 class GenericBlobfinder : public ThreadedDriver
 {
   public:
@@ -87,23 +87,17 @@ class GenericBlobfinder : public ThreadedDriver
 
 
 
-    player_devaddr_t blobfinder_addr; //o blobfinder a ser enviado.
+    player_devaddr_t blobfinder_addr; //The blobfinder to send
     player_blobfinder_data_t data;  //data used to publish the blobfinder :)
-    player_devaddr_t cam_addr;
-    Device * r_cam_dev;
-    //Device * r_blobfinder_dev;
+    player_devaddr_t cam_addr; //an generic camera
+    Device * r_cam_dev;			
     
 
-
-   // Mat teste;
-    //blobfinder variables.
-    //Mat img1;
     Mat frame; 
-    int debug;// = 5;
-    //struct blob blob_buffer[10]; //limit of 10 blobs
+    int debug;
     player_blobfinder_blob blob_buffer[10]; //limit of 10 blobs
     Mat R, G, B;
-    int blobs;// = 0;
+    int blobs;
     int min_blob_size;
     int reduce_noise;
 };
@@ -148,6 +142,7 @@ void GenericBlobfinder::Find_blobs()
   G.copyTo(GG);
   B.copyTo(BB);
 
+  //find the contours
   findContours(RR, contoursR, hierarchyR, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
   findContours(GG, contoursG, hierarchyG, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
   findContours(BB, contoursB, hierarchyB, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
@@ -155,9 +150,6 @@ void GenericBlobfinder::Find_blobs()
   //get X,Y and area of red blobs..
   for (int i = 0; i < contoursR.size(); i++)
   {
-    //for (int index = 0; index >= 0; index = hierarchyR[index][0]) 
-    //{
-
       Moments moment = moments((cv::Mat)contoursR[i]);
       curret_blob.area = moment.m00;
       //filter small areas, to reduce even more noise
@@ -170,15 +162,10 @@ void GenericBlobfinder::Find_blobs()
         blob_buffer[blobs] = curret_blob;
         blobs++;
       }
-    //}
   }
   //get X,Y and area of green blobs..
-
   for (int i = 0; i < contoursG.size(); i++)
   {
-    //for (int index = 0; index >= 0; index = hierarchyG[index][0])
-   //{
-
       Moments moment = moments((cv::Mat)contoursG[i]);
       curret_blob.area = moment.m00;
       //filter small areas, to reduce even more noise
@@ -186,20 +173,15 @@ void GenericBlobfinder::Find_blobs()
       {
         curret_blob.x = (moment.m10 / curret_blob.area);
         curret_blob.y = (moment.m01 / curret_blob.area);
-        curret_blob.color = 0x0000FF00; //0x00RRGGBB
+        curret_blob.color = 0x0000FF00; 
         curret_blob.id = blobs;
         blob_buffer[blobs] = curret_blob;
         blobs++;
       }
-    //}
   }
-
   //get X,Y and area of blue blobs..
   for (int i = 0; i < contoursB.size(); i++)
   {
-    //for (int index = 0; index >= 0; index = hierarchyB[index][0])
-    //{
-
       Moments moment = moments((cv::Mat)contoursB[i]);
       curret_blob.area = moment.m00;
       //filter small areas, to reduce even more noise
@@ -212,10 +194,9 @@ void GenericBlobfinder::Find_blobs()
         blob_buffer[blobs] = curret_blob;
         blobs++;
       }
-    //}
   }
-	//cout<<blobs<<endl;
 }
+
 //reduce noise using erode and dilate functions
 void GenericBlobfinder::Reduce_noise()
 {
@@ -234,17 +215,18 @@ void GenericBlobfinder::Reduce_noise()
 void GenericBlobfinder::Filter_colors()
 {
   cvtColor(frame, frame, COLOR_RGB2HSV);
+  //filter colors using the noise reduction. It's better, but slower.
   if(reduce_noise==1)
   {
-  	cv::inRange(frame, cv::Scalar(109, 0, 87), cv::Scalar(256, 256, 256), R); //vermelho
-  	cv::inRange(frame, cv::Scalar(21, 175, 47), cv::Scalar(56, 256, 184), G); //verde 
-  	cv::inRange(frame, cv::Scalar(0, 32, 48), cv::Scalar(30, 256, 256), B); //azul 
+  	cv::inRange(frame, cv::Scalar(109, 0, 87), cv::Scalar(256, 256, 256), R); //red
+  	cv::inRange(frame, cv::Scalar(21, 175, 47), cv::Scalar(56, 256, 184), G); //green 
+  	cv::inRange(frame, cv::Scalar(0, 32, 48), cv::Scalar(30, 256, 256), B);  //blue 
   }
-  else
+  else //filter colors withouth noise reduction. 
   {
-  	cv::inRange(frame, cv::Scalar(109, 0,63), cv::Scalar(256, 256, 256), R); //vermelho
-  	cv::inRange(frame, cv::Scalar(21, 169, 17), cv::Scalar(64, 256, 169), G); //verde 
-  	cv::inRange(frame, cv::Scalar(0, 28, 30), cv::Scalar(45, 237, 256), B); //azul 
+  	cv::inRange(frame, cv::Scalar(109, 0,63), cv::Scalar(256, 256, 256), R); //red
+  	cv::inRange(frame, cv::Scalar(21, 169, 17), cv::Scalar(64, 256, 169), G); //green 
+  	cv::inRange(frame, cv::Scalar(0, 28, 30), cv::Scalar(45, 237, 256), B); //blue 
   }
 
 
@@ -260,57 +242,31 @@ void GenericBlobfinder::Debug_mode()
 {
   if (debug == 1)
   {
-	//cout<<frame.size().width<<"x"<<frame.size().height<<endl;
-       // cout<<frame.size().width<<"x"<<frame.size().height<<endl; 
- 
    namedWindow("Frame", 1);
    imshow("Frame", frame);
-   // namedWindow("teste",4);
-   // imshow("teste",teste);
-
    cv::waitKey(30);
  //   imwrite("Frame.png", frame);
   }
   else if (debug == 2)
   {
-       // cout<<R.size().width<<"x"<<R.size().height<<endl;
-       // cout<<teste.size().width<<"x"<<teste.size().height<<endl;
-
     namedWindow("Frame R", 1);
     imshow("Frame R", R);
-
- //  namedWindow("teste",4);
-//    imshow("teste",teste);
     cv::waitKey(30);
-
     //imwrite("R.png", R);
   }
   else if (debug == 3)
   {
-    //    cout<<G.size().width<<"x"<<G.size().height<<endl;
-     //   cout<<teste.size().width<<"x"<<teste.size().height<<endl;
     namedWindow("Frame G", 1);
     imshow("Frame G", G);
-  //  namedWindow("teste",4);
-  //  imshow("teste",teste);
-
     cv::waitKey(30);
-
-       // imwrite("G.png", G);
-
+    // imwrite("G.png", G);
   }
   else if (debug == 4)
   {
-        cout<<B.size().width<<"x"<<B.size().height<<endl;
-    //    cout<<teste.size().width<<"x"<<teste.size().height<<endl;
     namedWindow("Frame B", 1);
     imshow("Frame B", B);
-   // namedWindow("teste",4);
-  //  imshow("teste",teste);
-
     cv::waitKey(30);
-       // imwrite("B.png", B);
-
+     // imwrite("B.png", B);
   }
   else if (debug == 5)
   {
@@ -320,8 +276,6 @@ void GenericBlobfinder::Debug_mode()
     //imwrite("R.png", R);
     //imwrite("G.png", G);
     //imwrite("B.png", B);
-   // namedWindow("teste",4);
-   // imshow("teste",teste);
     namedWindow("FrameR", 1);
     imshow("FrameR", R);
     namedWindow("FrameG", 2);
@@ -340,12 +294,11 @@ GenericBlobfinder::GenericBlobfinder(ConfigFile* cf, int section): ThreadedDrive
 {
 
 
-  memset(&(this->blobfinder_addr), 0, sizeof blobfinder_addr); //zera o struct com a função de C "memset". 
-                                                              //Sintaxe: memset(&espaço_de_memoria_a_modificar, valor_que_deseja_modificar, tamanho, em bytes)
+  memset(&(this->blobfinder_addr), 0, sizeof blobfinder_addr);                                                            
   memset(&(this->cam_addr), 0, sizeof (player_devaddr_t));
 
-  if (cf->ReadDeviceAddr(&(this->blobfinder_addr), section, "provides", //verifica se o blobfinder no arquivo de configuração está sendo utilizado de forma correta, provendo um blobfinder.
-                           PLAYER_BLOBFINDER_CODE, -1, NULL))           //este código não só verifica o .cfg mas cria o struct do blobfinder. :) 
+  if (cf->ReadDeviceAddr(&(this->blobfinder_addr), section, "provides", //check if the blobfinder in the .cfg file is being used correctly, providing a blobfinder.
+                           PLAYER_BLOBFINDER_CODE, -1, NULL))           
   {
     this->SetError(-1);
     return;
@@ -356,7 +309,7 @@ GenericBlobfinder::GenericBlobfinder(ConfigFile* cf, int section): ThreadedDrive
     return;
   }
   
-  if(cf->ReadDeviceAddr(&(this->cam_addr), section, "requires", PLAYER_CAMERA_CODE, -1, NULL))
+  if(cf->ReadDeviceAddr(&(this->cam_addr), section, "requires", PLAYER_CAMERA_CODE, -1, NULL))//check if the camera in the .cfg file is being used correctly, requiring a camera.
   {
     this->SetError(-1);
     return;
@@ -365,82 +318,53 @@ GenericBlobfinder::GenericBlobfinder(ConfigFile* cf, int section): ThreadedDrive
   min_blob_size =  cf->ReadInt(section, "min_blob_size", 1000);
   reduce_noise = cf->ReadInt(section, "reduce_noise", 0);
   debug = cf->ReadInt(section, "debug",0 );
-
   blobs=0;
-  // Read an option from the configuration file
-  //this->foop = cf->ReadInt(section, "foo", 0);
-
   return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Set up the device.  Return 0 if things go well, and -1 otherwise.
-int GenericBlobfinder::MainSetup() //método inicializador! similar ao "setup"do arduino..
+int GenericBlobfinder::MainSetup() //setup method
 {   
   puts("Generic Blobfinder initializing! ");
 
-  ///set up raspicam and configuration stuff :)
-
+  ///set up camera and configuration stuff 
 
   // Here you do whatever is necessary to setup the device, like open and
   // configure a serial port.
-
   this->r_cam_dev = deviceTable->GetDevice(this->cam_addr);
   if (!(this->r_cam_dev)) return -1;
   if (this->r_cam_dev->Subscribe(this->InQueue))
   {
     this->r_cam_dev = NULL;
     return -1;
-  }
-
- // printf("Was foo option given in config file? %d\n", this->foop);
-    
-  puts("Example driver ready");
+  }    
+  puts("GenericBlobfinder driver ready");
 
   return(0);
 }
-
-
-
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown the device
 void GenericBlobfinder::MainQuit() // este método serve para fechar tudo que ficou aberto. fechar a raspicam e o opencv.
 {
   puts("Shutting example driver down");
-
   // Here you would shut the device down by, for example, closing a
   // serial port.
-
   puts("Example driver has been shutdown");
 }
 
-
+//this method will process 
 int GenericBlobfinder::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr,void * data)
 {
-/*
-  uint32_t idle_width, idle_height, u, v;
-  player_blobfinder_data_t* data_teste;
-    player_blobfinder_blob_t* actual_blob;
-*/
-
     player_camera_data_t* cam_data;
-
   //PLAYER_WARN("New message received");
   if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_DATA, PLAYER_CAMERA_DATA_STATE, cam_addr))
   {
     //  PLAYER_WARN("requires cam received");
       cam_data = reinterpret_cast<player_camera_data_t *>(data); 
-      //Mat img(cam_data->height, cam_data->width, CV_8UC3, cam_data->image);
 
-/* --- Get the first two frames in the sequence */
-
-        Mat(cam_data->height, cam_data->width, CV_8UC3, cam_data->image).copyTo(frame);
-	      //  cout<<"frame:"<<frame.size().width<<"x"<<frame.size().height<<endl;
-     
-    //    frame.copyTo(teste);
+      Mat(cam_data->height, cam_data->width, CV_8UC3, cam_data->image).copyTo(frame);
         Filter_colors();
         if(reduce_noise==1)
         	Reduce_noise();
