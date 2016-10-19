@@ -84,13 +84,12 @@ int main()
 	BlobfinderProxy b(&c,0);
 	
 	c.Read();
-	// Mostra a quantidade de pixels da câmera
+	// Shows the resolution of the camera
 	
 	std::cout << "Width: " << b.GetWidth() << std::endl;
 	std::cout << "Height: " << b.GetHeight() << std::endl;
 	
-	// Verifica e mostra a posição do centro do(s) blob(s), que estão na frente do robô, em relação a câmera e o número da cor
-	
+	//Verifies and shows the position of the center of the blobs
 	while(true)
 	{
 		c.Read();
@@ -108,8 +107,8 @@ int main()
 			
 			std::cout <<"X: "<< blob.x << std::endl;
 			std::cout <<"Y: "<< blob.y << std::endl;
-			std::cout <<"COR: "<< blob.color << std::endl;
-			std::cout << "############################"<<std::endl;// " << i << "#########" << std::endl;			
+			std::cout <<"COLOR: "<< blob.color << std::endl;
+			std::cout << "############################"<<std::endl;			
 		}
         
 	}
