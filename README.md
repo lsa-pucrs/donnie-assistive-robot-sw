@@ -24,10 +24,11 @@ Contents
 
 1. [Getting Started](#getting-started)
 2. [Features](#features)
-3. [Configuring Donnie](#configuring-donnie)
-4. [Contributors](#contributors)
-5. [Contributing](#contributing)
-6. [Papers](#papers)
+3. [Building Your Donnie Robot](#building-your-donnie-robot)
+4. [Configuring Donnie](#configuring-donnie)
+5. [Contributors](#contributors)
+6. [Contributing](#contributing)
+7. [Papers](#papers)
 
 
 # Getting Started
@@ -60,6 +61,15 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 * Integration with a Arduino-based robot with Player robotic middleware;
 * Extension of Stage simulator to generate sound clues while the robot is moving;
 * Software developed for the simulated robot is compatible with the real Donnie robot;
+
+# Building Your Donnie Robot
+---------------
+
+To build your own Donnie robot, please refer to the following repositories:
+
+* [Donnie eletronics](https://github.com/lsa-pucrs/donnie-assistive-robot-hw)
+* [Donnie 3D printing](https://github.com/lsa-pucrs/donnie-assistive-robot-3d)
+
 
 # Configuring Donnie
 ---------------
