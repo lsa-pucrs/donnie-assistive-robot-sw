@@ -33,7 +33,7 @@ NC='\033[0m' # No Color
 echo -e "${RED}Running Donnie Compilation Script for Raspberry Pi ... ${NC}\n"
 
 if [ -z "$DONNIE_PATH" ]; then
-    echo -e "${RED}ERROR:{NC} Need to set DONNIE_PATH environment variable\n"
+    echo -e "${RED}ERROR:${NC} Need to set DONNIE_PATH environment variable\n"
     echo -e "Example: export DONNIE_PATH=/opt/donnie\n"
     exit 1
 fi  
@@ -48,22 +48,23 @@ OSNAME=$(lsb_release -sc)
 
 case ${OS} in 
 	Rasbian )
-		echo -e "${ORANGE}WARNING:{NC} Raspbian is recommended only for Raspberry Pi\n"
+		echo -e "${ORANGE}WARNING:${NC} Raspbian is recommended only for Raspberry Pi\n"
 		case ${VER} in 
 			8.0 )
-				echo -e "${GREEN}NOTE:{NC} ${OS} - ${VER} (${OSNAME}) is the recommended OS version.\n"
+				echo -e "${GREEN}NOTE:${NC} ${OS} - ${VER} (${OSNAME}) is the recommended OS version.\n"
 				;;
 			* )
 				# Handle other OS versions here
-				echo -e "${ORANGE}WARNING:{NC} ${OS} - ${VER} (${OSNAME}) is not a recommended OS version. You might get errors and some programming experience is required to compile Donnie. \n"
-				echo -e "${GREEN}NOTE:{NC} Raspbian Version 8 (Jessie) is the recommended version for ${OS}\n"
+				echo -e "${ORANGE}WARNING:${NC} ${OS} - ${VER} (${OSNAME}) is not a recommended OS version. You might get errors and some programming experience is required to compile Donnie. \n"
+				echo -e "${GREEN}NOTE:${NC} Raspbian Version 8 (Jessie) is the recommended version for ${OS}\n"
 				exit 1;
 			 ;;
-		esac		
+		esac
+		;;	
 	* )
      # Handle other distributions here
-		echo -e "${RED}ERROR:{NC} ${OS} is not a supported OS\n"
-		echo -e "${GREEN}NOTE:{NC} Raspbian Version 8 (Jessie) is recommended for Donnie's computer (Raspberry Pi)\n"
+		echo -e "${RED}ERROR:${NC} ${OS} is not a supported OS\n"
+		echo -e "${GREEN}NOTE:${NC} Raspbian Version 8 (Jessie) is recommended for Donnie's computer (Raspberry Pi)\n"
 		exit 1;
      ;;
 esac
