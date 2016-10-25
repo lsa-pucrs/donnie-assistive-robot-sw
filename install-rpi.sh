@@ -47,13 +47,13 @@ VER=$(lsb_release -sr)
 OSNAME=$(lsb_release -sc)
 
 case ${OS} in 
-	Rasbian )
+	Raspbian)
 		echo -e "${ORANGE}WARNING:${NC} Raspbian is recommended only for Raspberry Pi\n"
 		case ${VER} in 
-			8.0 )
+			8.0)
 				echo -e "${GREEN}NOTE:${NC} ${OS} - ${VER} (${OSNAME}) is the recommended OS version.\n"
 				;;
-			* )
+			*)
 				# Handle other OS versions here
 				echo -e "${ORANGE}WARNING:${NC} ${OS} - ${VER} (${OSNAME}) is not a recommended OS version. You might get errors and some programming experience is required to compile Donnie. \n"
 				echo -e "${GREEN}NOTE:${NC} Raspbian Version 8 (Jessie) is the recommended version for ${OS}\n"
@@ -61,7 +61,7 @@ case ${OS} in
 			 ;;
 		esac
 		;;	
-	* )
+	*)
      # Handle other distributions here
 		echo -e "${RED}ERROR:${NC} ${OS} is not a supported OS\n"
 		echo -e "${GREEN}NOTE:${NC} Raspbian Version 8 (Jessie) is recommended for Donnie's computer (Raspberry Pi)\n"
@@ -72,7 +72,7 @@ esac
 ##################################################
 # install commom packages
 ##################################################
-apt-get update
+sudo apt-get update
 sudo apt-get install -y build-essential
 
 # nice to have, not mandatory
@@ -91,8 +91,8 @@ sudo apt-get install -y pkg-config
 # so we downgraded the cmake to 2.8, used in wheezy
 # https://www.raspbian.org/RaspbianRepository
 wget https://archive.raspbian.org/raspbian.public.key -O - | sudo apt-key add -
-echo "deb http://archive.raspbian.org/raspbian wheezy main contrib non-free" >> /etc/apt/sources.list
-echo "deb-src http://archive.raspbian.org/raspbian wheezy main contrib non-free" >> /etc/apt/sources.list
+echo "deb http://archive.raspbian.org/raspbian wheezy main contrib non-free" |  sudo tee --append /etc/apt/sources.list > /dev/null
+echo "deb-src http://archive.raspbian.org/raspbian wheezy main contrib non-free"  |  sudo tee --append /etc/apt/sources.list > /dev/null
 sudo apt-get update
 #apt-cache madison cmake
 sudo apt-get install -y cmake-data=2.8.9-1
@@ -291,9 +291,7 @@ mkdir build
 cd build
 echo -e "${GREEN}Configuring Donnie ... ${NC}\n"
 # CMAKE_SYSTEM_PROCESSOR=arm is required to avoid compiling things not used by the robot computer
-cmake -DCMAKE_BUILD_TYPE=Release \
-	-DCMAKE_SYSTEM_PROCESSOR=arm \  
-	..
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_PROCESSOR=arm ..
 echo -e "${GREEN}Compiling Donnie ... ${NC}\n"
 make
 sudo make install
@@ -303,7 +301,7 @@ echo -e "${GREEN}Donnie installed !!!! ${NC}\n"
 # uninstall all dev packages to save space
 ##################################################
 echo -e "${GREEN}Cleaning the cache ... ${NC}\n"
-apt-get autoclean
-apt-get autoremove
+sudo apt-get -y autoclean
+sudo apt-get -y autoremove
 
 echo -e "${GREEN}End of installation !!!! ${NC}\n"
