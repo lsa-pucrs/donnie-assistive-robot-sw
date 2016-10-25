@@ -234,7 +234,7 @@ echo -e "${GREEN}End of installation !!!! ${NC}\n"
 # uninstall all dev packages to save space
 ##################################################
 echo -e "${GREEN}Cleaning the cache ... ${NC}\n"
-apt-get autoclean
-apt-get autoremove
+sudo apt-get -y autoclean
+sudo apt-get -y autoremove
 
 echo -e "${GREEN}End of installation !!!! ${NC}\n"
