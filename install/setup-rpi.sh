@@ -8,6 +8,10 @@
 #   Make sure this file is executed in your ~/.bashrc file
 # How to Execute:
 
+#general definitions
+alias ll='ls -lah'
+export LC_ALL=C
+
 # Donnie user environment variables
 # donnie instalation dir
 export DONNIE_PATH=/opt/donnie

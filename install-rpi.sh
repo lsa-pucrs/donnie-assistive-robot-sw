@@ -68,6 +68,32 @@ case ${OS} in
 		exit 1;
      ;;
 esac
+##################################################
+# set environment variables
+##################################################
+source ./install/setup-rpi.sh
+echo "source $DONNIE_PATH/setup-rpi.sh" >> ~/.bashrc
+
+##################################################
+# Setting up Raspberry Pi
+##################################################
+echo -e "${GREEN}Setting up Raspberry Pi ... ${NC}\n"
+#Desativa o login serial da Raspberry (Para evitar o conflito da serial do Arduino)
+#Source: http://spellfoundry.com/sleepypi/settingarduinoideraspbian/
+sudo systemctl mask serialgetty@ttyAMA0.service
+
+#Configurando o desligamento da raspberry (Shutdown) por interrupção do pino GPIO4
+#Referencia(No link tem outros uso para a GPIO Zero também): http://bennuttall.com/gpio-zero-developing-a-new-friendly-python-api-for-physical-computing/ 
+sudo apt-get install python3-gpiozero python-gpiozero
+
+# '$' means the last line, 'i' means insert before the current line, so '$i' means insert before the last line.
+sed -i -e '$i \nohup sudo python ${DONNIE_PATH}/scripts/softshutdown.py &\n' rc.local
+
+# script used to Donnie tell its IP address at startup 
+sudo apt-get install -y festival
+sed -i -e '$i \nohup sudo python ${DONNIE_PATH}/scripts/speechIP.py &\n' rc.local
+
+echo -e "${GREEN}Raspberry Pi Set Up Completed !!!!${NC}\n"
 
 ##################################################
 # install commom packages
@@ -98,12 +124,6 @@ sudo apt-get update
 sudo apt-get install -y cmake-data=2.8.9-1
 sudo apt-get install -y cmake=2.8.9-1
 sudo apt-get install -y cmake-curses-gui=2.8.9-1
-
-##################################################
-# set environment variables
-##################################################
-source ./install/setup-rpi.sh
-echo "source $DONNIE_PATH/setup-rpi.sh" >> ~/.bashrc
 
 ##################################################
 # install Player depedencies
@@ -147,6 +167,23 @@ sudo apt-get install -y libsox-dev
 #to compile gtts driver
 #sudo apt-get install -y curl
 sudo apt-get install -y libcurl4-openssl-dev
+#Instalar o TIMIDITY para poder usar os canais virtuais de MIDI (Virtual MIDI Port) e usar notas musicais no autofalante 
+sudo apt-get install -y timidity
+
+#Testando saida do auto falante
+#$speaker-test -t sine -f 1000 -c 2
+
+#Selecionar a saida para o jack p2
+#sudo amixer cset numid=3 1 # headphones
+#sudo amixer cset numid=3 0 # Auto
+#sudo amixer cset numid=3 2 # HDMI
+
+#Controle do volume
+#sudo alsamixer
+
+#Tocando um mp3
+#omxplayer mp3name.mp3
+
 
 ##################################################
 # Donwloading source code 
@@ -282,6 +319,18 @@ echo -e "${GREEN}Compiling raspicam ... ${NC}\n"
 make
 sudo make install
 echo -e "${GREEN}Raspicam installed !!!! ${NC}\n"
+
+#run the follwing command to test raspicam
+#raspivid -o - -t 9999999 -w 1280 -h 1024 -b 500000 -fps 20 -vf
+
+#Testing Raspicam via ssh
+#https://www.raspberrypi.org/forums/viewtopic.php?t=67571
+#http://raspi.tv/2013/how-to-stream-video-from-your-raspicam-to-your-nexus-7-tablet-using-vlc
+#1) Precisa do vlc (para o comando cvlc)
+sudo apt-get install -y vlc
+#2) Executar processo da camera
+raspivid -o - -t 99999 -w 640 -h 360 -fps 5 -vf|cvlc -vvv stream:///dev/stdin --sout '#standard{access=http,mux=ts,dst=:8090}' :demux=h264
+#Obs: Para conectar entrar no endereço (pelo streaming do VLC no PC) http://192.168.0.XX:8090 
 
 ##################################################
 # Compiling and installing Donnie
