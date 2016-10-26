@@ -1,6 +1,6 @@
-CXXFLAGS = `pkg-config --cflags playerc++ ` -g -I.
-CFLAGS = `pkg-config --cflags playerc ` -g -I.
-OBJS = utils.cpp DonnieClient.cpp Compiler.cpp GoDonnieLexer.c GoDonnieParser.c
+CXXFLAGS = `pkg-config --cflags playerc++ ` -g -I. -I../../utils/
+CFLAGS = `pkg-config --cflags playerc ` -g -I. -I../../utils/
+OBJS = ../../utils/utils.cpp DonnieClient.cpp Compiler.cpp GoDonnieLexer.c GoDonnieParser.c
 LDLIBS = $(OBJS) `pkg-config --libs playerc++` -fexec-charset=iso-8859-1 -std=c++0x -lreadline -lantlr3c
 CC = g++ 
 	
