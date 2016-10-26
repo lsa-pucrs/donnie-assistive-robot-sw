@@ -87,11 +87,11 @@ sudo systemctl mask serialgetty@ttyAMA0.service
 sudo apt-get install python3-gpiozero python-gpiozero
 
 # '$' means the last line, 'i' means insert before the current line, so '$i' means insert before the last line.
-sed -i -e '$i \nohup sudo python ${DONNIE_PATH}/scripts/softshutdown.py &\n' rc.local
+sudo sed -i -e '$i \nohup sudo python '"${DONNIE_PATH}"'/scripts/softshutdown.py &\n' /etc/rc.local
 
 # script used to Donnie tell its IP address at startup 
 sudo apt-get install -y festival
-sed -i -e '$i \nohup sudo python ${DONNIE_PATH}/scripts/speechIP.py &\n' rc.local
+sudo sed -i -e '$i \nohup sudo python '"${DONNIE_PATH}"'/scripts/speechIP.py &\n' /etc/rc.local
 
 echo -e "${GREEN}Raspberry Pi Set Up Completed !!!!${NC}\n"
 
@@ -99,18 +99,13 @@ echo -e "${GREEN}Raspberry Pi Set Up Completed !!!!${NC}\n"
 # install commom packages
 ##################################################
 sudo apt-get update
-sudo apt-get install -y build-essential
 
 # nice to have, not mandatory
 sudo apt-get install -y geany
 
 #compilation utils
 echo -e "${GREEN}Installing Compilation Utils ... ${NC}\n"
-sudo apt-get install -y autoconf
-#sudo apt-get install -y cmake
-#sudo apt-get install -y cmake-curses-gui
-sudo apt-get install -y git
-sudo apt-get install -y pkg-config
+sudo apt-get install -y build-essential autoconf git pkg-config
 
 # Jessie installs cmake 3.0 by the default, but lubuntu 14.04 uses cmake 2.8
 # this gives some weird warnings when running cmake 3.0 on rpi.
@@ -329,7 +324,7 @@ echo -e "${GREEN}Raspicam installed !!!! ${NC}\n"
 #1) Precisa do vlc (para o comando cvlc)
 sudo apt-get install -y vlc
 #2) Executar processo da camera
-raspivid -o - -t 99999 -w 640 -h 360 -fps 5 -vf|cvlc -vvv stream:///dev/stdin --sout '#standard{access=http,mux=ts,dst=:8090}' :demux=h264
+#raspivid -o - -t 99999 -w 640 -h 360 -fps 5 -vf|cvlc -vvv stream:///dev/stdin --sout '#standard{access=http,mux=ts,dst=:8090}' :demux=h264
 #Obs: Para conectar entrar no endereço (pelo streaming do VLC no PC) http://192.168.0.XX:8090 
 
 ##################################################
