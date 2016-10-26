@@ -72,7 +72,7 @@ esac
 # set environment variables
 ##################################################
 source ./install/setup-rpi.sh
-echo "source $DONNIE_PATH/setup-rpi.sh" >> ~/.bashrc
+echo "source $DONNIE_PATH/setup.sh" >> ~/.bashrc
 
 ##################################################
 # Setting up Raspberry Pi
@@ -329,7 +329,7 @@ echo -e "${GREEN}Raspicam installed !!!! ${NC}\n"
 #1) Precisa do vlc (para o comando cvlc)
 sudo apt-get install -y vlc
 #2) Executar processo da camera
-raspivid -o - -t 99999 -w 640 -h 360 -fps 5 -vf|cvlc -vvv stream:///dev/stdin --sout '#standard{access=http,mux=ts,dst=:8090}' :demux=h264
+#raspivid -o - -t 99999 -w 640 -h 360 -fps 5 -vf|cvlc -vvv stream:///dev/stdin --sout '#standard{access=http,mux=ts,dst=:8090}' :demux=h264
 #Obs: Para conectar entrar no endereço (pelo streaming do VLC no PC) http://192.168.0.XX:8090 
 
 ##################################################
