@@ -10,3 +10,8 @@ class sintaxeException: public exception
 	public:
 		virtual const char* what() const throw();
 };
+class variavelException: public exception
+{
+	public:
+		virtual const char* what() const throw();
+};
