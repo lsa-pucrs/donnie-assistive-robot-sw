@@ -1,4 +1,5 @@
 #include "Compiler.h"
+#include "Exception.h"
 
 using std::map;
 using std::vector;
@@ -46,7 +47,7 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
 	}
 	catch(exception& e)
 	{
-		cout e.what();
+		cout << e.what();
 	}
 	
   	parser->free(parser);
@@ -106,7 +107,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
                 return memory[getText(tree)];
               }
               else
-                cout << "Variavel " << getText(tree) << " global não existe" << endl;
+                //cout << "Variavel " << getText(tree) << " global não existe" << endl;
+                throw variavelException();
             }
             else
             {
@@ -115,7 +117,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
                 return localMem.top().memory[getText(tree)]; // Variável local do primeiro item da stack
               }
               else
-                cout << "Variavel " << getText(tree) << " local não existe" << endl;
+                //cout << "Variavel " << getText(tree) << " local não existe" << endl;
+                throw variavelException();
             }
             break;              
           }
@@ -221,7 +224,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
             int arg;
 
-            if(tkn[0] == 102 or tkn[0] == 70)
+            if(tkn[0] == 'f' or tkn[0] == 'F')
             {
               if(tkn[1] == 101 or tkn[1] == 69)
                 arg = 2;
@@ -597,7 +600,10 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
 pANTLR3_BASE_TREE getChild(pANTLR3_BASE_TREE tree, unsigned i)
 {
-    assert(i < tree->getChildCount(tree));
+	
+    //assert(i < tree->getChildCount(tree));
+    if(!(i < tree->getChildCount(tree))) throw sintaxeException();
+    
     return (pANTLR3_BASE_TREE) tree->getChild(tree, i);
 }
 
