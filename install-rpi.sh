@@ -87,6 +87,7 @@ sudo systemctl mask serialgetty@ttyAMA0.service
 sudo apt-get install python3-gpiozero python-gpiozero
 
 # '$' means the last line, 'i' means insert before the current line, so '$i' means insert before the last line.
+sed -i -e '$i \sleep 10\n' rc.local ## this sleep is required to play festival. sometimes rc.locals plays too early
 sed -i -e '$i \nohup sudo python ${DONNIE_PATH}/scripts/softshutdown.py &\n' rc.local
 
 # script used to Donnie tell its IP address at startup 
