@@ -72,6 +72,7 @@ Soxplayer::Soxplayer(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 		SetError(-1);
 		return;
 	}
+	//TODO. amory. pq speech interface ? revisar esta msg. dar find por speech
 	if (AddInterface(this->sound_addr)){
 		PLAYER_ERROR("Could not add speech interface ");
 		SetError(-1);
@@ -155,10 +156,20 @@ int Soxplayer::Play(char *fileAddr){
 	    exit(1);
 	}  */
 
+	//assert(in = sox_open_read(fileAddr, NULL, NULL, NULL) == SOX_SUCCESS);
 	
-	assert(in = sox_open_read(fileAddr, NULL, NULL, NULL));
+	if((in = sox_open_read(fileAddr, NULL, NULL, NULL)) == NULL){
+		printf ("ERROR: cannot read audio file %s \n", fileAddr);
+		exit(1);
+	}
+	
 	/* Change "alsa" in this line to use an alternative audio device driver: */
-	assert(out= sox_open_write("default", &in->signal, NULL, "alsa", NULL, NULL));
+	//assert(out= sox_open_write("default", &in->signal, NULL, "alsa", NULL, NULL) == SOX_SUCCESS );
+	
+	if((out= sox_open_write("default", &in->signal, NULL, "alsa", NULL, NULL)) == NULL){
+		printf ("ERROR: cannot write audio device 'alsa' \n");
+		exit(1);
+		}
 
 	chain = sox_create_effects_chain(&in->encoding, &out->encoding);
 
@@ -168,23 +179,23 @@ int Soxplayer::Play(char *fileAddr){
 	args[0] = (char *)in, assert(sox_effect_options(e, 1, args) == SOX_SUCCESS);
 	assert(sox_add_effect(chain, e, &interm_signal, &in->signal) == SOX_SUCCESS);
 	free(e);
-
+	
 	printf ("rate %d %d\n", (int)in->signal.rate, (int)out->signal.rate);
 	if (in->signal.rate != out->signal.rate) {
-	e = sox_create_effect(sox_find_effect("rate"));
-	//args[0] = "48000", assert(sox_effect_options(e, 1, args) == SOX_SUCCESS);
-	assert(sox_effect_options(e, 0, NULL) == SOX_SUCCESS);
-	assert(sox_add_effect(chain, e, &interm_signal, &out->signal) == SOX_SUCCESS);
-	free(e);
+		e = sox_create_effect(sox_find_effect("rate"));
+		//args[0] = "48000", assert(sox_effect_options(e, 1, args) == SOX_SUCCESS);
+		assert(sox_effect_options(e, 0, NULL) == SOX_SUCCESS);
+		assert(sox_add_effect(chain, e, &interm_signal, &out->signal) == SOX_SUCCESS);
+		free(e);
 
 	}
 
 	printf ("channels %d %d\n", in->signal.channels, out->signal.channels);
 	if (in->signal.channels != out->signal.channels) {
-	e = sox_create_effect(sox_find_effect("channels"));
-	assert(sox_effect_options(e, 0, NULL) == SOX_SUCCESS);
-	assert(sox_add_effect(chain, e, &interm_signal, &out->signal) == SOX_SUCCESS);
-	free(e);
+		e = sox_create_effect(sox_find_effect("channels"));
+		assert(sox_effect_options(e, 0, NULL) == SOX_SUCCESS);
+		assert(sox_add_effect(chain, e, &interm_signal, &out->signal) == SOX_SUCCESS);
+		free(e);
 	}
 
 	e = sox_create_effect(sox_find_effect("output"));
