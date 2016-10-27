@@ -48,22 +48,27 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
 ### Install Donnie Software on a Desktop Computer
 
- On a Linux computer, download this software 
+ On a Linux computer, download this repository 
  
 	sudo apt-get install git
 	cd Downloads
  	git clone  https://github.com/lsa-pucrs/donnie-assistive-robot-sw.git
+	<!---
+	wget https://raw.github.com/lsa-pucrs/donnie-assistive-robot-sw/feature-scripts/install.sh
+	-->
 	
  and type the following command:
 
-	./install
+	cd donnie-assistive-robot-sw.git
+	chmod +x ./install.sh 
+	./install.sh
 
 
 
 
 ### Install Donnie Software on a Donnie's Embedded Computer (Raspberry Pi)
 
- Logon the Donnie's embedded computer, download this software 
+ Logon the Donnie's embedded computer, download this repository 
  
 	sudo apt-get install git
 	cd Downloads
@@ -71,7 +76,9 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 	
  and type the following command:
 
-	./install-rpi
+	cd donnie-assistive-robot-sw.git
+	chmod +x ./install-rpi.sh 
+	./install-rpi.sh
 
 # Features
 ---------------
