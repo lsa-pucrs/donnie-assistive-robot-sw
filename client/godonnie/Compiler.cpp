@@ -577,14 +577,15 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
                 return val;
               }
               else
-                cout << "Variavel " << var << " local não existe" << endl;
+                //cout << "Variavel " << var << " local não existe" << endl;
+                ;
             }
             break;            
           }
   
           default:
               //cout << "Unhandled token: #" << tok->type << '\n';
-               throw sintaxeException();
+               throw sintaxeException("Sintaxe não conhecida\n");
                break;
         }
     }
