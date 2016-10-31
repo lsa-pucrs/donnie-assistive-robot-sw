@@ -36,7 +36,7 @@ driver
 #include <unistd.h> //sleep
 
 #include "sox.h" //to play audio files
-#include <assert.h>
+//#include <assert.h>
 
 #include <fstream> //to check file exists
 
@@ -80,7 +80,11 @@ Soxplayer::Soxplayer(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 	}
 
 	//init sox
-	assert(sox_init() == SOX_SUCCESS);
+	//assert(sox_init() == SOX_SUCCESS);
+	if(sox_init() != SOX_SUCCESS){
+		PLAYER_ERROR("Could not initialize sox");
+		exit(1);
+	}
 
 }
 Soxplayer::~Soxplayer(){
@@ -176,16 +180,20 @@ int Soxplayer::Play(char *fileAddr){
 	interm_signal = in->signal; /* NB: deep copy */
 
 	e = sox_create_effect(sox_find_effect("input"));
-	args[0] = (char *)in, assert(sox_effect_options(e, 1, args) == SOX_SUCCESS);
-	assert(sox_add_effect(chain, e, &interm_signal, &in->signal) == SOX_SUCCESS);
+	//args[0] = (char *)in, assert(sox_effect_options(e, 1, args) == SOX_SUCCESS);
+	args[0] = (char *)in, sox_effect_options(e, 1, args);
+	//assert(sox_add_effect(chain, e, &interm_signal, &in->signal) == SOX_SUCCESS);
+	sox_add_effect(chain, e, &interm_signal, &in->signal);
 	free(e);
 	
 	printf ("rate %d %d\n", (int)in->signal.rate, (int)out->signal.rate);
 	if (in->signal.rate != out->signal.rate) {
 		e = sox_create_effect(sox_find_effect("rate"));
 		//args[0] = "48000", assert(sox_effect_options(e, 1, args) == SOX_SUCCESS);
-		assert(sox_effect_options(e, 0, NULL) == SOX_SUCCESS);
-		assert(sox_add_effect(chain, e, &interm_signal, &out->signal) == SOX_SUCCESS);
+		//assert(sox_effect_options(e, 0, NULL) == SOX_SUCCESS);
+		sox_effect_options(e, 0, NULL);
+		//assert(sox_add_effect(chain, e, &interm_signal, &out->signal) == SOX_SUCCESS);
+		sox_add_effect(chain, e, &interm_signal, &out->signal);
 		free(e);
 
 	}
@@ -193,14 +201,18 @@ int Soxplayer::Play(char *fileAddr){
 	printf ("channels %d %d\n", in->signal.channels, out->signal.channels);
 	if (in->signal.channels != out->signal.channels) {
 		e = sox_create_effect(sox_find_effect("channels"));
-		assert(sox_effect_options(e, 0, NULL) == SOX_SUCCESS);
-		assert(sox_add_effect(chain, e, &interm_signal, &out->signal) == SOX_SUCCESS);
+		//assert(sox_effect_options(e, 0, NULL) == SOX_SUCCESS);
+		//assert(sox_add_effect(chain, e, &interm_signal, &out->signal) == SOX_SUCCESS);
+		sox_effect_options(e, 0, NULL);
+		sox_add_effect(chain, e, &interm_signal, &out->signal);
 		free(e);
 	}
 
 	e = sox_create_effect(sox_find_effect("output"));
-	args[0] = (char *)out, assert(sox_effect_options(e, 1, args) == SOX_SUCCESS);
-	assert(sox_add_effect(chain, e, &interm_signal, &out->signal) == SOX_SUCCESS);
+	//args[0] = (char *)out, assert(sox_effect_options(e, 1, args) == SOX_SUCCESS);
+	//assert(sox_add_effect(chain, e, &interm_signal, &out->signal) == SOX_SUCCESS);
+	args[0] = (char *)out, sox_effect_options(e, 1, args) ;
+	sox_add_effect(chain, e, &interm_signal, &out->signal) ;
 	free(e);
 
 	sox_flow_effects(chain, NULL, NULL);
