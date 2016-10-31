@@ -155,8 +155,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case PF:
           {
-
+			#ifndef NDEBUG
             cout << "PF: " << run(getChild(tree,0)) << endl;
+            #endif
             Donnie->ParaFrente((float)run(getChild(tree,0)));
             //Para_Frente(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
@@ -164,8 +165,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case PT:
           {
-
+			#ifndef NDEBUG
             cout << "PT: " << run(getChild(tree,0)) << endl;
+            #endif
             Donnie->ParaTras((float)run(getChild(tree,0)));
             //Para_Tras(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
@@ -173,8 +175,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case PD:
           {
-
+			#ifndef NDEBUG
             cout << "PD: " << run(getChild(tree,0)) << endl;
+            #endif
             Donnie->ParaDireita((float)run(getChild(tree,0)));
             //Para_Direita(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
@@ -182,8 +185,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case PE:
           {
-
+			#ifndef NDEBUG
             cout << "PE: " << run(getChild(tree,0)) << endl;
+            #endif
             Donnie->ParaEsquerda((float)run(getChild(tree,0)));
             //Para_Esquerda(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
@@ -192,15 +196,18 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case SCAN:
           {
-
+			#ifndef NDEBUG
             cout << "SCAN"<< endl;
+            #endif
             //Scan(&head, &p2d_headProxy, &speech, SHProxy, BfinderProxy,&robot,&p2dProxy);
             break;
           }
 
           case STATUS:
           {
+			#ifndef NDEBUG
             cout << "STATUS"<< endl;
+            #endif
             //Mostra_Status(&speech);
             break;
           }
@@ -284,7 +291,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case ESPERA:
           {
+			#ifndef NDEBUG
             cout << "ESPERAR: " << endl;
+            #endif
             sleep(run(getChild(tree,0)));
             break;
           }
@@ -337,8 +346,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case WHILEE:
           {
+			#ifndef NDEBUG
             cout << "while" << endl;
-
+			#endif
             int a = run(getChild(tree,0));                      // Retorna o valor das variáveis na condição
             int b = run(getChild(tree,2));                      // #
             string c = (string)getText(getChild(tree,1));       // Retorna operador de condição
@@ -392,10 +402,14 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case REPTB:
           case PROCB:
           {
+			#ifndef NDEBUG
             cout << "N Fi: " << tree->getChildCount(tree) << endl;
+            #endif
             for (int f = 0; f < tree->getChildCount(tree); f++)
               {
+				#ifndef NDEBUG
                 cout << getText(getChild(tree,f)) << endl;
+                #endif
                 run(getChild(tree,f));
               }
             break;
@@ -428,7 +442,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
               }
               else
               {
+				#ifndef NDEBUG
                 cout << "MAKE: " << var << " = " << val << endl;
+                #endif
                 memory[var] = val;
                 return val;
               }
@@ -443,7 +459,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
               }
               else
               {
+                #ifndef NDEBUG
                 cout << "MAKE: " << var << " = " << val << endl;
+                #endif
                 localMem.top().memory[var] = val;
                 return val;
               }
@@ -536,7 +554,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case QUIT:
           {
+            #ifndef NDEBUG
             cout << "EXIT" << endl;
+            #endif
             //Mix_CloseAudio();
             //SDL_Quit();
             done = 0;
