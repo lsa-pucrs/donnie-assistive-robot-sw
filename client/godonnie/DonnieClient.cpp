@@ -79,6 +79,7 @@ float DonnieClient::GetRange(int arg)
 	{
 		case 0: //f
 			return sonarProxy->GetRange(1)*100; //*100 to convert from m to cm
+			//return sonarProxy->GetRange(1)/STEP_LENGHT; // /STEP_LENGHT to convert from m to steps
 
 		case 1: //t
 			return sonarProxy->GetRange(4)*100;
@@ -130,7 +131,9 @@ void DonnieClient::ParaFrente(float arg)
 	{
 
 	  path.push_back(i*STEP_LENGHT);
+	  #ifndef NDEBUG // only print when it was compiled in debug mode. 'cmake -DCMAKE_BUILD_TYPE=Debug ..'
 	  cout << path[i-1] << endl;
+	  #endif
 	}
 
 	float fltPart = arg - (int)arg;
@@ -234,15 +237,19 @@ void DonnieClient::ParaFrente(float arg)
 
 	if(stop = true and erro < 0.8 and erro > 0.2)
 	{
+		#ifndef NDEBUG
 		cout << "!"  << erro << endl;
+		#endif
 		this->ParaTras(erro);
 	}
 
 	path.clear();
 
+	#ifndef NDEBUG
 	cout << "Andou: " << passos << endl;
 	//robot->Read();
 	//cout << p2dProxy->GetXPos() << ", " << p2dProxy->GetYPos() << endl;
+	#endif
 }
 
 void DonnieClient::ParaTras(float arg)
@@ -260,7 +267,9 @@ void DonnieClient::ParaTras(float arg)
 	{
 
 	  path.push_back(i*STEP_LENGHT);
+	  #ifndef NDEBUG
 	  cout << path[i-1] << endl;
+	  #endif
 	}
 
 	float fltPart = arg - (int)arg;
@@ -268,7 +277,9 @@ void DonnieClient::ParaTras(float arg)
 	if(fltPart > 0)
 	{
 	  path.push_back(fltPart);
+	  #ifndef NDEBUG
 	  cout << path[0];
+	  #endif
 	}
 
 	float Npassos = arg;
@@ -360,8 +371,10 @@ void DonnieClient::ParaTras(float arg)
 	}
 
 	if(stop = true and erro < 0.8 and erro > 0.2)
-	{
+	{	
+		#ifndef NDEBUG
 		cout << "!"  << endl<< endl;
+		#endif
 		this->ParaFrente(erro);
 	}
 
@@ -379,7 +392,9 @@ void DonnieClient::ParaDireita(float arg)
 	double yawd;  //Angulo de destino do robo
 	yawi = radTOrad(yawf);
 
+	#ifndef NDEBUG
 	cout << yawi << endl;
+	#endif
 
 	/////////////////Calculo para determinar angulo que o robo deve chegar////////////////////////////////
 	if(yawi - degTOrad(arg) > M_PI)
@@ -389,7 +404,9 @@ void DonnieClient::ParaDireita(float arg)
 	else
 	  yawd = yawi - degTOrad(arg);
 
+	#ifndef NDEBUG
 	cout << yawd << endl;
+	#endif
 
 	//p2d_headProxy->SetSpeed(0,-0.5);
 	p2dProxy->SetSpeed(0,-0.5);
@@ -544,7 +561,9 @@ void DonnieClient::ParaDireita(float arg)
 	//p2d_headProxy->SetSpeed(0,0);
 	p2dProxy->SetSpeed(0,0);
 	robot->Read();
+	#ifndef NDEBUG
 	cout << p2dProxy->GetYaw() << endl;
+	#endif
 }
 
 void DonnieClient::ParaEsquerda(float arg)
