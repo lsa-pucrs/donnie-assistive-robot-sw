@@ -192,6 +192,11 @@ echo -e "${GREEN}Stage installed !!!! ${NC}\n"
 echo -e "${GREEN}Installing Donnie Dependencies ... ${NC}\n"
 #to compile soxplayer driver
 #sudo apt-get install -y sox
+# TODO: check if any of these packages are actually required for donnie
+#  188  sudo apt-get install libsoxr0
+#  190  sudo apt-get install sox
+#  222  sudo apt-get install xfce4-mixer gstreamer0.10-alsa
+#  225  sudo apt-get install pulseaudio pavucontrol
 sudo apt-get install -y libsox-dev 
 #to compile gtts driver
 #sudo apt-get install -y curl
