@@ -70,7 +70,6 @@ int ExprTreeEvaluator::terminalMode(char* textIn)
 int ExprTreeEvaluator::scriptMode(char* fileIn)
 {
   mode = SCRIPT;
-  cout << "AAAAAA " << fileIn << endl;
   pANTLR3_INPUT_STREAM input = antlr3AsciiFileStreamNew((pANTLR3_UINT8)fileIn);       //  Utilizar para modo script
 
   this->parser(input);
@@ -244,8 +243,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             {
               arg = 6;
             } 
-
+			#ifndef NDEBUG
             cout << "RANGER: " << arg << endl;
+            #endif
             return (int)Donnie->GetRange(arg);
           }
 
@@ -265,8 +265,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
               arg = 1;
             else
               arg = 2;
-
+			#ifndef NDEBUG
             cout << "POS: " << getText(tree) << endl;
+            #endif
             return (int)Donnie->GetPos(arg);
 
           }
