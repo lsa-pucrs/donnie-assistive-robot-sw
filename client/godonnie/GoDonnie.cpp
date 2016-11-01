@@ -6,6 +6,7 @@
 #include <sstream>
 #include <cstring>
 #include <string>
+#include <unistd.h> //getopt
 
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -39,51 +40,99 @@ COMMAND commands[] = {
 void initialize_readline ();
 char ** fileman_completion (const char *text, int start, int end);
 char * command_generator (const char *text, int state);
-
-
+void usage(char *exec);
 
 int main(int argc, char* argv[])
 {
-
-	bool done = 0;
-
-	if(argc < 2)
-  {
-    cout << "\nUso: " << argv[0] << " <arg>" << endl;
-    cout << "Argumentos: \n    -t                :      Executa em modo terminal. \n    <nome do arquivo> :      Executa em modo script." << endl << endl;
-    return -1;
-  }
-
-  for(int i = 1; i < argc; i++)
-  {
-    if(argv[i][0] == '-' && argv[i][1] == 't')
-    {
-      done = 1;
-      break;
+	bool done = 0, termMode = 0, scriptMode=0;
+	string filename ;
+	int c=0;
+	
+    if ( argc <= 1 ) {  // there is NO input...
+        cerr << "No argument provided!" << endl;
+        usage(argv[0]);
+        return 1;
     }
-    else
-      done = 0;
+    
+   while ((c = getopt (argc, argv, "thf:")) != -1){
+    switch (c){
+      case 't': // terminal mode
+        termMode = 1;
+		if ( argc !=2 ) {  // check extra useless argumets in terminal mode
+			cerr << "Terminal mode requires only one argument" << endl;
+			usage(argv[0]);
+			return 1;
+		}        
+        break;
+      case 'f': // script file  mode
+        filename = optarg;
+        scriptMode=1;
+		if ( argc !=3 ) {  // check extra useless argumets in script mode
+			cerr << "Script mode requires only two arguments" << endl;
+			usage(argv[0]);
+			return 1;
+		}     
+        // test if file exists
+        if( access( optarg, F_OK ) == -1 ) {
+			cerr << "File " << filename << " not found!" << endl;
+			return 1;
+		}
+        break;
+      case 'h':  // help 
+		usage(argv[0]);
+        return 0;
+      case '?': // error
+        if (optopt == 'f'){
+          fprintf (stderr, "Option -%c requires a filename with GoDonnie code.\n", optopt);
+        }else if (isprint (optopt)){
+          fprintf (stderr, "Unknown option `-%c'.\n", optopt);
+        }else{
+          fprintf (stderr,
+                   "Unknown option character `\\x%x'.\n",
+                   optopt);
+	    }
+	    usage(argv[0]);
+        return 1;
+      default:
+        usage(argv[0]);
+        return 1;
+      }
   }
 
+  if(!termMode && !scriptMode){
+	  cerr << "No mode selected" << endl;
+	 usage(argv[0]);
+	 return 1;
+  }
+  if(termMode && scriptMode){
+	  cerr << "Cannot have both modes selected at the same time" << endl;
+	 usage(argv[0]);
+	 return 1;
+  }
+  
   ExprTreeEvaluator Client;
-
   initialize_readline ();
-
   char *temp, *prompt;
 
   temp = (char *)NULL;
   prompt = (char*)"GoDonnie$ ";
 
-  do
-  {
-    if(done)
-    {
+  // terminal mode
+  if(termMode)
+  {    	  
+	while(!done)
+	{		
       temp = (char *)NULL;
 
       temp = readline (prompt);
 
       if (!temp)
         exit (1);
+
+      if (strcmp(temp,"") == 1){
+		  // empty line
+		  continue;
+	  }
 
       if (*temp)
       {
@@ -92,15 +141,23 @@ int main(int argc, char* argv[])
       }
 
       done = Client.terminalMode(temp);
+    };
+  }else if(scriptMode){    // script mode
+  
+	if( Client.scriptMode((char *)filename.c_str()) != 0){
+		cerr << "Erro de sintaxe no arquivo " << filename << endl ;
+	}
+  }
 
-    }
-    else
-    {
-      done = Client.scriptMode(argv[1]);      //  Utilizar para modo script
-    }
+}
 
-  }while(done);
-
+void usage(char *exec){
+	cout << endl
+		 << "\nUso: " << exec << " <arg>" << endl
+		 << "Argumentos:" << endl
+		 << "   -t                   : Executa em modo terminal." << endl 
+		 << "   -f <nome do arquivo> : Executa em modo script." << endl
+		 << "   -h                   : Ajuda " << endl << endl;
 }
 
 void initialize_readline ()
