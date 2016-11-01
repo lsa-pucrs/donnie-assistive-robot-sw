@@ -47,12 +47,14 @@ int main(int argc, char* argv[])
 
 	bool done = 0;
 
+	//Caso não tenha a quantidade de argumentos corretos da um aviso
 	if(argc < 2)
   {
     cout << "\nUso: " << argv[0] << " <arg>" << endl;
     cout << "Argumentos: \n    -t                :      Executa em modo terminal. \n    <nome do arquivo> :      Executa em modo script." << endl << endl;
     return -1;
   }
+
 
   for(int i = 1; i < argc; i++)
   {
