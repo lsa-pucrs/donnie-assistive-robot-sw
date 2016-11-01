@@ -52,8 +52,6 @@ driver
 using namespace cv;
 using namespace std;
 
-//long delay = 33333; //Aprox. 30 fps
-
 ////////////////////////////////////////////////////////////////////////////////
 // The class for the driver
 class Raspicam_driver : public ThreadedDriver
@@ -81,17 +79,14 @@ class Raspicam_driver : public ThreadedDriver
 
     raspicam::RaspiCam_Cv tCamera;
 
-    //VideoCapture capture;
     int fps;
     double delay;
-   // clock_t t1, t2;
-	double t1,t2;
-    player_devaddr_t camera_addr; // camera a ser enviada
+	  double t1,t2;
+    player_devaddr_t camera_addr; 
     Mat frame;
     player_camera_data_t * data;
     int height, width, channels;
     int cont;
-    //unsigned char * pData;
     int foop;
 };
 
@@ -149,7 +144,6 @@ Raspicam_driver::Raspicam_driver(ConfigFile* cf, int section)
   memset(&(this->camera_addr), 0, sizeof (player_devaddr_t)); 
   memset(&(this->data), 0, sizeof (player_camera_data_t)); 
   cont = 0; 
-	//cout<<"batatinha"<<endl;  
   if (cf->ReadDeviceAddr(&(this->camera_addr), section, "provides", PLAYER_CAMERA_CODE, -1, NULL)){
     this->SetError(-1);
     return;
@@ -165,36 +159,22 @@ Raspicam_driver::Raspicam_driver(ConfigFile* cf, int section)
   width = cf->ReadInt(section, "width", 640);
   channels = cf->ReadInt(section, "channels", 3);
   t1=cv::getTickCount();
- // t1 = clock();
   
  if(configure(width,height,channels)==-1)
   {
     cout << "\tCamera not found or could not be opened" << endl;
     this->SetError(-1);
-  //  return -1;
+    //return -1;
   }
-
-  // Read an option from the configuration file
-  //this->foop = cf->ReadInt(section, "foo", 0);
 
   return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Set up the device.  Return 0 if things go well, and -1 otherwise.
-int Raspicam_driver::MainSetup() //método inicializador! similar ao "setup"do arduino..
+int Raspicam_driver::MainSetup() 
 {   
   puts("Raspicam_driver initializing! ");
-
-
-
-  ///set up raspicam and configuration stuff :)
-/* if(configure(width,height,channels)==-1)
-  {
-    cout << "\tCamera not found or could not be opened" << endl;
-    this->SetError(-1);
-    return -1;
-  }*/
 
   // Here you do whatever is necessary to setup the device, like open and
   // configure a serial port.
@@ -210,14 +190,12 @@ int Raspicam_driver::MainSetup() //método inicializador! similar ao "setup"do a
 
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown the device
-void Raspicam_driver::MainQuit() // este método serve para fechar tudo que ficou aberto. fechar a raspicam e o opencv.
+void Raspicam_driver::MainQuit()
 {
   puts("Shutting example driver down");
 
   // Here you would shut the device down by, for example, closing a
-  // serial port.
   frame.release();
-  //capture.release();
   tCamera.release();
 
   puts("Example driver has been shutdown");
@@ -248,17 +226,13 @@ int Raspicam_driver::capturar()
 {
 
 	t2=cv::getTickCount();
-	// t2 = clock();
-	//cout<<"diferenca:"<<(((double)(t2 - t1) / 1000000.0F))*100<<endl;
-  //cout<< (double ( t2-t1 ) /double ( cv::getTickFrequency()))<<endl;
-  // if ((((double)(t2 - t1) / 1000000.0F))*100 >= delay)
   if( (double ( t2-t1 ) /double ( cv::getTickFrequency())) >=delay)	 
   {
 
      frame=Raspi_Capture();
 
       Size size(height,width);
-      resize(frame,frame,size);
+      resize(frame,frame,size); //use this resize because the configuration function of raspicam is not working properly
       if (frame.depth() != CV_8U)
       {
         PLAYER_ERROR1("Unsupported depth %d", frame.depth());
@@ -310,12 +284,8 @@ int Raspicam_driver::capturar()
       data->compression = PLAYER_CAMERA_COMPRESS_RAW;
 
       this->Publish(device_addr, PLAYER_MSGTYPE_DATA, PLAYER_CAMERA_DATA_STATE, reinterpret_cast<void *>(data), 0, NULL, false);
-     // cout << "cont " << cont << endl;
-      //cont ++;
-     // namedWindow("batatas", CV_WINDOW_AUTOSIZE);
-     // imshow("batatas", teste);
-     // waitKey(1);
-      t1 =cv::getTickCount();//clock();
+
+      t1 =cv::getTickCount();
   }
       return 0;
 }
