@@ -1,15 +1,24 @@
 #include "DonnieClient.h"
+#include "Historic.h"
 #include <libplayerc++/playerc++.h>
 
 using namespace std;
 using namespace PlayerCc;
 
-#define STEP_LENGHT 0.05
-#define SIDE_RANGER 0.05
-#define FRONT_RANGER 0.06
-#define BACK_RANGER 0.05
+//Trocar por const
+const double STEP_LENGHT = 0.05;
+const double  SIDE_RANGER = 0.05;
+const double  FRONT_RANGER = 0.06;
+const double  BACK_RANGER = 0.05;
 
 
+//Singleton
+DonnieClient DonnieClient::singleton = DonnieClient();
+
+DonnieClient&  DonnieClient::getInstance()
+{
+	return singleton;
+}
 
 DonnieClient::DonnieClient()
 {
@@ -37,9 +46,10 @@ DonnieClient::DonnieClient()
 	//SHProxy = new RangerProxy(head,3);
 
 	//speech = new SpeechProxy(robot,0);
-
+	
+	speech = new SpeechProxy(robot,0);
+	
 	robot->StartThread();
-
 }
 
 int DonnieClient::FrontBumper()
@@ -72,6 +82,8 @@ int DonnieClient::BackBumper()
 
 }
 
+
+DonnieClient::~DonnieClient(){}
 float DonnieClient::GetRange(int arg)
 {
 	robot->Read();
