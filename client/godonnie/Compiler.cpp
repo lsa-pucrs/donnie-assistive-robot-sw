@@ -15,7 +15,7 @@ ExprTreeEvaluator::ExprTreeEvaluator()
 
   	memFlag = 0;
   	for_itFlag = 0;
-    done = 1;
+    done = 0;
 }
 
 int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
@@ -70,7 +70,7 @@ int ExprTreeEvaluator::terminalMode(char* textIn)
 int ExprTreeEvaluator::scriptMode(char* fileIn)
 {
   mode = SCRIPT;
-
+  cout << "AAAAAA " << fileIn << endl;
   pANTLR3_INPUT_STREAM input = antlr3AsciiFileStreamNew((pANTLR3_UINT8)fileIn);       //  Utilizar para modo script
 
   this->parser(input);
@@ -559,7 +559,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             #endif
             //Mix_CloseAudio();
             //SDL_Quit();
-            done = 0;
+            done = 1;
             break;
           }
 
