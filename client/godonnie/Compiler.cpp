@@ -165,7 +165,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case PF:
           {
 
-            cout << "PF: " << run(getChild(tree,0)) << endl;
+            //cout << "PF: " << run(getChild(tree,0)) << endl;
             Donnie->ParaFrente((float)run(getChild(tree,0)));
             //Para_Frente(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
@@ -174,7 +174,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case PT:
           {
 
-            cout << "PT: " << run(getChild(tree,0)) << endl;
+            //cout << "PT: " << run(getChild(tree,0)) << endl;
             Donnie->ParaTras((float)run(getChild(tree,0)));
             //Para_Tras(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
@@ -183,7 +183,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case PD:
           {
 
-            cout << "PD: " << run(getChild(tree,0)) << endl;
+            //cout << "PD: " << run(getChild(tree,0)) << endl;
             Donnie->ParaDireita((float)run(getChild(tree,0)));
             //Para_Direita(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
@@ -192,7 +192,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case PE:
           {
 
-            cout << "PE: " << run(getChild(tree,0)) << endl;
+            //cout << "PE: " << run(getChild(tree,0)) << endl;
             Donnie->ParaEsquerda((float)run(getChild(tree,0)));
             //Para_Esquerda(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
@@ -202,14 +202,14 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case SCAN:
           {
 
-            cout << "SCAN"<< endl;
+            //cout << "SCAN"<< endl;
             //Scan(&head, &p2d_headProxy, &speech, SHProxy, BfinderProxy,&robot,&p2dProxy);
             break;
           }
 
           case STATUS:
           {
-            cout << "STATUS"<< endl;
+            //cout << "STATUS"<< endl;
             //Mostra_Status(&speech);
             break;
           }
@@ -247,7 +247,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
               arg = 6;
             } 
 
-            cout << "RANGER: " << arg << endl;
+            //cout << "RANGER: " << arg << endl;
             return (int)Donnie->GetRange(arg);
           }
 
@@ -268,7 +268,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             else
               arg = 2;
 
-            cout << "POS: " << getText(tree) << endl;
+            //cout << "POS: " << getText(tree) << endl;
             return (int)Donnie->GetPos(arg);
 
           }
@@ -282,7 +282,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case PRINTE:
           {
-            cout << "PRINT: " << endl; 
+            //cout << "PRINT: " << endl; 
             //cout << "TIPE: " << tree->getToken(getChild(tree,0))->type << endl;
             if(tree->getToken(getChild(tree,0))->type == STRINGE)         // Caso seja string informa texto do filho caso contrario executa o filho
               cout << getText(getChild(tree,0)) << endl;
@@ -293,7 +293,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case ESPERA:
           {
-            cout << "ESPERAR: " << endl;
+            //cout << "ESPERAR: " << endl;
             sleep(run(getChild(tree,0)));
             break;
           }
@@ -346,7 +346,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case WHILEE:
           {
-            cout << "while" << endl;
+            //cout << "while" << endl;
 
             int a = run(getChild(tree,0));                      // Retorna o valor das variáveis na condição
             int b = run(getChild(tree,2));                      // #
@@ -401,10 +401,10 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case REPTB:
           case PROCB:
           {
-            cout << "N Fi: " << tree->getChildCount(tree) << endl;
+            //cout << "N Fi: " << tree->getChildCount(tree) << endl;
             for (int f = 0; f < tree->getChildCount(tree); f++)
               {
-                cout << getText(getChild(tree,f)) << endl;
+                //cout << getText(getChild(tree,f)) << endl;
                 run(getChild(tree,f));
               }
             break;
@@ -437,7 +437,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
               }
               else
               {
-                cout << "MAKE: " << var << " = " << val << endl;
+                //cout << "MAKE: " << var << " = " << val << endl;
                 memory[var] = val;
                 return val;
               }
@@ -452,7 +452,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
               }
               else
               {
-                cout << "MAKE: " << var << " = " << val << endl;
+                //cout << "MAKE: " << var << " = " << val << endl;
                 localMem.top().memory[var] = val;
                 return val;
               }
@@ -545,7 +545,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case QUIT:
           {
-            cout << "EXIT" << endl;
+            //cout << "EXIT" << endl;
             //Mix_CloseAudio();
             //SDL_Quit();
             done = 0;
