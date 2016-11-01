@@ -37,6 +37,13 @@ class DonnieClient{
   int alertBumperFlag;
   int alertRangerFlag;
 
+  string SSTEP;   //Sound STEP
+  string SSBACK;  //Sound Step BACK
+  string STRIGHT; //Sound Turn RIGHT
+  string STLEFT;  //Sound Turn LEFT
+  string SBUMPER; //Sound Turn LEFT
+  string SRANGER; //Sound Turn LEFT
+
 
 public:
   DonnieClient();

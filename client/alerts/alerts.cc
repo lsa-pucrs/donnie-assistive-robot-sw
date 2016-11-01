@@ -1,12 +1,4 @@
 #include "alerts.h"
-#define RSCPATH "../resources/sounds/" //relativo a pasta d server_donnie.cfg
-#define SSTEP RSCPATH"HIT.wav" //Sound STEP
-#define SSBACK RSCPATH"beep-01a.wav" //Sound Step BACK
-#define STRIGHT RSCPATH"right.wav" //Sound Turn RIGHT
-#define STLEFT RSCPATH"left.wav" //Sound Turn LEFT
-#define SBUMPER RSCPATH"mgs4_soundalert.wav" //Sound Turn LEFT
-#define SRANGER RSCPATH"mgs4_soundalert.wav" //Sound Turn LEFT
-
 
 #define STEP_YAW 10 //gradianos
 #define STEP_LENGHT 0.025  //TODO ver se esta certo com o client do augusto
@@ -18,9 +10,23 @@
 DonnieClient::DonnieClient()
 {
     string host = GetEnv("DONNIE_HOST");
+    string donnie_path = GetEnv("DONNIE_PATH");
     int port = atoi(GetEnv("DONNIE_PORT").c_str());
     if(host.size()==0) host = "localhost";
     if(port==0) port = 6665;
+    if (donnie_path=="") {
+		cerr << "variable DONNIE_PATH not defined. Please execute 'export DONNIE_PATH=<path-to-donnie>'" << endl;
+		exit(1);
+	}
+
+	// TODO: read a configuration file so user can change these sounds
+	SSTEP   = donnie_path+"/resources/sounds/HIT.wav"; //Sound STEP
+	SSBACK  = donnie_path+"/resources/sounds/beep-01a.wav"; //Sound Step BACK
+	STRIGHT = donnie_path+"/resources/sounds/right.wav"; //Sound Turn RIGHT
+	STLEFT  = donnie_path+"/resources/sounds/left.wav"; //Sound Turn LEFT
+	SBUMPER = donnie_path+"/resources/sounds/mgs4_soundalert.wav"; //Sound Turn LEFT
+	SRANGER = donnie_path+"/resources/sounds/mgs4_soundalert.wav"; //Sound Turn LEFT
+
 
     robot = new PlayerClient(host,port);
     //head = new PlayerClient("localhost",6666);
@@ -74,13 +80,13 @@ void DonnieClient::checkDir(){
     if(translation>=STEP_LENGHT){  //if(translation>(steps+1)*STEP_LENGHT){
         if(p2d->GetXSpeed()>0){
             steps++;
-            sound->play(SSTEP);
+            sound->play((char *)SSTEP.c_str());
             //cout << "forward:" << translation << endl;
             //cout << "steps:" << steps << endl << endl;
         }
         else if(p2d->GetXSpeed()<0){
             steps--;
-            sound->play(SSBACK);
+            sound->play((char *)SSBACK.c_str());
             //cout << "backward:" << translation << endl;
             //cout << "steps:" << steps << endl << endl;
         }
@@ -96,14 +102,14 @@ void DonnieClient::checkDir(){
         if(radTOdeg(p2d->GetYaw() - pos.a)>STEP_YAW){
             //cout << "ge Yaw-a:" << radTOdeg(p2d->GetYaw() - pos.a) << endl << endl;
             setPos(pos.x,pos.y,p2d->GetYaw());
-            sound->play(STLEFT);
+            sound->play((char *)STLEFT.c_str());
         }
     }
     else if(p2d->GetYawSpeed()<0){ //gd
         if(radTOdeg(pos.a - p2d->GetYaw())>STEP_YAW){
             //cout << "gd Yaw-a:" << radTOdeg(pos.a - p2d->GetYaw()) << endl << endl;
             setPos(pos.x,pos.y,p2d->GetYaw());
-            sound->play(STRIGHT);
+            sound->play((char *)STRIGHT.c_str());
         }
     }
     
@@ -117,7 +123,7 @@ void DonnieClient::checkBumpers(){
         if(!alertBumperFlag){
             cout << "BUMPED!:" << endl << endl;
             alertBumperFlag=1;
-            sound->play(SBUMPER);
+            sound->play((char *)SBUMPER.c_str());
             speech->Say(" Alguma coisa se colidiu com o robô\n");
         }
     }
@@ -141,11 +147,11 @@ void DonnieClient::checkRangers(){
             }
             cout << endl;
             alertRangerFlag = 1;
-            sound->play(SRANGER);
+            sound->play((char *)SRANGER.c_str());
             //speech->Say(" Existem obstaculos no caminho\n");
         }
     }
-    else alertRangerFlag = 0;
+    else alertRangerFlag = 0; 
 }
 
 string GetEnv( const string & var ) 
