@@ -11,6 +11,6 @@ const char* tipoException::what() const throw()
 }
 const char* sintaxeException::what() const throw()
 {
-	return "Erro Sintaxe invalida";
+	return "Erro sintaxe invalida";
 }
 
