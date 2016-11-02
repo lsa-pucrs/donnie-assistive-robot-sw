@@ -6,6 +6,8 @@ using namespace std;
 using namespace PlayerCc;
 
 //Trocar por const
+// TODO: amory. criar include donnie_defs.h com todas as definicoes de tamanho do donnie
+// TODO: amory. duplicaco c alerts.cc
 const double STEP_LENGHT = 0.05;
 const double  SIDE_RANGER = 0.05;
 const double  FRONT_RANGER = 0.06;

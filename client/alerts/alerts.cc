@@ -1,7 +1,8 @@
 #include "alerts.h"
 
+// TODO: amory. criar include donnie_defs.h com todas as definicoes de tamanho do donnie
 #define STEP_YAW 10 //gradianos
-#define STEP_LENGHT 0.025  //TODO ver se esta certo com o client do augusto
+#define STEP_LENGHT 0.05  //TODO ver se esta certo com o client do augusto
 #define SIDE_RANGER 0.05   //TODO ver se esta certo com o client do augusto
 #define FRONT_RANGER 0.06   //TODO ver se esta certo com o client do augusto
 #define BACK_RANGER 0.05  //TODO ver se esta certo com o client do augusto
