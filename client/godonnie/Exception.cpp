@@ -10,11 +10,11 @@ parametroException::parametroException(string error)
 }
 parametroException::parametroException()
 {
-	this->m_msg = "Parametro invalido\n";
+	this->m_msg = "Parametro inválido\n";
 }
 const char* parametroException::what() const throw()
 {
-	return "Parametro invalido\n";
+	return this->m_msg.c_str();
 }
 
 
@@ -38,7 +38,7 @@ variavelException::variavelException(string error)
 }
 variavelException::variavelException()
 {
-	this->m_msg = "Erro Variavel Inexistente\n";
+	this->m_msg = "Erro Variável Inexistente\n";
 }
 const char* variavelException::what() const throw()
 {
