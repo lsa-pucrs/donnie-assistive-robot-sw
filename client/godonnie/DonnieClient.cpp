@@ -38,30 +38,35 @@ DonnieClient::DonnieClient()
 	if(port==0) port = 6665;
 
 	robot = new PlayerClient(host,port);
-
 	//head = new PlayerClient("localhost",6666);
-
 	p2dProxy = new Position2dProxy(robot,0);
-
 	p2d_headProxy = new Position2dProxy(robot,1);
-
 	//actuator = new ActArrayProxy(robot,0);
-
 	bpProxy = new BumperProxy(robot,0);
-
 	//BfinderProxy = new BlobfinderProxy(head,0);
-
 	sonarProxy = new RangerProxy(robot,0);
-
 	//SHProxy = new RangerProxy(head,3);
-
-	//speech = new SpeechProxy(robot,0);
-	
 	speech = new SpeechProxy(robot,0);
 	
 	robot->StartThread();
 }
 
+
+DonnieClient::~DonnieClient()
+{
+	/*
+	//head = new PlayerClient("localhost",6666);
+	delete p2dProxy;
+	delete p2d_headProxy;
+	delete bpProxy;
+	//BfinderProxy = new BlobfinderProxy(head,0);
+	delete sonarProxy;
+	//SHProxy = new RangerProxy(head,3);
+	delete speech;	
+	delete robot;
+	* */
+}
+	
 int DonnieClient::FrontBumper()
 {
   robot->ReadIfWaiting();
@@ -91,9 +96,6 @@ int DonnieClient::BackBumper()
     return 0;
 
 }
-
-
-DonnieClient::~DonnieClient(){}
 
 float DonnieClient::GetRange(int arg)
 {
@@ -139,7 +141,7 @@ float DonnieClient::GetPos(int arg)
 }
 
 
-void DonnieClient::ParaFrente(float arg)
+void DonnieClient::moveForward(float arg)
 {
 	vector<float> path;
 
@@ -223,7 +225,7 @@ void DonnieClient::ParaFrente(float arg)
 		#ifndef NDEBUG
 		cout << "!"  << erro << endl;
 		#endif
-		this->ParaTras(erro);
+		this->moveBackward(erro);
 	}
 
 	path.clear();
@@ -235,7 +237,7 @@ void DonnieClient::ParaFrente(float arg)
 	#endif
 }
 
-void DonnieClient::ParaTras(float arg)
+void DonnieClient::moveBackward(float arg)
 {
 	vector<float> path;
 
@@ -358,7 +360,7 @@ void DonnieClient::ParaTras(float arg)
 		#ifndef NDEBUG
 		cout << "!"  << endl<< endl;
 		#endif
-		this->ParaFrente(erro);
+		this->moveForward(erro);
 	}
 
 	path.clear();
@@ -366,7 +368,7 @@ void DonnieClient::ParaTras(float arg)
 	//cout << p2dProxy->GetXPos() << ", " << p2dProxy->GetYPos() << endl;
 }
 
-void DonnieClient::ParaDireita(float arg)
+void DonnieClient::turnRight(float arg)
 {
 	robot->Read();
 
@@ -549,7 +551,7 @@ void DonnieClient::ParaDireita(float arg)
 	#endif
 }
 
-void DonnieClient::ParaEsquerda(float arg)
+void DonnieClient::turnLeft(float arg)
 {
 	robot->Read();
 
@@ -715,6 +717,12 @@ void DonnieClient::ParaEsquerda(float arg)
 	}
 	//p2d_headProxy->SetSpeed(0,0);
 	p2dProxy->SetSpeed(0,0);
+}
+
+void DonnieClient::speak(string text)
+{
+	cout << text << endl;
+	speech->Say(text.c_str());
 }
 
 string GetEnv( const string & var ) 

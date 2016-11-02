@@ -1,3 +1,14 @@
+/*
+ * Desc: Main parser for GoDonnie language
+ * Author: Augusto Bergamin
+ * Date:  November 2016
+ * Laboratório de Sistemas Autônomos 
+ *  - https://lsa.pucrs.br/
+ *  - https://github.com/lsa-pucrs
+ * Faculdade de Informática - PUCRS  
+ *  - www.inf.pucrs.br
+ */
+ 
 #include "GoDonnieLexer.h"
 #include "GoDonnieParser.h"
 
@@ -50,21 +61,21 @@ typedef struct {
   char *doc;      /* Documentation for this function.  */
 } COMMAND;
 
-
+/// Main parser for GoDonnie language
 class ExprTreeEvaluator 
 {
-    map<string,int> memory;         // Dicionário de variáveis globais
-    map<string,procDec> proc;       // Dicionário de procedimentos
-    stack<mem> localMem;            // Stack de dicionários de variáveis locais
-    map<string,int>::iterator it;   // Iterados dos dicionários
-    int memFlag;                    // Flag de indicação variáves globais/locais
+    map<string,int> memory;         /// Dicionário de variáveis globais
+    map<string,procDec> proc;       /// Dicionário de procedimentos
+    stack<mem> localMem;            /// Stack de dicionários de variáveis locais
+    map<string,int>::iterator it;   /// Iterados dos dicionários
+    int memFlag;                    /// Flag de indicação variáves globais/locais
     bool for_itFlag;
     char* for_it;
     int mode;
     bool done;
 
-    DonnieClient *Donnie;
-    Historic *History;
+    DonnieClient *Donnie; /// pointer to Donnie middleware class
+    Historic *History;    /// pointer to History class
 
     int parser(pANTLR3_INPUT_STREAM input);
 

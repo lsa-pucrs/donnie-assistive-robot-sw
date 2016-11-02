@@ -1,15 +1,27 @@
-//Class to Keep the Commands History
+/*
+ * Desc: Class to Keep the Commands History
+ * Author: Henry Nunes e Alexandre Amory
+ * Date:  November 2016
+ * Laboratório de Sistemas Autônomos 
+ *  - https://lsa.pucrs.br/
+ *  - https://github.com/lsa-pucrs
+ * Faculdade de Informática - PUCRS  
+ *  - www.inf.pucrs.br
+ */
+
+///Class to Keep the Commands History
 class Historic
 {	
 	private:
-		//Struct to save commands, no external access alowed
+		///Struct to save commands
 		struct Command {
-			string name;
-			string feedback;
+			string name;  ///name of command including parameters
+			string feedback; ///???
 			double posx;
 			double posy;
 			double degree;
 		};
+		/// list of commands
 		list<Command> commandsList;
 		list<Command>::iterator iterator;
 		/*

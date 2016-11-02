@@ -1,5 +1,17 @@
+/*
+ * Desc: Exception classes to treat parse errors
+ * Author: Henry Nunes
+ * Date:  November 2016
+ * Laboratório de Sistemas Autônomos 
+ *  - https://lsa.pucrs.br/
+ *  - https://github.com/lsa-pucrs
+ * Faculdade de Informática - PUCRS  
+ *  - www.inf.pucrs.br
+ */
+
 using namespace std;
 
+//TODO (amory). mudar nome das classes para ingles
 class parametroException: public exception
 {
 		string m_msg;

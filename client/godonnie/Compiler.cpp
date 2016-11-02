@@ -1,5 +1,7 @@
+#include <algorithm> // remove
 #include "Compiler.h"
 #include "Exception.h"
+
 
 using std::map;
 using std::vector;
@@ -178,7 +180,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             #endif
             // run the command
             float distance = (float)run(getChild(tree,0));
-            Donnie->ParaFrente(distance);
+            Donnie->moveForward(distance);
 			// save into history
             std::ostringstream distanceStr;
 			distanceStr << distance;
@@ -196,7 +198,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             #endif
             // run the command
             float distance = (float)run(getChild(tree,0));
-            Donnie->ParaTras(distance);
+            Donnie->moveBackward(distance);
 			// save into history
             std::ostringstream distanceStr;
 			distanceStr << distance;
@@ -214,7 +216,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             #endif
             // run the command
             float distance = (float)run(getChild(tree,0));
-            Donnie->ParaDireita(distance);
+            Donnie->turnRight(distance);
 			// save into history
             std::ostringstream distanceStr;
 			distanceStr << distance;
@@ -232,7 +234,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             #endif
             // run the command
             float distance = (float)run(getChild(tree,0));
-            Donnie->ParaEsquerda(distance);
+            Donnie->turnLeft(distance);
 			// save into history
             std::ostringstream distanceStr;
 			distanceStr << distance;
@@ -330,14 +332,24 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             break;
           }
 
-          case PRINTE:
+          case SPEAKE:
           {
             //cout << "PRINT: " << endl; 
             //cout << "TIPE: " << tree->getToken(getChild(tree,0))->type << endl;
-            if(tree->getToken(getChild(tree,0))->type == STRINGE)         // Caso seja string informa texto do filho caso contrario executa o filho
-              cout << getText(getChild(tree,0)) << endl;
-            else
-              cout << run(getChild(tree,0)) << endl;
+            std::ostringstream arg;			
+            if(tree->getToken(getChild(tree,0))->type == STRINGE) {        // Caso seja string informa texto do filho caso contrario executa o filho
+              string auxstr;
+              auxstr = getText(getChild(tree,0));
+              // Remove all double-quote characters
+			  auxstr.erase(
+				remove( auxstr.begin(), auxstr.end(), '\"' ),
+				auxstr.end()
+				);
+			  arg << auxstr;
+            }else{
+			  arg << run(getChild(tree,0));
+		   }
+            Donnie->speak(arg.str());
             break;
           }
 

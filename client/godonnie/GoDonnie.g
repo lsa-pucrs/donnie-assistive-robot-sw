@@ -24,7 +24,7 @@ cmd	:	arg
 		|repeat
 		|whilee
 		|assign
-		|printe
+		|speake
 		|commente
 		|procedec
 		|proceinv
@@ -89,7 +89,7 @@ make	:	MAKE^ ID (EQ! expression)?;
 assign	:	ID EQ^ expression;
 
 
-printe	:	PRINTE^ (expression | STRINGE) ;
+speake	:	SPEAKE^ (expression | STRINGE) ;
 
 
 commente	:	COMENT;
@@ -142,7 +142,7 @@ ENDWHILE	:	(('F'|'f')('I'|'i')('M'|'m')(' ')('E'|'e')('N'|'n')('Q'|'q')('U'|'u')
 		;
 		
 
-PRINTE	:	(('F'|'f')('A'|'a')('L'|'l')('A'|'a')('R'|'r'))
+SPEAKE	:	(('F'|'f')('A'|'a')('L'|'l')('A'|'a')('R'|'r'))
 		;
 		
 		
