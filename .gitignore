@@ -60,6 +60,7 @@
 
 # drivers compiled files dir
 build/
+build-dbg/
 
 # gtts resource
 download.mp3

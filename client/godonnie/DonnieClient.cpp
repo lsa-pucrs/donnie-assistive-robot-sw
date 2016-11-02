@@ -12,12 +12,20 @@ const double  FRONT_RANGER = 0.06;
 const double  BACK_RANGER = 0.05;
 
 
-//Singleton
-DonnieClient DonnieClient::singleton = DonnieClient();
+//Singleton. init pointer withou allocations
+DonnieClient *DonnieClient::singleton = NULL;
 
-DonnieClient&  DonnieClient::getInstance()
+DonnieClient *DonnieClient::getInstance()
 {
-	return singleton;
+   if (!singleton)   // Only allow one instance of class to be generated.
+      singleton = new DonnieClient();
+   return singleton;
+}
+
+void DonnieClient::ResetInstance()
+{
+      delete singleton; 
+      singleton = NULL; 
 }
 
 DonnieClient::DonnieClient()
@@ -84,6 +92,7 @@ int DonnieClient::BackBumper()
 
 
 DonnieClient::~DonnieClient(){}
+
 float DonnieClient::GetRange(int arg)
 {
 	robot->Read();

@@ -28,6 +28,7 @@ cmd	:	arg
 		|comentario
 		|procedec
 		|proceinv
+		|history
 		;
 		
 		
@@ -93,6 +94,7 @@ printe	:	PRINTE^ (expression | STRINGE) ;
 
 comentario	:	COMENT;
 
+history     :   HIST;
 
 procedec	:	PROCDEC^ ID (':'! (ID) (','! (ID))*)? procblock;
 
@@ -144,7 +146,7 @@ PRINTE	:	(('F'|'f')('A'|'a')('L'|'l')('A'|'a')('R'|'r'))
 		;
 		
 		
-HIST	:	(('H'|'h')('I'|'i')('S'|'s')('T'|'t')('Ó'|'ó')('R'|'r')('I'|'i')('C'|'c')('O'|'o'))
+HIST	:	(('H'|'h')('I'|'i')('S'|'s')('T'|'t')('O'|'o')('R'|'r')('I'|'i')('C'|'c')('O'|'o'))
 		;
 
 		

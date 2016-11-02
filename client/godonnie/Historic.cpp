@@ -3,42 +3,64 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
+#include <sstream>
+#include <iomanip>
 
 
 using namespace std;
 
 //Historic
-Historic Historic::singleton = Historic();
+Historic *Historic::singleton = NULL;
 Historic::Historic()
 {
 	 this->commandsList = list<Command>(); 
 	 this->iterator = commandsList.begin();
 }
-Historic::~Historic(){}
-Historic& Historic::getHistoric()
+
+Historic::~Historic()
 {
+	commandsList.clear();
+}
+
+Historic *Historic::getInstance()
+{
+	if (!singleton)   // Only allow one instance of class to be generated.
+      singleton = new Historic();
 	return singleton;
 }
+
+void Historic::ResetInstance()
+{
+      delete singleton; 
+      singleton = NULL; 
+}
+
 bool Historic::addCommand(string name, string feedback)
 {
 	Command temp = Command();
 	temp.name = name;
 	temp.feedback = feedback;
-	temp.posx = DonnieClient::getInstance().GetPos(0); //Alterar para pegar a posição do DonnieClient
-	temp.posy = DonnieClient::getInstance().GetPos(1); //Alterar para pegar a posição do DonnieClient
-	temp.degree = DonnieClient::getInstance().GetPos(2); //Alterar para pegar a posição do DonnieClient
-	this->commandsList.push_front(temp);
+	temp.posx = DonnieClient::getInstance()->GetPos(0); //Alterar para pegar a posição do DonnieClient
+	temp.posy = DonnieClient::getInstance()->GetPos(1); //Alterar para pegar a posição do DonnieClient
+	temp.degree = DonnieClient::getInstance()->GetPos(2); //Alterar para pegar a posição do DonnieClient
+	this->commandsList.push_back(temp);
 	return true;
 }
 int Historic::size()
 {
 	return this->commandsList.size();
 }
-bool Historic::resetIterator()
+
+/*
+ * 
+void Historic::resetIterator()
 {
-	this->iterator = commandsList.begin();
-	return true;
+	if(this->size() != 0)
+	{
+		this->iterator = commandsList.begin();
+	}
 }
+
 string Historic::getLast()
 {
 	if(this->size() == 0)
@@ -124,4 +146,26 @@ string Historic::next()
 	Command temp = *iterator;
 		resposta += "O comando foi " + temp.name + "e o resultado foi " + temp.feedback + "\n";
 	return resposta;
+}
+*/
+string Historic::show()
+{
+	stringstream history;
+	int cmdNum=0;
+	
+	history << "Historico possui " << commandsList.size() << " comandos" << endl;
+	for (this->iterator = this->commandsList.begin(); this->iterator != this->commandsList.end(); ++iterator) {
+		history << "Comando " << cmdNum << " foi " << (*iterator).name << ", " <<  (*iterator).feedback << 
+		", posicao [" << std::fixed << std::setprecision(2)  <<  (*iterator).posx  << 
+		"," << std::fixed << std::setprecision(2) <<  (*iterator).posy  << 
+		"," << std::fixed << std::setprecision(2) <<  (*iterator).degree << "]" << endl ;
+		cmdNum++;
+	}
+
+	return history.str();
+}
+
+void Historic::clear()
+{
+	this->commandsList.clear();
 }

@@ -11,11 +11,21 @@ using std::endl;
 ExprTreeEvaluator::ExprTreeEvaluator()
 {
 
-	*Donnie = DonnieClient::getInstance();
+	Donnie = DonnieClient::getInstance();
+	History = Historic::getInstance();
 
   	memFlag = 0;
   	for_itFlag = 0;
     done = 1;
+}
+
+ExprTreeEvaluator::~ExprTreeEvaluator()
+{
+	DonnieClient::ResetInstance();
+	Donnie = NULL;
+	
+	Historic::ResetInstance();
+	History = NULL;
 }
 
 int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
@@ -87,6 +97,7 @@ int ExprTreeEvaluator::scriptMode(char* fileIn)
 
 int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 {
+	string command="";
     pANTLR3_COMMON_TOKEN tok = tree->getToken(tree);
     if(tok) {
         switch(tok->type) {
@@ -164,7 +175,15 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           {
 
             //cout << "PF: " << run(getChild(tree,0)) << endl;
-            Donnie->ParaFrente((float)run(getChild(tree,0)));
+            // run the command
+            float distance = (float)run(getChild(tree,0));
+            Donnie->ParaFrente(distance);
+			// save into history
+            std::ostringstream distanceStr;
+			distanceStr << distance;
+            command = string(getText(tree)) + " " + distanceStr.str();
+            //command = string(getText(tree)) + " " + to_string(distance);
+            History->addCommand(command,"");
             //Para_Frente(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
           }
@@ -173,7 +192,15 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           {
 
             //cout << "PT: " << run(getChild(tree,0)) << endl;
-            Donnie->ParaTras((float)run(getChild(tree,0)));
+            // run the command
+            float distance = (float)run(getChild(tree,0));
+            Donnie->ParaTras(distance);
+			// save into history
+            std::ostringstream distanceStr;
+			distanceStr << distance;
+            command = string(getText(tree)) + " " + distanceStr.str();
+            //command = string(getText(tree)) + " " + to_string(distance);
+            History->addCommand(command,"");            
             //Para_Tras(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
           }
@@ -182,7 +209,15 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           {
 
             //cout << "PD: " << run(getChild(tree,0)) << endl;
-            Donnie->ParaDireita((float)run(getChild(tree,0)));
+            // run the command
+            float distance = (float)run(getChild(tree,0));
+            Donnie->ParaDireita(distance);
+			// save into history
+            std::ostringstream distanceStr;
+			distanceStr << distance;
+            command = string(getText(tree)) + " " + distanceStr.str();
+            //command = string(getText(tree)) + " " + to_string(distance);
+            History->addCommand(command,"");            
             //Para_Direita(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
           }
@@ -191,7 +226,15 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           {
 
             //cout << "PE: " << run(getChild(tree,0)) << endl;
-            Donnie->ParaEsquerda((float)run(getChild(tree,0)));
+            // run the command
+            float distance = (float)run(getChild(tree,0));
+            Donnie->ParaEsquerda(distance);
+			// save into history
+            std::ostringstream distanceStr;
+			distanceStr << distance;
+            command = string(getText(tree)) + " " + distanceStr.str();
+            //command = string(getText(tree)) + " " + to_string(distance);
+            History->addCommand(command,"");            
             //Para_Esquerda(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
 
@@ -515,6 +558,13 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             }
             break;
           }
+          
+          case HIST:
+          {
+				//TODO (amory): implementar um clear para o historico
+				cout << History->show();
+				break;
+		  }
 
           case SEMICOLON:
           {
@@ -643,6 +693,7 @@ bool compare (int a, int b, string comp)
   else
   {
     cout << "null comp" << endl;
+    //TODO: (amory) nao era p gerar uma excecao ?
     return false;
   } 
 }
