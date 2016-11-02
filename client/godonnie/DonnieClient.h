@@ -50,10 +50,14 @@ private:
 	//Singleton
 	DonnieClient();
 	~DonnieClient();
-	static DonnieClient singleton;
+	// instance pointer
+	static DonnieClient *singleton;
 	
 public:
-	static DonnieClient& getInstance();
+	// create instante of singleton
+	static DonnieClient *getInstance();
+	// delete singleton
+	static void ResetInstance();
 
   	void ParaFrente(float arg);
   	void ParaTras(float arg);

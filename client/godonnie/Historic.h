@@ -11,26 +11,35 @@ class Historic
 			double degree;
 		};
 		list<Command> commandsList;
-		//Bidiretional Iterator
 		list<Command>::iterator iterator;
-		bool resetIterator();
+		/*
+		string getLast();
+		string getLine(int line);
+		string previous();
+		string next();
+		void resetIterator();
+		*/		
 		
 		//Variable to hold Singleton 
-		static Historic singleton;
+		static Historic *singleton;
 		
 		//Block the construction and destruction of the object
 		Historic();
 		~Historic();
 			
 	public:
-		//Method to get the Singleton
-		static Historic& getHistoric();
+		/** method to get the Singleton */
+		static Historic *getInstance();
+		/** delete singleton */
+		static void ResetInstance();		
 		
-		
+		/** add command to the history list*/
 		bool addCommand(string name, string feedback);
+		/** number of commands in the history list*/
 		int size();
-		string getLast();
-		string getLine(int line);
-		string previous();
-		string next();
+		/** return the history of commands on a string*/
+		string show();
+		/** clear the history list*/
+		void clear();
+
 };
