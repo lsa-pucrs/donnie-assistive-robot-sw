@@ -170,8 +170,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             return run(getChild(tree,0)) / run(getChild(tree,1));
           }
 
-          case PF:
-          {
+		
+          case FW:
+          { // forward
 			#ifndef NDEBUG
             cout << "PF: " << run(getChild(tree,0)) << endl;
             #endif
@@ -188,8 +189,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             break;
           }
 
-          case PT:
-          {
+          case BW:
+          { // backward
 			#ifndef NDEBUG
             cout << "PT: " << run(getChild(tree,0)) << endl;
             #endif
@@ -206,8 +207,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             break;
           }
 
-          case PD:
-          {
+          case RTURN:
+          { // right turn
 			#ifndef NDEBUG
             cout << "PD: " << run(getChild(tree,0)) << endl;
             #endif
@@ -224,8 +225,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             break;
           }
 
-          case PE:
-          {
+          case LTURN:
+          { // left turn
 			#ifndef NDEBUG
             cout << "PE: " << run(getChild(tree,0)) << endl;
             #endif
@@ -340,7 +341,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             break;
           }
 
-          case ESPERA:
+          case WAIT:
           {
             #ifndef NDEBUG
 				if(tree->getToken(getChild(tree,0))->type == STRINGE)
@@ -451,7 +452,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case THEN:
           case ELSEE:
-          case FACA:
+          case DOIT:
           case REPTB:
           case PROCB:
           {
