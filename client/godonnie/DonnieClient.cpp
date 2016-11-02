@@ -24,7 +24,7 @@ DonnieClient::DonnieClient()
 
 	p2dProxy = new Position2dProxy(robot,0);
 
-	//p2d_headProxy = new Position2dProxy(robot,1);
+	p2d_headProxy = new Position2dProxy(robot,1);
 
 	//actuator = new ActArrayProxy(robot,0);
 
@@ -78,22 +78,22 @@ float DonnieClient::GetRange(int arg)
 	switch(arg)
 	{
 		case 0: //f
-			return sonarProxy->GetRange(1)*100; //*100 to convert from m to cm
+			return sonarProxy->GetRange(1)/STEP_LENGHT;
 
 		case 1: //t
-			return sonarProxy->GetRange(4)*100;
+			return sonarProxy->GetRange(4)/STEP_LENGHT;
 
 		case 2: //fe
-			return sonarProxy->GetRange(2)*100;
+			return sonarProxy->GetRange(2)/STEP_LENGHT;
 
 		case 3://fd
-			return sonarProxy->GetRange(0)*100;
+			return sonarProxy->GetRange(0)/STEP_LENGHT;
 
 		case 4: //te
-			return sonarProxy->GetRange(3)*100;
+			return sonarProxy->GetRange(3)/STEP_LENGHT;
 
 		case 5: //d
-			return sonarProxy->GetRange(5)*100;
+			return sonarProxy->GetRange(5)/STEP_LENGHT;
 	}
 }
 
@@ -130,7 +130,7 @@ void DonnieClient::ParaFrente(float arg)
 	{
 
 	  path.push_back(i*STEP_LENGHT);
-	  cout << path[i-1] << endl;
+	  //cout << path[i-1] << endl;
 	}
 
 	float fltPart = arg - (int)arg;
@@ -152,7 +152,7 @@ void DonnieClient::ParaFrente(float arg)
 	if(sonarProxy->GetRange(1) > 0.15)
 	{
 	  stop = false;
-	  //p2d_headProxy->SetSpeed(1,0);
+	  p2d_headProxy->SetSpeed(0,1);
 	  p2dProxy->SetSpeed(0.05,0);
 	}
 
@@ -163,7 +163,7 @@ void DonnieClient::ParaFrente(float arg)
 		//cout << passos << " > " << Npassos << endl;
 	  if(passos > Npassos )
 	  {
-	  	//p2d_headProxy->SetSpeed(0,0);
+	  	p2d_headProxy->SetSpeed(0,0);
 	    p2dProxy->SetSpeed(0,0);
 	    break;
 	  }
@@ -171,7 +171,7 @@ void DonnieClient::ParaFrente(float arg)
 	  robot->ReadIfWaiting();
 	  if(this->FrontBumper() != 0 or sonarProxy->GetRange(1) < FRONT_RANGER or sonarProxy->GetRange(2) < SIDE_RANGER or sonarProxy->GetRange(0) < SIDE_RANGER)
 	  {
-	  	//p2d_headProxy->SetSpeed(0,0);
+	  	p2d_headProxy->SetSpeed(0,0);
 	    p2dProxy->SetSpeed(0,0);
 	    stop = true;
 	    andou = hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi);
@@ -180,9 +180,9 @@ void DonnieClient::ParaFrente(float arg)
 	  }
 	    
 	  robot->ReadIfWaiting();
-	  if(sonarProxy->GetRange(1) < 0.15 and !obstacle)
+	  if(sonarProxy->GetRange(1) < 0.20 and !obstacle)
 	  {
-	    Npassos = passos;
+	    Npassos = passos + 1;
 	    obstacle = true;
 	  }
 
@@ -191,56 +191,17 @@ void DonnieClient::ParaFrente(float arg)
 	  {
 	  		passos++;
 	  }
-	    
-	  //if(yaw >= 0)
-	  //{
-	  //  if(yaw < M_PI/2)
-	  //  {
-	  //    robot->ReadIfWaiting();
-	  //    if(p2dProxy->GetXPos() >= path[passos].posx and p2dProxy->GetYPos() >= path[passos].posy)
-	  //    {
-	  //      passos++;
-	  //    }
-	  //  }
-	  //  else
-	  //  {
-	  //    robot->ReadIfWaiting();
-	  //    if(p2dProxy->GetXPos() <= path[passos].posx and p2dProxy->GetYPos() >= path[passos].posy)
-	  //    {
-	  //      passos++;
-	  //    }
-	  //  } 
-	  //}
-	  //else
-	  //{
-	  //  if(yaw > -M_PI/2)
-	  //  {
-	  //    robot->ReadIfWaiting();
-	  //    if(p2dProxy->GetXPos() >= path[passos].posx and p2dProxy->GetYPos() <= path[passos].posy)
-	  //    {
-	  //      passos++;
-	  //    }
-	  //  }
-	  //  else
-	  //  {
-	  //    robot->ReadIfWaiting();
-	  //    if(p2dProxy->GetXPos() <= path[passos].posx and p2dProxy->GetXPos() <= path[passos].posy)
-	  //    {
-	  //      passos++;
-	  //    }
-	  //  }  
-	  //}
 	}
 
 	if(stop = true and erro < 0.8 and erro > 0.2)
 	{
-		cout << "!"  << erro << endl;
+		//cout << "!"  << erro << endl;
 		this->ParaTras(erro);
 	}
 
 	path.clear();
 
-	cout << "Andou: " << passos << endl;
+	//cout << "Andou: " << passos << endl;
 	//robot->Read();
 	//cout << p2dProxy->GetXPos() << ", " << p2dProxy->GetYPos() << endl;
 }
@@ -260,7 +221,7 @@ void DonnieClient::ParaTras(float arg)
 	{
 
 	  path.push_back(i*STEP_LENGHT);
-	  cout << path[i-1] << endl;
+	  //cout << path[i-1] << endl;
 	}
 
 	float fltPart = arg - (int)arg;
@@ -268,7 +229,7 @@ void DonnieClient::ParaTras(float arg)
 	if(fltPart > 0)
 	{
 	  path.push_back(fltPart);
-	  cout << path[0];
+	  //cout << path[0];
 	}
 
 	float Npassos = arg;
@@ -361,7 +322,7 @@ void DonnieClient::ParaTras(float arg)
 
 	if(stop = true and erro < 0.8 and erro > 0.2)
 	{
-		cout << "!"  << endl<< endl;
+		//cout << "!"  << endl<< endl;
 		this->ParaFrente(erro);
 	}
 
@@ -379,7 +340,7 @@ void DonnieClient::ParaDireita(float arg)
 	double yawd;  //Angulo de destino do robo
 	yawi = radTOrad(yawf);
 
-	cout << yawi << endl;
+	//cout << yawi << endl;
 
 	/////////////////Calculo para determinar angulo que o robo deve chegar////////////////////////////////
 	if(yawi - degTOrad(arg) > M_PI)
@@ -389,7 +350,7 @@ void DonnieClient::ParaDireita(float arg)
 	else
 	  yawd = yawi - degTOrad(arg);
 
-	cout << yawd << endl;
+	//cout << yawd << endl;
 
 	//p2d_headProxy->SetSpeed(0,-0.5);
 	p2dProxy->SetSpeed(0,-0.5);
@@ -544,7 +505,7 @@ void DonnieClient::ParaDireita(float arg)
 	//p2d_headProxy->SetSpeed(0,0);
 	p2dProxy->SetSpeed(0,0);
 	robot->Read();
-	cout << p2dProxy->GetYaw() << endl;
+	//cout << p2dProxy->GetYaw() << endl;
 }
 
 void DonnieClient::ParaEsquerda(float arg)

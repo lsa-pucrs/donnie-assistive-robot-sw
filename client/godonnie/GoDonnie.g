@@ -8,10 +8,12 @@ options
 }
 
 
-prog	:	line+ ;
+start_rule	:	prog;
+
+prog	:	line+;
 			
 
-line	:	cmd ((SEMICOLON!? WS!) cmd)* SEMICOLON!?;
+line	:	(cmd SEMICOLON!?) ;
 
 
 cmd	:	arg
@@ -50,10 +52,10 @@ expression	:	multEXP ((PLUS^ | MINUS^) multEXP)*;
 comparison	:	expression COMP expression;
 
 
-then	:	THEN^ line;
+then	:	THEN^ prog;
 
 
-elsee	:	ELSEE^ line;
+elsee	:	ELSEE^ prog;
 
 
 forblock	:	FACA^ cmd ( SEMICOLON!? cmd)* SEMICOLON!? FIMFOR!;
