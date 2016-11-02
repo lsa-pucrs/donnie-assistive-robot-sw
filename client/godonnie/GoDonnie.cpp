@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
 
       if (*temp)
       {
-        fprintf (stderr, "%s\r\n", temp);
+        //fprintf (stderr, "%s\r\n", temp);
         add_history (temp);
       }
 
