@@ -1,4 +1,5 @@
 #include "Compiler.h"
+#include "Exception.h"
 
 using std::map;
 using std::vector;
@@ -39,13 +40,19 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
   	  return -1;
   	}
 
-  	this->run(tree);
-
+	//Tentando rodar o programa
+	try{
+		this->run(tree);
+	}
+	catch(exception& e)
+	{
+		cout << e.what();
+	}
+	
   	parser->free(parser);
   	tokens->free(tokens);
   	lex->free(lex);
   	input->close(input);
-
 }
 
 int ExprTreeEvaluator::terminalMode(char* textIn)
@@ -97,7 +104,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
                 return memory[getText(tree)];
               }
               else
-                cout << "Variavel " << getText(tree) << " global não existe" << endl;
+                //cout << "Variavel " << getText(tree) << " global não existe" << endl;
+                throw variavelException();
             }
             else
             {
@@ -106,7 +114,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
                 return localMem.top().memory[getText(tree)]; // Variável local do primeiro item da stack
               }
               else
-                cout << "Variavel " << getText(tree) << " local não existe" << endl;
+                //cout << "Variavel " << getText(tree) << " local não existe" << endl;
+                throw variavelException();
             }
             break;              
           }
@@ -219,7 +228,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
             int arg;
 
-            if(tkn[0] == 102 or tkn[0] == 70)
+            if(tkn[0] == 'f' or tkn[0] == 'F')
             {
               if(tkn[1] == 101 or tkn[1] == 69)
                 arg = 2;
@@ -279,7 +288,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case PRINTE:
           {
-            cout << "PRINT: " << endl; 
+            //cout << "PRINT: " << endl; 
             //cout << "TIPE: " << tree->getToken(getChild(tree,0))->type << endl;
             if(tree->getToken(getChild(tree,0))->type == STRINGE)         // Caso seja string informa texto do filho caso contrario executa o filho
               cout << getText(getChild(tree,0)) << endl;
@@ -290,12 +299,11 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case ESPERA:
           {
-			#ifndef NDEBUG
-            cout << "ESPERAR: " << endl;
-            #endif
-            if(tree->getToken(getChild(tree,0))->type == STRINGE)	
-				cout << getText(getChild(tree,0)) << endl;
-			else
+            #ifndef NDEBUG
+				if(tree->getToken(getChild(tree,0))->type == STRINGE)
+					cout << "ESPERAR: " << getText(getChild(tree,0)) << endl;
+			#endif
+			if(tree->getToken(getChild(tree,0))->type != STRINGE)
 				sleep(run(getChild(tree,0)));
             break;
           }
@@ -590,15 +598,17 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
                 return val;
               }
               else
-                cout << "Variavel " << var << " local não existe" << endl;
+                //cout << "Variavel " << var << " local não existe" << endl;
+                ;
             }
             break;            
           }
   
           default:
-			//Throw Exception?
-              cout << "Unhandled token: #" << tok->type << '\n';
-               break;
+			  //Throw Exception?
+              //cout << "Unhandled token: #" << tok->type << '\n';
+              throw sintaxeException("Sintaxe não conhecida\n");
+              break;
         }
     }
     else {
@@ -613,7 +623,10 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
 pANTLR3_BASE_TREE getChild(pANTLR3_BASE_TREE tree, unsigned i)
 {
-    assert(i < tree->getChildCount(tree));
+	
+    //assert(i < tree->getChildCount(tree));
+    if(!(i < tree->getChildCount(tree))) throw sintaxeException();
+    
     return (pANTLR3_BASE_TREE) tree->getChild(tree, i);
 }
 

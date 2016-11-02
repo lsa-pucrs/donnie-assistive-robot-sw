@@ -57,6 +57,7 @@
 
 # Gedit hidden files
 *~
+.project
 
 # drivers compiled files dir
 build/
@@ -69,7 +70,7 @@ client_test
 client-test
 Blobfindertest
 main
-Logo
+GoDonnie
 alerts
 
 #compiled .pdf tex files

@@ -35,7 +35,7 @@ DonnieClient::DonnieClient()
 
 	p2dProxy = new Position2dProxy(robot,0);
 
-	//p2d_headProxy = new Position2dProxy(robot,1);
+	p2d_headProxy = new Position2dProxy(robot,1);
 
 	//actuator = new ActArrayProxy(robot,0);
 
@@ -92,23 +92,22 @@ float DonnieClient::GetRange(int arg)
 	switch(arg)
 	{
 		case 0: //f
-			return sonarProxy->GetRange(1)*100; //*100 to convert from m to cm
-			//return sonarProxy->GetRange(1)/STEP_LENGHT; // /STEP_LENGHT to convert from m to steps
+			return sonarProxy->GetRange(1)/STEP_LENGHT; // /STEP_LENGHT to convert from m to steps
 
 		case 1: //t
-			return sonarProxy->GetRange(4)*100;
+			return sonarProxy->GetRange(4)/STEP_LENGHT;
 
 		case 2: //fe
-			return sonarProxy->GetRange(2)*100;
+			return sonarProxy->GetRange(2)/STEP_LENGHT;
 
 		case 3://fd
-			return sonarProxy->GetRange(0)*100;
+			return sonarProxy->GetRange(0)/STEP_LENGHT;
 
 		case 4: //te
-			return sonarProxy->GetRange(3)*100;
+			return sonarProxy->GetRange(3)/STEP_LENGHT;
 
 		case 5: //d
-			return sonarProxy->GetRange(5)*100;
+			return sonarProxy->GetRange(5)/STEP_LENGHT;
 	}
 }
 
@@ -169,7 +168,7 @@ void DonnieClient::ParaFrente(float arg)
 	if(sonarProxy->GetRange(1) > 0.15)
 	{
 	  stop = false;
-	  //p2d_headProxy->SetSpeed(1,0);
+	  p2d_headProxy->SetSpeed(0,1);
 	  p2dProxy->SetSpeed(0.05,0);
 	}
 
@@ -180,7 +179,7 @@ void DonnieClient::ParaFrente(float arg)
 		//cout << passos << " > " << Npassos << endl;
 	  if(passos > Npassos )
 	  {
-	  	//p2d_headProxy->SetSpeed(0,0);
+	  	p2d_headProxy->SetSpeed(0,0);
 	    p2dProxy->SetSpeed(0,0);
 	    break;
 	  }
@@ -188,7 +187,7 @@ void DonnieClient::ParaFrente(float arg)
 	  robot->ReadIfWaiting();
 	  if(this->FrontBumper() != 0 or sonarProxy->GetRange(1) < FRONT_RANGER or sonarProxy->GetRange(2) < SIDE_RANGER or sonarProxy->GetRange(0) < SIDE_RANGER)
 	  {
-	  	//p2d_headProxy->SetSpeed(0,0);
+	  	p2d_headProxy->SetSpeed(0,0);
 	    p2dProxy->SetSpeed(0,0);
 	    stop = true;
 	    andou = hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi);
@@ -197,9 +196,9 @@ void DonnieClient::ParaFrente(float arg)
 	  }
 	    
 	  robot->ReadIfWaiting();
-	  if(sonarProxy->GetRange(1) < 0.15 and !obstacle)
+	  if(sonarProxy->GetRange(1) < 0.20 and !obstacle)
 	  {
-	    Npassos = passos;
+	    Npassos = passos + 1;
 	    obstacle = true;
 	  }
 
@@ -208,45 +207,6 @@ void DonnieClient::ParaFrente(float arg)
 	  {
 	  		passos++;
 	  }
-	    
-	  //if(yaw >= 0)
-	  //{
-	  //  if(yaw < M_PI/2)
-	  //  {
-	  //    robot->ReadIfWaiting();
-	  //    if(p2dProxy->GetXPos() >= path[passos].posx and p2dProxy->GetYPos() >= path[passos].posy)
-	  //    {
-	  //      passos++;
-	  //    }
-	  //  }
-	  //  else
-	  //  {
-	  //    robot->ReadIfWaiting();
-	  //    if(p2dProxy->GetXPos() <= path[passos].posx and p2dProxy->GetYPos() >= path[passos].posy)
-	  //    {
-	  //      passos++;
-	  //    }
-	  //  } 
-	  //}
-	  //else
-	  //{
-	  //  if(yaw > -M_PI/2)
-	  //  {
-	  //    robot->ReadIfWaiting();
-	  //    if(p2dProxy->GetXPos() >= path[passos].posx and p2dProxy->GetYPos() <= path[passos].posy)
-	  //    {
-	  //      passos++;
-	  //    }
-	  //  }
-	  //  else
-	  //  {
-	  //    robot->ReadIfWaiting();
-	  //    if(p2dProxy->GetXPos() <= path[passos].posx and p2dProxy->GetXPos() <= path[passos].posy)
-	  //    {
-	  //      passos++;
-	  //    }
-	  //  }  
-	  //}
 	}
 
 	if(stop = true and erro < 0.8 and erro > 0.2)
