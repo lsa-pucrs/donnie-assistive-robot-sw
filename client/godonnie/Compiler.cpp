@@ -1,4 +1,5 @@
 #include "Compiler.h"
+#include "Exception.h"
 
 using std::map;
 using std::vector;
@@ -46,7 +47,7 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
 	}
 	catch(exception& e)
 	{
-		cout e.what();
+		cout << e.what();
 	}
 	
   	parser->free(parser);
