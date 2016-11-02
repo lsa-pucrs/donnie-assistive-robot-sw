@@ -13,6 +13,7 @@
 #include <iostream>
 
 #include "DonnieClient.h"
+#include "Historic.h"
 #include "utils.h"
 
 using std::map;
@@ -63,11 +64,13 @@ class ExprTreeEvaluator
     bool done;
 
     DonnieClient *Donnie;
+    Historic *History;
 
     int parser(pANTLR3_INPUT_STREAM input);
 
 public:
     ExprTreeEvaluator();
+    ~ExprTreeEvaluator();
     int run(pANTLR3_BASE_TREE);
     int terminalMode(char* textIn);
     int scriptMode(char* fileIn);

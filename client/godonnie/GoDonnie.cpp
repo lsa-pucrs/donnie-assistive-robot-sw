@@ -13,16 +13,16 @@
 
 #include "Compiler.h"
 
-extern HIST_ENTRY **history_list ();
+//extern HIST_ENTRY **history_list ();
 
 using namespace std;
 
 
 COMMAND commands[] = {
-  { (char*)"pf ", (char*)"Movimenta" },
-  { (char*)"pt ", (char*)"Movimenta" },
-  { (char*)"gd ", (char*)"Gira" },
-  { (char*)"ge ", (char*)"Gira" },
+  { (char*)"pf ", (char*)"Movimenta para frente" },
+  { (char*)"pt ", (char*)"Moviment para tras" },
+  { (char*)"gd ", (char*)"Gira para direita" },
+  { (char*)"ge ", (char*)"Gira para esquerda" },
   { (char*)"distância ", (char*)"Sensor" },
   { (char*)"posição ", (char*)"Posição" },
   { (char*)"estado", (char*)"Informação" },
@@ -34,6 +34,7 @@ COMMAND commands[] = {
   { (char*)"aprender ", (char*)"Criar procedimento" },
   { (char*)"falar ", (char*)"Falar" },
   { (char*)"sair", (char*)"Fechar interpretador" },
+  { (char*)"historico", (char*)"Historico de comandos de movimento" },
   { (char *)NULL, (char *)NULL }
 };
 
