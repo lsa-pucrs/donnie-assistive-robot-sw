@@ -248,7 +248,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			#ifndef NDEBUG
             cout << "SCAN"<< endl;
             #endif
-            //Scan(&head, &p2d_headProxy, &speech, SHProxy, BfinderProxy,&robot,&p2dProxy);
+            cout << "Comando 'espiar' nao implementado" << endl;
             break;
           }
 
@@ -257,7 +257,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			#ifndef NDEBUG
             cout << "STATUS"<< endl;
             #endif
-            //Mostra_Status(&speech);
+            cout << "Comando 'STATUS' nao implementado" << endl;
             break;
           }
 
@@ -609,6 +609,10 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case INFO:
           {
+			#ifndef NDEBUG
+              cout << "STATUS"<< endl;
+            #endif
+            cout << "Comando 'estado' nao implementado" << endl;
             break;
           }
 
