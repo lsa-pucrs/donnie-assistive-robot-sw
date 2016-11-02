@@ -71,7 +71,7 @@ TODO:  colocar exemplo c todos os parametros
 
 #define BUFFER_SIZE 200
 
-
+// TODO: amory. criar include donnie_defs.h com todas as definicoes de tamanho do donnie
 // Defines
 #define PI 3.141592653
 #define DIAMETER 0.44 //[m]
