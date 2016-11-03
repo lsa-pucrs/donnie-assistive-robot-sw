@@ -58,7 +58,7 @@
 # Gedit hidden files
 *~
 
-# compiled files dir
+# drivers compiled files dir
 build/
 docs/doxygen/html/
 

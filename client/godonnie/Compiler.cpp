@@ -1,4 +1,7 @@
+#include <algorithm> // remove
 #include "Compiler.h"
+#include "Exception.h"
+
 
 using std::map;
 using std::vector;
@@ -7,15 +10,24 @@ using std::string;
 using std::cout;
 using std::endl;
 
-
 ExprTreeEvaluator::ExprTreeEvaluator()
 {
 
-	Donnie = new DonnieClient();
+	Donnie = DonnieClient::getInstance();
+	History = Historic::getInstance();
 
   	memFlag = 0;
   	for_itFlag = 0;
-    done = 1;
+    done = 0;
+}
+
+ExprTreeEvaluator::~ExprTreeEvaluator()
+{
+	DonnieClient::ResetInstance();
+	Donnie = NULL;
+	
+	Historic::ResetInstance();
+	History = NULL;
 }
 
 int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
@@ -40,13 +52,19 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
   	  return -1;
   	}
 
-  	this->run(tree);
-
+	//Tentando rodar o programa
+	try{
+		this->run(tree);
+	}
+	catch(exception& e)
+	{
+		cout << e.what();
+	}
+	
   	parser->free(parser);
   	tokens->free(tokens);
   	lex->free(lex);
   	input->close(input);
-
 }
 
 int ExprTreeEvaluator::terminalMode(char* textIn)
@@ -70,7 +88,6 @@ int ExprTreeEvaluator::terminalMode(char* textIn)
 int ExprTreeEvaluator::scriptMode(char* fileIn)
 {
   mode = SCRIPT;
-
   pANTLR3_INPUT_STREAM input = antlr3AsciiFileStreamNew((pANTLR3_UINT8)fileIn);       //  Utilizar para modo script
 
   this->parser(input);
@@ -79,9 +96,9 @@ int ExprTreeEvaluator::scriptMode(char* fileIn)
 
 }
 
-
 int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 {
+	string command="";
     pANTLR3_COMMON_TOKEN tok = tree->getToken(tree);
     if(tok) {
         switch(tok->type) {
@@ -100,7 +117,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
                 return memory[getText(tree)];
               }
               else
-                cout << "Variavel " << getText(tree) << " global não existe" << endl;
+                //cout << "Variavel " << getText(tree) << " global não existe" << endl;
+                throw variavelException();
             }
             else
             {
@@ -109,7 +127,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
                 return localMem.top().memory[getText(tree)]; // Variável local do primeiro item da stack
               }
               else
-                cout << "Variavel " << getText(tree) << " local não existe" << endl;
+                //cout << "Variavel " << getText(tree) << " local não existe" << endl;
+                throw variavelException();
             }
             break;              
           }
@@ -153,38 +172,75 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             return run(getChild(tree,0)) / run(getChild(tree,1));
           }
 
-          case PF:
-          {
-
+		
+          case FW:
+          { // forward
+			#ifndef NDEBUG
             cout << "PF: " << run(getChild(tree,0)) << endl;
-            Donnie->ParaFrente((float)run(getChild(tree,0)));
+            #endif
+            // run the command
+            float distance = (float)run(getChild(tree,0));
+            Donnie->moveForward(distance);
+			// save into history
+            std::ostringstream distanceStr;
+			distanceStr << distance;
+            command = string(getText(tree)) + " " + distanceStr.str();
+            //command = string(getText(tree)) + " " + to_string(distance);
+            History->addCommand(command,"");
             //Para_Frente(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
           }
 
-          case PT:
-          {
-
+          case BW:
+          { // backward
+			#ifndef NDEBUG
             cout << "PT: " << run(getChild(tree,0)) << endl;
-            Donnie->ParaTras((float)run(getChild(tree,0)));
+            #endif
+            // run the command
+            float distance = (float)run(getChild(tree,0));
+            Donnie->moveBackward(distance);
+			// save into history
+            std::ostringstream distanceStr;
+			distanceStr << distance;
+            command = string(getText(tree)) + " " + distanceStr.str();
+            //command = string(getText(tree)) + " " + to_string(distance);
+            History->addCommand(command,"");            
             //Para_Tras(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
           }
 
-          case PD:
-          {
-
+          case RTURN:
+          { // right turn
+			#ifndef NDEBUG
             cout << "PD: " << run(getChild(tree,0)) << endl;
-            Donnie->ParaDireita((float)run(getChild(tree,0)));
+            #endif
+            // run the command
+            float distance = (float)run(getChild(tree,0));
+            Donnie->turnRight(distance);
+			// save into history
+            std::ostringstream distanceStr;
+			distanceStr << distance;
+            command = string(getText(tree)) + " " + distanceStr.str();
+            //command = string(getText(tree)) + " " + to_string(distance);
+            History->addCommand(command,"");            
             //Para_Direita(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
           }
 
-          case PE:
-          {
-
+          case LTURN:
+          { // left turn
+			#ifndef NDEBUG
             cout << "PE: " << run(getChild(tree,0)) << endl;
-            Donnie->ParaEsquerda((float)run(getChild(tree,0)));
+            #endif
+            // run the command
+            float distance = (float)run(getChild(tree,0));
+            Donnie->turnLeft(distance);
+			// save into history
+            std::ostringstream distanceStr;
+			distanceStr << distance;
+            command = string(getText(tree)) + " " + distanceStr.str();
+            //command = string(getText(tree)) + " " + to_string(distance);
+            History->addCommand(command,"");            
             //Para_Esquerda(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
 
@@ -192,16 +248,19 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case SCAN:
           {
-
+			#ifndef NDEBUG
             cout << "SCAN"<< endl;
-            //Scan(&head, &p2d_headProxy, &speech, SHProxy, BfinderProxy,&robot,&p2dProxy);
+            #endif
+            cout << "Comando 'espiar' nao implementado" << endl;
             break;
           }
 
           case STATUS:
           {
+			#ifndef NDEBUG
             cout << "STATUS"<< endl;
-            //Mostra_Status(&speech);
+            #endif
+            cout << "Comando 'STATUS' nao implementado" << endl;
             break;
           }
 
@@ -215,7 +274,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
             int arg;
 
-            if(tkn[0] == 102 or tkn[0] == 70)
+            if(tkn[0] == 'f' or tkn[0] == 'F')
             {
               if(tkn[1] == 101 or tkn[1] == 69)
                 arg = 2;
@@ -237,8 +296,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             {
               arg = 6;
             } 
-
+			#ifndef NDEBUG
             cout << "RANGER: " << arg << endl;
+            #endif
             return (int)Donnie->GetRange(arg);
           }
 
@@ -258,8 +318,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
               arg = 1;
             else
               arg = 2;
-
+			#ifndef NDEBUG
             cout << "POS: " << getText(tree) << endl;
+            #endif
             return (int)Donnie->GetPos(arg);
 
           }
@@ -271,21 +332,35 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             break;
           }
 
-          case PRINTE:
+          case SPEAKE:
           {
-            cout << "PRINT: " << endl; 
+            //cout << "PRINT: " << endl; 
             //cout << "TIPE: " << tree->getToken(getChild(tree,0))->type << endl;
-            if(tree->getToken(getChild(tree,0))->type == STRINGE)         // Caso seja string informa texto do filho caso contrario executa o filho
-              cout << getText(getChild(tree,0)) << endl;
-            else
-              cout << run(getChild(tree,0)) << endl;
+            std::ostringstream arg;			
+            if(tree->getToken(getChild(tree,0))->type == STRINGE) {        // Caso seja string informa texto do filho caso contrario executa o filho
+              string auxstr;
+              auxstr = getText(getChild(tree,0));
+              // Remove all double-quote characters
+			  auxstr.erase(
+				remove( auxstr.begin(), auxstr.end(), '\"' ),
+				auxstr.end()
+				);
+			  arg << auxstr;
+            }else{
+			  arg << run(getChild(tree,0));
+		   }
+            Donnie->speak(arg.str());
             break;
           }
 
-          case ESPERA:
+          case WAIT:
           {
-            cout << "ESPERAR: " << endl;
-            sleep(run(getChild(tree,0)));
+            #ifndef NDEBUG
+				if(tree->getToken(getChild(tree,0))->type == STRINGE)
+					cout << "ESPERAR: " << getText(getChild(tree,0)) << endl;
+			#endif
+			if(tree->getToken(getChild(tree,0))->type != STRINGE)
+				sleep(run(getChild(tree,0)));
             break;
           }
 
@@ -337,8 +412,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case WHILEE:
           {
+			#ifndef NDEBUG
             cout << "while" << endl;
-
+			#endif
             int a = run(getChild(tree,0));                      // Retorna o valor das variáveis na condição
             int b = run(getChild(tree,2));                      // #
             string c = (string)getText(getChild(tree,1));       // Retorna operador de condição
@@ -388,14 +464,18 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case THEN:
           case ELSEE:
-          case FACA:
+          case DOIT:
           case REPTB:
           case PROCB:
           {
+			#ifndef NDEBUG
             cout << "N Fi: " << tree->getChildCount(tree) << endl;
+            #endif
             for (int f = 0; f < tree->getChildCount(tree); f++)
               {
+				#ifndef NDEBUG
                 cout << getText(getChild(tree,f)) << endl;
+                #endif
                 run(getChild(tree,f));
               }
             break;
@@ -428,7 +508,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
               }
               else
               {
+				#ifndef NDEBUG
                 cout << "MAKE: " << var << " = " << val << endl;
+                #endif
                 memory[var] = val;
                 return val;
               }
@@ -443,7 +525,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
               }
               else
               {
+                #ifndef NDEBUG
                 cout << "MAKE: " << var << " = " << val << endl;
+                #endif
                 localMem.top().memory[var] = val;
                 return val;
               }
@@ -505,6 +589,13 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             }
             break;
           }
+          
+          case HIST:
+          {
+				//TODO (amory): implementar um clear para o historico
+				cout << History->show();
+				break;
+		  }
 
           case SEMICOLON:
           {
@@ -531,15 +622,21 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case INFO:
           {
+			#ifndef NDEBUG
+              cout << "STATUS"<< endl;
+            #endif
+            cout << "Comando 'estado' nao implementado" << endl;
             break;
           }
 
           case QUIT:
           {
+            #ifndef NDEBUG
             cout << "EXIT" << endl;
+            #endif
             //Mix_CloseAudio();
             //SDL_Quit();
-            done = 0;
+            done = 1;
             break;
           }
 
@@ -568,13 +665,15 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
                 return val;
               }
               else
-                cout << "Variavel " << var << " local não existe" << endl;
+                //cout << "Variavel " << var << " local não existe" << endl;
+                ;
             }
             break;            
           }
   
           default:
-              cout << "Unhandled token: #" << tok->type << '\n';
+              //cout << "Unhandled token: #" << tok->type << '\n';
+               throw sintaxeException("Sintaxe não conhecida\n");
                break;
         }
     }
@@ -590,7 +689,10 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
 pANTLR3_BASE_TREE getChild(pANTLR3_BASE_TREE tree, unsigned i)
 {
-    assert(i < tree->getChildCount(tree));
+	
+    //assert(i < tree->getChildCount(tree));
+    if(!(i < tree->getChildCount(tree))) throw sintaxeException();
+    
     return (pANTLR3_BASE_TREE) tree->getChild(tree, i);
 }
 
@@ -598,7 +700,6 @@ const char* getText(pANTLR3_BASE_TREE tree)
 {
     return (const char*) tree->getText(tree)->chars;
 }
-
 
 bool compare (int a, int b, string comp)
 {
@@ -629,9 +730,9 @@ bool compare (int a, int b, string comp)
   else
   {
     cout << "null comp" << endl;
+    //TODO: (amory) nao era p gerar uma excecao ?
     return false;
-  }
-    
+  } 
 }
 
 
