@@ -58,8 +58,9 @@
 # Gedit hidden files
 *~
 
-# drivers compiled files dir
+# compiled files dir
 build/
+docs/doxygen/html/
 
 # gtts resource
 download.mp3
