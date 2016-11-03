@@ -33,7 +33,7 @@ NC='\033[0m' # No Color
 echo -e "${RED}Running Donnie Compilation Script for Raspberry Pi ... ${NC}\n"
 
 if [ -z "$DONNIE_PATH" ]; then
-    echo -e "${RED}ERROR:{NC} Need to set DONNIE_PATH environment variable\n"
+    echo -e "${RED}ERROR:${NC} Need to set DONNIE_PATH environment variable\n"
     echo -e "Example: export DONNIE_PATH=/opt/donnie\n"
     exit 1
 fi  
@@ -47,62 +47,79 @@ VER=$(lsb_release -sr)
 OSNAME=$(lsb_release -sc)
 
 case ${OS} in 
-	Rasbian )
-		echo -e "${ORANGE}WARNING:{NC} Raspbian is recommended only for Raspberry Pi\n"
+	Raspbian)
+		echo -e "${ORANGE}WARNING:${NC} Raspbian is recommended only for Raspberry Pi\n"
 		case ${VER} in 
-			8.0 )
-				echo -e "${GREEN}NOTE:{NC} ${OS} - ${VER} (${OSNAME}) is the recommended OS version.\n"
+			8.0)
+				echo -e "${GREEN}NOTE:${NC} ${OS} - ${VER} (${OSNAME}) is the recommended OS version.\n"
 				;;
-			* )
+			*)
 				# Handle other OS versions here
-				echo -e "${ORANGE}WARNING:{NC} ${OS} - ${VER} (${OSNAME}) is not a recommended OS version. You might get errors and some programming experience is required to compile Donnie. \n"
-				echo -e "${GREEN}NOTE:{NC} Raspbian Version 8 (Jessie) is the recommended version for ${OS}\n"
+				echo -e "${ORANGE}WARNING:${NC} ${OS} - ${VER} (${OSNAME}) is not a recommended OS version. You might get errors and some programming experience is required to compile Donnie. \n"
+				echo -e "${GREEN}NOTE:${NC} Raspbian Version 8 (Jessie) is the recommended version for ${OS}\n"
 				exit 1;
 			 ;;
-		esac		
-	* )
+		esac
+		;;	
+	*)
      # Handle other distributions here
-		echo -e "${RED}ERROR:{NC} ${OS} is not a supported OS\n"
-		echo -e "${GREEN}NOTE:{NC} Raspbian Version 8 (Jessie) is recommended for Donnie's computer (Raspberry Pi)\n"
+		echo -e "${RED}ERROR:${NC} ${OS} is not a supported OS\n"
+		echo -e "${GREEN}NOTE:${NC} Raspbian Version 8 (Jessie) is recommended for Donnie's computer (Raspberry Pi)\n"
 		exit 1;
      ;;
 esac
+##################################################
+# set environment variables
+##################################################
+source ./install/setup-rpi.sh
+echo "source $DONNIE_PATH/setup.sh" >> ~/.bashrc
+
+##################################################
+# Setting up Raspberry Pi
+##################################################
+echo -e "${GREEN}Setting up Raspberry Pi ... ${NC}\n"
+#Desativa o login serial da Raspberry (Para evitar o conflito da serial do Arduino)
+#Source: http://spellfoundry.com/sleepypi/settingarduinoideraspbian/
+sudo systemctl mask serialgetty@ttyAMA0.service
+
+#Configurando o desligamento da raspberry (Shutdown) por interrupção do pino GPIO4
+#Referencia(No link tem outros uso para a GPIO Zero também): http://bennuttall.com/gpio-zero-developing-a-new-friendly-python-api-for-physical-computing/ 
+sudo apt-get install python3-gpiozero python-gpiozero
+
+# '$' means the last line, 'i' means insert before the current line, so '$i' means insert before the last line.
+sudo sed -i -e '$i \sleep 10\n' /etc/rc.local ## this sleep is required to play festival. sometimes rc.locals plays too early
+sudo sed -i -e '$i \nohup sudo python '"${DONNIE_PATH}"'/scripts/softshutdown.py &\n' /etc/rc.local
+
+# script used to Donnie tell its IP address at startup 
+sudo apt-get install -y festival
+sudo sed -i -e '$i \nohup sudo python '"${DONNIE_PATH}"'/scripts/speechIP.py &\n' /etc/rc.local
+
+echo -e "${GREEN}Raspberry Pi Set Up Completed !!!!${NC}\n"
 
 ##################################################
 # install commom packages
 ##################################################
-apt-get update
-sudo apt-get install -y build-essential
+sudo apt-get update
 
 # nice to have, not mandatory
 sudo apt-get install -y geany
 
 #compilation utils
 echo -e "${GREEN}Installing Compilation Utils ... ${NC}\n"
-sudo apt-get install -y autoconf
-#sudo apt-get install -y cmake
-#sudo apt-get install -y cmake-curses-gui
-sudo apt-get install -y git
-sudo apt-get install -y pkg-config
+sudo apt-get install -y build-essential autoconf git pkg-config
 
 # Jessie installs cmake 3.0 by the default, but lubuntu 14.04 uses cmake 2.8
 # this gives some weird warnings when running cmake 3.0 on rpi.
 # so we downgraded the cmake to 2.8, used in wheezy
 # https://www.raspbian.org/RaspbianRepository
 wget https://archive.raspbian.org/raspbian.public.key -O - | sudo apt-key add -
-echo "deb http://archive.raspbian.org/raspbian wheezy main contrib non-free" >> /etc/apt/sources.list
-echo "deb-src http://archive.raspbian.org/raspbian wheezy main contrib non-free" >> /etc/apt/sources.list
+echo "deb http://archive.raspbian.org/raspbian wheezy main contrib non-free" |  sudo tee --append /etc/apt/sources.list > /dev/null
+echo "deb-src http://archive.raspbian.org/raspbian wheezy main contrib non-free"  |  sudo tee --append /etc/apt/sources.list > /dev/null
 sudo apt-get update
 #apt-cache madison cmake
 sudo apt-get install -y cmake-data=2.8.9-1
 sudo apt-get install -y cmake=2.8.9-1
 sudo apt-get install -y cmake-curses-gui=2.8.9-1
-
-##################################################
-# set environment variables
-##################################################
-source ./install/setup-rpi.sh
-echo "source $DONNIE_PATH/setup-rpi.sh" >> ~/.bashrc
 
 ##################################################
 # install Player depedencies
@@ -146,6 +163,23 @@ sudo apt-get install -y libsox-dev
 #to compile gtts driver
 #sudo apt-get install -y curl
 sudo apt-get install -y libcurl4-openssl-dev
+#Instalar o TIMIDITY para poder usar os canais virtuais de MIDI (Virtual MIDI Port) e usar notas musicais no autofalante 
+sudo apt-get install -y timidity
+
+#Testando saida do auto falante
+#$speaker-test -t sine -f 1000 -c 2
+
+#Selecionar a saida para o jack p2
+#sudo amixer cset numid=3 1 # headphones
+#sudo amixer cset numid=3 0 # Auto
+#sudo amixer cset numid=3 2 # HDMI
+
+#Controle do volume
+#sudo alsamixer
+
+#Tocando um mp3
+#omxplayer mp3name.mp3
+
 
 ##################################################
 # Donwloading source code 
@@ -282,6 +316,18 @@ make
 sudo make install
 echo -e "${GREEN}Raspicam installed !!!! ${NC}\n"
 
+#run the follwing command to test raspicam
+#raspivid -o - -t 9999999 -w 1280 -h 1024 -b 500000 -fps 20 -vf
+
+#Testing Raspicam via ssh
+#https://www.raspberrypi.org/forums/viewtopic.php?t=67571
+#http://raspi.tv/2013/how-to-stream-video-from-your-raspicam-to-your-nexus-7-tablet-using-vlc
+#1) Precisa do vlc (para o comando cvlc)
+sudo apt-get install -y vlc
+#2) Executar processo da camera
+#raspivid -o - -t 99999 -w 640 -h 360 -fps 5 -vf|cvlc -vvv stream:///dev/stdin --sout '#standard{access=http,mux=ts,dst=:8090}' :demux=h264
+#Obs: Para conectar entrar no endereço (pelo streaming do VLC no PC) http://192.168.0.XX:8090 
+
 ##################################################
 # Compiling and installing Donnie
 ##################################################
@@ -290,9 +336,7 @@ mkdir build
 cd build
 echo -e "${GREEN}Configuring Donnie ... ${NC}\n"
 # CMAKE_SYSTEM_PROCESSOR=arm is required to avoid compiling things not used by the robot computer
-cmake -DCMAKE_BUILD_TYPE=Release \
-	-DCMAKE_SYSTEM_PROCESSOR=arm \  
-	..
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_PROCESSOR=arm ..
 echo -e "${GREEN}Compiling Donnie ... ${NC}\n"
 make
 sudo make install
@@ -302,7 +346,7 @@ echo -e "${GREEN}Donnie installed !!!! ${NC}\n"
 # uninstall all dev packages to save space
 ##################################################
 echo -e "${GREEN}Cleaning the cache ... ${NC}\n"
-apt-get autoclean
-apt-get autoremove
+sudo apt-get -y autoclean
+sudo apt-get -y autoremove
 
 echo -e "${GREEN}End of installation !!!! ${NC}\n"

@@ -22,7 +22,7 @@ NC='\033[0m' # No Color
 echo -e "${RED}Running Donnie Compilation Script for Lubuntu 14.04 ... ${NC}\n"
 
 if [ -z "$DONNIE_PATH" ]; then
-    echo -e "${RED}ERROR:{NC} Need to set DONNIE_PATH environment variable\n"
+    echo -e "${RED}ERROR:${NC} Need to set DONNIE_PATH environment variable\n"
     echo -e "Example: export DONNIE_PATH=/opt/donnie\n"
     exit 1
 fi  
@@ -38,39 +38,40 @@ VER=$(lsb_release -sr)
 OSNAME=$(lsb_release -sc)
 
 case ${OS} in 
-	Ubuntu )
-		echo -e "${ORANGE}WARNING:{NC} Ubuntu is only recommended for Destop computer, not VMs, and not Raspberry Pi\n"
+	Ubuntu)
+		echo -e "${ORANGE}WARNING:${NC} Ubuntu is only recommended for Destop computer, not VMs, and not Raspberry Pi\n"
 		case ${VER} in 
-			14.04 )
-				echo -e "${GREEN}NOTE:{NC} ${OS} - ${VER} (${OSNAME} is the recommended OS version.\n"
+			14.04)
+				echo -e "${GREEN}NOTE:${NC} ${OS} - ${VER} (${OSNAME} is the recommended OS version.\n"
 				;;
-			* )
+			*)
 				# Handle other OS versions here
-				echo -e "${ORANGE}WARNING:{NC} ${OS} - ${VER} (${OSNAME} is not a recommended OS version. You might get errors and some programming experience is required to compile Donnie. \n"
-				echo -e "${GREEN}NOTE:{NC} Ubuntu 14.04 (trusty) is the recommended version for ${OS}\n"
+				echo -e "${ORANGE}WARNING:${NC} ${OS} - ${VER} (${OSNAME} is not a recommended OS version. You might get errors and some programming experience is required to compile Donnie. \n"
+				echo -e "${GREEN}NOTE:${NC} Ubuntu 14.04 (trusty) is the recommended version for ${OS}\n"
 				exit 1;
-			 ;;
+			    ;;
 		esac		
 		;;
-	Lubuntu )
-		echo -e "${ORANGE}WARNING:{NC} Lubuntu is recommended for both Destop computers and VMs, but not for Raspberry Pi\n"
+	Lubuntu)
+		echo -e "${ORANGE}WARNING:${NC} Lubuntu is recommended for both Destop computers and VMs, but not for Raspberry Pi\n"
 		case ${VER} in 
-			14.04 )
-				echo -e "${GREEN}NOTE:{NC} ${OS} - ${VER} (${OSNAME} is the recommended OS version.\n"
+			14.04)
+				echo -e "${GREEN}NOTE:${NC} ${OS} - ${VER} (${OSNAME} is the recommended OS version.\n"
 				;;
-			* )
+			*)
 				# Handle other OS versions here
-				echo -e "${ORANGE}WARNING:{NC} ${OS} - ${VER} (${OSNAME} is not a recommended OS version. You might get errors and some programming experience is required to compile Donnie. \n"
-				echo -e "${GREEN}NOTE:{NC} Lubuntu 14.04 (trusty) is the recommended version for ${OS}\n"
+				echo -e "${ORANGE}WARNING:${NC} ${OS} - ${VER} (${OSNAME} is not a recommended OS version. You might get errors and some programming experience is required to compile Donnie. \n"
+				echo -e "${GREEN}NOTE:${NC} Lubuntu 14.04 (trusty) is the recommended version for ${OS}\n"
 				exit 1;
-			 ;;
-		esac			
-	* )
+			    ;;
+		esac
+		;;			
+	*)
      # Handle other distributions here
-		echo -e "${RED}ERROR:{NC} ${OS} - ${VER} (${OSNAME} is not a supported OS\n"
-		echo -e "${GREEN}NOTE:{NC}Lubuntu 14.04 (trusty) is recommended OS for Donnie's host computer\n"
+		echo -e "${RED}ERROR:${NC} ${OS} - ${VER} (${OSNAME} is not a supported OS\n"
+		echo -e "${GREEN}NOTE:${NC}Lubuntu 14.04 (trusty) is recommended OS for Donnie's host computer\n"
 		exit 1;
-     ;;
+        ;;
 esac
 
 ##################################################
@@ -191,6 +192,11 @@ echo -e "${GREEN}Stage installed !!!! ${NC}\n"
 echo -e "${GREEN}Installing Donnie Dependencies ... ${NC}\n"
 #to compile soxplayer driver
 #sudo apt-get install -y sox
+# TODO: check if any of these packages are actually required for donnie
+#  188  sudo apt-get install libsoxr0
+#  190  sudo apt-get install sox
+#  222  sudo apt-get install xfce4-mixer gstreamer0.10-alsa
+#  225  sudo apt-get install pulseaudio pavucontrol
 sudo apt-get install -y libsox-dev 
 #to compile gtts driver
 #sudo apt-get install -y curl
@@ -233,7 +239,7 @@ echo -e "${GREEN}End of installation !!!! ${NC}\n"
 # uninstall all dev packages to save space
 ##################################################
 echo -e "${GREEN}Cleaning the cache ... ${NC}\n"
-apt-get autoclean
-apt-get autoremove
+sudo apt-get -y autoclean
+sudo apt-get -y autoremove
 
 echo -e "${GREEN}End of installation !!!! ${NC}\n"

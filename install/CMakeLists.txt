@@ -12,3 +12,10 @@ INSTALL(FILES ${setup}
         DESTINATION ${DONNIE_PATH}
         RENAME setup.sh
 )
+
+# auxiliar rasp scripts
+if (ROBOT_COMPUTER)
+	INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/softshutdown.py ${CMAKE_CURRENT_SOURCE_DIR}/speechIP.py
+			DESTINATION ${DONNIE_PATH}/scripts
+	)
+endif ()
