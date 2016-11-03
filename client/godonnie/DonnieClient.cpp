@@ -32,7 +32,7 @@ void DonnieClient::ResetInstance()
 
 DonnieClient::DonnieClient()
 {
-	string host = GetEnv("DONNIE_HOST");
+	string host = GetEnv("DONNIE_IP");
 	int port = atoi(GetEnv("DONNIE_PORT").c_str());
 	if(host.size()==0) host = "localhost";
 	if(port==0) port = 6665;

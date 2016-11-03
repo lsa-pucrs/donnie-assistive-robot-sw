@@ -10,7 +10,7 @@
 
 DonnieClient::DonnieClient()
 {
-    string host = GetEnv("DONNIE_HOST");
+    string host = GetEnv("DONNIE_IP");
     string donnie_path = GetEnv("DONNIE_PATH");
     int port = atoi(GetEnv("DONNIE_PORT").c_str());
     if(host.size()==0) host = "localhost";

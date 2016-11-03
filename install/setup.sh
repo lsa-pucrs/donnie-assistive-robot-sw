@@ -15,6 +15,7 @@ export DONNIE_PATH=/opt/donnie
 export DONNIE_SOURCE_PATH=/home/lsa/Downloads/donnie-assistive-robot-sw
 # donnie IP address
 export DONNIE_IP=192.168.0.6
+export DONNIE_PORT=6665
 
 #required to run donnie
 export PATH=$PATH:$DONNIE_PATH/bin
