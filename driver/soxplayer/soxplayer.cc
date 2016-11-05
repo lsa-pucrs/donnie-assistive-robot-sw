@@ -42,7 +42,10 @@ driver
 
 #define DRIVERNAME "soxplayer"
 
-
+// Message levels
+#define MESSAGE_ERROR	0
+#define MESSAGE_INFO	1
+#define MESSAGE_DEBUG	2
 
 ////////////////////////////////////////////////////////////////////////////////
 // The class for the driver
@@ -68,13 +71,13 @@ Soxplayer::Soxplayer(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 
 	//create a sound interface
 	if (cf->ReadDeviceAddr(&(this->sound_addr), section, "provides", PLAYER_SOUND_CODE, -1, NULL)){
-		PLAYER_ERROR("Could not read SOUND ");
+		PLAYER_ERROR("[soxplayer] Could not read SOUND");
 		SetError(-1);
 		return;
 	}
 	//TODO. amory. pq speech interface ? revisar esta msg. dar find por speech
 	if (AddInterface(this->sound_addr)){
-		PLAYER_ERROR("Could not add speech interface ");
+		PLAYER_ERROR("[soxplayer] Could not add sox sound interface");
 		SetError(-1);
 		return;
 	}
@@ -82,20 +85,22 @@ Soxplayer::Soxplayer(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 	//init sox
 	//assert(sox_init() == SOX_SUCCESS);
 	if(sox_init() != SOX_SUCCESS){
-		PLAYER_ERROR("Could not initialize sox");
-		exit(1);
+		PLAYER_ERROR("[soxplayer] Could not initialize sox");
+		SetError(-1);
 	}
 
 }
 Soxplayer::~Soxplayer(){
 	sox_quit();
-	puts("Sox Closed");
+	//puts("Sox Closed");
+	PLAYER_MSG0(MESSAGE_INFO, "[soxplayer] Closed");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Set up the device (ONLY WHEN A CLIENT CONECTS TO THE DRIVER).  Return 0 if things go well, and -1 otherwise.
 int Soxplayer::MainSetup(){   
-	puts("Soxplayer client has been connected");
+	//puts("Soxplayer client has been connected");
+	PLAYER_MSG0(MESSAGE_INFO, "[soxplayer] client has been connected");
 
 	//assossiate the device with an interface
 	/*this->bumper_dev = deviceTable->GetDevice(this->bumper_addr);
@@ -105,14 +110,14 @@ int Soxplayer::MainSetup(){
 		return -1;
 	}*/
 
-	puts("Soxplayer driver ready");
+	//puts("Soxplayer driver ready");
 	return(0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //Shutdown the device (occurs in each client shutdown)
 void Soxplayer::MainQuit(){
-	PLAYER_MSG0(0, "Soxplayer client has been disconnected...\n");
+	PLAYER_MSG0(MESSAGE_INFO, "[soxplayer] client has been disconnected...");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -129,7 +134,9 @@ void Soxplayer::Main(){
 
 //deal with messages comming from the clients
 int Soxplayer::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, void * data){
-	//PLAYER_MSG0(0,"Msg Received in Driver Soxplayer");
+	#ifndef NDEBUG
+	  PLAYER_MSG0(MESSAGE_INFO,"[soxplayer] Msg received");
+	#endif
 	if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_CMD, PLAYER_SOUND_CMD_VALUES, sound_addr)){
 		Play((reinterpret_cast<player_sound_cmd_t*>(data))->filename);
 		return(0);
@@ -141,13 +148,22 @@ int Soxplayer::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, vo
 
 int Soxplayer::Play(char *fileAddr){
 	//check if file exists
-	if (!std::ifstream(fileAddr))
+	std::ifstream infile(fileAddr, std::ifstream::ate | std::ifstream::binary);
+	if (!infile)
 	{
-		PLAYER_ERROR1("File[%s] do not exists!\n",fileAddr);
-		//printf("\nError! File[%s] do not exists!\n",fileAddr);
-		return 1;
+		PLAYER_ERROR1("[soxplayer] File[%s] do not exists!",fileAddr);
+		return -1;
 	}
-	printf("Playing[%s]\n",fileAddr);
+	// check if file is empty
+    if (infile.tellg()<=0)	
+	{
+		PLAYER_ERROR1("[soxplayer] File[%s] is empty!",fileAddr);
+		return -1;
+	}
+	infile.close();
+ 
+	//printf("Playing[%s]\n",fileAddr);
+	PLAYER_MSG1(MESSAGE_INFO, "[soxplayer] Playing[%s]",fileAddr);
 
 	static sox_format_t * in, * out; /* input and output files */
 	sox_effects_chain_t * chain;
@@ -155,25 +171,20 @@ int Soxplayer::Play(char *fileAddr){
 	sox_signalinfo_t interm_signal;
 	char * args[10];
 
-	/*if (argc != 2) {
-	    fprintf(stderr, "usage: %s input_file \nIt supports any audio format supported by sox\n", argv[0]);
-	    exit(1);
-	}  */
-
 	//assert(in = sox_open_read(fileAddr, NULL, NULL, NULL) == SOX_SUCCESS);
-	
 	if((in = sox_open_read(fileAddr, NULL, NULL, NULL)) == NULL){
-		printf ("ERROR: cannot read audio file %s \n", fileAddr);
-		exit(1);
+		//printf ("ERROR: cannot read audio file %s \n", fileAddr);
+		PLAYER_ERROR1("[soxplayer] Cannot read audio file %s", fileAddr);
+		return -1;
 	}
 	
 	/* Change "alsa" in this line to use an alternative audio device driver: */
 	//assert(out= sox_open_write("default", &in->signal, NULL, "alsa", NULL, NULL) == SOX_SUCCESS );
-	
 	if((out= sox_open_write("default", &in->signal, NULL, "alsa", NULL, NULL)) == NULL){
-		printf ("ERROR: cannot write audio device 'alsa' \n");
-		exit(1);
-		}
+		//printf ("ERROR: cannot write audio device 'alsa' \n");
+		PLAYER_ERROR("[soxplayer] cannot write audio device 'alsa'");
+		return -1;
+	}
 
 	chain = sox_create_effects_chain(&in->encoding, &out->encoding);
 
@@ -186,7 +197,8 @@ int Soxplayer::Play(char *fileAddr){
 	sox_add_effect(chain, e, &interm_signal, &in->signal);
 	free(e);
 	
-	printf ("rate %d %d\n", (int)in->signal.rate, (int)out->signal.rate);
+	//printf ("rate %d %d\n", (int)in->signal.rate, (int)out->signal.rate);
+	PLAYER_MSG2(MESSAGE_INFO, "[soxplayer] rate %d %d", (int)in->signal.rate, (int)out->signal.rate);
 	if (in->signal.rate != out->signal.rate) {
 		e = sox_create_effect(sox_find_effect("rate"));
 		//args[0] = "48000", assert(sox_effect_options(e, 1, args) == SOX_SUCCESS);
@@ -195,10 +207,10 @@ int Soxplayer::Play(char *fileAddr){
 		//assert(sox_add_effect(chain, e, &interm_signal, &out->signal) == SOX_SUCCESS);
 		sox_add_effect(chain, e, &interm_signal, &out->signal);
 		free(e);
-
 	}
 
-	printf ("channels %d %d\n", in->signal.channels, out->signal.channels);
+	//printf ("channels %d %d\n", in->signal.channels, out->signal.channels);
+	PLAYER_MSG2(MESSAGE_INFO, "[soxplayer] channels %d %d", in->signal.channels, out->signal.channels);
 	if (in->signal.channels != out->signal.channels) {
 		e = sox_create_effect(sox_find_effect("channels"));
 		//assert(sox_effect_options(e, 0, NULL) == SOX_SUCCESS);
@@ -216,9 +228,7 @@ int Soxplayer::Play(char *fileAddr){
 	free(e);
 
 	sox_flow_effects(chain, NULL, NULL);
-
 	sox_delete_effects_chain(chain);
-	
 	sox_close(out);
 	sox_close(in);
 
@@ -247,9 +257,11 @@ void Soxplayer_Register(DriverTable* table){                                    
 /* need the extern to avoid C++ name-mangling  */                            //
 extern "C"{                                                                  //
 	int player_driver_init(DriverTable* table){                              //
-		puts("Soxplayer driver initiallized");
+		//puts("Soxplayer driver initiallized");
+		PLAYER_MSG0(MESSAGE_INFO, "[soxplayer] driver initiallized");
 		Soxplayer_Register(table);
-		puts("waiting for client startup...");                               //
+		//puts("waiting for client startup...");                               //
+		PLAYER_MSG0(MESSAGE_INFO, "[soxplayer] waiting for client startup...");
 		return(0);                                                           //
 	}                                                                        //
 }                                                                            //

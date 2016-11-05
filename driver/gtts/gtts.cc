@@ -43,18 +43,21 @@ driver
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h> //sleep
-#include <curl/curl.h> 
+//#include <curl/curl.h> 
 #include <netinet/in.h> //TODO perguntar para henry oq isso faz
-
-#include <assert.h>
+//#include <assert.h>
 
 
 #define DRIVERNAME "gtts"
 
 
-CURL *curl;  
-FILE *file;
+//CURL *curl;  
+//FILE *file;
 
+// Message levels
+#define MESSAGE_ERROR	0
+#define MESSAGE_INFO	1
+#define MESSAGE_DEBUG	2
 
 ////////////////////////////////////////////////////////////////////////////////
 // The class for the driver
@@ -84,18 +87,18 @@ Gtts::Gtts(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 
 	//requires assosiations with devies
 	if (cf->ReadDeviceAddr (&(this->sound_addr),section,"requires",PLAYER_SOUND_CODE, -1, NULL)){
-		PLAYER_ERROR("Could not read sound interface ");
+		PLAYER_ERROR("[Gtts] Could not read sound interface");
 		SetError (-1);
 		return;
 	}
 	//requires assosiation with interfaces
 	if (cf->ReadDeviceAddr(&(this->speech_addr), section, "provides", PLAYER_SPEECH_CODE, -1, NULL)){
-		PLAYER_ERROR("Could not read SPEECH ");
+		PLAYER_ERROR("[Gtts] Could not read speech");
 		SetError(-1);
 		return;
 	}
 	if (AddInterface(this->speech_addr)){
-		PLAYER_ERROR("Could not add speech interface ");
+		PLAYER_ERROR("[Gtts] Could not add speech interface");
 		SetError(-1);
 		return;
 	}
@@ -104,8 +107,7 @@ Gtts::Gtts(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 ////////////////////////////////////////////////////////////////////////////////
 // Set up the device (ONLY WHEN A CLIENT CONECTS TO THE DRIVER).  Return 0 if things go well, and -1 otherwise.
 int Gtts::MainSetup(){   
-	PLAYER_MSG0(0, "Gtts client has been connected\n");
-	puts("Gtts driver initialising");
+	PLAYER_MSG0(MESSAGE_INFO, "[Gtts] client has been connected");
 
 	//assossiate the device with an interface
 	//Gtts this driver with Sound driver like a client does
@@ -116,14 +118,15 @@ int Gtts::MainSetup(){
 		return -1;
 	}
 
-	puts("Gtts driver ready");
+	//puts("Gtts driver ready");
+	//PLAYER_MSG0(MESSAGE_INFO, "Gtts driver ready\n");
 	return(0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //Shutdown the device (occurs in each client shutdown)
 void Gtts::MainQuit(){
-	PLAYER_MSG0(0, "Gtts client has been disconnected...\n");
+	PLAYER_MSG0(MESSAGE_INFO, "[Gtts] client has been disconnected...");
 	//return 0; //close server
 }
 
@@ -156,14 +159,15 @@ int Gtts::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, void * 
 }
 
 void Gtts::ProcessSpeechCmd(player_msghdr_t* hdr, player_speech_cmd_t &data){
-	std::cout << std::endl << "Received:";
 	for(int i=0;i<data.string_count;i++){
 		std::cout << data.string[i];
 	}
-	std::cout << std::endl;
 
-	char *palavra = data.string+1;
-	//trata os espaços em branco da palavra ' '->%
+	char *palavra = data.string;
+	#ifndef NDEBUG
+	  PLAYER_MSG1(MESSAGE_INFO,"[Gtts] Receiving phrase [%s] to be transformed to speech",palavra);
+	#endif	
+	//treat the white spaces ' '->%
 	int i = 0;
 	for(i = 0; i < data.string_count; i++)
 	{
@@ -185,7 +189,9 @@ void Gtts::ProcessSpeechCmd(player_msghdr_t* hdr, player_speech_cmd_t &data){
 	strcat(url,"&tl=PT-br");
 	strcat(url,"&q=");
 	strcat(url, palavra);
-	//printf("%s\n", url);
+	#ifndef NDEBUG
+	  PLAYER_MSG1(MESSAGE_INFO,"[Gtts] URL for GoogleTTS [%s]",url);
+	#endif	
 	
 	//Download do arquivo com curl
     //file = fopen("download.mp3", "w");
@@ -204,7 +210,8 @@ void Gtts::ProcessSpeechCmd(player_msghdr_t* hdr, player_speech_cmd_t &data){
     strcat(cmdcurl,url);
     strcat(cmdcurl,"\"");
 	if (system(cmdcurl) == -1){
-		std::cout << "ERROR: cannot execute wget" << std::endl;
+		PLAYER_ERROR("[Gtts] Cannot execute wget");
+		return;
 	}
     //printf("%s\n", cmdcurl);
     Play("download.mp3");
@@ -215,6 +222,9 @@ void Gtts::Play(char *fileAddr){
 	memset(&sfile,0,sizeof(sfile));
 
 	strcpy(sfile.filename, fileAddr);
+	#ifndef NDEBUG
+	  PLAYER_MSG1(MESSAGE_INFO,"[Gtts] Sending filename [%s] to be played by sox",sfile.filename);
+	#endif	
 	//printf("Playing?[%s]\n",sfile.filename);
 
 	//send sox command
@@ -246,9 +256,11 @@ void Gtts_Register(DriverTable* table){                                    //   
 /* need the extern to avoid C++ name-mangling  */                            //
 extern "C"{                                                                  //
 	int player_driver_init(DriverTable* table){                              //
-		puts("Gtts driver initiallized");
+		//puts("Gtts driver initiallized");
+		PLAYER_MSG0(MESSAGE_INFO, "[Gtts] driver initiallized");
 		Gtts_Register(table);
-		puts("waiting for client startup...");                               //
+		//puts("waiting for client startup...");                               //
+		PLAYER_MSG0(MESSAGE_INFO, "[Gtts] waiting for client startup...");
 		return(0);                                                           //
 	}                                                                        //
 }                                                                            //

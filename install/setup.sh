@@ -13,8 +13,9 @@
 export DONNIE_PATH=/opt/donnie
 # donnie source dir
 export DONNIE_SOURCE_PATH=/home/lsa/Downloads/donnie-assistive-robot-sw
-# donnie IP address
-export DONNIE_IP=192.168.0.6
+# donnie IP address. Use localhost for simulation mode. When the robot 
+# is used, this variable should have the robot`s IP address
+export DONNIE_IP=localhost
 export DONNIE_PORT=6665
 
 #required to run donnie

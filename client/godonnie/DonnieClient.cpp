@@ -37,16 +37,30 @@ DonnieClient::DonnieClient()
 	if(host.size()==0) host = "localhost";
 	if(port==0) port = 6665;
 
-	robot = new PlayerClient(host,port);
-	//head = new PlayerClient("localhost",6666);
-	p2dProxy = new Position2dProxy(robot,0);
-	p2d_headProxy = new Position2dProxy(robot,1);
-	//actuator = new ActArrayProxy(robot,0);
-	bpProxy = new BumperProxy(robot,0);
-	//BfinderProxy = new BlobfinderProxy(head,0);
-	sonarProxy = new RangerProxy(robot,0);
-	//SHProxy = new RangerProxy(head,3);
-	speech = new SpeechProxy(robot,0);
+	try{
+		robot = new PlayerClient(host,port);
+	} catch (PlayerError e){
+		cerr << e << endl;
+		cerr << "Nao foi possivel conectar no robo com IP " << host << " porta " << port << endl;
+		cerr << "Possivelmente o Player nao foi executado ou as variaveis DONNIE_IP e DONNIE_PORT estao erradas" << endl;
+		exit(1);
+	}
+	
+	try{		
+		//head = new PlayerClient("localhost",6666);
+		p2dProxy = new Position2dProxy(robot,0);
+		p2d_headProxy = new Position2dProxy(robot,1);
+		//actuator = new ActArrayProxy(robot,0);
+		bpProxy = new BumperProxy(robot,0);
+		//BfinderProxy = new BlobfinderProxy(head,0);
+		sonarProxy = new RangerProxy(robot,0);
+		speechProxy = new SpeechProxy(robot,0);
+	}catch (PlayerError e){
+		cerr << e << endl;
+		cerr << "Nao foi possivel conectar no robo " << endl;
+		cerr << "Possivelmente o arquivo cfg esta incorreto." << endl;
+		exit(1);
+	}
 	
 	robot->StartThread();
 }
@@ -99,27 +113,42 @@ int DonnieClient::BackBumper()
 
 float DonnieClient::GetRange(int arg)
 {
-	robot->Read();
-	switch(arg)
-	{
-		case 0: //f
-			return sonarProxy->GetRange(1)/STEP_LENGHT; // /STEP_LENGHT to convert from m to steps
+	try{
+		robot->Read();
+		switch(arg)
+		{   // The order is NE N  NW SW S  SE HEAD
+			case 0: //frente - N
+				return sonarProxy->GetRange(1)/STEP_LENGHT; // /STEP_LENGHT to convert from m to steps
 
-		case 1: //t
-			return sonarProxy->GetRange(4)/STEP_LENGHT;
+			case 1: //tras - S
+				return sonarProxy->GetRange(4)/STEP_LENGHT;
 
-		case 2: //fe
-			return sonarProxy->GetRange(2)/STEP_LENGHT;
+			case 2: //frente-esquerda - NW 
+				return sonarProxy->GetRange(2)/STEP_LENGHT;
 
-		case 3://fd
-			return sonarProxy->GetRange(0)/STEP_LENGHT;
+			case 3: //frente-direita - NE
+				return sonarProxy->GetRange(0)/STEP_LENGHT;
 
-		case 4: //te
-			return sonarProxy->GetRange(3)/STEP_LENGHT;
+			case 4: //tras-esquerda - SW
+				return sonarProxy->GetRange(3)/STEP_LENGHT;
 
-		case 5: //d
-			return sonarProxy->GetRange(5)/STEP_LENGHT;
+			case 5: //tras-direita - SE
+				return sonarProxy->GetRange(5)/STEP_LENGHT;
+
+			case 6: //cabeca - head
+				return sonarProxy->GetRange(6)/STEP_LENGHT;
+				
+			default: // invalid
+				ostringstream buf;
+				buf << "Range id "<< arg << "invalido" << endl;
+				throw PlayerError("DonnieClient::GetRange()", buf.str());
+		}
 	}
+	catch (PlayerError e)
+    {
+      std::cerr << e << std::endl;
+      return -1.0;
+    }
 }
 
 float DonnieClient::GetPos(int arg)
@@ -722,7 +751,7 @@ void DonnieClient::turnLeft(float arg)
 void DonnieClient::speak(string text)
 {
 	cout << text << endl;
-	speech->Say(text.c_str());
+	speechProxy->Say(text.c_str());
 }
 
 string GetEnv( const string & var ) 

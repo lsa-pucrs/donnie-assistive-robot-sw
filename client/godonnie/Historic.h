@@ -9,6 +9,10 @@
  *  - www.inf.pucrs.br
  */
 
+#pragma once
+#ifndef HISTORIC_H
+#define HISTORIC_H
+
 ///Class to Keep the Commands History
 class Historic
 {	
@@ -16,7 +20,7 @@ class Historic
 		///Struct to save commands
 		struct Command {
 			string name;  ///name of command including parameters
-			string feedback; ///???
+			string feedback; ///say if it bumped or not during the movement
 			double posx;
 			double posy;
 			double degree;
@@ -55,3 +59,5 @@ class Historic
 		void clear();
 
 };
+
+#endif
