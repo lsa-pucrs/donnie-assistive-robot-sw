@@ -34,7 +34,7 @@ COMMAND commands[] = {
   { (char*)"aprender ", (char*)"Criar procedimento" },
   { (char*)"falar ", (char*)"Falar" },
   { (char*)"sair", (char*)"Fechar interpretador" },
-  { (char*)"historico", (char*)"Historico de comandos de movimento" },
+  { (char*)"histórico", (char*)"Histórico de comandos de movimento" },
   { (char *)NULL, (char *)NULL }
 };
 

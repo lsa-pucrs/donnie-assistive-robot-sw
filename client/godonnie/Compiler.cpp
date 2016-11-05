@@ -376,17 +376,17 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case COMENT:
           {
-            //cout << "COMMENT: " << endl; 
-            //cout << getText(tree) << endl;
+			#ifndef NDEBUG
+			cout << "COMMENT: " << getText(tree) << endl; 
+			#endif
             break;
           }
 
           case SPEAKE:
           {
-            //cout << "PRINT: " << endl; 
-            //cout << "TIPE: " << tree->getToken(getChild(tree,0))->type << endl;
-            std::ostringstream arg;			
-            if(tree->getToken(getChild(tree,0))->type == STRINGE) {        // Caso seja string informa texto do filho caso contrario executa o filho
+            std::ostringstream arg;
+            // if it is a string, get the text, otherwise, parse the expression
+            if(tree->getToken(getChild(tree,0))->type == STRINGE) {
               string auxstr;
               auxstr = getText(getChild(tree,0));
               // Remove all double-quote characters
@@ -397,22 +397,25 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			  arg << auxstr;
             }else{
 			  arg << run(getChild(tree,0));
-		   }
+		    }
+		    #ifndef NDEBUG
+			cout << "SPEAK: " << arg.str() << endl; 
+			#endif
             Donnie->speak(arg.str());
             break;
           }
 
           case WAIT:
           {
-            #ifndef NDEBUG
-				if(tree->getToken(getChild(tree,0))->type == STRINGE)
-					cout << "ESPERAR: " << getText(getChild(tree,0)) << endl;
-			#endif
-			if(tree->getToken(getChild(tree,0))->type != STRINGE)
-				sleep(run(getChild(tree,0)));
+			if(tree->getToken(getChild(tree,0))->type != STRINGE){
+				int exp = run(getChild(tree,0));
+				#ifndef NDEBUG
+				cout << "WAIT: " << exp << endl;
+				#endif				
+				sleep(exp);
+			}
             break;
           }
-
 
 
           case FORE:
