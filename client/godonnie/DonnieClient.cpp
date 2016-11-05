@@ -265,8 +265,6 @@ int DonnieClient::moveForward(float arg)
 
 	#ifndef NDEBUG
 	cout << "Andou: " << passos << ", parou: " << stop << ", erro: " << erro << ", obstaculo: " << obstacle << endl;
-	//robot->Read();
-	//cout << p2dProxy->GetXPos() << ", " << p2dProxy->GetYPos() << endl;
 	#endif
 	
 	// number of steps actually taken
@@ -404,8 +402,6 @@ int DonnieClient::moveBackward(float arg)
 	
 	#ifndef NDEBUG
 	cout << "Andou: " << passos << ", parou: " << stop << ", erro: " << erro << ", obstaculo: " << obstacle << endl;
-	//robot->Read();
-	//cout << p2dProxy->GetXPos() << ", " << p2dProxy->GetYPos() << endl;
 	#endif
 
 	// number of steps actually taken
