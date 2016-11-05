@@ -18,7 +18,9 @@ using std::endl;
 #define RANGER_SW "te" // 4
 #define RANGER_SE "td" // 5
 #define RANGER_HEAD "c" // 6
-
+#define POSITION_X "x"
+#define POSITION_Y "y"
+#define POSITION_YAW "a"
 
 ExprTreeEvaluator::ExprTreeEvaluator()
 {
@@ -142,15 +144,14 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case ID:
           {            
-            if (!memFlag)         // Se flag for zero retorna o valor da variável global caso contrario o valor da variável local  
+            if (!memFlag)         // it tells whether the variable is global or local. recursive function is not supported  
             {
               if(memory.find(getText(tree)) != memory.end())
               {
                 return memory[getText(tree)];
               }
               else
-                //cout << "Variavel " << getText(tree) << " global não existe" << endl;
-                throw variavelException();
+                throw variavelException("Variavel " + string(getText(tree)) + " global não existe");
             }
             else
             {
@@ -159,8 +160,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
                 return localMem.top().memory[getText(tree)]; // Variável local do primeiro item da stack
               }
               else
-                //cout << "Variavel " << getText(tree) << " local não existe" << endl;
-                throw variavelException();
+                throw variavelException("Variavel " + string(getText(tree)) + " local não existe");
             }
             break;              
           }
@@ -172,7 +172,6 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case PLUS:
           {
-
             if (tree->getChildCount(tree) < 2)
               return run(getChild(tree,0));
             else
@@ -181,7 +180,6 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case MINUS:
           {
-
             if (tree->getChildCount(tree) < 2)
              return -1*(run(getChild(tree,0)));
             else
@@ -190,20 +188,13 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case MULT:
           {
-
-            //int fi = tree->getChildCount(tree);
-            //cout << "MULT: " << fi << std::endl;
             return run(getChild(tree,0)) * run(getChild(tree,1));
           }
 
           case DIV:
           {
-
-            //int fi = tree->getChildCount(tree);
-            //cout << "DIV: " << fi << std::endl;
             return run(getChild(tree,0)) / run(getChild(tree,1));
           }
-
 		
           case FW:
           { // forward
@@ -267,9 +258,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             std::ostringstream distanceStr;
 			distanceStr << distance;
             string command = string(getText(tree)) + " " + distanceStr.str();
-            //command = string(getText(tree)) + " " + to_string(distance);
             History->addCommand(command,(Donnie->bumped() ? "bateu" : "nao bateu"));            
-            //Para_Direita(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
           }
 
@@ -285,9 +274,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             std::ostringstream distanceStr;
 			distanceStr << distance;
             string command = string(getText(tree)) + " " + distanceStr.str();
-            //command = string(getText(tree)) + " " + to_string(distance);
             History->addCommand(command,(Donnie->bumped() ? "bateu" : "nao bateu"));            
-            //Para_Esquerda(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
 
           }
@@ -343,8 +330,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			else if (tokens[1] == RANGER_HEAD)
 				arg = 6;
 			else 
-				throw sintaxeException("Sintaxe não conhecida\n");        
+				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");        
 
+			// TODO. leitura da cabeca nao funciona. ver bug #22 no github
             range  = Donnie->GetRange(arg);
 			#ifndef NDEBUG
             cout << "RANGER: " << arg << " " << (int)range << endl;
@@ -355,24 +343,35 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case POS:
           {
             char* cmdTxt= (char*)getText(tree);
-
-            char* tkn = strtok (cmdTxt," ");
-
-            tkn = strtok (NULL, " ");
-
+            string str;
             int arg;
+            float pos;
+            vector<string> tokens;
+            
+            // remove extra space between tokens
+            str = cmdTxt;
+            str.erase(std::unique(str.begin(), str.end(),
+					[](char a, char b) { return a == ' ' && b == ' '; } ), str.end() ); 
+			// tolower
+			transform(str.begin(), str.end(), str.begin(), ::tolower);
+            // split into vector of tokens and get the 2nd token
+            tokens = split(str,' ');
 
-            if(tkn[0] == 120)
-              arg = 0;
-            else if(tkn[0] == 121)
-              arg = 1;
-            else
-              arg = 2;
+			// get the ranger id
+			if (tokens[1] == POSITION_X)
+				arg = 0;
+			else if (tokens[1] == POSITION_Y)
+				arg = 1;
+			else if (tokens[1] == POSITION_YAW)
+				arg = 2;
+			else  
+				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
+				
+			pos = Donnie->GetPos(arg);             
 			#ifndef NDEBUG
-            cout << "POS: " << getText(tree) << endl;
+            cout << "POS: " << arg << " " << (int)pos << endl;
             #endif
-            return (int)Donnie->GetPos(arg);
-
+            return (int)pos;
           }
 
           case COMENT:
@@ -684,8 +683,6 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             #ifndef NDEBUG
             cout << "EXIT" << endl;
             #endif
-            //Mix_CloseAudio();
-            //SDL_Quit();
             done = 1;
             break;
           }

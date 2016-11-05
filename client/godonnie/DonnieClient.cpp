@@ -144,7 +144,7 @@ float DonnieClient::GetRange(int arg)
 				
 			default: // invalid
 				ostringstream buf;
-				buf << "Range id "<< arg << "invalido" << endl;
+				buf << "Range id "<< arg << "invalid" << endl;
 				throw PlayerError("DonnieClient::GetRange()", buf.str());
 		}
 	}
@@ -163,12 +163,15 @@ float DonnieClient::GetPos(int arg)
 	{
 		case 0:
 			return p2dProxy->GetXPos()/STEP_LENGHT;
-
 		case 1:
 			return p2dProxy->GetYPos()/STEP_LENGHT;
-
 		case 2:
 			return radTOdeg(p2dProxy->GetYaw());
+		default:
+			ostringstream buf;
+			buf << "Position id "<< arg << "invalid" << endl;
+			throw PlayerError("DonnieClient::GetPos()", buf.str());
+			return -1.0;
 	}
 
 }
