@@ -8,7 +8,11 @@
  * Faculdade de Informática - PUCRS  
  *  - www.inf.pucrs.br
  */
- 
+
+#pragma once
+#ifndef DONNIECLIENT_H
+#define DONNIECLIENT_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
@@ -37,20 +41,13 @@ class DonnieClient
 private:
   PlayerClient *robot;
   //PlayerClient *head;
-
   Position2dProxy *p2dProxy;
   Position2dProxy *p2d_headProxy;
-
   //ActArrayProxy *actuator;
-
   BumperProxy *bpProxy;
-
   //BlobfinderProxy *BfinderProxy;
-
   RangerProxy *sonarProxy;
-  //RangerProxy *SHProxy;
-
-  SpeechProxy *speech;
+  SpeechProxy *speechProxy;
 
   int FrontBumper();
   int BackBumper();
@@ -82,3 +79,5 @@ public:
 	void speak(string text);
 	
 };
+
+#endif

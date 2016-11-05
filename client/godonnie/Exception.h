@@ -9,6 +9,10 @@
  *  - www.inf.pucrs.br
  */
 
+#pragma once
+#ifndef EXCEPTION_H
+#define EXCEPTION_H
+
 using namespace std;
 
 //TODO (amory). mudar nome das classes para ingles
@@ -36,3 +40,5 @@ class variavelException: public exception
 		variavelException();
 		virtual const char* what() const throw();
 };
+
+#endif
