@@ -40,7 +40,9 @@ DonnieClient::DonnieClient()
 	try{
 		robot = new PlayerClient(host,port);
 	} catch (PlayerError e){
-		cerr << e << endl;
+		#ifndef NDEBUG
+			cerr << e << endl;
+		#endif
 		cerr << "Nao foi possivel conectar no robo com IP " << host << " porta " << port << endl;
 		cerr << "Possivelmente o Player nao foi executado ou as variaveis DONNIE_IP e DONNIE_PORT estao erradas" << endl;
 		exit(1);
@@ -56,7 +58,9 @@ DonnieClient::DonnieClient()
 		sonarProxy = new RangerProxy(robot,0);
 		speechProxy = new SpeechProxy(robot,0);
 	}catch (PlayerError e){
-		cerr << e << endl;
+		#ifndef NDEBUG
+			cerr << e << endl;
+		#endif
 		cerr << "Nao foi possivel conectar no robo " << endl;
 		cerr << "Possivelmente o arquivo cfg esta incorreto." << endl;
 		exit(1);
@@ -170,7 +174,7 @@ float DonnieClient::GetPos(int arg)
 }
 
 
-void DonnieClient::moveForward(float arg)
+int DonnieClient::moveForward(float arg)
 {
 	vector<float> path;
 
@@ -248,7 +252,7 @@ void DonnieClient::moveForward(float arg)
 	  		passos++;
 	  }
 	}
-
+/* se bateu, para mas nao volta
 	if(stop = true and erro < 0.8 and erro > 0.2)
 	{
 		#ifndef NDEBUG
@@ -256,17 +260,20 @@ void DonnieClient::moveForward(float arg)
 		#endif
 		this->moveBackward(erro);
 	}
-
+*/
 	path.clear();
 
 	#ifndef NDEBUG
-	cout << "Andou: " << passos << endl;
+	cout << "Andou: " << passos << ", parou: " << stop << ", erro: " << erro << ", obstaculo: " << obstacle << endl;
 	//robot->Read();
 	//cout << p2dProxy->GetXPos() << ", " << p2dProxy->GetYPos() << endl;
 	#endif
+	
+	// number of steps actually taken
+	return passos;
 }
 
-void DonnieClient::moveBackward(float arg)
+int DonnieClient::moveBackward(float arg)
 {
 	vector<float> path;
 
@@ -384,6 +391,7 @@ void DonnieClient::moveBackward(float arg)
 	  //}
 	}
 
+/* se bateu, para mas nao volta
 	if(stop = true and erro < 0.8 and erro > 0.2)
 	{	
 		#ifndef NDEBUG
@@ -391,10 +399,17 @@ void DonnieClient::moveBackward(float arg)
 		#endif
 		this->moveForward(erro);
 	}
-
+*/
 	path.clear();
+	
+	#ifndef NDEBUG
+	cout << "Andou: " << passos << ", parou: " << stop << ", erro: " << erro << ", obstaculo: " << obstacle << endl;
 	//robot->Read();
 	//cout << p2dProxy->GetXPos() << ", " << p2dProxy->GetYPos() << endl;
+	#endif
+
+	// number of steps actually taken
+	return passos;	
 }
 
 void DonnieClient::turnRight(float arg)
