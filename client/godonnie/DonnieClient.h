@@ -52,6 +52,7 @@ private:
   int FrontBumper();
   int BackBumper();
 	
+
 	//Singleton
 	DonnieClient();
 	~DonnieClient();
@@ -64,8 +65,9 @@ public:
 	// delete singleton
 	static void ResetInstance();
 
-  	void moveForward(float arg);
-  	void moveBackward(float arg);
+	/// 
+  	int moveForward(float arg);
+  	int moveBackward(float arg);
   	void turnRight(float arg);
   	void turnLeft(float arg);
 
@@ -74,6 +76,9 @@ public:
 	//float GetBumper(int arg);
 	//void Scan();
 	//void Status();
+	
+	/// returns true when donnie bumped during the movements
+	int bumped() {return FrontBumper()+BackBumper();};
 
 	/// call text-to-speech and print
 	void speak(string text);

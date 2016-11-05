@@ -130,7 +130,7 @@ int ExprTreeEvaluator::scriptMode(char* fileIn)
 
 int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 {
-	string command="";
+	
     pANTLR3_COMMON_TOKEN tok = tree->getToken(tree);
     if(tok) {
         switch(tok->type) {
@@ -212,14 +212,21 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             #endif
             // run the command
             float distance = (float)run(getChild(tree,0));
-            Donnie->moveForward(distance);
+            int steps_taken = Donnie->moveForward(distance);
 			// save into history
             std::ostringstream distanceStr;
 			distanceStr << distance;
+			string command;
             command = string(getText(tree)) + " " + distanceStr.str();
-            //command = string(getText(tree)) + " " + to_string(distance);
-            History->addCommand(command,"");
-            //Para_Frente(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
+            // if less steps were taken, then report a bump
+            distanceStr.str("");
+            distanceStr.clear();
+            distanceStr << "andou " << steps_taken;
+            if (((float)steps_taken < (distance-1.0)) || Donnie->bumped())
+				distanceStr << ", bateu";
+			else
+				distanceStr << ", nao bateu";
+            History->addCommand(command,distanceStr.str());
             break;
           }
 
@@ -230,14 +237,21 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             #endif
             // run the command
             float distance = (float)run(getChild(tree,0));
-            Donnie->moveBackward(distance);
+            int steps_taken = Donnie->moveBackward(distance);
 			// save into history
             std::ostringstream distanceStr;
 			distanceStr << distance;
+			string command;
             command = string(getText(tree)) + " " + distanceStr.str();
-            //command = string(getText(tree)) + " " + to_string(distance);
-            History->addCommand(command,"");            
-            //Para_Tras(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
+            // if less steps were taken, then report a bump
+            distanceStr.str("");
+            distanceStr.clear();
+            distanceStr << "andou " << steps_taken;
+            if (((float)steps_taken < (distance-1.0)) || Donnie->bumped())
+				distanceStr << ", bateu";
+			else
+				distanceStr << ", nao bateu";
+            History->addCommand(command,distanceStr.str());
             break;
           }
 
@@ -252,9 +266,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			// save into history
             std::ostringstream distanceStr;
 			distanceStr << distance;
-            command = string(getText(tree)) + " " + distanceStr.str();
+            string command = string(getText(tree)) + " " + distanceStr.str();
             //command = string(getText(tree)) + " " + to_string(distance);
-            History->addCommand(command,"");            
+            History->addCommand(command,(Donnie->bumped() ? "bateu" : "nao bateu"));            
             //Para_Direita(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
           }
@@ -270,9 +284,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			// save into history
             std::ostringstream distanceStr;
 			distanceStr << distance;
-            command = string(getText(tree)) + " " + distanceStr.str();
+            string command = string(getText(tree)) + " " + distanceStr.str();
             //command = string(getText(tree)) + " " + to_string(distance);
-            History->addCommand(command,"");            
+            History->addCommand(command,(Donnie->bumped() ? "bateu" : "nao bateu"));            
             //Para_Esquerda(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
             break;
 
