@@ -72,15 +72,20 @@ public:
   	int moveBackward(float arg);
   	void turnRight(string p2d,float arg);
   	void turnLeft(string p2d,float arg);
+  	//void gotoYawHead(float arg);
 
 	float GetRange(int arg);
 	float GetPos(string p2d,int arg);
 	//float GetBumper(int arg);
-	//void Scan();
+	
+	/// scan 180 degree for obstacle using the sonar.
+	/// ranges is writen with sonar readings every 30 degree.
+	/// 180/30 = 7 sonar readings. 0o, 30o, 60o, 90o, 120o, 150o, 180o.
+	void Scan(float *sonar_readings);
 	//void Status();
 	
 	/// returns true when donnie bumped during the movements
-	int bumped() {return FrontBumper()+BackBumper();};
+	int bumped();
 
 	/// call text-to-speech and print
 	void speak(string text);

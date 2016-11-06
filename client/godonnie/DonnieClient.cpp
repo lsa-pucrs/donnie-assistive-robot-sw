@@ -786,6 +786,39 @@ void DonnieClient::turnLeft(Position2dProxy *p2d,float arg)
 	p2d->SetSpeed(0,0);
 }
 
+void DonnieClient::Scan(float *sonar_readings)
+{
+	robot->ReadIfWaiting();
+	float prev_head_yaw = p2d_headProxy->GetYaw(); // in rads
+	float head_yaw = 0; //in degree
+	#ifndef NDEBUG
+	cout << "SCAN initial position "<< RTOD(prev_head_yaw) << endl;
+	#endif
+	// place head in the initial position for scanning
+	do{
+		p2d_headProxy->GoTo(p2d_headProxy->GetXPos(),p2d_headProxy->GetYPos(), DTOR(head_yaw));
+		robot->ReadIfWaiting();
+		// TODO: read head sonar 
+		*sonar_readings = 0;
+		sonar_readings++;
+		head_yaw = head_yaw + 30; // more + 30 degree 
+	}while (head_yaw < (180+30));
+	// back to the original head yaw position
+	p2d_headProxy->GoTo(p2d_headProxy->GetXPos(),p2d_headProxy->GetYPos(), prev_head_yaw);	
+	robot->ReadIfWaiting();
+	#ifndef NDEBUG
+	cout << "SCAN final position "<< RTOD(p2d_headProxy->GetYaw()) << endl;
+	#endif
+}
+
+int DonnieClient::bumped(){
+	if (FrontBumper()==0 && BackBumper()==0 && !p2dProxy->GetStall())
+		return 0;
+	else
+		return 1;
+}
+
+
 void DonnieClient::speak(string text)
 {
 	cout << text << endl;

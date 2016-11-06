@@ -283,23 +283,16 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case SCAN:
           {
-			// TODO: os comandos de movimentos estao errados pois eh necessario tratar a conversao de rad2degree
-			// save the head yaw position 
-            float prev_head_yaw = Donnie->GetPos("head",2);
+			// get 7 sonar readings by moving the head from 0o to 180o
+			// every 30 degrees
+			float sonar_readings[7];
+			Donnie->Scan(sonar_readings);
 			#ifndef NDEBUG
-            cout << "SCAN initial position "<< prev_head_yaw << endl;
+				cout << "SCAN: "<< endl;
+				for(int i=0; i<7; i++)
+					cout << sonar_readings[i];
+				cout << endl;
             #endif
-            // place head in the initial position for scanning
-            Donnie->turnLeft("head",0);
-            // TODO: read head sonar and blob
-            // scanning 180 degrees 
-            Donnie->turnRight("head",180);
-            // back to the original head yaw position
-            prev_head_yaw=prev_head_yaw-Donnie->GetPos("head",2);
-			#ifndef NDEBUG
-            cout << "SCAN final position "<< prev_head_yaw << endl;
-            #endif           
-            Donnie->turnLeft("head",prev_head_yaw); 
             cout << "Comando 'espiar' nao implementado" << endl;
             break;
           }
