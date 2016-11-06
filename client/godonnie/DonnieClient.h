@@ -51,7 +51,9 @@ private:
 
   int FrontBumper();
   int BackBumper();
-	
+  void turnRight(Position2dProxy *p2d,float arg);
+  void turnLeft(Position2dProxy *p2d,float arg);
+  float GetPos(Position2dProxy *p2d,int arg);
 
 	//Singleton
 	DonnieClient();
@@ -68,11 +70,11 @@ public:
 	/// 
   	int moveForward(float arg);
   	int moveBackward(float arg);
-  	void turnRight(float arg);
-  	void turnLeft(float arg);
+  	void turnRight(string p2d,float arg);
+  	void turnLeft(string p2d,float arg);
 
 	float GetRange(int arg);
-	float GetPos(int arg);
+	float GetPos(string p2d,int arg);
 	//float GetBumper(int arg);
 	//void Scan();
 	//void Status();

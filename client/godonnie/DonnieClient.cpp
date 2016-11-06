@@ -155,18 +155,26 @@ float DonnieClient::GetRange(int arg)
     }
 }
 
-float DonnieClient::GetPos(int arg)
+float DonnieClient::GetPos(string p2d, int arg)
+{
+	if (p2d == "head")
+		return GetPos(p2d_headProxy, arg);
+	else
+		return GetPos(p2dProxy, arg);
+}
+
+float DonnieClient::GetPos(Position2dProxy *p2d, int arg)
 {
 	robot->Read();
 
 	switch(arg)
 	{
 		case 0:
-			return p2dProxy->GetXPos()/STEP_LENGHT;
+			return p2d->GetXPos()/STEP_LENGHT;
 		case 1:
-			return p2dProxy->GetYPos()/STEP_LENGHT;
+			return p2d->GetYPos()/STEP_LENGHT;
 		case 2:
-			return radTOdeg(p2dProxy->GetYaw());
+			return radTOdeg(p2d->GetYaw());
 		default:
 			ostringstream buf;
 			buf << "Position id "<< arg << "invalid" << endl;
@@ -411,11 +419,19 @@ int DonnieClient::moveBackward(float arg)
 	return passos;	
 }
 
-void DonnieClient::turnRight(float arg)
+void DonnieClient::turnRight(string p2d, float arg)
+{
+	if (p2d == "head")
+		turnRight(p2d_headProxy, arg);
+	else
+		turnRight(p2dProxy, arg);
+}
+
+void DonnieClient::turnRight(Position2dProxy *p2d, float arg)
 {
 	robot->Read();
 
-	double yawf = p2dProxy->GetYaw(); //Angulo "bruto" atual do robo (radianos negativos e positivos)
+	double yawf = p2d->GetYaw(); //Angulo "bruto" atual do robo (radianos negativos e positivos)
 	double yawi;  //Angulo atual do robo (apenas radianos positivos)
 	double yawd;  //Angulo de destino do robo
 	yawi = radTOrad(yawf);
@@ -437,25 +453,25 @@ void DonnieClient::turnRight(float arg)
 	#endif
 
 	//p2d_headProxy->SetSpeed(0,-0.5);
-	p2dProxy->SetSpeed(0,-0.5);
+	p2d->SetSpeed(0,-0.5);
 	while(true)
 	{
 	  robot->ReadIfWaiting();
-	  if(p2dProxy->GetYaw() >= 0 and yawd >= 0)
+	  if(p2d->GetYaw() >= 0 and yawd >= 0)
 	  {
 	    robot->ReadIfWaiting();
-	    if(p2dProxy->GetYaw() < M_PI/2 and yawd < M_PI/2)
+	    if(p2d->GetYaw() < M_PI/2 and yawd < M_PI/2)
 	    {
 	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetYaw() > yawd + 0.000001)
+	      if(p2d->GetYaw() > yawd + 0.000001)
 	      {
 	        break;
 	      }
 	    }
-	    else if(p2dProxy->GetYaw() >= M_PI/2 and yawd >= M_PI/2)
+	    else if(p2d->GetYaw() >= M_PI/2 and yawd >= M_PI/2)
 	    {
 	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetYaw() > yawd + 0.000001)
+	      if(p2d->GetYaw() > yawd + 0.000001)
 	      {
 	        break;
 	      }
@@ -465,21 +481,21 @@ void DonnieClient::turnRight(float arg)
 	      break;
 	    }
 	  }
-	  else if(p2dProxy->GetYaw() < 0 and yawd < 0)
+	  else if(p2d->GetYaw() < 0 and yawd < 0)
 	  {
 	    robot->ReadIfWaiting();
-	    if(p2dProxy->GetYaw() < -M_PI/2 and yawd < -M_PI/2)
+	    if(p2d->GetYaw() < -M_PI/2 and yawd < -M_PI/2)
 	    {
 	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetYaw() > yawd + 0.000001)
+	      if(p2d->GetYaw() > yawd + 0.000001)
 	      {
 	        break;
 	      }
 	    }
-	    else if(p2dProxy->GetYaw() >= -M_PI/2 and yawd >= -M_PI/2)
+	    else if(p2d->GetYaw() >= -M_PI/2 and yawd >= -M_PI/2)
 	    {
 	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetYaw() > yawd + 0.000001)
+	      if(p2d->GetYaw() > yawd + 0.000001)
 	      {
 	        break;
 	      }
@@ -500,27 +516,27 @@ void DonnieClient::turnRight(float arg)
 	while(true)
 	{
 	  robot->ReadIfWaiting();
-	  if(p2dProxy->GetYaw() >= 0 and yawd >= 0)
+	  if(p2d->GetYaw() >= 0 and yawd >= 0)
 	  {
 	    robot->ReadIfWaiting();
-	    if(p2dProxy->GetYaw() < M_PI/2 and yawd < M_PI/2)
+	    if(p2d->GetYaw() < M_PI/2 and yawd < M_PI/2)
 	    {
 	      break;
 	    }
-	    else if(p2dProxy->GetYaw() >= M_PI/2 and yawd >= M_PI/2)
+	    else if(p2d->GetYaw() >= M_PI/2 and yawd >= M_PI/2)
 	    {
 	      break;
 	    }
 
 	  }
-	  else if(p2dProxy->GetYaw() < 0 and yawd < 0)
+	  else if(p2d->GetYaw() < 0 and yawd < 0)
 	  {
 	    robot->ReadIfWaiting();
-	    if(p2dProxy->GetYaw() < -M_PI/2 and yawd < -M_PI/2)
+	    if(p2d->GetYaw() < -M_PI/2 and yawd < -M_PI/2)
 	    {
 	        break;
 	    }
-	    else if(p2dProxy->GetYaw() >= -M_PI/2 and yawd >= -M_PI/2)
+	    else if(p2d->GetYaw() >= -M_PI/2 and yawd >= -M_PI/2)
 	    {	      
 	        break;
 	    }
@@ -532,21 +548,21 @@ void DonnieClient::turnRight(float arg)
 	while(true)
 	{
 	  robot->ReadIfWaiting();
-	  if(p2dProxy->GetYaw() >= 0 and yawd >= 0)
+	  if(p2d->GetYaw() >= 0 and yawd >= 0)
 	  {
 	    robot->ReadIfWaiting();
-	    if(p2dProxy->GetYaw() < M_PI/2 and yawd < M_PI/2)
+	    if(p2d->GetYaw() < M_PI/2 and yawd < M_PI/2)
 	    {
 	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetYaw() <= yawd + 0.0500000)
+	      if(p2d->GetYaw() <= yawd + 0.0500000)
 	      {
 	        break;
 	      }
 	    }
-	    else if(p2dProxy->GetYaw() >= M_PI/2 and yawd >= M_PI/2)
+	    else if(p2d->GetYaw() >= M_PI/2 and yawd >= M_PI/2)
 	    {
 	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetYaw() <= yawd + 0.0500000)
+	      if(p2d->GetYaw() <= yawd + 0.0500000)
 	      {
 	        break;
 	      }
@@ -556,21 +572,21 @@ void DonnieClient::turnRight(float arg)
 	      break;
 	    }
 	  }
-	  else if(p2dProxy->GetYaw() < 0 and yawd < 0)
+	  else if(p2d->GetYaw() < 0 and yawd < 0)
 	  {
 	    robot->ReadIfWaiting();
-	    if(p2dProxy->GetYaw() < -M_PI/2 and yawd < -M_PI/2)
+	    if(p2d->GetYaw() < -M_PI/2 and yawd < -M_PI/2)
 	    {
 	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetYaw() <= yawd + 0.0500000)
+	      if(p2d->GetYaw() <= yawd + 0.0500000)
 	      {
 	        break;
 	      }
 	    }
-	    else if(p2dProxy->GetYaw() >= -M_PI/2 and yawd >= -M_PI/2)
+	    else if(p2d->GetYaw() >= -M_PI/2 and yawd >= -M_PI/2)
 	    {
 	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetYaw() <= yawd + 0.0500000)
+	      if(p2d->GetYaw() <= yawd + 0.0500000)
 	      {
 	        break;
 	      }
@@ -587,18 +603,26 @@ void DonnieClient::turnRight(float arg)
 	}
 
 	//p2d_headProxy->SetSpeed(0,0);
-	p2dProxy->SetSpeed(0,0);
+	p2d->SetSpeed(0,0);
 	robot->Read();
 	#ifndef NDEBUG
-	cout << p2dProxy->GetYaw() << endl;
+	cout << p2d->GetYaw() << endl;
 	#endif
 }
 
-void DonnieClient::turnLeft(float arg)
+void DonnieClient::turnLeft(string p2d, float arg)
+{
+	if (p2d == "head")
+		turnLeft(p2d_headProxy, arg);
+	else
+		turnLeft(p2dProxy, arg);
+}
+
+void DonnieClient::turnLeft(Position2dProxy *p2d,float arg)
 {
 	robot->Read();
 
-	double yawf = p2dProxy->GetYaw(); //Angulo "bruto" atual do robo (radianos negativos e positivos)
+	double yawf = p2d->GetYaw(); //Angulo "bruto" atual do robo (radianos negativos e positivos)
 	double yawi;  //Angulo atual do robo (apenas radianos positivos)
 	double yawd;  //Angulo de destino do robo
 	yawi = radTOrad(yawf);
@@ -612,26 +636,26 @@ void DonnieClient::turnLeft(float arg)
 	  yawd = yawi + degTOrad(arg);
 
 	//p2d_headProxy->SetSpeed(0,0.5);
-	p2dProxy->SetSpeed(0,0.5);
+	p2d->SetSpeed(0,0.5);
 
 	while(true)
 	{
 	  robot->ReadIfWaiting();
-	  if(p2dProxy->GetYaw() >= 0 and yawd >= 0)
+	  if(p2d->GetYaw() >= 0 and yawd >= 0)
 	  {
 	    robot->ReadIfWaiting();
-	    if(p2dProxy->GetYaw() < M_PI/2 and yawd < M_PI/2)
+	    if(p2d->GetYaw() < M_PI/2 and yawd < M_PI/2)
 	    {
 	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetYaw() < yawd - 0.000001)
+	      if(p2d->GetYaw() < yawd - 0.000001)
 	      {
 	        break;
 	      }
 	    }
-	    else if(p2dProxy->GetYaw() >= M_PI/2 and yawd >= M_PI/2)
+	    else if(p2d->GetYaw() >= M_PI/2 and yawd >= M_PI/2)
 	    {
 	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetYaw() < yawd - 0.000001)
+	      if(p2d->GetYaw() < yawd - 0.000001)
 	      {
 	        break;
 	      }
@@ -641,21 +665,21 @@ void DonnieClient::turnLeft(float arg)
 	      break;
 	    }
 	  }
-	  else if(p2dProxy->GetYaw() < 0 and yawd < 0)
+	  else if(p2d->GetYaw() < 0 and yawd < 0)
 	  {
 	    robot->ReadIfWaiting();
-	    if(p2dProxy->GetYaw() < -M_PI/2 and yawd < -M_PI/2)
+	    if(p2d->GetYaw() < -M_PI/2 and yawd < -M_PI/2)
 	    {
 	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetYaw() < yawd - 0.000001)
+	      if(p2d->GetYaw() < yawd - 0.000001)
 	      {
 	        break;
 	      }
 	    }
-	    else if(p2dProxy->GetYaw() >= -M_PI/2 and yawd >= -M_PI/2)
+	    else if(p2d->GetYaw() >= -M_PI/2 and yawd >= -M_PI/2)
 	    {
 	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetYaw() < yawd - 0.000001)
+	      if(p2d->GetYaw() < yawd - 0.000001)
 	      {
 	        break;
 	      }
@@ -674,27 +698,27 @@ void DonnieClient::turnLeft(float arg)
 	while(true)
 	{
 	  robot->ReadIfWaiting();
-	  if(p2dProxy->GetYaw() >= 0 and yawd >= 0)
+	  if(p2d->GetYaw() >= 0 and yawd >= 0)
 	  {
 	    robot->ReadIfWaiting();
-	    if(p2dProxy->GetYaw() < M_PI/2 and yawd < M_PI/2)
+	    if(p2d->GetYaw() < M_PI/2 and yawd < M_PI/2)
 	    {
 	      break;
 	    }
-	    else if(p2dProxy->GetYaw() >= M_PI/2 and yawd >= M_PI/2)
+	    else if(p2d->GetYaw() >= M_PI/2 and yawd >= M_PI/2)
 	    {
 	      break;
 	    }
 
 	  }
-	  else if(p2dProxy->GetYaw() < 0 and yawd < 0)
+	  else if(p2d->GetYaw() < 0 and yawd < 0)
 	  {
 	    robot->ReadIfWaiting();
-	    if(p2dProxy->GetYaw() < -M_PI/2 and yawd < -M_PI/2)
+	    if(p2d->GetYaw() < -M_PI/2 and yawd < -M_PI/2)
 	    {
 	        break;
 	    }
-	    else if(p2dProxy->GetYaw() >= -M_PI/2 and yawd >= -M_PI/2)
+	    else if(p2d->GetYaw() >= -M_PI/2 and yawd >= -M_PI/2)
 	    {	      
 	        break;
 	    }
@@ -705,21 +729,21 @@ void DonnieClient::turnLeft(float arg)
 	while(true)
 	{
 	  robot->ReadIfWaiting();
-	  if(p2dProxy->GetYaw() >= 0 and yawd >= 0)
+	  if(p2d->GetYaw() >= 0 and yawd >= 0)
 	  {
 	    robot->ReadIfWaiting();
-	    if(p2dProxy->GetYaw() < M_PI/2 and yawd < M_PI/2)
+	    if(p2d->GetYaw() < M_PI/2 and yawd < M_PI/2)
 	    {
 	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetYaw() >= yawd - 0.0500000)
+	      if(p2d->GetYaw() >= yawd - 0.0500000)
 	      {
 	        break;
 	      }
 	    }
-	    else if(p2dProxy->GetYaw() >= M_PI/2 and yawd >= M_PI/2)
+	    else if(p2d->GetYaw() >= M_PI/2 and yawd >= M_PI/2)
 	    {
 	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetYaw() >= yawd - 0.0500000)
+	      if(p2d->GetYaw() >= yawd - 0.0500000)
 	      {
 	        break;
 	      }
@@ -729,21 +753,21 @@ void DonnieClient::turnLeft(float arg)
 	      break;
 	    }
 	  }
-	  else if(p2dProxy->GetYaw() < 0 and yawd < 0)
+	  else if(p2d->GetYaw() < 0 and yawd < 0)
 	  {
 	    robot->ReadIfWaiting();
-	    if(p2dProxy->GetYaw() < -M_PI/2 and yawd < -M_PI/2)
+	    if(p2d->GetYaw() < -M_PI/2 and yawd < -M_PI/2)
 	    {
 	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetYaw() >= yawd - 0.0500000)
+	      if(p2d->GetYaw() >= yawd - 0.0500000)
 	      {
 	        break;
 	      }
 	    }
-	    else if(p2dProxy->GetYaw() >= -M_PI/2 and yawd >= -M_PI/2)
+	    else if(p2d->GetYaw() >= -M_PI/2 and yawd >= -M_PI/2)
 	    {
 	      robot->ReadIfWaiting();
-	      if(p2dProxy->GetYaw() >= yawd - 0.0500000)
+	      if(p2d->GetYaw() >= yawd - 0.0500000)
 	      {
 	        break;
 	      }
@@ -759,7 +783,7 @@ void DonnieClient::turnLeft(float arg)
 	  }
 	}
 	//p2d_headProxy->SetSpeed(0,0);
-	p2dProxy->SetSpeed(0,0);
+	p2d->SetSpeed(0,0);
 }
 
 void DonnieClient::speak(string text)

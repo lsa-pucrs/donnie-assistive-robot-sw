@@ -40,9 +40,9 @@ bool Historic::addCommand(string name, string feedback)
 	Command temp = Command();
 	temp.name = name;
 	temp.feedback = feedback;
-	temp.posx = DonnieClient::getInstance()->GetPos(0);
-	temp.posy = DonnieClient::getInstance()->GetPos(1);
-	temp.degree = DonnieClient::getInstance()->GetPos(2);
+	temp.posx = DonnieClient::getInstance()->GetPos("body",0);
+	temp.posy = DonnieClient::getInstance()->GetPos("body",1);
+	temp.degree = DonnieClient::getInstance()->GetPos("body",2);
 	this->commandsList.push_back(temp);
 	return true;
 }
