@@ -248,12 +248,13 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case RTURN:
           { // right turn
+			int exp = run(getChild(tree,0));
 			#ifndef NDEBUG
-            cout << "PD: " << run(getChild(tree,0)) << endl;
+            cout << "PD: " << exp << endl;
             #endif
             // run the command
-            float distance = (float)run(getChild(tree,0));
-            Donnie->turnRight(distance);
+            float distance = (float)exp;
+            Donnie->turnRight("body",distance);
 			// save into history
             std::ostringstream distanceStr;
 			distanceStr << distance;
@@ -264,12 +265,13 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case LTURN:
           { // left turn
+			int exp = run(getChild(tree,0));
 			#ifndef NDEBUG
-            cout << "PE: " << run(getChild(tree,0)) << endl;
+            cout << "PE: " << exp << endl;
             #endif
             // run the command
-            float distance = (float)run(getChild(tree,0));
-            Donnie->turnLeft(distance);
+            float distance = (float)exp;
+            Donnie->turnLeft("body",distance);
 			// save into history
             std::ostringstream distanceStr;
 			distanceStr << distance;
@@ -281,9 +283,23 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case SCAN:
           {
+			// TODO: os comandos de movimentos estao errados pois eh necessario tratar a conversao de rad2degree
+			// save the head yaw position 
+            float prev_head_yaw = Donnie->GetPos("head",2);
 			#ifndef NDEBUG
-            cout << "SCAN"<< endl;
+            cout << "SCAN initial position "<< prev_head_yaw << endl;
             #endif
+            // place head in the initial position for scanning
+            Donnie->turnLeft("head",0);
+            // TODO: read head sonar and blob
+            // scanning 180 degrees 
+            Donnie->turnRight("head",180);
+            // back to the original head yaw position
+            prev_head_yaw=prev_head_yaw-Donnie->GetPos("head",2);
+			#ifndef NDEBUG
+            cout << "SCAN final position "<< prev_head_yaw << endl;
+            #endif           
+            Donnie->turnLeft("head",prev_head_yaw); 
             cout << "Comando 'espiar' nao implementado" << endl;
             break;
           }
@@ -367,7 +383,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			else  
 				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
 				
-			pos = Donnie->GetPos(arg);             
+			pos = Donnie->GetPos("body",arg);             
 			#ifndef NDEBUG
             cout << "POS: " << arg << " " << (int)pos << endl;
             #endif
