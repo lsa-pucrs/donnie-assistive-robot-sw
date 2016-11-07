@@ -10,6 +10,18 @@ using std::string;
 using std::cout;
 using std::endl;
 
+/// definition of the ranger tokens in Portuguese
+#define RANGER_N "f"   // 0
+#define RANGER_S "t"   // 1
+#define RANGER_NW "fe" // 2
+#define RANGER_NE "fd" // 3
+#define RANGER_SW "te" // 4
+#define RANGER_SE "td" // 5
+#define RANGER_HEAD "c" // 6
+#define POSITION_X "x"
+#define POSITION_Y "y"
+#define POSITION_YAW "a"
+
 ExprTreeEvaluator::ExprTreeEvaluator()
 {
 
@@ -32,27 +44,47 @@ ExprTreeEvaluator::~ExprTreeEvaluator()
 
 int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
 {
-	assert(input != NULL);
-                                   
+  	if (input == NULL)
+  	{
+  	  cout << "Input file error" << endl;
+  	  return -1;
+  	}                                   
   	pGoDonnieLexer lex = GoDonnieLexerNew(input);
-  	assert(lex != NULL);
+  	if (lex == NULL)
+  	{
+  	  cout << "Lexical error" << endl;
+  	  return -1;
+  	}   	
   	pANTLR3_COMMON_TOKEN_STREAM tokens = antlr3CommonTokenStreamSourceNew(ANTLR3_SIZE_HINT, TOKENSOURCE(lex));
-  	assert(tokens != NULL);
-
+  	if (tokens == NULL)
+  	{
+  	  cout << "Token error" << endl;
+  	  return -1;
+  	} 
   	pGoDonnieParser parser = GoDonnieParserNew(tokens);
-  	assert(parser != NULL);
-
-  	GoDonnieParser_prog_return r = parser->prog(parser);
-
+  	if (parser == NULL)
+  	{
+  	  cout << "Parse error" << endl;
+  	  return -1;
+  	} 
+	//try to parse the GoDonnie code
+	GoDonnieParser_prog_return r;
+	try{
+		r = parser->prog(parser);
+	}
+	catch(exception& e)
+	{
+		cout << e.what();
+	}
+	
   	pANTLR3_BASE_TREE tree = r.tree;
-
   	if (tree == NULL)
   	{
-  	  cout << "error" << endl;
+  	  cout << "Parse error" << endl;
   	  return -1;
   	}
 
-	//Tentando rodar o programa
+	//try to run the GoDonnie code
 	try{
 		this->run(tree);
 	}
@@ -65,6 +97,8 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
   	tokens->free(tokens);
   	lex->free(lex);
   	input->close(input);
+  	
+  	return 1;
 }
 
 int ExprTreeEvaluator::terminalMode(char* textIn)
@@ -98,7 +132,7 @@ int ExprTreeEvaluator::scriptMode(char* fileIn)
 
 int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 {
-	string command="";
+	
     pANTLR3_COMMON_TOKEN tok = tree->getToken(tree);
     if(tok) {
         switch(tok->type) {
@@ -110,15 +144,14 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case ID:
           {            
-            if (!memFlag)         // Se flag for zero retorna o valor da variável global caso contrario o valor da variável local  
+            if (!memFlag)         // it tells whether the variable is global or local. recursive function is not supported  
             {
               if(memory.find(getText(tree)) != memory.end())
               {
                 return memory[getText(tree)];
               }
               else
-                //cout << "Variavel " << getText(tree) << " global não existe" << endl;
-                throw variavelException();
+                throw variavelException("Variavel " + string(getText(tree)) + " global não existe");
             }
             else
             {
@@ -127,8 +160,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
                 return localMem.top().memory[getText(tree)]; // Variável local do primeiro item da stack
               }
               else
-                //cout << "Variavel " << getText(tree) << " local não existe" << endl;
-                throw variavelException();
+                throw variavelException("Variavel " + string(getText(tree)) + " local não existe");
             }
             break;              
           }
@@ -140,7 +172,6 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case PLUS:
           {
-
             if (tree->getChildCount(tree) < 2)
               return run(getChild(tree,0));
             else
@@ -149,7 +180,6 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case MINUS:
           {
-
             if (tree->getChildCount(tree) < 2)
              return -1*(run(getChild(tree,0)));
             else
@@ -158,20 +188,13 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case MULT:
           {
-
-            //int fi = tree->getChildCount(tree);
-            //cout << "MULT: " << fi << std::endl;
             return run(getChild(tree,0)) * run(getChild(tree,1));
           }
 
           case DIV:
           {
-
-            //int fi = tree->getChildCount(tree);
-            //cout << "DIV: " << fi << std::endl;
             return run(getChild(tree,0)) / run(getChild(tree,1));
           }
-
 		
           case FW:
           { // forward
@@ -180,14 +203,21 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             #endif
             // run the command
             float distance = (float)run(getChild(tree,0));
-            Donnie->moveForward(distance);
+            int steps_taken = Donnie->moveForward(distance);
 			// save into history
             std::ostringstream distanceStr;
 			distanceStr << distance;
+			string command;
             command = string(getText(tree)) + " " + distanceStr.str();
-            //command = string(getText(tree)) + " " + to_string(distance);
-            History->addCommand(command,"");
-            //Para_Frente(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
+            // if less steps were taken, then report a bump
+            distanceStr.str("");
+            distanceStr.clear();
+            distanceStr << "andou " << steps_taken;
+            if (((float)steps_taken < (distance-1.0)) || Donnie->bumped())
+				distanceStr << ", bateu";
+			else
+				distanceStr << ", nao bateu";
+            History->addCommand(command,distanceStr.str());
             break;
           }
 
@@ -198,58 +228,70 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             #endif
             // run the command
             float distance = (float)run(getChild(tree,0));
-            Donnie->moveBackward(distance);
+            int steps_taken = Donnie->moveBackward(distance);
 			// save into history
             std::ostringstream distanceStr;
 			distanceStr << distance;
+			string command;
             command = string(getText(tree)) + " " + distanceStr.str();
-            //command = string(getText(tree)) + " " + to_string(distance);
-            History->addCommand(command,"");            
-            //Para_Tras(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
+            // if less steps were taken, then report a bump
+            distanceStr.str("");
+            distanceStr.clear();
+            distanceStr << "andou " << steps_taken;
+            if (((float)steps_taken < (distance-1.0)) || Donnie->bumped())
+				distanceStr << ", bateu";
+			else
+				distanceStr << ", nao bateu";
+            History->addCommand(command,distanceStr.str());
             break;
           }
 
           case RTURN:
           { // right turn
+			int exp = run(getChild(tree,0));
 			#ifndef NDEBUG
-            cout << "PD: " << run(getChild(tree,0)) << endl;
+            cout << "PD: " << exp << endl;
             #endif
             // run the command
-            float distance = (float)run(getChild(tree,0));
-            Donnie->turnRight(distance);
+            float distance = (float)exp;
+            Donnie->turnRight("body",distance);
 			// save into history
             std::ostringstream distanceStr;
 			distanceStr << distance;
-            command = string(getText(tree)) + " " + distanceStr.str();
-            //command = string(getText(tree)) + " " + to_string(distance);
-            History->addCommand(command,"");            
-            //Para_Direita(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
+            string command = string(getText(tree)) + " " + distanceStr.str();
+            History->addCommand(command,(Donnie->bumped() ? "bateu" : "nao bateu"));            
             break;
           }
 
           case LTURN:
           { // left turn
+			int exp = run(getChild(tree,0));
 			#ifndef NDEBUG
-            cout << "PE: " << run(getChild(tree,0)) << endl;
+            cout << "PE: " << exp << endl;
             #endif
             // run the command
-            float distance = (float)run(getChild(tree,0));
-            Donnie->turnLeft(distance);
+            float distance = (float)exp;
+            Donnie->turnLeft("body",distance);
 			// save into history
             std::ostringstream distanceStr;
 			distanceStr << distance;
-            command = string(getText(tree)) + " " + distanceStr.str();
-            //command = string(getText(tree)) + " " + to_string(distance);
-            History->addCommand(command,"");            
-            //Para_Esquerda(run(getChild(tree,0)),&robot,&p2dProxy,sonarProxy,front_bumper,back_bumper,&speech,&p2d_headProxy);
+            string command = string(getText(tree)) + " " + distanceStr.str();
+            History->addCommand(command,(Donnie->bumped() ? "bateu" : "nao bateu"));            
             break;
 
           }
 
           case SCAN:
           {
+			// get 7 sonar readings by moving the head from 0o to 180o
+			// every 30 degrees
+			float sonar_readings[7];
+			Donnie->Scan(sonar_readings);
 			#ifndef NDEBUG
-            cout << "SCAN"<< endl;
+				cout << "SCAN: "<< endl;
+				for(int i=0; i<7; i++)
+					cout << sonar_readings[i];
+				cout << endl;
             #endif
             cout << "Comando 'espiar' nao implementado" << endl;
             break;
@@ -267,77 +309,93 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case RANGER:
           {
             char* cmdTxt= (char*)getText(tree);
-
-            char* tkn = strtok (cmdTxt," ");
-
-            tkn = strtok (NULL, " ");
-
+            string str;
             int arg;
+            float range;
+            vector<string> tokens;
+            
+            // remove extra space between tokens
+            str = cmdTxt;
+            str.erase(std::unique(str.begin(), str.end(),
+					[](char a, char b) { return a == ' ' && b == ' '; } ), str.end() ); 
+			// tolower
+			transform(str.begin(), str.end(), str.begin(), ::tolower);
+            // split into vector of tokens and get the 2nd token
+            tokens = split(str,' ');
 
-            if(tkn[0] == 'f' or tkn[0] == 'F')
-            {
-              if(tkn[1] == 101 or tkn[1] == 69)
-                arg = 2;
-              else if(tkn[1] == 100 or tkn[1] == 68)
-                arg = 3;
-              else
-                arg = 0;
-            }
-            else if(tkn[0] == 116 or tkn[0] == 84)
-            {
-              if(tkn[1] == 101 or tkn[1] == 69)
-                arg = 4;
-              else if(tkn[1] == 100 or tkn[1] == 68)
-                arg = 5;
-              else
-                arg = 1;
-            }
-            else
-            {
-              arg = 6;
-            } 
+			// get the ranger id
+			if (tokens[1] == RANGER_N)
+				arg = 0;
+			else if (tokens[1] == RANGER_S)
+				arg = 1;
+			else if (tokens[1] == RANGER_NW)
+				arg = 2;
+			else if (tokens[1] == RANGER_NE)
+				arg = 3;
+			else if (tokens[1] == RANGER_SW)
+				arg = 4;
+			else if (tokens[1] == RANGER_SE)
+				arg = 5;
+			else if (tokens[1] == RANGER_HEAD)
+				arg = 6;
+			else 
+				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");        
+
+			// TODO. leitura da cabeca nao funciona. ver bug #22 no github
+            range  = Donnie->GetRange(arg);
 			#ifndef NDEBUG
-            cout << "RANGER: " << arg << endl;
+            cout << "RANGER: " << arg << " " << (int)range << endl;
             #endif
-            return (int)Donnie->GetRange(arg);
+            return (int)range;
           }
 
           case POS:
           {
             char* cmdTxt= (char*)getText(tree);
-
-            char* tkn = strtok (cmdTxt," ");
-
-            tkn = strtok (NULL, " ");
-
+            string str;
             int arg;
+            float pos;
+            vector<string> tokens;
+            
+            // remove extra space between tokens
+            str = cmdTxt;
+            str.erase(std::unique(str.begin(), str.end(),
+					[](char a, char b) { return a == ' ' && b == ' '; } ), str.end() ); 
+			// tolower
+			transform(str.begin(), str.end(), str.begin(), ::tolower);
+            // split into vector of tokens and get the 2nd token
+            tokens = split(str,' ');
 
-            if(tkn[0] == 120)
-              arg = 0;
-            else if(tkn[0] == 121)
-              arg = 1;
-            else
-              arg = 2;
+			// get the ranger id
+			if (tokens[1] == POSITION_X)
+				arg = 0;
+			else if (tokens[1] == POSITION_Y)
+				arg = 1;
+			else if (tokens[1] == POSITION_YAW)
+				arg = 2;
+			else  
+				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
+				
+			pos = Donnie->GetPos("body",arg);             
 			#ifndef NDEBUG
-            cout << "POS: " << getText(tree) << endl;
+            cout << "POS: " << arg << " " << (int)pos << endl;
             #endif
-            return (int)Donnie->GetPos(arg);
-
+            return (int)pos;
           }
 
           case COMENT:
           {
-            //cout << "COMMENT: " << endl; 
-            //cout << getText(tree) << endl;
+			#ifndef NDEBUG
+			cout << "COMMENT: " << getText(tree) << endl; 
+			#endif
             break;
           }
 
           case SPEAKE:
           {
-            //cout << "PRINT: " << endl; 
-            //cout << "TIPE: " << tree->getToken(getChild(tree,0))->type << endl;
-            std::ostringstream arg;			
-            if(tree->getToken(getChild(tree,0))->type == STRINGE) {        // Caso seja string informa texto do filho caso contrario executa o filho
+            std::ostringstream arg;
+            // if it is a string, get the text, otherwise, parse the expression
+            if(tree->getToken(getChild(tree,0))->type == STRINGE) {
               string auxstr;
               auxstr = getText(getChild(tree,0));
               // Remove all double-quote characters
@@ -348,22 +406,25 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			  arg << auxstr;
             }else{
 			  arg << run(getChild(tree,0));
-		   }
+		    }
+		    #ifndef NDEBUG
+			cout << "SPEAK: " << arg.str() << endl; 
+			#endif
             Donnie->speak(arg.str());
             break;
           }
 
           case WAIT:
           {
-            #ifndef NDEBUG
-				if(tree->getToken(getChild(tree,0))->type == STRINGE)
-					cout << "ESPERAR: " << getText(getChild(tree,0)) << endl;
-			#endif
-			if(tree->getToken(getChild(tree,0))->type != STRINGE)
-				sleep(run(getChild(tree,0)));
+			if(tree->getToken(getChild(tree,0))->type != STRINGE){
+				int exp = run(getChild(tree,0));
+				#ifndef NDEBUG
+				cout << "WAIT: " << exp << endl;
+				#endif				
+				sleep(exp);
+			}
             break;
           }
-
 
 
           case FORE:
@@ -634,8 +695,6 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             #ifndef NDEBUG
             cout << "EXIT" << endl;
             #endif
-            //Mix_CloseAudio();
-            //SDL_Quit();
             done = 1;
             break;
           }
@@ -735,4 +794,18 @@ bool compare (int a, int b, string comp)
   } 
 }
 
+void split(const std::string &s, char delim, std::vector<std::string> &elems) {
+    std::stringstream ss;
+    ss.str(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+}
 
+
+std::vector<std::string> split(const std::string &s, char delim) {
+    std::vector<std::string> elems;
+    split(s, delim, elems);
+    return elems;
+}
