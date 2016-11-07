@@ -55,7 +55,8 @@ define donnie_eyes blobfinder
 
 define donnie_HS ranger
 (
-	donnie_sonar( pose [ 0.51 0 -1 0])
+	donnie_sonar( pose [0.06350 0 -0.05 0])
+
 )
 
 define donnie_head position
