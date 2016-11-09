@@ -824,17 +824,3 @@ void DonnieClient::speak(string text)
 	cout << text << endl;
 	speechProxy->Say(text.c_str());
 }
-
-string GetEnv( const string & var ) 
-{
-     const char * val = ::getenv( var.c_str() );
-     if ( val == 0 ) {
-         return "";
-     }
-     else {
-         return val;
-     }
-}
-
-
-
