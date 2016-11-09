@@ -34,3 +34,15 @@ double degTOrad(double deg)
 	return deg;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+string GetEnv( const string & var ) 
+{
+    const char * val = ::getenv( var.c_str() );
+    if ( val == 0 ) {
+       DEBUG_MSG("\033[41mWarning!\033[0m " << var.c_str() << " environment variable are not set!"); //TODO BUG -> Essa macro nesse arquivo nunca executa pois o NDEBUG nunca esta setado. Aparentemente o utils.h compila antes do main.cc nesse meu makefile
+       return "";
+    }
+    else {
+       return val;
+    }
+}
