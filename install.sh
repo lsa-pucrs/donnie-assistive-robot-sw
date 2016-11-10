@@ -84,7 +84,7 @@ sudo apt-get install -y build-essential
 
 # update VBoX Additions
 sudo apt-get install -y module-assistant
-sudo apt-get install virtualbox-guest-dkms
+sudo apt-get install -y virtualbox-guest-dkms
 sudo m-a prepare
 
 # nice to have, not mandatory
@@ -214,7 +214,7 @@ sudo apt-get install -y texlive texlive-lang-english texlive-lang-portuguese
 # uses 558MB in disk
 sudo apt-get install -y texlive-latex-extra
 # saves some 700MB in disk by removing docs
-sudo apt-get --purge remove tex.\*-doc$
+sudo apt-get --purge remove -y tex.\*-doc$
 
 
 cd ../../donnie-assistive-robot-sw
