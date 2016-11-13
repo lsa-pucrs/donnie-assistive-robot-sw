@@ -1,3 +1,18 @@
+/* This test client can be used to test Donnie both in 
+ * simulation or with the real robot.
+ * 
+ * Simulation mode:
+ *   $export DONNIE_IP="localhost"
+ *   player donnie_sim.cfg &
+ *   ./test-rangers
+  * Robot mode:
+ *   $export DONNIE_IP="use the robot ip address"
+ *   player donnie.cfg &
+ *   ./test-rangers
+ *  
+ * TODO:  colocar o cfg para robo real e simulacao
+ * 
+ */ 
 #define NDEBUG
 #include <iostream>
 #include <libplayerc++/playerc++.h>
@@ -12,9 +27,6 @@ int main(int argc, char *argv[]){
 	int port = atoi(GetEnv("DONNIE_PORT").c_str());
 	if(host.size()==0) host = "localhost";
 	if(port==0) port = 6665;
-
-	//GetEnv("DONNIE_IP").size()==0 ? "localhost" : GetEnv("DONNIE_IP")
-	//atoi(GetEnv("DONNIE_PORT").c_str())==0 ? 6665 : atoi(GetEnv("DONNIE_PORT").c_str()) 
 
 	PlayerClient robot(host,port);
 	RangerProxy	bodySonarProxy(&robot, 0);
