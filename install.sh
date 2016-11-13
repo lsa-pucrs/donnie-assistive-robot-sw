@@ -172,9 +172,9 @@ cd build
 # BUILD_PYTHONCPP_BINDINGS:BOOL=ON
 # BUILD_PYTHONC_BINDINGS:BOOL=ON
 echo -e "${GREEN}Configuring Player for Lubuntu 14.04 ... ${NC}\n"
-cmake -j ${NUM_CORES} -DCMAKE_BUILD_TYPE=Release -DDEBUG_LEVEL=NONE -BUILD_PYTHONC_BINDINGS:BOOL=ON ..
+cmake -DCMAKE_BUILD_TYPE=Release -DDEBUG_LEVEL=NONE -BUILD_PYTHONC_BINDINGS:BOOL=ON ..
 echo -e "${GREEN}Compiling Player for Lubuntu 14.04 ... ${NC}\n"
-make
+make -j ${NUM_CORES} 
 sudo make install
 echo -e "${GREEN}Player installed !!!! ${NC}\n"
 
@@ -184,9 +184,9 @@ cd build
 # Mandatory
 # CMAKE_BUILD_TYPE=release <==== important !!!
 echo -e "${GREEN}Configuring Stage for Lubuntu 14.04 ... ${NC}\n"
-cmake -j ${NUM_CORES} -DCMAKE_BUILD_TYPE=Release ..
+cmake -DCMAKE_BUILD_TYPE=Release ..
 echo -e "${GREEN}Compiling Stage for Lubuntu 14.04 ... ${NC}\n"
-make
+make -j ${NUM_CORES} 
 sudo make install
 echo -e "${GREEN}Stage installed !!!! ${NC}\n"
 
@@ -227,7 +227,7 @@ cd ../../donnie-assistive-robot-sw
 mkdir build
 cd build
 echo -e "${GREEN}Configuring Donnie for Lubuntu 14.04 ... ${NC}\n"
-cmake -j ${NUM_CORES} -DCMAKE_BUILD_TYPE=Release \
+cmake -DCMAKE_BUILD_TYPE=Release \
 	-DBUILD_EXAMPLES=ON \
 	-DBUILD_DOCS=ON  \
 	-DBUILD_DOXYGEN=ON \
@@ -235,7 +235,7 @@ cmake -j ${NUM_CORES} -DCMAKE_BUILD_TYPE=Release \
 	-DBUILD_MANUAL=ON \
     ..
 echo -e "${GREEN}Compiling Donnie for Lubuntu 14.04 ... ${NC}\n"
-make
+make -j ${NUM_CORES} 
 sudo make install
 echo -e "${GREEN}Donnie installed !!!! ${NC}\n"
 
