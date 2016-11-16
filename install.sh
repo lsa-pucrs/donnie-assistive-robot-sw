@@ -39,7 +39,8 @@ OSNAME=$(lsb_release -sc)
 
 case ${OS} in 
 	Ubuntu)
-		echo -e "${ORANGE}WARNING:${NC} Ubuntu is only recommended for Destop computer, not VMs, and not Raspberry Pi\n"
+		echo -e "${GREEN}NOTE:${NC} Ubuntu is only recommended for Destop computer, not VMs, and not Raspberry Pi\n"
+		echo -e "${GREEN}NOTE:${NC} Ubuntu 14.04 (trusty) is the recommended version for ${OS}\n"
 		case ${VER} in 
 			14.04)
 				echo -e "${GREEN}NOTE:${NC} ${OS} - ${VER} (${OSNAME} is the recommended OS version.\n"
@@ -47,13 +48,14 @@ case ${OS} in
 			*)
 				# Handle other OS versions here
 				echo -e "${ORANGE}WARNING:${NC} ${OS} - ${VER} (${OSNAME} is not a recommended OS version. You might get errors and some programming experience is required to compile Donnie. \n"
-				echo -e "${GREEN}NOTE:${NC} Ubuntu 14.04 (trusty) is the recommended version for ${OS}\n"
-				exit 1;
+				echo -e "Press CTRL+C to exit or Enter to continue the installation:"
+				read
 			    ;;
 		esac		
 		;;
 	Lubuntu)
-		echo -e "${ORANGE}WARNING:${NC} Lubuntu is recommended for both Destop computers and VMs, but not for Raspberry Pi\n"
+		echo -e "${GREEN}NOTE:${NC} Lubuntu is recommended for both Destop computers and VMs, but not for Raspberry Pi\n"
+		echo -e "${GREEN}NOTE:${NC} Lubuntu 14.04 (trusty) is the recommended version for ${OS}\n"
 		case ${VER} in 
 			14.04)
 				echo -e "${GREEN}NOTE:${NC} ${OS} - ${VER} (${OSNAME} is the recommended OS version.\n"
@@ -61,18 +63,22 @@ case ${OS} in
 			*)
 				# Handle other OS versions here
 				echo -e "${ORANGE}WARNING:${NC} ${OS} - ${VER} (${OSNAME} is not a recommended OS version. You might get errors and some programming experience is required to compile Donnie. \n"
-				echo -e "${GREEN}NOTE:${NC} Lubuntu 14.04 (trusty) is the recommended version for ${OS}\n"
-				exit 1;
+				echo -e "Press CTRL+C to exit or Enter to continue the installation:"
+				read
 			    ;;
 		esac
 		;;			
 	*)
      # Handle other distributions here
 		echo -e "${RED}ERROR:${NC} ${OS} - ${VER} (${OSNAME} is not a supported OS\n"
-		echo -e "${GREEN}NOTE:${NC}Lubuntu 14.04 (trusty) is recommended OS for Donnie's host computer\n"
-		exit 1;
+		echo -e "${GREEN}NOTE:${NC}Ubuntu/Lubuntu 14.04 (trusty) are the recommended OS for Donnie's host computer\n"
+		echo -e "Press CTRL+C to exit or Enter to continue the installation:"
+		read
         ;;
 esac
+
+NUM_CORES=`cat /proc/cpuinfo | grep processor | wc -l`
+echo -e "${GREEN}NOTE:${NC} This computer has ${NUM_CORES} cores ...\n"
 
 ##################################################
 # install commom packages
@@ -84,7 +90,7 @@ sudo apt-get install -y build-essential
 
 # update VBoX Additions
 sudo apt-get install -y module-assistant
-sudo apt-get install virtualbox-guest-dkms
+sudo apt-get install -y virtualbox-guest-dkms
 sudo m-a prepare
 
 # nice to have, not mandatory
@@ -168,7 +174,7 @@ cd build
 echo -e "${GREEN}Configuring Player for Lubuntu 14.04 ... ${NC}\n"
 cmake -DCMAKE_BUILD_TYPE=Release -DDEBUG_LEVEL=NONE -BUILD_PYTHONC_BINDINGS:BOOL=ON ..
 echo -e "${GREEN}Compiling Player for Lubuntu 14.04 ... ${NC}\n"
-make
+make -j ${NUM_CORES} 
 sudo make install
 echo -e "${GREEN}Player installed !!!! ${NC}\n"
 
@@ -180,7 +186,7 @@ cd build
 echo -e "${GREEN}Configuring Stage for Lubuntu 14.04 ... ${NC}\n"
 cmake -DCMAKE_BUILD_TYPE=Release ..
 echo -e "${GREEN}Compiling Stage for Lubuntu 14.04 ... ${NC}\n"
-make
+make -j ${NUM_CORES} 
 sudo make install
 echo -e "${GREEN}Stage installed !!!! ${NC}\n"
 
@@ -214,7 +220,7 @@ sudo apt-get install -y texlive texlive-lang-english texlive-lang-portuguese
 # uses 558MB in disk
 sudo apt-get install -y texlive-latex-extra
 # saves some 700MB in disk by removing docs
-sudo apt-get --purge remove tex.\*-doc$
+sudo apt-get --purge remove -y tex.\*-doc$
 
 
 cd ../../donnie-assistive-robot-sw
@@ -229,7 +235,7 @@ cmake -DCMAKE_BUILD_TYPE=Release \
 	-DBUILD_MANUAL=ON \
     ..
 echo -e "${GREEN}Compiling Donnie for Lubuntu 14.04 ... ${NC}\n"
-make
+make -j ${NUM_CORES} 
 sudo make install
 echo -e "${GREEN}Donnie installed !!!! ${NC}\n"
 
