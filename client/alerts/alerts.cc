@@ -155,16 +155,6 @@ void DonnieClient::checkRangers(){
     else alertRangerFlag = 0; 
 }
 
-string GetEnv( const string & var ) 
-{
-     const char * val = ::getenv( var.c_str() );
-     if ( val == 0 ) {
-         return "";
-     }
-     else {
-         return val;
-     }
-}
 
 int main(int argc, char *argv[]){
     DonnieClient *donnie1 = new DonnieClient();

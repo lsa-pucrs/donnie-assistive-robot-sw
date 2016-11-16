@@ -140,6 +140,9 @@ float DonnieClient::GetRange(int arg)
 			case 5: //tras-direita - SE
 				return sonarProxy->GetRange(5)/STEP_LENGHT;
 
+			case 6: //cabeca - head
+				return sonarProxy->GetRange(6)/STEP_LENGHT;
+				
 			default: // invalid
 				ostringstream buf;
 				buf << "Range id "<< arg << "invalid" << endl;
@@ -845,24 +848,9 @@ int DonnieClient::bumped(){
 		return 1;
 }
 
+
 void DonnieClient::speak(string text)
 {
 	cout << text << endl;
 	speechProxy->Say(text.c_str());
 }
-/*
-	double yawf = p2d->GetYaw(); //Angulo "bruto" atual do robo (radianos negativos e positivos)
-	double yawi;  //Angulo atual do robo (apenas radianos positivos)
-	double yawd;  //Angulo de destino do robo
-	yawi = radTOrad(yawf);
-
-	/////////////////Calculo para determinar angulo que o robo deve chegar////////////////////////////////
-	if(yawi + degTOrad(arg) > 3*M_PI)
-	  yawd = (yawi + degTOrad(arg)) - 4*M_PI;
-	else if(yawi + degTOrad(arg) > M_PI)
-	  yawd = (yawi + degTOrad(arg)) - 2*M_PI;
-	else
-	  yawd = yawi + degTOrad(arg);
-
-	//p2d_headProxy->SetSpeed(0,0.5);
-	p2d->SetSpeed(0,0.5);*/

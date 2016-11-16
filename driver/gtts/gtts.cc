@@ -159,14 +159,13 @@ int Gtts::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, void * 
 }
 
 void Gtts::ProcessSpeechCmd(player_msghdr_t* hdr, player_speech_cmd_t &data){
+	/*
 	for(int i=0;i<data.string_count;i++){
 		std::cout << data.string[i];
-	}
+	}*/
 
 	char *palavra = data.string;
-	#ifndef NDEBUG
-	  PLAYER_MSG1(MESSAGE_INFO,"[Gtts] Receiving phrase [%s] to be transformed to speech",palavra);
-	#endif	
+	PLAYER_MSG1(MESSAGE_INFO,"[Gtts] Receiving phrase [%s] to be transformed to speech",palavra);
 	//treat the white spaces ' '->%
 	int i = 0;
 	for(i = 0; i < data.string_count; i++)
