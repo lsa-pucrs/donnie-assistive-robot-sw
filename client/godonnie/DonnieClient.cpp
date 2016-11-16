@@ -824,11 +824,11 @@ void DonnieClient::Scan(float *sonar_readings){
 		robot->ReadIfWaiting();
 		headSonarProxy->GetRange(0)/100; ///STEP_LENGHT;  // read head sonar 
 		*sonar_readings = headSonarProxy->GetRange(0)/STEP_LENGHT;  // read head sonar 
-		cout << "           "<< "TH POS:" << RTOD(p2d_headProxy->GetYaw()) << endl;
-		cout << "           "<< "TH SPEED:" << p2d_headProxy->GetYawSpeed() << endl;
-		cout << "           "<< "TARGET:" << DTOR(head_yawi) << endl;
-		if(head_yawi<1&&head_yawi>-1) cout << "           "<< "FOWARD SONAR:" << sonarProxy->GetRange(1)/STEP_LENGHT << endl; //debug para comparaçao
-		cout << "           "<< "HEAD SONAR:" << *sonar_readings << endl << endl;
+		DEBUG_MSG("           "<< "TH POS:" << RTOD(p2d_headProxy->GetYaw()) << endl);
+		DEBUG_MSG("           "<< "TH SPEED:" << p2d_headProxy->GetYawSpeed() << endl);
+		DEBUG_MSG("           "<< "TARGET:" << DTOR(head_yawi) << endl);
+		if(head_yawi<1&&head_yawi>-1) DEBUG_MSG("           "<< "FOWARD SONAR:" << sonarProxy->GetRange(1)/STEP_LENGHT << endl); //debug para comparaçao
+		DEBUG_MSG("           "<< "HEAD SONAR:" << *sonar_readings << endl << endl);
 		sonar_readings++;
 
 		head_yawi = head_yawi + 30; // more + 30 degree 
