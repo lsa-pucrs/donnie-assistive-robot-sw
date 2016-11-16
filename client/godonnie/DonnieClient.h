@@ -44,6 +44,7 @@ private:
   BumperProxy *bpProxy;
   //BlobfinderProxy *BfinderProxy;
   RangerProxy *sonarProxy;
+  RangerProxy *headSonarProxy;
   SpeechProxy *speechProxy;
 
   int FrontBumper();
@@ -73,6 +74,7 @@ public:
 
 	float GetRange(int arg);
 	float GetPos(string p2d,int arg);
+	int Goto(float px, float py, float pa);
 	//float GetBumper(int arg);
 	
 	/// scan 180 degree for obstacle using the sonar.

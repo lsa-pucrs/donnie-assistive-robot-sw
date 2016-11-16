@@ -10,13 +10,14 @@ resolution 0.02
 # configure the GUI window
 window
 (
-  size [ 949 999 ] # in pixels
-  scale 88.378            
-  #pixels per meteri
-  center [ -7.358  6.103 ]
-  rotate [ 0.000  -119.500 ]
+  size [ 949 999 ] 		# window dimensions, in pixels    
+  scale 300 			# zoom of world cam          
+  center [ 0.50  1 ]  	# centralization of world cam   
+  rotate [ 0  0 ]  		# rotation of world cam
   			
-  show_data 1              # 1=on 0=off
+  show_data 1           # 1=on 0=off
+  show_follow 0			# if 1 the cam follows the robot when it moves
+  #interval 50
 )
 
 # load an environment bitmap

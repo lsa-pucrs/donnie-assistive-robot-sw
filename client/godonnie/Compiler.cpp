@@ -293,7 +293,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 					cout << sonar_readings[i];
 				cout << endl;
             #endif
-            cout << "Comando 'espiar' nao implementado" << endl;
+            cout << "Comando 'espiar' em desenvolvimento" << endl;
             break;
           }
 

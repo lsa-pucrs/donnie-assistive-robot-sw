@@ -56,6 +56,7 @@ DonnieClient::DonnieClient()
 		bpProxy = new BumperProxy(robot,0);
 		//BfinderProxy = new BlobfinderProxy(head,0);
 		sonarProxy = new RangerProxy(robot,0);
+		headSonarProxy = new RangerProxy(robot,1);
 		speechProxy = new SpeechProxy(robot,0);
 	}catch (PlayerError e){
 		#ifndef NDEBUG
@@ -139,9 +140,6 @@ float DonnieClient::GetRange(int arg)
 			case 5: //tras-direita - SE
 				return sonarProxy->GetRange(5)/STEP_LENGHT;
 
-			case 6: //cabeca - head
-				return sonarProxy->GetRange(6)/STEP_LENGHT;
-				
 			default: // invalid
 				ostringstream buf;
 				buf << "Range id "<< arg << "invalid" << endl;
@@ -785,30 +783,59 @@ void DonnieClient::turnLeft(Position2dProxy *p2d,float arg)
 	//p2d_headProxy->SetSpeed(0,0);
 	p2d->SetSpeed(0,0);
 }
+int DonnieClient::Goto(float px, float py, float pa){
+	float errorOffset=0.8;
+	if(pa>0){
+		do{
+			robot->ReadIfWaiting();
+			p2d_headProxy->GoTo(px,py,DTOR(pa));
+		}while (p2d_headProxy->GetYaw()>=DTOR(pa-errorOffset)); //0.5 is the parameter to validate the speed more fast
+		p2d_headProxy->SetSpeed(0,0);
+	}
+	else{
+		do{
+			robot->ReadIfWaiting();
+			p2d_headProxy->GoTo(px,py,DTOR(pa));
+		}while (p2d_headProxy->GetYaw()<=DTOR(pa+errorOffset)); //0.5 is the parameter to validate the speed more fast
+		p2d_headProxy->SetSpeed(0,0);
+	}
+	return 1;
+}
 
-void DonnieClient::Scan(float *sonar_readings)
-{
-	robot->ReadIfWaiting();
-	float prev_head_yaw = p2d_headProxy->GetYaw(); // in rads
-	float head_yaw = 0; //in degree
-	#ifndef NDEBUG
-	cout << "SCAN initial position "<< RTOD(prev_head_yaw) << endl;
-	#endif
-	// place head in the initial position for scanning
-	do{
-		p2d_headProxy->GoTo(p2d_headProxy->GetXPos(),p2d_headProxy->GetYPos(), DTOR(head_yaw));
+void DonnieClient::Scan(float *sonar_readings){
+	float errorOffset=0.8;
+	do{ //GOTO -90
 		robot->ReadIfWaiting();
-		// TODO: read head sonar 
-		*sonar_readings = 0;
+		p2d_headProxy->GoTo(p2d_headProxy->GetXPos(),p2d_headProxy->GetYPos(), DTOR(-90));
+	}while (p2d_headProxy->GetYaw()>=-1*DTOR(90-errorOffset));  //0.5 is the parameter to validate the speed more fast
+	p2d_headProxy->SetSpeed(0,0);
+
+	float head_yawi = RTOD(p2d_headProxy->GetYaw()); //in degree. +90 due the servo default pos is 90 degre
+	do{//GOTO -90 to 90 in 30 by 30 steps
+		do{
+			robot->ReadIfWaiting();
+			p2d_headProxy->GoTo(p2d_headProxy->GetXPos(),p2d_headProxy->GetYPos(), DTOR(head_yawi));
+		}while (p2d_headProxy->GetYaw()<=DTOR(head_yawi-errorOffset));  //0.5 is the parameter to validate the speed more fast
+		p2d_headProxy->SetSpeed(0,0);
+
+		robot->ReadIfWaiting();
+		headSonarProxy->GetRange(0)/100; ///STEP_LENGHT;  // read head sonar 
+		*sonar_readings = headSonarProxy->GetRange(0)/STEP_LENGHT;  // read head sonar 
+		cout << "           "<< "TH POS:" << RTOD(p2d_headProxy->GetYaw()) << endl;
+		cout << "           "<< "TH SPEED:" << p2d_headProxy->GetYawSpeed() << endl;
+		cout << "           "<< "TARGET:" << DTOR(head_yawi) << endl;
+		if(head_yawi<1&&head_yawi>-1) cout << "           "<< "FOWARD SONAR:" << sonarProxy->GetRange(1)/STEP_LENGHT << endl; //debug para comparaçao
+		cout << "           "<< "HEAD SONAR:" << *sonar_readings << endl << endl;
 		sonar_readings++;
-		head_yaw = head_yaw + 30; // more + 30 degree 
-	}while (head_yaw < (180+30));
-	// back to the original head yaw position
-	p2d_headProxy->GoTo(p2d_headProxy->GetXPos(),p2d_headProxy->GetYPos(), prev_head_yaw);	
-	robot->ReadIfWaiting();
-	#ifndef NDEBUG
-	cout << "SCAN final position "<< RTOD(p2d_headProxy->GetYaw()) << endl;
-	#endif
+
+		head_yawi = head_yawi + 30; // more + 30 degree 
+	}while (head_yawi < (90+30));
+
+	do{ //GOTO 0
+		robot->ReadIfWaiting();
+		p2d_headProxy->GoTo(p2d_headProxy->GetXPos(),p2d_headProxy->GetYPos(), DTOR(0));
+	}while (p2d_headProxy->GetYaw()>=DTOR(errorOffset));  //0.5 is the parameter to validate the speed more fast
+	p2d_headProxy->SetSpeed(0,0);
 }
 
 int DonnieClient::bumped(){
@@ -818,9 +845,24 @@ int DonnieClient::bumped(){
 		return 1;
 }
 
-
 void DonnieClient::speak(string text)
 {
 	cout << text << endl;
 	speechProxy->Say(text.c_str());
 }
+/*
+	double yawf = p2d->GetYaw(); //Angulo "bruto" atual do robo (radianos negativos e positivos)
+	double yawi;  //Angulo atual do robo (apenas radianos positivos)
+	double yawd;  //Angulo de destino do robo
+	yawi = radTOrad(yawf);
+
+	/////////////////Calculo para determinar angulo que o robo deve chegar////////////////////////////////
+	if(yawi + degTOrad(arg) > 3*M_PI)
+	  yawd = (yawi + degTOrad(arg)) - 4*M_PI;
+	else if(yawi + degTOrad(arg) > M_PI)
+	  yawd = (yawi + degTOrad(arg)) - 2*M_PI;
+	else
+	  yawd = yawi + degTOrad(arg);
+
+	//p2d_headProxy->SetSpeed(0,0.5);
+	p2d->SetSpeed(0,0.5);*/
