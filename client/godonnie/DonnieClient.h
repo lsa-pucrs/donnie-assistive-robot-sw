@@ -74,7 +74,7 @@ public:
 
 	float GetRange(int arg);
 	float GetPos(string p2d,int arg);
-	int Goto(float px, float py, float pa);
+	int GotoRelative(float px, float py, float pa);
 	//float GetBumper(int arg);
 	
 	/// scan 180 degree for obstacle using the sonar.

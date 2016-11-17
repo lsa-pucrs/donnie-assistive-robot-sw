@@ -786,59 +786,64 @@ void DonnieClient::turnLeft(Position2dProxy *p2d,float arg)
 	//p2d_headProxy->SetSpeed(0,0);
 	p2d->SetSpeed(0,0);
 }
-int DonnieClient::Goto(float px, float py, float pa){
-	float errorOffset=0.8;
-	if(pa>0){
-		do{
-			robot->ReadIfWaiting();
-			p2d_headProxy->GoTo(px,py,DTOR(pa));
-		}while (p2d_headProxy->GetYaw()>=DTOR(pa-errorOffset)); //0.5 is the parameter to validate the speed more fast
-		p2d_headProxy->SetSpeed(0,0);
-	}
-	else{
-		do{
-			robot->ReadIfWaiting();
-			p2d_headProxy->GoTo(px,py,DTOR(pa));
-		}while (p2d_headProxy->GetYaw()<=DTOR(pa+errorOffset)); //0.5 is the parameter to validate the speed more fast
-		p2d_headProxy->SetSpeed(0,0);
-	}
+//!Goto Relativo a base do robo 
+/*! A posicao que este goto tenta atingir depende da posicao da base. 
+	Exemplo, Se mandar a cabeca do robo ir para 45 graus(em relacao ao robo) e a base estiver em 10 graus(em relacao ao mundo) 
+	a cabeca vai para  55 graus (em relacao ao mundo).
+	/return 1 se chegou no destino
+	/return 0 se atingiu tempo limite TODO ou bateu TODO
+*/
+int DonnieClient::GotoRelative(float px, float py, float pa){
+	float errorOffset = DTOR(0.8);
+	float paTarget = DTOR(pa);
+	do{
+		robot->ReadIfWaiting();
+		p2d_headProxy->GoTo(p2dProxy->GetXPos(),p2dProxy->GetYPos(), paTarget+p2dProxy->GetYaw()); //soma a posicao desejada da cabeca em relacao a base
+		//DEBUG_MSG("           "<< "TH POS:" << p2d_headProxy->GetYaw());
+		//DEBUG_MSG("           "<< "TARGET:" << (paTarget+p2dProxy->GetYaw())-errorOffset<<endl);
+	}while (p2d_headProxy->GetYaw()<=(paTarget+p2dProxy->GetYaw())-errorOffset || 
+			p2d_headProxy->GetYaw()>=(paTarget+p2dProxy->GetYaw())+errorOffset);  //0.5 is the parameter to validate the speed more fast
+	p2d_headProxy->SetSpeed(0,0);
 	return 1;
 }
 
 void DonnieClient::Scan(float *sonar_readings){
 	float errorOffset=0.8;
-	do{ //GOTO -90
+	/*do{ //GOTO -90
 		robot->ReadIfWaiting();
 		p2d_headProxy->GoTo(p2d_headProxy->GetXPos(),p2d_headProxy->GetYPos(), DTOR(-90));
 	}while (p2d_headProxy->GetYaw()>=-1*DTOR(90-errorOffset));  //0.5 is the parameter to validate the speed more fast
-	p2d_headProxy->SetSpeed(0,0);
+	p2d_headProxy->SetSpeed(0,0);*/
+	//GotoRelative(p2d_headProxy->GetXPos(),p2d_headProxy->GetYPos(),-90);
 
-	float head_yawi = RTOD(p2d_headProxy->GetYaw()); //in degree. +90 due the servo default pos is 90 degre
+	float head_yawi = -90; //in degree. +90 due the servo default pos is 90 degre
 	do{//GOTO -90 to 90 in 30 by 30 steps
-		do{
+		/*do{
 			robot->ReadIfWaiting();
 			p2d_headProxy->GoTo(p2d_headProxy->GetXPos(),p2d_headProxy->GetYPos(), DTOR(head_yawi));
 		}while (p2d_headProxy->GetYaw()<=DTOR(head_yawi-errorOffset));  //0.5 is the parameter to validate the speed more fast
-		p2d_headProxy->SetSpeed(0,0);
+		p2d_headProxy->SetSpeed(0,0);*/
+		GotoRelative(p2d_headProxy->GetXPos(),p2d_headProxy->GetYPos(),head_yawi);
 
 		robot->ReadIfWaiting();
 		headSonarProxy->GetRange(0)/100; ///STEP_LENGHT;  // read head sonar 
 		*sonar_readings = headSonarProxy->GetRange(0)/STEP_LENGHT;  // read head sonar 
-		DEBUG_MSG("           "<< "TH POS:" << RTOD(p2d_headProxy->GetYaw()) << endl);
-		DEBUG_MSG("           "<< "TH SPEED:" << p2d_headProxy->GetYawSpeed() << endl);
-		DEBUG_MSG("           "<< "TARGET:" << DTOR(head_yawi) << endl);
-		if(head_yawi<1&&head_yawi>-1) DEBUG_MSG("           "<< "FOWARD SONAR:" << sonarProxy->GetRange(1)/STEP_LENGHT << endl); //debug para comparaçao
-		DEBUG_MSG("           "<< "HEAD SONAR:" << *sonar_readings << endl << endl);
+		DEBUG_MSG("           "<< "TH POS:" << RTOD(p2d_headProxy->GetYaw()));
+		DEBUG_MSG("           "<< "TH SPEED:" << p2d_headProxy->GetYawSpeed());
+		DEBUG_MSG("           "<< "TARGET:" << DTOR(head_yawi));
+		if(head_yawi<1&&head_yawi>-1) DEBUG_MSG("           "<< "FOWARD SONAR:" << sonarProxy->GetRange(1)/STEP_LENGHT); //debug para comparaçao
+		DEBUG_MSG("           "<< "HEAD SONAR:" << *sonar_readings << endl);
 		sonar_readings++;
 
 		head_yawi = head_yawi + 30; // more + 30 degree 
 	}while (head_yawi < (90+30));
 
-	do{ //GOTO 0
+	/*do{ //GOTO 0
 		robot->ReadIfWaiting();
 		p2d_headProxy->GoTo(p2d_headProxy->GetXPos(),p2d_headProxy->GetYPos(), DTOR(0));
 	}while (p2d_headProxy->GetYaw()>=DTOR(errorOffset));  //0.5 is the parameter to validate the speed more fast
-	p2d_headProxy->SetSpeed(0,0);
+	p2d_headProxy->SetSpeed(0,0);*/
+	GotoRelative(p2d_headProxy->GetXPos(),p2d_headProxy->GetYPos(),0);
 }
 
 int DonnieClient::bumped(){
