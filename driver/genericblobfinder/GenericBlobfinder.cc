@@ -10,7 +10,7 @@
 */
 
 
-/* GenericBlobfinder configuration file sintaxe:
+/* GenericBlobfinder configuration file syntax:
 
 driver
 (
@@ -46,59 +46,83 @@ driver
 #include <iostream>
 #include <libplayercore/playercore.h>
 
-//#include <opencv2/core/core.hpp>
-//#include <opencv2/imgcodecs.hpp>
-//#include <opencv2/video/video.hpp>
-//#include <opencv2/videoio/videoio.hpp>
+
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
-//#include <opencv2/calib3d/calib3d.hpp>
-//#include <opencv2/features2d/features2d.hpp>
+
 
 using namespace cv;
 using namespace std;
 ////////////////////////////////////////////////////////////////////////////////
 // The class for the driver GenericBlobfinder
+
+//! A Generic Blobfinder, used to find blue, red and green blobs through a camera frame
+/*! This class receives a frame from a camera and, through opencv, detects red, blue 
+and green objects. Then, outputs a blobfinder and its position using the blobfinder 
+struct defined by player.*/
 class GenericBlobfinder : public ThreadedDriver
 {
   public:
     
-    // Constructor; need that
+	//! Constructor.
+	//! Runs when player server was launched.
     GenericBlobfinder(ConfigFile* cf, int section);
 
-    // This method will be invoked on each incoming message
-    //virtual int ProcessMessage(QueuePointer &resp_queue, 
-    //                           player_msghdr * hdr,
-    //                           void * data);
-
+	//! This method will be invoked on each incoming message.
     virtual int ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr,void * data);
   private:
 
-    // Main function for device thread.
+	//! Main function for device thread.
     virtual void Main();
+    //! Runs when a client connects to this driver.
     virtual int MainSetup();
+    //! Runs when a client disconnects from this driver. 
     virtual void MainQuit();
+
+    //! Used to publish the blobs detected.
     int  publicar();
+    //! Used for debugging,controlled by the variable debug.
     void Debug_mode();
+    //! Filter the colors from the original freme, generating images with the three colors for detection (Red, Green and Blue).
     void Filter_colors();
+ 	//! Used to reduce the noise from the image. The performance will be affected if it's used.
     void Reduce_noise();
+    //! Used to detect and find the shapes of the blobs after the filtering.
     void Find_blobs();
+    //! Reset all the blobs.
     void Reset_blobs();
 
 
+    //! Blobfinder interface.
+    player_devaddr_t blobfinder_addr; 
+    //! Camera interface.
+    player_devaddr_t cam_addr; 
 
-    player_devaddr_t blobfinder_addr; //The blobfinder to send
-    player_blobfinder_data_t data;  //data used to publish the blobfinder :)
-    player_devaddr_t cam_addr; //an generic camera
+    //! Blobfinder data.
+    player_blobfinder_data_t data;  
+    //! Camera device.
     Device * r_cam_dev;			
     
-
+    //! Frame sent by the camera and analysed for blob detection.
     Mat frame; 
+    //! Debug variable to control the Debug_Mode() method. 
+    /*! Debug variable can be:
+		1 - show original frame
+		2 - show thresholded image for red blobs.
+		3 - show thresholded image for green blobs.
+		4- show thresholded image for blue blobs.
+		5- show blobs found, with thresholded image for red blobs.
+	*/
     int debug;
-    player_blobfinder_blob blob_buffer[10]; //limit of 10 blobs
+    //! Vector of blobfinders, limited to 10 blobs.Can be used on the configuration file. Default value is 0.
+    player_blobfinder_blob blob_buffer[10]; 
+    //! Matrixes for storing the filtered frame by the colors Red, Green and Blue.
     Mat R, G, B;
+    //! Number of blobs detected.
     int blobs;
+    //! Minimum size of the blobs. Can be used on the configuration file. Default value is 1000.
     int min_blob_size;
+    //! Used as a flag to control if the method Reduce_noise() is used or not. If its value is 1, the program will use the method.Can be used on the configuration file. Default value is 0.
     int reduce_noise;
 };
 
