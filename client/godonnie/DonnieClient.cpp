@@ -786,34 +786,49 @@ void DonnieClient::turnLeft(Position2dProxy *p2d,float arg)
 	//p2d_headProxy->SetSpeed(0,0);
 	p2d->SetSpeed(0,0);
 }
-//!Goto Relativo a base do robo 
+
+int DonnieClient::Goto(float pa){
+	float errorOffset = DTOR(0.5); //min value that is considered at correct angle
+	float paTarget = DTOR(pa);
+	float paLast = p2dProxy->GetYaw();
+	do{
+		robot->ReadIfWaiting();
+		p2dProxy->GoTo(p2dProxy->GetXPos(),p2dProxy->GetYPos(),paTarget+paLast); //soma o angulo desejado com o angulo inicial do robo
+		//DEBUG_MSG("           "<< "TH POS:" << p2d_headProxy->GetYaw());
+		//DEBUG_MSG("           "<< "TARGET:" << (paTarget+p2dProxy->GetYaw())-errorOffset<<endl);
+	}while (p2dProxy->GetYaw()<=(paTarget+paLast)-errorOffset || 
+			p2dProxy->GetYaw()>=(paTarget+paLast)+errorOffset); 
+	p2dProxy->SetSpeed(0,0);
+	return 0;
+}
+
+
+//!Rotação da cabeça relativo a base do robo 
 /*! A posicao que este goto tenta atingir depende da posicao da base. 
 	Exemplo, Se mandar a cabeca do robo ir para 45 graus(em relacao ao robo) e a base estiver em 10 graus(em relacao ao mundo) 
 	a cabeca vai para  55 graus (em relacao ao mundo).
-	/return 1 se chegou no destino
-	/return 0 se atingiu tempo limite TODO ou bateu TODO
+	/return 0 se chegou no destino sem imprevistos
+	/return 1 se atingiu tempo limite TODO ou bateu TODO
 */
-int DonnieClient::GotoRelative(float px, float py, float pa){
-	float errorOffset = DTOR(0.8);
+int DonnieClient::headGoto(float pa){
+	float errorOffsetYaw = DTOR(0.7); //min value that is considered at correct angle
 	float paTarget = DTOR(pa);
 	do{
 		robot->ReadIfWaiting();
 		p2d_headProxy->GoTo(p2dProxy->GetXPos(),p2dProxy->GetYPos(), paTarget+p2dProxy->GetYaw()); //soma a posicao desejada da cabeca em relacao a base
 		//DEBUG_MSG("           "<< "TH POS:" << p2d_headProxy->GetYaw());
-		//DEBUG_MSG("           "<< "TARGET:" << (paTarget+p2dProxy->GetYaw())-errorOffset<<endl);
-	}while (p2d_headProxy->GetYaw()<=(paTarget+p2dProxy->GetYaw())-errorOffset || 
-			p2d_headProxy->GetYaw()>=(paTarget+p2dProxy->GetYaw())+errorOffset);  //0.5 is the parameter to validate the speed more fast
+		//DEBUG_MSG("           "<< "TARGET:" << (paTarget+p2dProxy->GetYaw())-errorOffsetYaw<<endl);
+	}while (p2d_headProxy->GetYaw()<=(paTarget+p2dProxy->GetYaw())-errorOffsetYaw || 
+			p2d_headProxy->GetYaw()>=(paTarget+p2dProxy->GetYaw())+errorOffsetYaw);  //0.5 is the parameter to validate the speed more fast
 	p2d_headProxy->SetSpeed(0,0);
-	return 1;
+	return 0;
 }
 
 void DonnieClient::Scan(float *sonar_readings){
-	float errorOffset=0.8;
-
 	float head_yawi = -90; //in degree. +90 due the servo default pos is 90 degre
 	//GOTO -90 to 90 in 30 by 30 steps
 	do{
-		GotoRelative(p2d_headProxy->GetXPos(),p2d_headProxy->GetYPos(),head_yawi);
+		headGoto(head_yawi);
 
 		robot->ReadIfWaiting();
 		headSonarProxy->GetRange(0)/100; ///STEP_LENGHT;  // read head sonar 
@@ -828,7 +843,7 @@ void DonnieClient::Scan(float *sonar_readings){
 		head_yawi = head_yawi + 30; // more + 30 degree 
 	}while (head_yawi < (90+30));
 
-	GotoRelative(p2d_headProxy->GetXPos(),p2d_headProxy->GetYPos(),0);
+	headGoto(0);
 }
 
 int DonnieClient::bumped(){
