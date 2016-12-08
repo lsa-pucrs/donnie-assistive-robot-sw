@@ -206,8 +206,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             int steps_taken = Donnie->moveForward(distance);
 			// save into history
             std::ostringstream distanceStr;
-			distanceStr << distance;
-			string command;
+			      distanceStr << distance;
+			      string command;
             command = string(getText(tree)) + " " + distanceStr.str();
             // if less steps were taken, then report a bump
             distanceStr.str("");
@@ -254,7 +254,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             #endif
             // run the command
             float distance = (float)exp;
-            Donnie->turnRight("body",distance);
+            //Donnie->turnRight("body",distance);
+            Donnie->Goto(-1*distance);
 			// save into history
             std::ostringstream distanceStr;
 			distanceStr << distance;
@@ -271,7 +272,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             #endif
             // run the command
             float distance = (float)exp;
-            Donnie->turnLeft("body",distance);
+            //Donnie->turnLeft("body",distance);
+            Donnie->Goto(distance);
 			// save into history
             std::ostringstream distanceStr;
 			distanceStr << distance;

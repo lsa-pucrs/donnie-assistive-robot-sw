@@ -72,9 +72,12 @@ public:
   	void turnLeft(string p2d,float arg);
   	//void gotoYawHead(float arg);
 
+  	int Goto(float pa); //only rotation
+  	//int Goto(float px, float py, float pa);
+
 	float GetRange(int arg);
 	float GetPos(string p2d,int arg);
-	int GotoRelative(float px, float py, float pa);
+	int headGoto(float pa);
 	//float GetBumper(int arg);
 	
 	/// scan 180 degree for obstacle using the sonar.
