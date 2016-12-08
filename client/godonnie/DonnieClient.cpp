@@ -54,7 +54,7 @@ DonnieClient::DonnieClient()
 		p2d_headProxy = new Position2dProxy(robot,1);
 		//actuator = new ActArrayProxy(robot,0);
 		bpProxy = new BumperProxy(robot,0);
-		//BfinderProxy = new BlobfinderProxy(head,0);
+		bfinderProxy = new BlobfinderProxy(robot,0);
 		sonarProxy = new RangerProxy(robot,0);
 		headSonarProxy = new RangerProxy(robot,1);
 		speechProxy = new SpeechProxy(robot,0);
@@ -835,11 +835,6 @@ int DonnieClient::Goto(float pa){
 	/return 1 se atingiu tempo limite TODO ou bateu TODO
 */
 int DonnieClient::headGoto(float pa){
-	//faz com que o goto funcione girando para o lado correto
-	/*if(pa>170){	
-		if(headGoto(pa-170)) return 1; //se qualquer batida ou erro acontecer retorna imediatamente
-	}*/
-
 	float errorOffsetYaw = DTOR(0.7); //min value that is considered at correct angle
 	float paTarget = DTOR(pa);
 	do{
@@ -869,10 +864,17 @@ void DonnieClient::Scan(float *sonar_readings){
 		DEBUG_MSG("           "<< "HEAD SONAR:" << *sonar_readings << endl);
 		sonar_readings++;
 
+		processBlobs();
+
 		head_yawi = head_yawi + 30; // more + 30 degree 
 	}while (head_yawi < (90+30));
 
 	headGoto(0);
+}
+
+int DonnieClient::processBlobs(){
+	DEBUG_MSG("OPA!");
+	return 1;
 }
 
 int DonnieClient::bumped(){
