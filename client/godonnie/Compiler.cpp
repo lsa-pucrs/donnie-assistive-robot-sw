@@ -201,6 +201,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			#ifndef NDEBUG
             cout << "PF: " << run(getChild(tree,0)) << endl;
             #endif
+            Donnie->speak(" Para frente");
             // run the command
             float distance = (float)run(getChild(tree,0));
             int steps_taken = Donnie->moveForward(distance);
@@ -213,11 +214,16 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             distanceStr.str("");
             distanceStr.clear();
             distanceStr << "andou " << steps_taken;
-            if (((float)steps_taken < (distance-1.0)) || Donnie->bumped())
-				distanceStr << ", bateu";
-			else
-				distanceStr << ", nao bateu";
+            if (((float)steps_taken < (distance-1.0)) || Donnie->bumped()){
+				      distanceStr << ", bateu";
+              Donnie->speak(" Bati e andei "+to_string(int(steps_taken))+" passos");
+            }
+      			else{
+              distanceStr << ", nao bateu"; 
+              Donnie->speak(" Andei "+to_string(int(steps_taken))+" passos");
+            }
             History->addCommand(command,distanceStr.str());
+            
             break;
           }
 
@@ -226,6 +232,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			#ifndef NDEBUG
             cout << "PT: " << run(getChild(tree,0)) << endl;
             #endif
+            Donnie->speak(" Para tras");
             // run the command
             float distance = (float)run(getChild(tree,0));
             int steps_taken = Donnie->moveBackward(distance);
@@ -238,10 +245,14 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             distanceStr.str("");
             distanceStr.clear();
             distanceStr << "andou " << steps_taken;
-            if (((float)steps_taken < (distance-1.0)) || Donnie->bumped())
-				distanceStr << ", bateu";
-			else
-				distanceStr << ", nao bateu";
+            if (((float)steps_taken < (distance-1.0)) || Donnie->bumped()){
+              distanceStr << ", bateu";
+              Donnie->speak(" Bati e andei "+to_string(int(steps_taken))+" passos");
+            }
+			      else{
+				      distanceStr << ", nao bateu";
+              Donnie->speak(" Andei "+to_string(int(steps_taken))+" passos");
+            }
             History->addCommand(command,distanceStr.str());
             break;
           }
@@ -252,14 +263,16 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			#ifndef NDEBUG
             cout << "PD: " << exp << endl;
             #endif
+            Donnie->speak(" Girando para direita");
             // run the command
             float distance = (float)exp;
             //Donnie->turnRight("body",distance);
             Donnie->Goto(-1*distance);
 			// save into history
             std::ostringstream distanceStr;
-			distanceStr << distance;
+			      distanceStr << distance;
             string command = string(getText(tree)) + " " + distanceStr.str();
+            Donnie->speak(" Girei "+to_string(int(distance))+" graus");
             History->addCommand(command,(Donnie->bumped() ? "bateu" : "nao bateu"));            
             break;
           }
@@ -270,14 +283,16 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			#ifndef NDEBUG
             cout << "PE: " << exp << endl;
             #endif
+            Donnie->speak(" Girando para esquerda");
             // run the command
             float distance = (float)exp;
             //Donnie->turnLeft("body",distance);
             Donnie->Goto(distance);
 			// save into history
             std::ostringstream distanceStr;
-			distanceStr << distance;
+			      distanceStr << distance;
             string command = string(getText(tree)) + " " + distanceStr.str();
+            Donnie->speak(" Girei "+to_string(int(distance))+" graus");
             History->addCommand(command,(Donnie->bumped() ? "bateu" : "nao bateu"));            
             break;
 
@@ -287,13 +302,18 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           {
 			// get 7 sonar readings by moving the head from 0o to 180o
 			// every 30 degrees
-			float sonar_readings[7];
-			Donnie->Scan(sonar_readings);
-			#ifndef NDEBUG
-				cout << "SCAN: "<< endl;
-				for(int i=0; i<7; i++)
-					cout << sonar_readings[i];
-				cout << endl;
+      float sonar_readings[7];
+      int graus = 0;
+      Donnie->speak(" Espiando");
+      Donnie->Scan(sonar_readings);
+            #ifndef NDEBUG
+              cout << "SCAN: "<< endl;
+              for(int i=0; i<7; i++){
+                cout << sonar_readings[i] << " ";
+                if(sonar_readings[i]<20) Donnie->speak(" Objeto a " + to_string(int(sonar_readings[i])) +" centimetros no grau " + to_string(graus)); //TODO condicao de teste, tem que verificar se vai ser assim mesmo no futuro
+                graus+=30;
+              }
+              cout << endl;
             #endif
             cout << "Comando 'espiar' em desenvolvimento" << endl;
             break;
