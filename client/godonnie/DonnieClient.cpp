@@ -224,7 +224,7 @@ int DonnieClient::moveForward(float arg)
 	if(sonarProxy->GetRange(1) > 0.15)
 	{
 	  stop = false;
-	  p2d_headProxy->SetSpeed(0,1);
+	  //p2d_headProxy->SetSpeed(0,1); gg
 	  p2dProxy->SetSpeed(0.05,0);
 	}
 
@@ -235,7 +235,7 @@ int DonnieClient::moveForward(float arg)
 		//cout << passos << " > " << Npassos << endl;
 	  if(passos > Npassos )
 	  {
-	  	p2d_headProxy->SetSpeed(0,0);
+	  	//p2d_headProxy->SetSpeed(0,0); gg
 	    p2dProxy->SetSpeed(0,0);
 	    break;
 	  }
@@ -243,7 +243,7 @@ int DonnieClient::moveForward(float arg)
 	  robot->ReadIfWaiting();
 	  if(this->FrontBumper() != 0 or sonarProxy->GetRange(1) < FRONT_RANGER or sonarProxy->GetRange(2) < SIDE_RANGER or sonarProxy->GetRange(0) < SIDE_RANGER)
 	  {
-	  	p2d_headProxy->SetSpeed(0,0);
+	  	//p2d_headProxy->SetSpeed(0,0); gg
 	    p2dProxy->SetSpeed(0,0);
 	    stop = true;
 	    andou = hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi);
@@ -809,20 +809,10 @@ int DonnieClient::GotoRelative(float px, float py, float pa){
 
 void DonnieClient::Scan(float *sonar_readings){
 	float errorOffset=0.8;
-	/*do{ //GOTO -90
-		robot->ReadIfWaiting();
-		p2d_headProxy->GoTo(p2d_headProxy->GetXPos(),p2d_headProxy->GetYPos(), DTOR(-90));
-	}while (p2d_headProxy->GetYaw()>=-1*DTOR(90-errorOffset));  //0.5 is the parameter to validate the speed more fast
-	p2d_headProxy->SetSpeed(0,0);*/
-	//GotoRelative(p2d_headProxy->GetXPos(),p2d_headProxy->GetYPos(),-90);
 
 	float head_yawi = -90; //in degree. +90 due the servo default pos is 90 degre
-	do{//GOTO -90 to 90 in 30 by 30 steps
-		/*do{
-			robot->ReadIfWaiting();
-			p2d_headProxy->GoTo(p2d_headProxy->GetXPos(),p2d_headProxy->GetYPos(), DTOR(head_yawi));
-		}while (p2d_headProxy->GetYaw()<=DTOR(head_yawi-errorOffset));  //0.5 is the parameter to validate the speed more fast
-		p2d_headProxy->SetSpeed(0,0);*/
+	//GOTO -90 to 90 in 30 by 30 steps
+	do{
 		GotoRelative(p2d_headProxy->GetXPos(),p2d_headProxy->GetYPos(),head_yawi);
 
 		robot->ReadIfWaiting();
@@ -838,11 +828,6 @@ void DonnieClient::Scan(float *sonar_readings){
 		head_yawi = head_yawi + 30; // more + 30 degree 
 	}while (head_yawi < (90+30));
 
-	/*do{ //GOTO 0
-		robot->ReadIfWaiting();
-		p2d_headProxy->GoTo(p2d_headProxy->GetXPos(),p2d_headProxy->GetYPos(), DTOR(0));
-	}while (p2d_headProxy->GetYaw()>=DTOR(errorOffset));  //0.5 is the parameter to validate the speed more fast
-	p2d_headProxy->SetSpeed(0,0);*/
 	GotoRelative(p2d_headProxy->GetXPos(),p2d_headProxy->GetYPos(),0);
 }
 
