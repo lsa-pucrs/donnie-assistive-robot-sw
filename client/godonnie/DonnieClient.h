@@ -42,7 +42,7 @@ private:
   Position2dProxy *p2d_headProxy;
   //ActArrayProxy *actuator;
   BumperProxy *bpProxy;
-  //BlobfinderProxy *BfinderProxy;
+  BlobfinderProxy *bfinderProxy;
   RangerProxy *sonarProxy;
   RangerProxy *headSonarProxy;
   SpeechProxy *speechProxy;
@@ -86,6 +86,8 @@ public:
 	void Scan(float *sonar_readings);
 	//void Status();
 	
+	int processBlobs();
+
 	/// returns true when donnie bumped during the movements
 	int bumped();
 
