@@ -72,8 +72,8 @@ public:
   	void turnLeft(string p2d,float arg);
   	//void gotoYawHead(float arg);
 
-  	int Goto(float pa); //only rotation
-  	//int Goto(float px, float py, float pa);
+  	int Goto(float px, float py, float pa);
+  	int Goto(float pa); //rotation only [degrees]
 
 	float GetRange(int arg);
 	float GetPos(string p2d,int arg);

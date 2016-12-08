@@ -787,17 +787,40 @@ void DonnieClient::turnLeft(Position2dProxy *p2d,float arg)
 	p2d->SetSpeed(0,0);
 }
 
+
+int Goto(float px, float py, float pa){
+
+	return 0;	
+}
+
+//!Rotação [graus] da base do robo 
 int DonnieClient::Goto(float pa){
+	//faz com que o goto funcione girando para o lado correto
+	DEBUG_MSG("ROTACAO:" << pa);
+	if(pa>0 && pa>170){
+		DEBUG_MSG("PARCIAL");
+		if(Goto(170)) return 1; //se qualquer batida ou erro acontecer retorna imediatamente
+		if(Goto(pa-170)) return 1; //se qualquer batida ou erro acontecer retorna imediatamente
+		return 0;
+	}
+	if(pa<0 && pa<-170){	
+		DEBUG_MSG("PARCIAL");
+		if(Goto(-170)) return 1; //se qualquer batida ou erro acontecer retorna imediatamente
+		if(Goto(pa+170)) return 1; //se qualquer batida ou erro acontecer retorna imediatamente
+		return 0;
+	}
+
 	float errorOffset = DTOR(0.5); //min value that is considered at correct angle
-	float paTarget = DTOR(pa);
-	float paLast = p2dProxy->GetYaw();
+	float paTarget = DTOR(pa)+p2dProxy->GetYaw(); //target = desejado + atual
+	if(paTarget>0 && paTarget>M_PI) paTarget=paTarget-2*M_PI; //ajusta o valor do target evitando que o robo fique infinitamente tentando girar
+	if(paTarget<0 && paTarget<-M_PI) paTarget=paTarget+2*M_PI;
 	do{
 		robot->ReadIfWaiting();
-		p2dProxy->GoTo(p2dProxy->GetXPos(),p2dProxy->GetYPos(),paTarget+paLast); //soma o angulo desejado com o angulo inicial do robo
-		//DEBUG_MSG("           "<< "TH POS:" << p2d_headProxy->GetYaw());
-		//DEBUG_MSG("           "<< "TARGET:" << (paTarget+p2dProxy->GetYaw())-errorOffset<<endl);
-	}while (p2dProxy->GetYaw()<=(paTarget+paLast)-errorOffset || 
-			p2dProxy->GetYaw()>=(paTarget+paLast)+errorOffset); 
+		p2dProxy->GoTo(p2dProxy->GetXPos(),p2dProxy->GetYPos(),paTarget); //soma o angulo desejado com o angulo inicial do robo
+		//DEBUG_MSG("           "<< "TH POS:" << p2dProxy->GetYaw());
+		//DEBUG_MSG("           "<< "TARGET:" << (paTarget)<<endl);
+	}while (p2dProxy->GetYaw()<=(paTarget)-errorOffset || 
+			p2dProxy->GetYaw()>=(paTarget)+errorOffset); 
 	p2dProxy->SetSpeed(0,0);
 	return 0;
 }
@@ -807,10 +830,16 @@ int DonnieClient::Goto(float pa){
 /*! A posicao que este goto tenta atingir depende da posicao da base. 
 	Exemplo, Se mandar a cabeca do robo ir para 45 graus(em relacao ao robo) e a base estiver em 10 graus(em relacao ao mundo) 
 	a cabeca vai para  55 graus (em relacao ao mundo).
+	/param pa em graus
 	/return 0 se chegou no destino sem imprevistos
 	/return 1 se atingiu tempo limite TODO ou bateu TODO
 */
 int DonnieClient::headGoto(float pa){
+	//faz com que o goto funcione girando para o lado correto
+	/*if(pa>170){	
+		if(headGoto(pa-170)) return 1; //se qualquer batida ou erro acontecer retorna imediatamente
+	}*/
+
 	float errorOffsetYaw = DTOR(0.7); //min value that is considered at correct angle
 	float paTarget = DTOR(pa);
 	do{
