@@ -38,7 +38,7 @@ cmd	:	arg
 arg	:	(FW^| BW^| RTURN^| LTURN^| WAIT^) expression;
 
 
-narg	:	(SCAN | INFO | POS | RANGER | QUIT);
+narg	:	(SCAN | INFO | POS | RANGER | QUIT | COLOR);
  
 		
 signEXP	:	(PLUS^ | MINUS^)? atom;
@@ -104,6 +104,7 @@ proceinv	:	ID PROCINV^ (expression (','! expression)*)? ']'!;
 	
 atom	:	POS
 		|RANGER
+		|COLOR
 		|INT
 		|ID
 		;
@@ -177,13 +178,16 @@ SCAN	:	(('E'|'e')('S'|'s')('P'|'p')('I'|'i')('A'|'a')('R'|'r'));
 
 RANGER	
 :	(('D'|'d')('I'|'i')('S'|'s')('T'|'t')('â'|'Â'|'A'|'a')('N'|'n')('C'|'c')('I'|'i')('A'|'a'))
-		(' ')+ (('F'|'f')|('FE'|'fe')|('FD'|'fd')|('T'|'t')|('TE'|'te')|('TD'|'td')|('C'|'c'))
+		(' ')+ (('F'|'f')|('FE'|'fe'|'Fe'|'fE')|('FD'|'fd'|'Fd'|'fD')|('T'|'t')|('TE'|'te'|'Te'|'tE')|('TD'|'td'|'Td'|'tD')|('C'|'c'))
 		;
 		
 INFO	:	(('E'|'e')('S'|'s')('T'|'t')('A'|'a')('D'|'d')('O'|'o'))
 		;
 		
 POS	:	(('P'|'p')('O'|'o')('S'|'s')(('I'|'i')('Ç'|'ç'|'C'|'c')('Ã'|'ã'|'A'|'a')('O'|'o'))?) (' ')+ (('X'|'x') | ('Y'|'y') | ('A'|'a'))
+		;
+
+COLOR	:	(('C'|'c')('O'|'o')('R'|'r')) (' ')+ ((('A'|'a')('Z'|'z')('U'|'u')('L'|'l')) | (('V'|'v')('E'|'e')('R'|'r')('D'|'d')('E'|'e')) | (('V'|'v')('E'|'e')('R'|'r')('M'|'m')('E'|'e')('L'|'l')('H'|'h')('O'|'o')))
 		;
 		
 THEN	:	(('E'|'e')('N'|'n')('T'|'t')('Ã'|'ã'|'A'|'a')('O'|'o'))

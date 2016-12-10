@@ -907,7 +907,7 @@ void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
 			cout << scanText;
 		else{
 			speak(scanText.str());
-			// gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
+			// TODO gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
 			sleep(5);	
 		}
 		/*
@@ -926,7 +926,67 @@ void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
 		head_yawi = head_yawi + 30; // more + 30 degree 
 	}while (head_yawi < (90+30));
 
+	// go back to the initial position
 	headGoto(0);
+	robot->ReadIfWaiting();
+}
+
+
+int DonnieClient::Color(int color_code){
+	float head_yawi = -90; //in degree. +90 due the servo default pos is 90 degre
+	//GOTO -90 to 90 in 30 by 30 steps
+	// texto de saida de exemplo: 
+		//FALAR COR azul
+		//será falado 2
+		//FALAR COR verde
+		//será falado 1	
+	int blobs_found = 0;
+	// TODO: cerate a function to convert numerial color code to textual color name
+	std:string color_str = to_string(color_code);	
+
+	speak("Procurando cor " + color_str);
+	do{
+		// move head
+		headGoto(head_yawi);
+		robot->ReadIfWaiting();
+		
+		// get the color of the blobs
+        for(int i = 0; i < bfinderProxy->GetCount(); i++)
+        {
+			// color is encodedd in 0x00RRGGBB format
+			// TODO: extremelly simplistic color comparison. 
+			// It does not account for diff tones
+			if (color_code == bfinderProxy->GetBlob(i).color)
+				blobs_found++;
+		}		
+
+		head_yawi = head_yawi + 30; // more + 30 degree 
+	}while (head_yawi < (90+30));
+	
+	// go back to the initial position
+	headGoto(0);
+	robot->ReadIfWaiting();
+
+	// generate output
+	std::ostringstream scanText;
+	if (blobs_found == 0){
+		scanText << "nenhum objeto encontrado com a cor " << color_str;
+	}else 	if (blobs_found == 1){
+		scanText << "1 objeto encontrado com a cor " << color_str;
+	}else	{
+		scanText << blobs_found << " objetos encontrados com a cor " << color_str;
+	}
+
+	if (muted)
+		cout << scanText;
+	else{
+		speak(scanText.str());
+		// TODO gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
+		sleep(3);	
+	}
+	
+	return blobs_found;
+
 }
 
 int DonnieClient::processBlobs(){

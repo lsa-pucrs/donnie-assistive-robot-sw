@@ -18,9 +18,16 @@ using std::endl;
 #define RANGER_SW "te" // 4
 #define RANGER_SE "td" // 5
 #define RANGER_HEAD "c" // 6
+
+/// definition of the position tokens in Portuguese
 #define POSITION_X "x"
 #define POSITION_Y "y"
 #define POSITION_YAW "a"
+
+/// definition of the color tokens in Portuguese
+#define COLOR_BLUE "azul"
+#define COLOR_RED "vermelho"
+#define COLOR_GREEN "verde"
 
 ExprTreeEvaluator::ExprTreeEvaluator()
 {
@@ -332,20 +339,12 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case RANGER:
           {
-            char* cmdTxt= (char*)getText(tree);
-            string str;
             int arg;
             float range;
             vector<string> tokens;
-            
-            // remove extra space between tokens
-            str = cmdTxt;
-            str.erase(std::unique(str.begin(), str.end(),
-					[](char a, char b) { return a == ' ' && b == ' '; } ), str.end() ); 
-			// tolower
-			transform(str.begin(), str.end(), str.begin(), ::tolower);
-            // split into vector of tokens and get the 2nd token
-            tokens = split(str,' ');
+            split((char*)getText(tree),' ',tokens);
+			if (tokens.size() != 2)
+				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
 
 			// get the ranger id
 			if (tokens[1] == RANGER_N)
@@ -375,13 +374,14 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case POS:
           {
-            char* cmdTxt= (char*)getText(tree);
-            string str;
+            //char* cmdTxt= (char*)getText(tree);
+            //string str;
             int arg;
             float pos;
             vector<string> tokens;
             
             // remove extra space between tokens
+            /*
             str = cmdTxt;
             str.erase(std::unique(str.begin(), str.end(),
 					[](char a, char b) { return a == ' ' && b == ' '; } ), str.end() ); 
@@ -389,6 +389,11 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			transform(str.begin(), str.end(), str.begin(), ::tolower);
             // split into vector of tokens and get the 2nd token
             tokens = split(str,' ');
+            */
+            split((char*)getText(tree),' ',tokens);
+
+			if (tokens.size() != 2)
+				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
 
 			// get the ranger id
 			if (tokens[1] == POSITION_X)
@@ -407,6 +412,34 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             return (int)pos;
           }
 
+          case COLOR:
+          {
+            int arg, blobs;
+			// get 7 sonar and blob readings by moving the head from 0o to 180o
+			// every 30 degrees. report only the blobs with requested color (r,g, or b)
+			
+            vector<string> tokens;
+            split((char*)getText(tree),' ',tokens);
+			if (tokens.size() != 2)
+				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
+
+			// get the color id. color is encodedd in 0x00RRGGBB format
+			if (tokens[1] == COLOR_BLUE)
+				//arg = 0x000000FF;
+				arg = 138;
+			else if (tokens[1] == COLOR_GREEN)
+				arg = 0x0000FF00;
+			else if (tokens[1] == COLOR_RED)
+				arg = 0x00FF0000;
+			else 
+				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");        
+
+			// only report when there are blobs with the selected color
+			blobs = Donnie->Color(arg);
+            return blobs;
+            break;
+          }
+          
           case COMENT:
           {
 			#ifndef NDEBUG
@@ -820,16 +853,24 @@ bool compare (int a, int b, string comp)
 
 void split(const std::string &s, char delim, std::vector<std::string> &elems) {
     std::stringstream ss;
-    ss.str(s);
-    std::string item;
+    
+    std::string item, aux = s;
+
+	// remove extra spaces
+	aux.erase(std::unique(aux.begin(), aux.end(),
+			[](char a, char b) { return a == ' ' && b == ' '; } ), aux.end() ); 
+	// tolower
+	transform(aux.begin(), aux.end(), aux.begin(), ::tolower);    
+    ss.str(aux);
     while (std::getline(ss, item, delim)) {
         elems.push_back(item);
     }
 }
 
-
+/*
 std::vector<std::string> split(const std::string &s, char delim) {
     std::vector<std::string> elems;
     split(s, delim, elems);
     return elems;
 }
+*/
