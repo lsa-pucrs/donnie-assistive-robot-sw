@@ -17,7 +17,7 @@ using std::endl;
 #define RANGER_NE "fd" // 3
 #define RANGER_SW "te" // 4
 #define RANGER_SE "td" // 5
-#define RANGER_HEAD "c" // 6
+//#define RANGER_HEAD "c" // 6
 
 /// definition of the position tokens in Portuguese
 #define POSITION_X "x"
@@ -357,8 +357,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 				arg = 4;
 			else if (tokens[1] == RANGER_SE)
 				arg = 5;
-			else if (tokens[1] == RANGER_HEAD)
-				arg = 6;
+			//else if (tokens[1] == RANGER_HEAD)
+			//	arg = 6;
 			else 
 				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");        
 
