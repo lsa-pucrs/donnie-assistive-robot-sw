@@ -42,8 +42,9 @@ private:
   Position2dProxy *p2d_headProxy;
   //ActArrayProxy *actuator;
   BumperProxy *bpProxy;
-  //BlobfinderProxy *BfinderProxy;
+  BlobfinderProxy *bfinderProxy;
   RangerProxy *sonarProxy;
+  RangerProxy *headSonarProxy;
   SpeechProxy *speechProxy;
 
   int FrontBumper();
@@ -71,8 +72,12 @@ public:
   	void turnLeft(string p2d,float arg);
   	//void gotoYawHead(float arg);
 
+  	int Goto(float px, float py, float pa);
+  	int Goto(float pa); //rotation only [degrees]
+
 	float GetRange(int arg);
 	float GetPos(string p2d,int arg);
+	int headGoto(float pa);
 	//float GetBumper(int arg);
 	
 	/// scan 180 degree for obstacle using the sonar.
@@ -81,6 +86,8 @@ public:
 	void Scan(float *sonar_readings);
 	//void Status();
 	
+	int processBlobs();
+
 	/// returns true when donnie bumped during the movements
 	int bumped();
 

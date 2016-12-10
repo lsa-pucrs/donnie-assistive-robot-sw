@@ -9,7 +9,7 @@
 using namespace std;
 
 // Message macros
-#ifdef NDEBUG
+#ifndef NDEBUG
 //! Debug messages. They are not showed when NDEBUG are not defined
 /*! Especify the parameters by << separator \n
 	Example: DEBUG_MSG("test" << var << "Kmh")*/
