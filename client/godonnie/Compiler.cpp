@@ -71,6 +71,10 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
 	GoDonnieParser_prog_return r;
 	try{
 		r = parser->prog(parser);
+		// print the parse tree
+		#ifdef NDEBUG
+			cout << "Tree : " << r.tree->toStringTree(r.tree)->chars << endl;
+		#endif
 	}
 	catch(exception& e)
 	{

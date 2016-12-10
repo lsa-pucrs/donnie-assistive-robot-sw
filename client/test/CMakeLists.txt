@@ -13,8 +13,9 @@ else()
 endif()
 
 # add here any additional test source files
-SET (clientTestSrcs  test_rangers.cc
-    )
+FILE( GLOB clientTestSrcs "*.cc" )
+#SET (clientTestSrcs  test_rangers.cc
+#    )
 
 # install all source files
 INSTALL (FILES ${clientTestSrcs} DESTINATION ${DONNIE_PATH}/test/client)
