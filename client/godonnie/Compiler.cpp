@@ -274,15 +274,13 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			#ifndef NDEBUG
             cout << "PD: " << exp << endl;
             #endif
-            Donnie->speak(" Girando para direita");
             // run the command
             float distance = (float)exp;
-            Donnie->Goto(-1*distance);
+            Donnie->GotoTTS(-1*distance);
 			// save into history
-            std::ostringstream distanceStr;
-			      distanceStr << distance;
-            string command = string(getText(tree)) + " " + distanceStr.str();
-            Donnie->speak(" Girei "+to_string(int(distance))+" graus");
+			// TODO: o comando pode ser interrompido por uma colizao.
+			// assim, está errado assumir que a distancia pedida será a distancia percorrida
+            string command = string(getText(tree)) + " " + to_string(int(distance));
             History->addCommand(command,(Donnie->bumped() ? "bateu" : "nao bateu"));            
             break;
           }
@@ -293,15 +291,13 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			#ifndef NDEBUG
             cout << "PE: " << exp << endl;
             #endif
-            Donnie->speak(" Girando para esquerda");
             // run the command
             float distance = (float)exp;
-            Donnie->Goto(distance);
+            Donnie->GotoTTS(distance);
 			// save into history
-            std::ostringstream distanceStr;
-			distanceStr << distance;
-            string command = string(getText(tree)) + " " + distanceStr.str();
-            Donnie->speak(" Girei "+to_string(int(distance))+" graus");
+			// TODO: o comando pode ser interrompido por uma colizao.
+			// assim, está errado assumir que a distancia pedida será a distancia percorrida
+            string command = string(getText(tree)) + " " + to_string(int(distance));
             History->addCommand(command,(Donnie->bumped() ? "bateu" : "nao bateu"));            
             break;
 

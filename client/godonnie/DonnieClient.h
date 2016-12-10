@@ -62,6 +62,10 @@ private:
 		/return 1 se atingiu tempo limite TODO ou bateu TODO
 	*/	
 	int headGoto(float pa);
+
+  	//! Rotates [in degree] the robot base
+  	/*! make goto return the actual movement, considering a colision*/
+  	int Goto(float pa); //rotation only [degrees]
 	
 	//Singleton
 	DonnieClient();
@@ -79,11 +83,9 @@ public:
   	int moveForward(float arg);
   	int moveBackward(float arg);
 
-	//! to be done
-  	int Goto(float px, float py, float pa);
+	//! run Goto and run TTS
+  	int GotoTTS(float pa);
   	
-  	//! Rotates [in degree] the robot base
-  	int Goto(float pa); //rotation only [degrees]
 
 	float GetRange(int arg);
 	float GetPos(string p2d,int arg);
