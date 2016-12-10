@@ -2,7 +2,7 @@ criar a = 4
 
 aprender quadrado
 início
-	para criar b = 0; b < 2; b = b + 1 
+	para criar b = 0; b < 4; b = b + 1 
 	faça
 		pf 4
 		ge 90
@@ -11,8 +11,6 @@ fim aprender
 
 se a > 3 então falar "oi" fim se
 
-pt 2
-
 quadrado[]
 
-pt 1
+falar "terminei"
