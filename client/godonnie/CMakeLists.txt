@@ -111,5 +111,8 @@ add_dependencies(GoDonnie GoDonnieParser)
 # Install library and example files
 # Install executable with -x permission 
 INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${CLIENTNAME} DESTINATION ${DONNIE_PATH}/bin) 
-INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/test/square.gd DESTINATION ${DONNIE_PATH}/test/${CLIENTNAME})
-INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/test/test.gd DESTINATION ${DONNIE_PATH}/test/${CLIENTNAME})
+# install all godonnie examples
+FILE( GLOB gdfiles "test/*.gd" )
+INSTALL(FILES ${gdfiles}
+        DESTINATION ${DONNIE_PATH}/test/${CLIENTNAME}
+)
