@@ -88,6 +88,10 @@ public:
 	/// ranges is writen with sonar readings every 30 degree.
 	/// 180/30 = 7 sonar readings. 0o, 30o, 60o, 90o, 120o, 150o, 180o.
 	void Scan(float *sonar_readings, int *blobs_found);
+	
+	//! returns the number of times the color was found around the robot. color is encodedd in 0x00RRGGBB format
+	int Color(int color);
+	
 	//void Status();
 	
 	// TODO: to be done
