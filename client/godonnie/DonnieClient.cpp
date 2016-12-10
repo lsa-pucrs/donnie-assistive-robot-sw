@@ -36,6 +36,7 @@ DonnieClient::DonnieClient()
 	int port = atoi(GetEnv("DONNIE_PORT").c_str());
 	if(host.size()==0) host = "localhost";
 	if(port==0) port = 6665;
+	muted = false;
 
 	try{
 		robot = new PlayerClient(host,port);
@@ -848,24 +849,59 @@ int DonnieClient::headGoto(float pa){
 	return 0;
 }
 
-void DonnieClient::Scan(float *sonar_readings){
+void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
 	float head_yawi = -90; //in degree. +90 due the servo default pos is 90 degre
 	//GOTO -90 to 90 in 30 by 30 steps
+	// texto de saida de exemplo: 
+		//verde, 40o a
+		//esquerda, 2 passos,
+		//vermelho, 90o a direita, 4 passos		
+	std::ostringstream scanText;
+	speak("Espiando");
 	do{
+		// move head
 		headGoto(head_yawi);
-
 		robot->ReadIfWaiting();
+		// read sonar
 		headSonarProxy->GetRange(0)/100; ///STEP_LENGHT;  // read head sonar 
 		*sonar_readings = headSonarProxy->GetRange(0)/STEP_LENGHT;  // read head sonar 
+		*blobs_found = bfinderProxy->GetCount(); // get the number of blobs found
+		
+		// build string
+		if (head_yawi == 0)
+			scanText << "a frente: ";
+		else if (head_yawi < 0)
+			scanText << "a " << -head_yawi << " graus a direita: ";
+		else 
+			scanText << "a " << head_yawi << " graus a esquerda: ";
+
+		// OBS: '(int)*sonar_readings' truncate the distance. perhaps 'round' would be better
+		if (*blobs_found == 1){
+			scanText << "1 objeto a " << (int)*sonar_readings << " passos";
+		}else{
+			scanText << *blobs_found << " objetos a " << (int)*sonar_readings << " passos";
+		}
+		
+		if (muted)
+			cout << scanText;
+		else{
+			speak(scanText.str());
+			// gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
+			sleep(4);	
+		}
+		/*
 		DEBUG_MSG("           "<< "TH POS:" << RTOD(p2d_headProxy->GetYaw()));
 		DEBUG_MSG("           "<< "TH SPEED:" << p2d_headProxy->GetYawSpeed());
 		DEBUG_MSG("           "<< "TARGET:" << DTOR(head_yawi));
-		if(head_yawi<1&&head_yawi>-1) DEBUG_MSG("           "<< "FOWARD SONAR:" << sonarProxy->GetRange(1)/STEP_LENGHT); //debug para comparaçao
+		//if(head_yawi<1&&head_yawi>-1) DEBUG_MSG("           "<< "FOWARD SONAR:" << sonarProxy->GetRange(1)/STEP_LENGHT); //debug para comparaçao
 		DEBUG_MSG("           "<< "HEAD SONAR:" << *sonar_readings << endl);
+		// print full information about blobs
+		cout << *bfinderProxy;
+		*/
+		scanText.str("");
+		scanText.clear();	
 		sonar_readings++;
-
-		processBlobs();
-
+		blobs_found++;
 		head_yawi = head_yawi + 30; // more + 30 degree 
 	}while (head_yawi < (90+30));
 

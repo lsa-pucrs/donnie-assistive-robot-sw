@@ -46,6 +46,10 @@ private:
   RangerProxy *sonarProxy;
   RangerProxy *headSonarProxy;
   SpeechProxy *speechProxy;
+  
+  // if on, it only play sound command Speak is explictly executed by user
+  // TO BE DONE
+  bool muted;
 
   int FrontBumper();
   int BackBumper();
@@ -83,9 +87,10 @@ public:
 	/// scan 180 degree for obstacle using the sonar.
 	/// ranges is writen with sonar readings every 30 degree.
 	/// 180/30 = 7 sonar readings. 0o, 30o, 60o, 90o, 120o, 150o, 180o.
-	void Scan(float *sonar_readings);
+	void Scan(float *sonar_readings, int *blobs_found);
 	//void Status();
 	
+	// TODO: to be done
 	int processBlobs();
 
 	/// returns true when donnie bumped during the movements

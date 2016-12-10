@@ -294,7 +294,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             Donnie->Goto(distance);
 			// save into history
             std::ostringstream distanceStr;
-			      distanceStr << distance;
+			distanceStr << distance;
             string command = string(getText(tree)) + " " + distanceStr.str();
             Donnie->speak(" Girei "+to_string(int(distance))+" graus");
             History->addCommand(command,(Donnie->bumped() ? "bateu" : "nao bateu"));            
@@ -304,22 +304,20 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case SCAN:
           {
-			// get 7 sonar readings by moving the head from 0o to 180o
+			// get 7 sonar and blob readings by moving the head from 0o to 180o
 			// every 30 degrees
-      float sonar_readings[7];
-      int graus = 0;
-      Donnie->speak(" Espiando");
-      Donnie->Scan(sonar_readings);
+			float sonar_readings[7];
+			int blobs_found[7];
+			Donnie->Scan(sonar_readings,blobs_found);
             #ifndef NDEBUG
-              cout << "SCAN: "<< endl;
-              for(int i=0; i<7; i++){
-                cout << sonar_readings[i] << " ";
-                if(sonar_readings[i]<20) Donnie->speak(" Objeto a " + to_string(int(sonar_readings[i])) +" centimetros no grau " + to_string(graus)); //TODO condicao de teste, tem que verificar se vai ser assim mesmo no futuro
-                graus+=30;
-              }
-              cout << endl;
+				int graus = 0;
+				cout << "SCAN: "<< endl;
+				for(int i=0; i<7; i++){
+				   cout << blobs_found[i] << " objetos a " << int(sonar_readings[i]) << " passos no grau " << graus << endl; 
+				   graus+=30;
+				}              
+				cout << endl;
             #endif
-            cout << "Comando 'espiar' em desenvolvimento" << endl;
             break;
           }
 
