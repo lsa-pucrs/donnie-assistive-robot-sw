@@ -38,14 +38,7 @@ driver
 #include <libplayercore/playercore.h>
 
 #include <opencv2/core/core.hpp>
-// these includes were not found on 14.04 and they are not used after all
-//#include <opencv2/imgcodecs.hpp>
-//      #include <opencv2/video/video.hpp>
-//#include <opencv2/videoio/videoio.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-//#include <opencv2/highgui/highgui.hpp>
-//#include <opencv2/calib3d/calib3d.hpp>
-//#include <opencv2/features2d/features2d.hpp>
 #include <raspicam/raspicam_cv.h>
 
 
@@ -54,40 +47,69 @@ using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
 // The class for the driver
+//! A Class for a raspicam camera 
+/*! This class uses a raspicam camera and publish its frames on the player format.*/
 class Raspicam_driver : public ThreadedDriver
 {
   public:
     
-    // Constructor; need that
+  //! Constructor.
+  //! Runs when player server was launched.
     Raspicam_driver(ConfigFile* cf, int section);
 
-    //This method will be invoked on each incoming message
+  //! This method will be invoked on each incoming message.
     virtual int ProcessMessage(QueuePointer &resp_queue, 
                                player_msghdr * hdr,
                                void * data);
 
   private:
 
-    // Main function for device thread.
+    //! Main function for device thread.
     virtual void Main();
+    //! Runs when a client connects to this driver.
     virtual int MainSetup();
+    //! Runs when a client disconnects from this driver.
     virtual void MainQuit();
+
+    //! Configure raspicam.
+    /*!
+      \param FRAME_WIDTH width of the frames.
+      \param FRAME_HEIGHT height of the frames.
+      \param channels number of channes of the images. Can be 1(greyscale) or 3(RGB).
+    */
     int configure(int FRAME_WIDTH, int FRAME_HEIGHT,int channels);
-    int capturar();
+  
+    //! Capture the next frame.
     Mat Raspi_Capture();
+    //! Process and publish the current frame.
+    int process_frame();
 
 
+    //! Raspicam camera 
     raspicam::RaspiCam_Cv tCamera;
 
+    //! Number of FPS. Can be used on the configuration file. Default value is 1.
     int fps;
+    //! Used to assist the control of the number of frames per second.
     double delay;
 	  double t1,t2;
+
+    // ! Camera interface.
     player_devaddr_t camera_addr; 
-    Mat frame;
+    //! Camera data.
     player_camera_data_t * data;
-    int height, width, channels;
-    int cont;
-    int foop;
+
+    //! Frame to be published.
+    Mat frame;
+    // height of the frame. Can be used on the configuration file. Default value is 480.
+    int height;
+    // width of the frame. Can be used on the configuration file. Default value is 640.
+    int width;
+    // number of channels of the frame. Can be used on the configuration file. Default value is 3.
+    int channels;
+
+    //int cont;
+    //int foop;
 };
 
 // A factory creation function, declared outside of the class so that it
@@ -143,7 +165,7 @@ Raspicam_driver::Raspicam_driver(ConfigFile* cf, int section)
 {
   memset(&(this->camera_addr), 0, sizeof (player_devaddr_t)); 
   memset(&(this->data), 0, sizeof (player_camera_data_t)); 
-  cont = 0; 
+  //cont = 0; 
   if (cf->ReadDeviceAddr(&(this->camera_addr), section, "provides", PLAYER_CAMERA_CODE, -1, NULL)){
     this->SetError(-1);
     return;
@@ -179,9 +201,9 @@ int Raspicam_driver::MainSetup()
   // Here you do whatever is necessary to setup the device, like open and
   // configure a serial port.
 
-  printf("Was foo option given in config file? %d\n", this->foop);
+  //printf("Was foo option given in config file? %d\n", this->foop);
     
-  puts("Example driver ready");
+  puts("Raspicam_driver ready");
 
   return(0);
 }
@@ -222,7 +244,7 @@ Mat Raspicam_driver::Raspi_Capture()
 
     return tCapturedImage;
 }
-int Raspicam_driver::capturar()
+int Raspicam_driver::process_frame()
 {
 
 	t2=cv::getTickCount();
@@ -307,7 +329,7 @@ void Raspicam_driver::Main()
       // Interact with the device, and push out the resulting data, using
       // Driver::Publish()
       
-      capturar();
+      process_frame();
 
       // Sleep (you might, for example, block on a read() instead)
       usleep(100000); //IMPORTANTE: deve ser acrescentado um delay para a câmera
