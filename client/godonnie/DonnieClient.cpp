@@ -849,6 +849,8 @@ int DonnieClient::headGoto(float pa){
 	return 0;
 }
 
+// TODO: is it necessary to return the blobs color ? 
+// it will require a struct to place all data. 
 void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
 	float head_yawi = -90; //in degree. +90 due the servo default pos is 90 degre
 	//GOTO -90 to 90 in 30 by 30 steps
@@ -857,6 +859,9 @@ void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
 		//esquerda, 2 passos,
 		//vermelho, 90o a direita, 4 passos		
 	std::ostringstream scanText;
+	//int color; //0x00RRGGBB
+	string color_str;
+	//playerc_blobfinder_blob_t blob;
 	speak("Espiando");
 	do{
 		// move head
@@ -867,6 +872,20 @@ void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
 		*sonar_readings = headSonarProxy->GetRange(0)/STEP_LENGHT;  // read head sonar 
 		*blobs_found = bfinderProxy->GetCount(); // get the number of blobs found
 		
+		// get the color of the blobs
+		color_str = "";
+        for(int i = 0; i < *blobs_found; i++)
+        {
+			//blob = bfinderProxy->GetBlob(i);
+			//color = bfinderProxy->GetBlob(i).color;
+			// color is encodedd in 0x00RRGGBB format
+			// TODO: convert color in 0x00RRGGBB format to text format
+			color_str += to_string(bfinderProxy->GetBlob(i).color);
+			// if it is the last
+			if (i+1 != *blobs_found)
+				color_str += ",";
+		}		
+		
 		// build string
 		if (head_yawi == 0)
 			scanText << "a frente: ";
@@ -876,10 +895,12 @@ void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
 			scanText << "a " << head_yawi << " graus a esquerda: ";
 
 		// OBS: '(int)*sonar_readings' truncate the distance. perhaps 'round' would be better
-		if (*blobs_found == 1){
-			scanText << "1 objeto a " << (int)*sonar_readings << " passos";
+		if (*blobs_found == 0){
+			scanText << "0 objetos a " << (int)*sonar_readings << " passos";
+		}else if (*blobs_found == 1){
+			scanText << "1 objeto de cor " << color_str << " a " << (int)*sonar_readings << " passos";
 		}else{
-			scanText << *blobs_found << " objetos a " << (int)*sonar_readings << " passos";
+			scanText << *blobs_found << " objetos de cores " << color_str << " a " << (int)*sonar_readings << " passos";
 		}
 		
 		if (muted)
@@ -887,7 +908,7 @@ void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
 		else{
 			speak(scanText.str());
 			// gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
-			sleep(4);	
+			sleep(5);	
 		}
 		/*
 		DEBUG_MSG("           "<< "TH POS:" << RTOD(p2d_headProxy->GetYaw()));
