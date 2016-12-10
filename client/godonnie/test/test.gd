@@ -2,8 +2,8 @@
 aprender teste : a, b
 inicio
 	se a < b então  
-		repita 4 vezes falar "oi"
-			para criar c = 0; c < 4; c = c + 1 faça 
+		repita 3 vezes falar "oi"
+			para criar c = 0; c < 2; c = c + 1 faça 
 				falar "tchau" 
 			fim para
 		fim repita
@@ -12,8 +12,8 @@ inicio
 	fim se
 fim aprender
 
-criar a = 3
-criar b = 2
+criar a = 2
+criar b = 3
 
 falar "começo"
 
