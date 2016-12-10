@@ -277,7 +277,6 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             Donnie->speak(" Girando para direita");
             // run the command
             float distance = (float)exp;
-            //Donnie->turnRight("body",distance);
             Donnie->Goto(-1*distance);
 			// save into history
             std::ostringstream distanceStr;
@@ -297,7 +296,6 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             Donnie->speak(" Girando para esquerda");
             // run the command
             float distance = (float)exp;
-            //Donnie->turnLeft("body",distance);
             Donnie->Goto(distance);
 			// save into history
             std::ostringstream distanceStr;
@@ -374,22 +372,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case POS:
           {
-            //char* cmdTxt= (char*)getText(tree);
-            //string str;
             int arg;
             float pos;
             vector<string> tokens;
-            
-            // remove extra space between tokens
-            /*
-            str = cmdTxt;
-            str.erase(std::unique(str.begin(), str.end(),
-					[](char a, char b) { return a == ' ' && b == ' '; } ), str.end() ); 
-			// tolower
-			transform(str.begin(), str.end(), str.begin(), ::tolower);
-            // split into vector of tokens and get the 2nd token
-            tokens = split(str,' ');
-            */
             split((char*)getText(tree),' ',tokens);
 
 			if (tokens.size() != 2)
@@ -866,11 +851,3 @@ void split(const std::string &s, char delim, std::vector<std::string> &elems) {
         elems.push_back(item);
     }
 }
-
-/*
-std::vector<std::string> split(const std::string &s, char delim) {
-    std::vector<std::string> elems;
-    split(s, delim, elems);
-    return elems;
-}
-*/
