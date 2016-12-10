@@ -267,8 +267,24 @@ int DonnieClient::moveForward(float arg)
 */
 	path.clear();
 
+	// say command
+	// TODO: o comando pode ser interrompido por uma colizao.
+	// assim, está errado assumir que a distancia pedida será a distancia percorrida
+	std::ostringstream sayStr;
+	if (bumped() || stop)
+		sayStr << "Andei " << int(passos) << " passos para frente. Houve colisão.";
+	else
+		sayStr << "Andei " << int(passos) << " passos para frente.";
+	if (muted)
+		cout << sayStr;
+	else{
+		speak(sayStr.str());
+		// TODO gambiarra
+		sleep(3);
+	}
+
 	#ifndef NDEBUG
-	cout << "Andou: " << passos << ", parou: " << stop << ", erro: " << erro << ", obstaculo: " << obstacle << endl;
+	cout << "parou: " << stop << ", erro: " << erro << ", obstaculo: " << obstacle << endl;
 	#endif
 	
 	// number of steps actually taken
@@ -366,8 +382,24 @@ int DonnieClient::moveBackward(float arg)
 */
 	path.clear();
 	
+	// say command
+	// TODO: o comando pode ser interrompido por uma colizao.
+	// assim, está errado assumir que a distancia pedida será a distancia percorrida
+	std::ostringstream sayStr;
+	if (bumped() || stop)
+		sayStr << "Andei " << int(passos) << " passos para traz. Houve colisão.";
+	else
+		sayStr << "Andei " << int(passos) << " passos para traz.";
+	if (muted)
+		cout << sayStr;
+	else{
+		speak(sayStr.str());
+		// TODO gambiarra
+		sleep(3);
+	}
+		
 	#ifndef NDEBUG
-	cout << "Andou: " << passos << ", parou: " << stop << ", erro: " << erro << ", obstaculo: " << obstacle << endl;
+	cout << "parou: " << stop << ", erro: " << erro << ", obstaculo: " << obstacle << endl;
 	#endif
 
 	// number of steps actually taken

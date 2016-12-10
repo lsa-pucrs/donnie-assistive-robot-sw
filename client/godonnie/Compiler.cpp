@@ -212,29 +212,20 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			#ifndef NDEBUG
             cout << "PF: " << run(getChild(tree,0)) << endl;
             #endif
-            Donnie->speak(" Para frente");
             // run the command
             float distance = (float)run(getChild(tree,0));
             int steps_taken = Donnie->moveForward(distance);
-			// save into history
-            std::ostringstream distanceStr;
-			      distanceStr << distance;
-			      string command;
-            command = string(getText(tree)) + " " + distanceStr.str();
             // if less steps were taken, then report a bump
-            distanceStr.str("");
-            distanceStr.clear();
+            std::ostringstream distanceStr;
             distanceStr << "andou " << steps_taken;
             if (((float)steps_taken < (distance-1.0)) || Donnie->bumped()){
-				      distanceStr << ", bateu";
-              Donnie->speak(" Bati e andei "+to_string(int(steps_taken))+" passos");
+              distanceStr << ", bateu";
+            }else{
+		      distanceStr << ", nao bateu";
             }
-      			else{
-              distanceStr << ", nao bateu"; 
-              Donnie->speak(" Andei "+to_string(int(steps_taken))+" passos");
-            }
+			// save into history
+            string command = string(getText(tree)) + " " + to_string(int(distance));
             History->addCommand(command,distanceStr.str());
-            
             break;
           }
 
@@ -243,27 +234,19 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			#ifndef NDEBUG
             cout << "PT: " << run(getChild(tree,0)) << endl;
             #endif
-            Donnie->speak(" Para tras");
             // run the command
             float distance = (float)run(getChild(tree,0));
             int steps_taken = Donnie->moveBackward(distance);
-			// save into history
-            std::ostringstream distanceStr;
-			distanceStr << distance;
-			string command;
-            command = string(getText(tree)) + " " + distanceStr.str();
             // if less steps were taken, then report a bump
-            distanceStr.str("");
-            distanceStr.clear();
+            std::ostringstream distanceStr;
             distanceStr << "andou " << steps_taken;
             if (((float)steps_taken < (distance-1.0)) || Donnie->bumped()){
               distanceStr << ", bateu";
-              Donnie->speak(" Bati e andei "+to_string(int(steps_taken))+" passos");
+            }else{
+		      distanceStr << ", nao bateu";
             }
-			      else{
-				      distanceStr << ", nao bateu";
-              Donnie->speak(" Andei "+to_string(int(steps_taken))+" passos");
-            }
+			// save into history
+            string command = string(getText(tree)) + " " + to_string(int(distance));
             History->addCommand(command,distanceStr.str());
             break;
           }
