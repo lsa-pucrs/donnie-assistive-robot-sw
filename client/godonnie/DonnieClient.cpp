@@ -374,8 +374,33 @@ int DonnieClient::moveBackward(float arg)
 	return passos;	
 }
 
-int Goto(float px, float py, float pa){
+int DonnieClient::GotoTTS(float pa){
 
+	// call recursive Goto and return the actual move
+	//float actual_move = Goto(pa);
+	Goto(pa);
+	
+	string direction;
+	if (pa < 0){
+		direction = "direita";
+		pa = -pa;
+	}else
+		direction = "esquerda";
+	// say command
+	// TODO: o comando pode ser interrompido por uma colizao.
+	// assim, está errado assumir que a distancia pedida será a distancia percorrida
+	std::ostringstream sayStr;
+	if (bumped())
+		sayStr << "Girei " << int(pa) << " graus para " << direction << ". Houve colisão.";
+	else
+		sayStr << "Girei " << int(pa) << " graus para " << direction;
+	if (muted)
+		cout << sayStr;
+	else{
+		speak(sayStr.str());
+		// TODO gambiarra
+		sleep(3);
+	}
 	return 0;	
 }
 
