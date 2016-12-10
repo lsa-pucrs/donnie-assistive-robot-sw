@@ -130,10 +130,11 @@ float DonnieClient::GetRange(int arg)
 
 			case 5: //tras-direita - SE
 				return sonarProxy->GetRange(5)/STEP_LENGHT;
-
+/*
 			case 6: //cabeca - head
-				return sonarProxy->GetRange(6)/STEP_LENGHT;
-				
+				//return sonarProxy->GetRange(6)/STEP_LENGHT;
+				return headSonarProxy->GetRange(0)/STEP_LENGHT;
+*/				
 			default: // invalid
 				ostringstream buf;
 				buf << "Range id "<< arg << "invalid" << endl;
