@@ -275,13 +275,7 @@ int DonnieClient::moveForward(float arg)
 		sayStr << "Andei " << int(passos) << " passos para frente. Houve colisão.";
 	else
 		sayStr << "Andei " << int(passos) << " passos para frente.";
-	if (muted)
-		cout << sayStr;
-	else{
-		speak(sayStr.str());
-		// TODO gambiarra
-		sleep(3);
-	}
+	speak(sayStr.str());
 
 	#ifndef NDEBUG
 	cout << "parou: " << stop << ", erro: " << erro << ", obstaculo: " << obstacle << endl;
@@ -390,13 +384,7 @@ int DonnieClient::moveBackward(float arg)
 		sayStr << "Andei " << int(passos) << " passos para traz. Houve colisão.";
 	else
 		sayStr << "Andei " << int(passos) << " passos para traz.";
-	if (muted)
-		cout << sayStr;
-	else{
-		speak(sayStr.str());
-		// TODO gambiarra
-		sleep(3);
-	}
+	speak(sayStr.str());
 		
 	#ifndef NDEBUG
 	cout << "parou: " << stop << ", erro: " << erro << ", obstaculo: " << obstacle << endl;
@@ -426,13 +414,8 @@ int DonnieClient::GotoTTS(float pa){
 		sayStr << "Girei " << int(pa) << " graus para " << direction << ". Houve colisão.";
 	else
 		sayStr << "Girei " << int(pa) << " graus para " << direction;
-	if (muted)
-		cout << sayStr;
-	else{
-		speak(sayStr.str());
-		// TODO gambiarra
-		sleep(3);
-	}
+	speak(sayStr.str());
+
 	return 0;	
 }
 
@@ -537,13 +520,9 @@ void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
 			scanText << *blobs_found << " objetos de cores " << color_str << " a " << (int)*sonar_readings << " passos";
 		}
 		
-		if (muted)
-			cout << scanText;
-		else{
-			speak(scanText.str());
-			// TODO gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
-			sleep(5);	
-		}
+		speak(scanText.str());
+		// TODO gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
+		sleep(2);
 		/*
 		DEBUG_MSG("           "<< "TH POS:" << RTOD(p2d_headProxy->GetYaw()));
 		DEBUG_MSG("           "<< "TH SPEED:" << p2d_headProxy->GetYawSpeed());
@@ -610,17 +589,9 @@ int DonnieClient::Color(int color_code){
 	}else	{
 		scanText << blobs_found << " objetos encontrados com a cor " << color_str;
 	}
-
-	if (muted)
-		cout << scanText;
-	else{
-		speak(scanText.str());
-		// TODO gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
-		sleep(3);	
-	}
+	speak(scanText.str());
 	
 	return blobs_found;
-
 }
 
 int DonnieClient::bumped(){
@@ -633,6 +604,11 @@ int DonnieClient::bumped(){
 
 void DonnieClient::speak(string text)
 {
-	cout << text << endl;
-	speechProxy->Say(text.c_str());
+	if (muted)
+		cout << text;
+	else{
+		speechProxy->Say(text.c_str());
+		// TODO gambiarra
+		sleep(3);
+	}	
 }
