@@ -29,6 +29,11 @@ using std::endl;
 #define COLOR_RED "vermelho"
 #define COLOR_GREEN "verde"
 
+/// definition of the on/off tokens in Portuguese
+#define SOUND_ON "ligado"
+#define SOUND_OFF "desligado"
+
+
 ExprTreeEvaluator::ExprTreeEvaluator()
 {
 
@@ -404,6 +409,25 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             break;
           }
           
+          case SOUND:
+          {
+            vector<string> tokens;
+            split((char*)getText(tree),' ',tokens);
+			if (tokens.size() != 2)
+				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
+
+			// sound on or off
+			if (tokens[1] == SOUND_ON)
+				Donnie->muteTTS(false);
+			else if (tokens[1] == SOUND_OFF)
+				Donnie->muteTTS(true);
+			else 
+				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");        
+
+            return 0;
+            break;
+          }
+                    
           case COMENT:
           {
 			#ifndef NDEBUG

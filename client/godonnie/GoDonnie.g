@@ -38,7 +38,7 @@ cmd	:	arg
 arg	:	(FW^| BW^| RTURN^| LTURN^| WAIT^) expression;
 
 
-narg	:	(SCAN | INFO | POS | RANGER | QUIT | COLOR);
+narg	:	(SCAN | INFO | POS | RANGER | QUIT | COLOR | SOUND);
  
 		
 signEXP	:	(PLUS^ | MINUS^)? atom;
@@ -189,6 +189,10 @@ POS	:	(('P'|'p')('O'|'o')('S'|'s')(('I'|'i')('Ç'|'ç'|'C'|'c')('Ã'|'ã'|'A'|'a
 
 COLOR	:	(('C'|'c')('O'|'o')('R'|'r')) (' ')+ ((('A'|'a')('Z'|'z')('U'|'u')('L'|'l')) | (('V'|'v')('E'|'e')('R'|'r')('D'|'d')('E'|'e')) | (('V'|'v')('E'|'e')('R'|'r')('M'|'m')('E'|'e')('L'|'l')('H'|'h')('O'|'o')))
 		;
+
+SOUND	:	(('S'|'s')('O'|'o')('M'|'m')) (' ')+ ((('L'|'l')('I'|'i')('G'|'g')('A'|'a')('D'|'d')('O'|'o')) | (('D'|'d')('E'|'e')('S'|'s')('L'|'l')('I'|'i')('G'|'g')('A'|'a')('D'|'d')('O'|'o')))
+		;
+		
 		
 THEN	:	(('E'|'e')('N'|'n')('T'|'t')('Ã'|'ã'|'A'|'a')('O'|'o'))
 		;

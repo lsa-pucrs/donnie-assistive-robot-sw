@@ -612,3 +612,8 @@ void DonnieClient::speak(string text)
 		sleep(3);
 	}	
 }
+
+void DonnieClient::muteTTS(bool m)
+{
+	muted = m;
+}
