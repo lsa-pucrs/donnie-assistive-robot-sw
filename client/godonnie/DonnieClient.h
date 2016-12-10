@@ -1,6 +1,6 @@
 /*
  * Desc: This class implements the GoDonnie commands via Player middleware
- * Author: Augusto Bergamin
+ * Author: Augusto Bergamin, Alexandre Amory
  * Date:  November 2016
  * Laboratório de Sistemas Autônomos 
  *  - https://lsa.pucrs.br/
@@ -37,26 +37,32 @@ class DonnieClient
 {
 private:
   PlayerClient *robot;
-  //PlayerClient *head;
   Position2dProxy *p2dProxy;
   Position2dProxy *p2d_headProxy;
-  //ActArrayProxy *actuator;
   BumperProxy *bpProxy;
   BlobfinderProxy *bfinderProxy;
   RangerProxy *sonarProxy;
   RangerProxy *headSonarProxy;
   SpeechProxy *speechProxy;
   
-  // if on, it only play sound command Speak is explictly executed by user
-  // TO BE DONE
+  //! if on, it only play sound command Speak is explictly executed by user
+  /*! TO BE DONE*/
   bool muted;
 
   int FrontBumper();
   int BackBumper();
-  void turnRight(Position2dProxy *p2d,float arg);
-  void turnLeft(Position2dProxy *p2d,float arg);
   float GetPos(Position2dProxy *p2d,int arg);
 
+	//!Rotação da cabeça relativo a base do robo 
+	/*! A posicao que este goto tenta atingir depende da posicao da base. 
+		Exemplo, Se mandar a cabeca do robo ir para 45 graus(em relacao ao robo) e a base estiver em 10 graus(em relacao ao mundo) 
+		a cabeca vai para  55 graus (em relacao ao mundo).
+		/param pa em graus
+		/return 0 se chegou no destino sem imprevistos
+		/return 1 se atingiu tempo limite TODO ou bateu TODO
+	*/	
+	int headGoto(float pa);
+	
 	//Singleton
 	DonnieClient();
 	~DonnieClient();
@@ -72,35 +78,35 @@ public:
 	/// 
   	int moveForward(float arg);
   	int moveBackward(float arg);
-  	void turnRight(string p2d,float arg);
-  	void turnLeft(string p2d,float arg);
-  	//void gotoYawHead(float arg);
 
+	//! to be done
   	int Goto(float px, float py, float pa);
+  	
+  	//! Rotates [in degree] the robot base
   	int Goto(float pa); //rotation only [degrees]
 
 	float GetRange(int arg);
 	float GetPos(string p2d,int arg);
-	int headGoto(float pa);
+	
+
 	//float GetBumper(int arg);
 	
-	/// scan 180 degree for obstacle using the sonar.
-	/// ranges is writen with sonar readings every 30 degree.
-	/// 180/30 = 7 sonar readings. 0o, 30o, 60o, 90o, 120o, 150o, 180o.
+	//! scan 180 degree for obstacle using the sonar.
+	/*! ranges is writen with sonar readings every 30 degree.
+	    180/30 = 7 sonar readings. 0o, 30o, 60o, 90o, 120o, 150o, 180o.
+	*/ 
 	void Scan(float *sonar_readings, int *blobs_found);
 	
-	//! returns the number of times the color was found around the robot. color is encodedd in 0x00RRGGBB format
+	//! returns the number of times the color was found around the robot. 
+	/*! color is encodedd in 0x00RRGGBB format */
 	int Color(int color);
 	
 	//void Status();
-	
-	// TODO: to be done
-	int processBlobs();
 
-	/// returns true when donnie bumped during the movements
+	//! returns true when donnie bumped during the movements
 	int bumped();
 
-	/// call text-to-speech and print
+	//! call text-to-speech and print
 	void speak(string text);
 	
 };
