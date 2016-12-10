@@ -85,6 +85,9 @@ public:
 
 	//! run Goto and run TTS
   	int GotoTTS(float pa);
+
+	//! turn TTS on/off
+  	void muteTTS(bool m);
   	
 
 	float GetRange(int arg);
