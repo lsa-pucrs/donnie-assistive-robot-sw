@@ -124,6 +124,11 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
     if (parser->pParser->rec->state->errorCount > 0)
     {
 		cout << "The parser returned " << parser->pParser->rec->state->errorCount << " errors, tree walking aborted.\n";
+		// será q isso funciona p pegar a linha ? http://puredanger.github.io/tech.puredanger.com/2007/02/01/recovering-line-and-column-numbers-in-your-antlr-ast/
+		// este exemplo tb extende a classe token, para incluir informacoes uteis p msg de erro
+		// http://www.milk.com/kodebase/antlr-tutorial/
+		// http://www.milk.com/kodebase/antlr-tutorial/ExtentToken.java
+		// http://www.milk.com/kodebase/antlr-tutorial/ErrorFormatter.java
 		//cout << "Error in line " << parser->pParser->rec->state->tokenStartLine << " near " << parser->pParser->rec->state->text << endl;
  
     }else{
