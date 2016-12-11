@@ -28,7 +28,6 @@ cmd	:	arg
 		|commente
 		|procedec
 		|proceinv
-		|history
 		;
 		
 		
@@ -38,7 +37,7 @@ cmd	:	arg
 arg	:	(FW^| BW^| RTURN^| LTURN^| WAIT^) expression;
 
 
-narg	:	(SCAN | INFO | POS | RANGER | QUIT | COLOR | SOUND);
+narg	:	(SCAN | POS | RANGER | QUIT | COLOR | SOUND | HIST | STATE);
  
 		
 signEXP	:	(PLUS^ | MINUS^)? atom;
@@ -92,9 +91,8 @@ assign	:	ID EQ^ expression;
 speake	:	SPEAKE^ (expression | STRINGE) ;
 
 
-commente	:	COMENT;
+commente  : COMENT;
 
-history     :   HIST;
 
 procedec	:	PROCDEC^ ID (':'! (ID) (','! (ID))*)? procblock;
 
@@ -150,6 +148,9 @@ SPEAKE	:	(('F'|'f')('A'|'a')('L'|'l')('A'|'a')('R'|'r'))
 HIST	:	(('H'|'h')('I'|'i')('S'|'s')('T'|'t')('Ó'|'ó'|'O'|'o')('R'|'r')('I'|'i')('C'|'c')('O'|'o'))
 		;
 
+STATE	:	(('E'|'e')('S'|'s')('T'|'t')('A'|'a')('D'|'d')('O'|'o'))
+		;
+
 		
 QUIT	:	(('S'|'s')('A'|'a')('I'|'i')('R'|'r'))
 		;
@@ -179,9 +180,6 @@ SCAN	:	(('E'|'e')('S'|'s')('P'|'p')('I'|'i')('A'|'a')('R'|'r'));
 RANGER	
 :	(('D'|'d')('I'|'i')('S'|'s')('T'|'t')('â'|'Â'|'A'|'a')('N'|'n')('C'|'c')('I'|'i')('A'|'a'))
 		(' ')+ (('F'|'f')|('FE'|'fe'|'Fe'|'fE')|('FD'|'fd'|'Fd'|'fD')|('T'|'t')|('TE'|'te'|'Te'|'tE')|('TD'|'td'|'Td'|'tD'))
-		;
-		
-INFO	:	(('E'|'e')('S'|'s')('T'|'t')('A'|'a')('D'|'d')('O'|'o'))
 		;
 		
 POS	:	(('P'|'p')('O'|'o')('S'|'s')(('I'|'i')('Ç'|'ç'|'C'|'c')('Ã'|'ã'|'A'|'a')('O'|'o'))?) (' ')+ (('X'|'x') | ('Y'|'y') | ('A'|'a'))

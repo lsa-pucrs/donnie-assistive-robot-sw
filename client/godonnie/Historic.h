@@ -27,9 +27,8 @@ class Historic
 		};
 		/// list of commands
 		list<Command> commandsList;
-		list<Command>::iterator iterator;
+		
 		/*
-		string getLast();
 		string getLine(int line);
 		string previous();
 		string next();
@@ -57,6 +56,8 @@ class Historic
 		string show();
 		/** clear the history list*/
 		void clear();
+		/** the the last command in the list. used in command Estado*/
+		string getLast();
 
 };
 
