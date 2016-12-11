@@ -4,6 +4,11 @@
 #include "Compiler.h"
 #include "Exception.h"
 
+// this parser uses antlr 3.4, with support to c++ code generation
+// manual is available at 
+//https://theantlrguy.atlassian.net/wiki/display/ANTLR3/ANTLR+v3+printable+documentation
+//https://github.com/antlr/antlr3
+//http://www.antlr3.org/api/C/index.html
 
 using std::map;
 using std::vector;
@@ -114,10 +119,12 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
     // If the parser ran correctly, we will have a tree to parse. In general I recommend
     // keeping your own flags as part of the error trapping, but here is how you can
     // work out if there were errors if you are using the generic error messages
-    //
+    // http://www.antlr3.org/api/Java/org/antlr/runtime/BaseRecognizer.html
+    // http://www.antlr3.org/api/Java/org/antlr/runtime/RecognizerSharedState.html
     if (parser->pParser->rec->state->errorCount > 0)
     {
 		cout << "The parser returned " << parser->pParser->rec->state->errorCount << " errors, tree walking aborted.\n";
+		//cout << "Error in line " << parser->pParser->rec->state->tokenStartLine << " near " << parser->pParser->rec->state->text << endl;
  
     }else{
 		//if all tests passed, try to run the GoDonnie code
