@@ -13,7 +13,7 @@
 # Donnie Software Stack
 
 Robotics has been used to teach young students the basics of programming. However, 
-most of the programming environments for kids are high visual, based on grab and grag blocks.
+most of the programming environments for kids are high visual, based on grab and drag blocks.
 **Blind students or students with some visual disability cannot use these teaching resources**. 
 
 Donnie project proposes an inclusive robotic programming environment where all students 
