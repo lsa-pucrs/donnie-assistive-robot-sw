@@ -20,20 +20,23 @@ using namespace std;
 
 COMMAND commands[] = {
   { (char*)"pf ", (char*)"Movimenta para frente" },
-  { (char*)"pt ", (char*)"Moviment para tras" },
+  { (char*)"pt ", (char*)"Movimenta para trás" },
   { (char*)"gd ", (char*)"Gira para direita" },
   { (char*)"ge ", (char*)"Gira para esquerda" },
-  { (char*)"distância ", (char*)"Sensor" },
-  { (char*)"posição ", (char*)"Posição" },
-  { (char*)"estado", (char*)"Informação" },
+  { (char*)"distância ", (char*)"Sensor de distância" },
   { (char*)"espiar", (char*)"Observar objetos" },
-  { (char*)"criar ", (char*)"Criar variavel" },
+  { (char*)"cor", (char*)"Procura por uma cor" },
+  { (char*)"posição ", (char*)"Posição do robô" },
+  { (char*)"estado", (char*)"Informação atual" },
+  { (char*)"criar ", (char*)"Criar variável" },
   { (char*)"para ", (char*)"Laço" },
   { (char*)"repita ", (char*)"Laço" },
+  { (char*)"enquanto ", (char*)"Laço" },
   { (char*)"se ", (char*)"Condição" },
   { (char*)"aprender ", (char*)"Criar procedimento" },
   { (char*)"falar ", (char*)"Falar" },
   { (char*)"sair", (char*)"Fechar interpretador" },
+  { (char*)"som", (char*)"Liga ou desliga o som" },
   { (char*)"histórico", (char*)"Histórico de comandos de movimento" },
   { (char *)NULL, (char *)NULL }
 };

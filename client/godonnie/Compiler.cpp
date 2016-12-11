@@ -377,7 +377,6 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			else 
 				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");        
 
-			// TODO. leitura da cabeca nao funciona. ver bug #22 no github
             range  = Donnie->GetRange(arg);
 			#ifndef NDEBUG
             cout << "RANGER: " << arg << " " << (int)range << endl;

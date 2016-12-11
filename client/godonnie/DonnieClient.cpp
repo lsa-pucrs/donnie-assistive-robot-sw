@@ -554,7 +554,7 @@ int DonnieClient::Color(int color_code){
 		//FALAR COR verde
 		//será falado 1	
 	int blobs_found = 0;
-	// TODO: cerate a function to convert numerial color code to textual color name
+	// TODO: create a function to convert numerial color code to textual color name
 	std:string color_str = to_string(color_code);	
 
 	speak("Procurando cor " + color_str);
