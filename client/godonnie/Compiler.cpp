@@ -63,44 +63,30 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
   	  cout << "Input file error" << endl;
   	  return -1;
   	}
-  	/*
-  	#ifndef NDEBUG   
-  	cout << "li o arquivo" << endl;
-  	#endif
-  	*/ 
+
   	pGoDonnieLexer lex = GoDonnieLexerNew(input);
   	if (lex == NULL)
   	{
-  	  cout << "Lexical error" << endl;
-  	  return -1;
+      cout << "Unable to create the lexer due to malloc() failure1\n";
+	  exit(ANTLR3_ERR_NOMEM);
+  	  
   	} 
-  	/*
-  	#ifndef NDEBUG
-  	cout << "lex ok" << endl;
-  	#endif
-  	*/ 
+
   	pANTLR3_COMMON_TOKEN_STREAM tokens = antlr3CommonTokenStreamSourceNew(ANTLR3_SIZE_HINT, TOKENSOURCE(lex));
   	if (tokens == NULL)
   	{
-  	  cout << "Token error" << endl;
-  	  return -1;
+      cout << "Out of memory trying to allocate token stream\n";
+	  exit(ANTLR3_ERR_NOMEM);  	  
   	} 
-  	/*
-  	#ifndef NDEBUG
-  	cout << "tokens ok" << endl;
-  	#endif
-  	*/ 
+
+  	// Finally, now that we have our lexer constructed, we can create the parser
   	pGoDonnieParser parser = GoDonnieParserNew(tokens);
   	if (parser == NULL)
   	{
-  	  cout << "Parse error" << endl;
-  	  return -1;
+  	  cout << "Out of memory trying to allocate parser\n";
+	  exit(ANTLR3_ERR_NOMEM);
   	} 
-  	/*
-  	#ifndef NDEBUG
-  	cout << "parser ok" << endl;
-  	#endif
-  	*/ 
+
 	//try to parse the GoDonnie code
 	GoDonnieParser_prog_return r;
 	try{
@@ -108,6 +94,12 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
 		// que nao eh capturada pelo catch abaixo. teria q capturar para 
 		// evitar de executar o programa
 		r = parser->prog(parser);
+		//pANTLR3_BASE_TREE tree = r.tree;
+		if (r.tree == NULL)
+		{
+		  cout << "Parse error" << endl;
+		  exit(ANTLR3_ERR_NOMEM);
+		}		
 		// print the parse tree
 		#ifndef NDEBUG
 			cout << "Tree : " << r.tree->toStringTree(r.tree)->chars << endl;
@@ -118,26 +110,24 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
 		cout << e.what();
 		return -1;
 	}
-	/*
-	#ifndef NDEBUG
-	cout << "tree ok" << endl;
-	#endif
-	*/ 
 	
-  	pANTLR3_BASE_TREE tree = r.tree;
-  	if (tree == NULL)
-  	{
-  	  cout << "Parse error" << endl;
-  	  return -1;
-  	}
+    // If the parser ran correctly, we will have a tree to parse. In general I recommend
+    // keeping your own flags as part of the error trapping, but here is how you can
+    // work out if there were errors if you are using the generic error messages
+    //
+    if (parser->pParser->rec->state->errorCount > 0)
+    {
+		cout << "The parser returned " << parser->pParser->rec->state->errorCount << " errors, tree walking aborted.\n";
 
-	//if all test passed, try to run the GoDonnie code
-	try{
-		this->run(tree);
-	}
-	catch(exception& e)
-	{
-		cout << e.what();
+    }else{
+		//if all tests passed, try to run the GoDonnie code
+		try{
+			this->run(r.tree);
+		}
+		catch(exception& e)
+		{
+			cout << e.what();
+		}
 	}
 	
   	parser->free(parser);
@@ -170,6 +160,12 @@ int ExprTreeEvaluator::scriptMode(char* fileIn)
 {
   mode = SCRIPT;
   pANTLR3_INPUT_STREAM input = antlr3AsciiFileStreamNew((pANTLR3_UINT8)fileIn);       //  Utilizar para modo script
+
+  if ( input == NULL )
+  {
+	cout << "Unable to open file " << fileIn << endl;
+	exit(1);
+  }
 
   this->parser(input);
 
