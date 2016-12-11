@@ -1,4 +1,6 @@
 #include <algorithm> // remove
+#include <sstream>
+#include <iomanip>
 #include "Compiler.h"
 #include "Exception.h"
 
@@ -60,38 +62,67 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
   	{
   	  cout << "Input file error" << endl;
   	  return -1;
-  	}                                   
+  	}
+  	/*
+  	#ifndef NDEBUG   
+  	cout << "li o arquivo" << endl;
+  	#endif
+  	*/ 
   	pGoDonnieLexer lex = GoDonnieLexerNew(input);
   	if (lex == NULL)
   	{
   	  cout << "Lexical error" << endl;
   	  return -1;
-  	}   	
+  	} 
+  	/*
+  	#ifndef NDEBUG
+  	cout << "lex ok" << endl;
+  	#endif
+  	*/ 
   	pANTLR3_COMMON_TOKEN_STREAM tokens = antlr3CommonTokenStreamSourceNew(ANTLR3_SIZE_HINT, TOKENSOURCE(lex));
   	if (tokens == NULL)
   	{
   	  cout << "Token error" << endl;
   	  return -1;
   	} 
+  	/*
+  	#ifndef NDEBUG
+  	cout << "tokens ok" << endl;
+  	#endif
+  	*/ 
   	pGoDonnieParser parser = GoDonnieParserNew(tokens);
   	if (parser == NULL)
   	{
   	  cout << "Parse error" << endl;
   	  return -1;
   	} 
+  	/*
+  	#ifndef NDEBUG
+  	cout << "parser ok" << endl;
+  	#endif
+  	*/ 
 	//try to parse the GoDonnie code
 	GoDonnieParser_prog_return r;
 	try{
+		// TODO: esta parte gera uma excecao qnd tem um comando invalido 
+		// que nao eh capturada pelo catch abaixo. teria q capturar para 
+		// evitar de executar o programa
 		r = parser->prog(parser);
 		// print the parse tree
-		#ifdef NDEBUG
+		#ifndef NDEBUG
 			cout << "Tree : " << r.tree->toStringTree(r.tree)->chars << endl;
 		#endif
 	}
 	catch(exception& e)
 	{
 		cout << e.what();
+		return -1;
 	}
+	/*
+	#ifndef NDEBUG
+	cout << "tree ok" << endl;
+	#endif
+	*/ 
 	
   	pANTLR3_BASE_TREE tree = r.tree;
   	if (tree == NULL)
@@ -100,7 +131,7 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
   	  return -1;
   	}
 
-	//try to run the GoDonnie code
+	//if all test passed, try to run the GoDonnie code
 	try{
 		this->run(tree);
 	}
@@ -703,12 +734,28 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 				break;
 		  }
 
+          case STATE:
+          {
+			  std::ostringstream output;
+			  
+			  if (History->size()>0){
+				output << History->getLast();
+			  }else{
+				output << "Nenhum comando executado, posição [" 
+				       << std::fixed << std::setprecision(2) <<  Donnie->GetPos("body",0)  <<  //POSITION_X
+				   "," << std::fixed << std::setprecision(2) <<  Donnie->GetPos("body",1)  <<  //POSITION_Y
+				   "," << std::fixed << std::setprecision(2) <<  Donnie->GetPos("body",2) << "]" << endl ; //POSITION_YAW
+			  }
+				Donnie->speak(output.str());
+				break;
+		  }
+
           case SEMICOLON:
           {
   
               //int fi = tree->getChildCount(tree);
               //cout << "COMMENT: " << fi << std::endl;
-             break;
+              break;
           }
 
           case WS:
@@ -724,15 +771,6 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
   
               //return getText(tree);
               break;
-          }
-
-          case INFO:
-          {
-			#ifndef NDEBUG
-              cout << "STATUS"<< endl;
-            #endif
-            cout << "Comando 'estado' nao implementado" << endl;
-            break;
           }
 
           case QUIT:
