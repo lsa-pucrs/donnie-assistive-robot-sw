@@ -118,7 +118,7 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
     if (parser->pParser->rec->state->errorCount > 0)
     {
 		cout << "The parser returned " << parser->pParser->rec->state->errorCount << " errors, tree walking aborted.\n";
-
+ 
     }else{
 		//if all tests passed, try to run the GoDonnie code
 		try{
