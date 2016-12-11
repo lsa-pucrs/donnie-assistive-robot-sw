@@ -162,6 +162,7 @@ int main(int argc, char *argv[]){
         donnie1->checkDir();
         donnie1->checkBumpers();
         donnie1->checkRangers();
+        //TODO : amory. Marques, acho q tem q colocar um sleep pequeno aqui pois vcs está fazendo requisições ao Read com muita frequencia
     }
 
     return 0;
