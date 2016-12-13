@@ -476,7 +476,7 @@ void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
 		//esquerda, 2 passos,
 		//vermelho, 90o a direita, 4 passos		
 	std::ostringstream scanText;
-	//int color; //0x00RRGGBB
+	int color; //0x00RRGGBB
 	string color_str;
 	//playerc_blobfinder_blob_t blob;
 	speak("Espiando");
@@ -494,22 +494,22 @@ void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
         for(int i = 0; i < *blobs_found; i++)
         {
 			//blob = bfinderProxy->GetBlob(i);
-			//color = bfinderProxy->GetBlob(i).color;
+			color = bfinderProxy->GetBlob(i).color;
 			// color is encodedd in 0x00RRGGBB format		
-			if(color_code > 0x0000FF00 && color_code <= 0x00FF0000) //red
+			if(color > 0x0000FF00 && color <= 0x00FF0000) //red
 			{
 				color_str += "vermelho";
 			}
-			else if(color_code > 0x000000FF &&  color_code <= 0x0000FF00)//green
+			else if(color > 0x000000FF &&  color <= 0x0000FF00)//green
 			{
 				color_str += "verde";
 			}
-			else if(color_code <= 0x000000FF)//blue
+			else if(color <= 0x000000FF)//blue
 			{
 				color_str += "azul";
 			}
 			else //UNDEFINED COLOR
-				color_str += to_string(bfinderProxy->GetBlob(i).color);
+				color_str += to_string(color);
 
 			// if it is the last
 			if (i+1 != *blobs_found)

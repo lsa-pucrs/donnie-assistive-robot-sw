@@ -136,7 +136,7 @@ int main(int argc, char** argv)
 			}
 			else if(blob.color == 0x0000FF00)//green
 			{
-				std::cout <<"COLOR: GREEN"std::endl;
+				std::cout <<"COLOR: GREEN" << std::endl;
 			}
 			else if(blob.color == 0x000000FF)//blue
 			{
