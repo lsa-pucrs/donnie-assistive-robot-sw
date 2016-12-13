@@ -13,6 +13,8 @@
 export DONNIE_PATH=/opt/donnie
 # donnie source dir
 export DONNIE_SOURCE_PATH=/home/lsa/Downloads/donnie-assistive-robot-sw
+# dir used to run Donnie
+export DONNIE_EXEC_PATH=/home/lsa/Downloads/test/stage/
 # donnie IP address. Use localhost for simulation mode. When the robot 
 # is used, this variable should have the robot`s IP address
 export DONNIE_IP=localhost
@@ -52,7 +54,22 @@ function donnie_umount {
 }
 
 function donnie_desktop_update {
-	echo "TO BE DONE !!!"
+	echo "Atualizando o Donnie no diretório $DONNIE_SOURCE_PATH"
+    cd $DONNIE_SOURCE_PATH/build
+	git pull origin devel
+	sudo make install -j 8
+	cd -
+	echo "Atualização concluída"
+}
+
+function donnie_player(){
+  echo "Executando Donnie software no diretório $DONNIE_SOURCE_PATH"
+  cd $DONNIE_EXEC_PATH
+  player server_donnie.cfg &
+  sleep 5
+  alerts &
+  sleep 3
+  echo "Donnie executando ..."
 }
 
 function donnie_desktop_compile {
