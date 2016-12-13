@@ -632,7 +632,7 @@ int DonnieClient::bumped(){
 void DonnieClient::speak(string text)
 {
 	if (muted)
-		cout << text;
+		cout << text <<  endl;
 	else{
 		speechProxy->Say(text.c_str());
 		// TODO gambiarra
