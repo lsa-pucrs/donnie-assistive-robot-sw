@@ -465,7 +465,7 @@ int DonnieClient::headGoto(float pa){
 	p2d_headProxy->SetSpeed(0,0);
 	return 0;
 }
-
+//MOD DANIEL
 // TODO: is it necessary to return the blobs color ? 
 // it will require a struct to place all data. 
 void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
@@ -495,9 +495,22 @@ void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
         {
 			//blob = bfinderProxy->GetBlob(i);
 			//color = bfinderProxy->GetBlob(i).color;
-			// color is encodedd in 0x00RRGGBB format
-			// TODO: convert color in 0x00RRGGBB format to text format
-			color_str += to_string(bfinderProxy->GetBlob(i).color);
+			// color is encodedd in 0x00RRGGBB format		
+			if(color_code > 0x0000FF00 && color_code <= 0x00FF0000) //red
+			{
+				color_str += "vermelho";
+			}
+			else if(color_code > 0x000000FF &&  color_code <= 0x0000FF00)//green
+			{
+				color_str += "verde";
+			}
+			else if(color_code <= 0x000000FF)//blue
+			{
+				color_str += "azul";
+			}
+			else //UNDEFINED COLOR
+				color_str += to_string(bfinderProxy->GetBlob(i).color);
+
 			// if it is the last
 			if (i+1 != *blobs_found)
 				color_str += ",";
@@ -544,7 +557,7 @@ void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
 	robot->ReadIfWaiting();
 }
 
-
+//MOD DANIEL
 int DonnieClient::Color(int color_code){
 	float head_yawi = -90; //in degree. +90 due the servo default pos is 90 degre
 	//GOTO -90 to 90 in 30 by 30 steps
@@ -554,8 +567,22 @@ int DonnieClient::Color(int color_code){
 		//FALAR COR verde
 		//será falado 1	
 	int blobs_found = 0;
-	// TODO: create a function to convert numerial color code to textual color name
-	std:string color_str = to_string(color_code);	
+
+	std:string color_str;
+	if(color_code > 0x0000FF00 && color_code <= 0x00FF0000) //red
+	{
+		color_str = "vermelho";
+	}
+	else if(color_code > 0x000000FF &&  color_code <= 0x0000FF00)//green
+	{
+		color_str = "verde";
+	}
+	else if(color_code <= 0x000000FF)//blue
+	{
+		color_str = "azul";
+	}
+	else //UNDEFINED COLOR
+		color_str = to_string(color_code); //undefined color
 
 	speak("Procurando cor " + color_str);
 	do{

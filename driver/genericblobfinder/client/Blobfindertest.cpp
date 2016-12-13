@@ -130,7 +130,21 @@ int main(int argc, char** argv)
 			
 			std::cout <<"X: "<< blob.x << std::endl;
 			std::cout <<"Y: "<< blob.y << std::endl;
-			std::cout <<"COLOR: "<< blob.color << std::endl;
+			if(blob.color == 0x00FF0000) //red
+			{
+				std::cout <<"COLOR: RED" << std::endl;
+			}
+			else if(blob.color == 0x0000FF00)//green
+			{
+				std::cout <<"COLOR: GREEN"std::endl;
+			}
+			else if(blob.color == 0x000000FF)//blue
+			{
+				std::cout <<"COLOR: BUE"<< std::endl;
+			}
+			else
+				std::cout <<"UNDEFINED COLOR: "<< blob.color << std::endl;
+			
 			std::cout << "############################"<<std::endl;			
 		}
         
