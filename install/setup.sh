@@ -65,9 +65,10 @@ function donnie_desktop_update {
 function donnie_player(){
   echo "Executando Donnie software no diretório $DONNIE_SOURCE_PATH"
   cd $DONNIE_EXEC_PATH
-  player server_donnie.cfg &
+  gnome-terminal -e "player server_donnie.cfg"
   sleep 5
   alerts &
+  gnome-terminal -e "${DONNIE_PATH}/bin/alerts"
   sleep 3
   echo "Donnie executando ..."
 }
