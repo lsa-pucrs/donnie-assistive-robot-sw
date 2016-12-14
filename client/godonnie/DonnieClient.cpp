@@ -509,7 +509,8 @@ void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
 				color_str += "azul";
 			}
 			else //UNDEFINED COLOR
-				color_str += to_string(color);
+				//color_str += to_string(color);
+				color_str += "desconhecida";
 
 			// if it is the last
 			if (i+1 != *blobs_found)
@@ -581,8 +582,11 @@ int DonnieClient::Color(int color_code){
 	{
 		color_str = "azul";
 	}
-	else //UNDEFINED COLOR
-		color_str = to_string(color_code); //undefined color
+	else {//UNDEFINED COLOR
+		//color_str = to_string(color_code); //undefined color
+		speak("cor desconhecida");
+		return 0;
+	}
 
 	speak("Procurando cor " + color_str);
 	do{
