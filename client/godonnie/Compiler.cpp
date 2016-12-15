@@ -82,7 +82,7 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
   	{
       cout << "Out of memory trying to allocate token stream\n";
 	  exit(ANTLR3_ERR_NOMEM);  	  
-  	} 
+  	}
 
   	// Finally, now that we have our lexer constructed, we can create the parser
   	pGoDonnieParser parser = GoDonnieParserNew(tokens);
@@ -90,15 +90,16 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
   	{
   	  cout << "Out of memory trying to allocate parser\n";
 	  exit(ANTLR3_ERR_NOMEM);
-  	} 
+  	}
+
 
 	//try to parse the GoDonnie code
-	GoDonnieParser_prog_return r;
+	GoDonnieParser_start_rule_return r;
 	try{
 		// TODO: esta parte gera uma excecao qnd tem um comando invalido 
 		// que nao eh capturada pelo catch abaixo. teria q capturar para 
 		// evitar de executar o programa
-		r = parser->prog(parser);
+		r = parser->start_rule(parser);
 		//pANTLR3_BASE_TREE tree = r.tree;
 		if (r.tree == NULL)
 		{
