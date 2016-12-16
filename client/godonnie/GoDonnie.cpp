@@ -139,19 +139,14 @@ int main(int argc, char* argv[])
         if (!temp)
         exit (1);
 
-        if (!strcmp(temp,""))
-        {
-          // empty line
-          rl_on_new_line ();
-        }
-
-        if (*temp)
+        if (*temp and strcmp(temp,"") != 0)
         {
           //fprintf (stderr, "%s\r\n", temp);
           add_history (temp);
+          code += "\n" + string(temp);
         }
-
-        code += "\n" + string(temp);
+        else
+          rl_on_new_line ();
       
     };
   }else if(scriptMode){    // script mode
@@ -174,11 +169,19 @@ void usage(char *exec){
 
 int evalCode(int count, int key) 
 {
-  cout << code << endl;
-  done = Client.terminalMode(&code[0]);
-  code = "";
-  rl_on_new_line ();
-  return 1;
+  if (code != "")
+  {
+    cout << code << endl;
+    done = Client.terminalMode(&code[0]);
+    code = "";
+    rl_on_new_line ();
+    return 1;
+  }
+  else
+    rl_on_new_line ();
+  cout << "\nNão há código para ser executado" << endl;
+  return 0;
+  
 }
 
 
