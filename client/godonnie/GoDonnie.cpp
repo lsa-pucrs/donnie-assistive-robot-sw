@@ -41,14 +41,19 @@ COMMAND commands[] = {
   { (char *)NULL, (char *)NULL }
 };
 
+string code;
+bool done = 0;
+ExprTreeEvaluator Client;
+
 void initialize_readline ();
 char ** fileman_completion (const char *text, int start, int end);
 char * command_generator (const char *text, int state);
 void usage(char *exec);
+int evalCode(int count, int key);
 
 int main(int argc, char* argv[])
 {
-	bool done = 0, termMode = 0, scriptMode=0;
+	bool termMode = 0, scriptMode=0;
 	string filename ;
 	int c=0;
 	
@@ -114,37 +119,35 @@ int main(int argc, char* argv[])
 	 return 1;
   }
   
-  ExprTreeEvaluator Client;
   initialize_readline ();
-  char *temp, *prompt;
+  char *temp, *prompt; 
+  string preCode;
 
   temp = (char *)NULL;
   prompt = (char*)"GoDonnie$ ";
 
   // terminal mode
   if(termMode)
-  {    	  
-	while(!done)
-	{		
-      temp = (char *)NULL;
+  {
+    rl_bind_key (27, evalCode); /* "27" ascii code for ESC */
+    while(!done)
+    {
+        //temp = (char *)NULL;
+        memset(&temp,0,sizeof(temp));
+        temp = readline (prompt);
 
-      temp = readline (prompt);
-
-      if (!temp)
+        if (!temp)
         exit (1);
 
-      if (strcmp(temp,"") == 1){
-		  // empty line
-		  continue;
-	  }
-
-      if (*temp)
-      {
-        //fprintf (stderr, "%s\r\n", temp);
-        add_history (temp);
-      }
-
-      done = Client.terminalMode(temp);
+        if (*temp and strcmp(temp,"") != 0)
+        {
+          //fprintf (stderr, "%s\r\n", temp);
+          add_history (temp);
+          code += "\n" + string(temp);
+        }
+        else
+          rl_on_new_line ();
+      
     };
   }else if(scriptMode){    // script mode
   
@@ -163,6 +166,24 @@ void usage(char *exec){
 		 << "   -f <nome do arquivo> : Executa em modo script." << endl
 		 << "   -h                   : Ajuda " << endl << endl;
 }
+
+int evalCode(int count, int key) 
+{
+  if (code != "")
+  {
+    cout << code << endl;
+    done = Client.terminalMode(&code[0]);
+    code = "";
+    rl_on_new_line ();
+    return 1;
+  }
+  else
+    rl_on_new_line ();
+  cout << "\nNão há código para ser executado" << endl;
+  return 0;
+  
+}
+
 
 void initialize_readline ()
 {
