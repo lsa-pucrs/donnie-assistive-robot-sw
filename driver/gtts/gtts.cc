@@ -46,6 +46,7 @@ driver
 //#include <curl/curl.h> 
 #include <netinet/in.h> //TODO perguntar para henry oq isso faz
 //#include <assert.h>
+#include <fstream>      // std::ofstream
 
 
 #define DRIVERNAME "gtts"
@@ -165,7 +166,7 @@ void Gtts::ProcessSpeechCmd(player_msghdr_t* hdr, player_speech_cmd_t &data){
 	}*/
 
 	char *palavra = data.string;
-	PLAYER_MSG1(MESSAGE_INFO,"[Gtts] Receiving phrase [%s] to be transformed to speech",palavra);
+	//PLAYER_MSG1(MESSAGE_INFO,"[Gtts] Receiving phrase [%s] to be transformed to speech",palavra);
 	//treat the white spaces ' '->%
 	int i = 0;
 	for(i = 0; i < data.string_count; i++)
@@ -195,6 +196,7 @@ void Gtts::ProcessSpeechCmd(player_msghdr_t* hdr, player_speech_cmd_t &data){
 	//Download do arquivo com curl
     //file = fopen("download.mp3", "w");
     //curl = curl_easy_init();
+	  
     //curl_easy_setopt(curl, CURLOPT_URL, url);
     //curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
     //curl_easy_perform(curl);
@@ -203,17 +205,29 @@ void Gtts::ProcessSpeechCmd(player_msghdr_t* hdr, player_speech_cmd_t &data){
 
     //terminal example
     //wget -q -U Mozilla -O output.mp3 "http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&tl=PT-br&q=+mundo+inteiro+é+um+palco"
-    
-    char cmdcurl[1000];
-    strcpy(cmdcurl,"wget -q -U Mozilla -O download.mp3 \"");
-    strcat(cmdcurl,url);
-    strcat(cmdcurl,"\"");
-	if (system(cmdcurl) == -1){
-		PLAYER_ERROR("[Gtts] Cannot execute wget");
-		return;
+
+	//Temporary filename generation
+	char tmpName[1000];
+	if(tmpnam(tmpName)){
+		strcat(tmpName,".mp3"); //concat filetype
+		std::ofstream file(tmpName); //create the file
+
+		char cmdcurl[1000];
+	    strcpy(cmdcurl,"wget -q -U Mozilla -O ");
+	    strcat(cmdcurl,tmpName); //filename
+	    strcat(cmdcurl," \"");
+	    strcat(cmdcurl,url);
+	    strcat(cmdcurl,"\"");
+		if (system(cmdcurl) == -1){
+			PLAYER_ERROR("[Gtts] Cannot execute wget");
+			return;
+		}
+	    //printf("%s\n", cmdcurl);
+	    Play(tmpName);
 	}
-    //printf("%s\n", cmdcurl);
-    Play("download.mp3");
+	else{
+		PLAYER_ERROR("[Gtts] Cannot generate the temp file");
+	} 
 }
 
 void Gtts::Play(char *fileAddr){
