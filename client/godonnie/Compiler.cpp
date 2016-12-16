@@ -82,7 +82,7 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
   	{
       cout << "Out of memory trying to allocate token stream\n";
 	  exit(ANTLR3_ERR_NOMEM);  	  
-  	} 
+  	}
 
   	// Finally, now that we have our lexer constructed, we can create the parser
   	pGoDonnieParser parser = GoDonnieParserNew(tokens);
@@ -90,15 +90,16 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
   	{
   	  cout << "Out of memory trying to allocate parser\n";
 	  exit(ANTLR3_ERR_NOMEM);
-  	} 
+  	}
+
 
 	//try to parse the GoDonnie code
-	GoDonnieParser_prog_return r;
+	GoDonnieParser_start_rule_return r;
 	try{
 		// TODO: esta parte gera uma excecao qnd tem um comando invalido 
 		// que nao eh capturada pelo catch abaixo. teria q capturar para 
 		// evitar de executar o programa
-		r = parser->prog(parser);
+		r = parser->start_rule(parser);
 		//pANTLR3_BASE_TREE tree = r.tree;
 		if (r.tree == NULL)
 		{
@@ -121,7 +122,7 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
     // work out if there were errors if you are using the generic error messages
     // http://www.antlr3.org/api/Java/org/antlr/runtime/BaseRecognizer.html
     // http://www.antlr3.org/api/Java/org/antlr/runtime/RecognizerSharedState.html
-    if (parser->pParser->rec->state->errorCount > 0)
+    if (parser->pParser->rec->state->errorCount > 0 and lex->pLexer->rec->getNumberOfSyntaxErrors(lex->pLexer->rec) > 0)
     {
 		cout << "The parser returned " << parser->pParser->rec->state->errorCount << " errors, tree walking aborted.\n";
 		// será q isso funciona p pegar a linha ? http://puredanger.github.io/tech.puredanger.com/2007/02/01/recovering-line-and-column-numbers-in-your-antlr-ast/
@@ -152,8 +153,6 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
 
 int ExprTreeEvaluator::terminalMode(char* textIn)
 {
-  mode = TERMINAL;
-
   uint8_t* bufferData = (uint8_t*)textIn;
     
   uint32_t bufferSize = strlen(textIn);
@@ -170,7 +169,6 @@ int ExprTreeEvaluator::terminalMode(char* textIn)
 
 int ExprTreeEvaluator::scriptMode(char* fileIn)
 {
-  mode = SCRIPT;
   pANTLR3_INPUT_STREAM input = antlr3AsciiFileStreamNew((pANTLR3_UINT8)fileIn);       //  Utilizar para modo script
 
   if ( input == NULL )
@@ -682,12 +680,6 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case PROCINV:
           {
-            if(mode == TERMINAL)
-            {
-              cout << "Procedimentos não são aceitos no modo terminal" << endl;
-              break;
-            }
-
             char* name = (char*)getText(getChild(tree,0));
 
             mem local;                                      // Inicia dicionário local
@@ -708,12 +700,6 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case PROCDEC:
           {
-            if(mode == TERMINAL)
-            {
-              cout << "Procedimentos não são aceitos no modo terminal" << endl;
-              break;
-            }
-
             char* name = (char*)getText(getChild(tree,0));
   
             int childNum = tree->getChildCount(tree);
