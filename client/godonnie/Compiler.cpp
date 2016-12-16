@@ -122,7 +122,7 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
     // work out if there were errors if you are using the generic error messages
     // http://www.antlr3.org/api/Java/org/antlr/runtime/BaseRecognizer.html
     // http://www.antlr3.org/api/Java/org/antlr/runtime/RecognizerSharedState.html
-    if (parser->pParser->rec->state->errorCount > 0)
+    if (parser->pParser->rec->state->errorCount > 0 and lex->pLexer->rec->getNumberOfSyntaxErrors(lex->pLexer->rec) > 0)
     {
 		cout << "The parser returned " << parser->pParser->rec->state->errorCount << " errors, tree walking aborted.\n";
 		// será q isso funciona p pegar a linha ? http://puredanger.github.io/tech.puredanger.com/2007/02/01/recovering-line-and-column-numbers-in-your-antlr-ast/
