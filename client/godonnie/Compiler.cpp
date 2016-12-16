@@ -153,8 +153,6 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
 
 int ExprTreeEvaluator::terminalMode(char* textIn)
 {
-  mode = TERMINAL;
-
   uint8_t* bufferData = (uint8_t*)textIn;
     
   uint32_t bufferSize = strlen(textIn);
@@ -171,7 +169,6 @@ int ExprTreeEvaluator::terminalMode(char* textIn)
 
 int ExprTreeEvaluator::scriptMode(char* fileIn)
 {
-  mode = SCRIPT;
   pANTLR3_INPUT_STREAM input = antlr3AsciiFileStreamNew((pANTLR3_UINT8)fileIn);       //  Utilizar para modo script
 
   if ( input == NULL )
@@ -683,12 +680,6 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case PROCINV:
           {
-            if(mode == TERMINAL)
-            {
-              cout << "Procedimentos não são aceitos no modo terminal" << endl;
-              break;
-            }
-
             char* name = (char*)getText(getChild(tree,0));
 
             mem local;                                      // Inicia dicionário local
@@ -709,12 +700,6 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case PROCDEC:
           {
-            if(mode == TERMINAL)
-            {
-              cout << "Procedimentos não são aceitos no modo terminal" << endl;
-              break;
-            }
-
             char* name = (char*)getText(getChild(tree,0));
   
             int childNum = tree->getChildCount(tree);
