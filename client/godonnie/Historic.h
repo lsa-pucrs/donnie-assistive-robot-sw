@@ -13,6 +13,11 @@
 #ifndef HISTORIC_H
 #define HISTORIC_H
 
+#include <string>
+#include <list>
+
+using namespace std;
+
 ///Class to Keep the Commands History
 class Historic
 {	
@@ -24,6 +29,7 @@ class Historic
 			double posx;
 			double posy;
 			double degree;
+			//TODO: implement << operator
 		};
 		/// list of commands
 		list<Command> commandsList;
