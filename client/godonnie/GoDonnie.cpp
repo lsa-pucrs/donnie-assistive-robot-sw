@@ -167,6 +167,7 @@ void usage(char *exec){
 		 << "   -h                   : Ajuda " << endl << endl;
 }
 
+//! this code is executed in terminal mode every time ESC key is pressed
 int evalCode(int count, int key) 
 {
   if (code != "")

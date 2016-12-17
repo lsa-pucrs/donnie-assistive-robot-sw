@@ -465,7 +465,7 @@ int DonnieClient::headGoto(float pa){
 	p2d_headProxy->SetSpeed(0,0);
 	return 0;
 }
-//MOD DANIEL
+
 // TODO: is it necessary to return the blobs color ? 
 // it will require a struct to place all data. 
 void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
@@ -537,15 +537,7 @@ void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
 		speak(scanText.str());
 		// TODO gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
 		sleep(2);
-		/*
-		DEBUG_MSG("           "<< "TH POS:" << RTOD(p2d_headProxy->GetYaw()));
-		DEBUG_MSG("           "<< "TH SPEED:" << p2d_headProxy->GetYawSpeed());
-		DEBUG_MSG("           "<< "TARGET:" << DTOR(head_yawi));
-		//if(head_yawi<1&&head_yawi>-1) DEBUG_MSG("           "<< "FOWARD SONAR:" << sonarProxy->GetRange(1)/STEP_LENGHT); //debug para comparaçao
-		DEBUG_MSG("           "<< "HEAD SONAR:" << *sonar_readings << endl);
-		// print full information about blobs
-		cout << *bfinderProxy;
-		*/
+
 		scanText.str("");
 		scanText.clear();	
 		sonar_readings++;
@@ -632,12 +624,21 @@ int DonnieClient::bumped(){
 		return 1;
 }
 
+/*
+void DonnieClient::speak(stringstream text)
+{
+	speak(text.str());
+}
+*/
 
 void DonnieClient::speak(string text)
 {
 	if (muted)
-		cout << text;
+		cout << text << endl;
 	else{
+		#ifndef NDEBUG
+		cout << "SPEAK: " << text << endl;
+		#endif		
 		speechProxy->Say(text.c_str());
 		// TODO gambiarra
 		sleep(3);

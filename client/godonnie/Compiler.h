@@ -27,9 +27,11 @@
 #include <string>
 #include <iostream>
 
-#include "DonnieClient.h"
-#include "Historic.h"
 #include "utils.h"
+
+class DonnieClient;
+class Historic;
+ 
 
 using std::map;
 using std::vector;

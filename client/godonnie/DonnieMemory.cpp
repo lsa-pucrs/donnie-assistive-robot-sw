@@ -1,5 +1,7 @@
-#include "DonnieMemory"
+#include "DonnieMemory.h"
+#include <stdio.h>
 
+using namespace std;
 
 DonnieMemory *DonnieMemory::singleton = NULL;
 

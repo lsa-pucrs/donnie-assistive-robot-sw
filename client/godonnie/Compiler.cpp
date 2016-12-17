@@ -3,12 +3,15 @@
 #include <iomanip>
 #include "Compiler.h"
 #include "Exception.h"
+#include "DonnieClient.h"
+#include "Historic.h"
 
-// this parser uses antlr 3.4, with support to c++ code generation
+// this parser uses antlr 3.4, with support to C code generation
 // manual is available at 
 //https://theantlrguy.atlassian.net/wiki/display/ANTLR3/ANTLR+v3+printable+documentation
-//https://github.com/antlr/antlr3
 //http://www.antlr3.org/api/C/index.html
+// this is the source code of -lantlr3 library. run doxygen to generate the docs
+//https://github.com/antlr/antlr3/tree/master/runtime/C
 
 using std::map;
 using std::vector;
@@ -122,9 +125,9 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
     // work out if there were errors if you are using the generic error messages
     // http://www.antlr3.org/api/Java/org/antlr/runtime/BaseRecognizer.html
     // http://www.antlr3.org/api/Java/org/antlr/runtime/RecognizerSharedState.html
-    if (parser->pParser->rec->state->errorCount > 0 and lex->pLexer->rec->getNumberOfSyntaxErrors(lex->pLexer->rec) > 0)
+    if (parser->pParser->rec->getNumberOfSyntaxErrors(parser->pParser->rec) > 0 or lex->pLexer->rec->getNumberOfSyntaxErrors(lex->pLexer->rec) > 0)
     {
-		cout << "The parser returned " << parser->pParser->rec->state->errorCount << " errors, tree walking aborted.\n";
+		cout << parser->pParser->rec->getNumberOfSyntaxErrors(parser->pParser->rec) + lex->pLexer->rec->getNumberOfSyntaxErrors(lex->pLexer->rec) << " errors. tree walking aborted." << endl;
 		// será q isso funciona p pegar a linha ? http://puredanger.github.io/tech.puredanger.com/2007/02/01/recovering-line-and-column-numbers-in-your-antlr-ast/
 		// este exemplo tb extende a classe token, para incluir informacoes uteis p msg de erro
 		// http://www.milk.com/kodebase/antlr-tutorial/
@@ -139,7 +142,9 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
 		}
 		catch(exception& e)
 		{
-			cout << e.what();
+			//cout << e.what();
+			Donnie->speak(e.what());
+			
 		}
 	}
 	
@@ -204,7 +209,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
                 return memory[getText(tree)];
               }
               else
-                throw variavelException("Variavel " + string(getText(tree)) + " global não existe");
+                throw variavelException("Variável global '" + string(getText(tree)) + "' não existe");
             }
             else
             {
@@ -213,7 +218,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
                 return localMem.top().memory[getText(tree)]; // Variável local do primeiro item da stack
               }
               else
-                throw variavelException("Variavel " + string(getText(tree)) + " local não existe");
+                throw variavelException("Variável local '" + string(getText(tree)) + "' não existe");
             }
             break;              
           }
@@ -347,6 +352,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             break;
           }
 
+/*
           case STATUS:
           {
 			#ifndef NDEBUG
@@ -355,7 +361,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             cout << "Comando 'STATUS' nao implementado" << endl;
             break;
           }
-
+*/
           case RANGER:
           {
             int arg;
@@ -646,7 +652,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             {
               if(memory.find(var) != memory.end())
               {
-                cout << "Variavel " << var << " global já foi declarada" << endl;        // Se flag for zero e variável ainda não foi declarada cria-se uma variavel global 
+                //cout << "Variável " << var << " global já foi declarada" << endl;        // Se flag for zero e variável ainda não foi declarada cria-se uma variavel global 
+                throw variavelException("Variável global '" + string(var) + "' já foi declarada");
               }
               else
               {
@@ -663,7 +670,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             {
               if(localMem.top().memory.find(var) != localMem.top().memory.end())
               {
-                cout << "Variavel " << var << " local já foi declarada" << endl;
+                //cout << "Variável local '" << var << "' já foi declarada" << endl;
+                throw variavelException("Variável local '" + string(var) + "' já foi declarada");
               }
               else
               {
@@ -788,9 +796,10 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
                 memory[var] = val;
                 return val;
               }
-              else
-                cout << "Variavel " << var << " global não existe" << endl;
-                
+              else{
+                //cout << "Variável " << var << " global não existe" << endl;
+                throw variavelException("Variável global " + string(getText(tree)) + " não existe");
+			  }
             }
             else
             {
@@ -799,9 +808,10 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
                 localMem.top().memory[var] = val;
                 return val;
               }
-              else
-                //cout << "Variavel " << var << " local não existe" << endl;
-                ;
+              else{
+                //cout << "Variável " << var << " local não existe" << endl;
+                throw variavelException("Variável global " + string(getText(tree)) + " não existe");
+              }
             }
             break;            
           }

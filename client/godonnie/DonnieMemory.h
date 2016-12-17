@@ -31,4 +31,4 @@ public:
 	int getVar(string name);
 	void stackMemory();
 	void unstackMemory();
-}
+};
