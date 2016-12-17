@@ -20,6 +20,6 @@ PLAYER_ADD_PLAYERCPP_CLIENT (donnie-test SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/cli
 
 target_link_libraries (donnie-test pthread) 
 
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/donnie-test
+INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/donnie-test
 		DESTINATION ${DONNIE_PATH}/test/donnie
 )
