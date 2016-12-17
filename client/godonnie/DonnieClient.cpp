@@ -624,13 +624,6 @@ int DonnieClient::bumped(){
 		return 1;
 }
 
-/*
-void DonnieClient::speak(stringstream text)
-{
-	speak(text.str());
-}
-*/
-
 void DonnieClient::speak(string text)
 {
 	if (muted)
