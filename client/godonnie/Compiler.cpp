@@ -125,15 +125,21 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
     // work out if there were errors if you are using the generic error messages
     // http://www.antlr3.org/api/Java/org/antlr/runtime/BaseRecognizer.html
     // http://www.antlr3.org/api/Java/org/antlr/runtime/RecognizerSharedState.html
-    if (parser->pParser->rec->getNumberOfSyntaxErrors(parser->pParser->rec) > 0 or lex->pLexer->rec->getNumberOfSyntaxErrors(lex->pLexer->rec) > 0)
+    int errors = parser->pParser->rec->getNumberOfSyntaxErrors(parser->pParser->rec) + lex->pLexer->rec->getNumberOfSyntaxErrors(lex->pLexer->rec);
+    if (errors == 1)
     {
-		cout << parser->pParser->rec->getNumberOfSyntaxErrors(parser->pParser->rec) + lex->pLexer->rec->getNumberOfSyntaxErrors(lex->pLexer->rec) << " errors. tree walking aborted." << endl;
+		//cout << parser->pParser->rec->getNumberOfSyntaxErrors(parser->pParser->rec) + lex->pLexer->rec->getNumberOfSyntaxErrors(lex->pLexer->rec) << " errors. tree walking aborted." << endl;
+		Donnie->speak(to_string (errors) + " erro foi encontrado.");
 		// será q isso funciona p pegar a linha ? http://puredanger.github.io/tech.puredanger.com/2007/02/01/recovering-line-and-column-numbers-in-your-antlr-ast/
 		// este exemplo tb extende a classe token, para incluir informacoes uteis p msg de erro
 		// http://www.milk.com/kodebase/antlr-tutorial/
 		// http://www.milk.com/kodebase/antlr-tutorial/ExtentToken.java
 		// http://www.milk.com/kodebase/antlr-tutorial/ErrorFormatter.java
 		//cout << "Error in line " << parser->pParser->rec->state->tokenStartLine << " near " << parser->pParser->rec->state->text << endl;
+    } else if (errors > 1)
+    {
+		//cout << parser->pParser->rec->getNumberOfSyntaxErrors(parser->pParser->rec) + lex->pLexer->rec->getNumberOfSyntaxErrors(lex->pLexer->rec) << " errors. tree walking aborted." << endl;
+		Donnie->speak(to_string (errors) + " erros foram encontrados.");
  
     }else{
 		//if all tests passed, try to run the GoDonnie code
