@@ -7,10 +7,6 @@
  *  - https://github.com/lsa-pucrs
  * Faculdade de Informática - PUCRS  
  *  - www.inf.pucrs.br
- * 
- * follow tips in to change the exception behavior of the C runtime library
- * http://stackoverflow.com/questions/4751699/what-is-the-antlr3-c-runtime-equivalent-of-throwing-an-exception-for-error-repor
- * 
  */
 
 #pragma once
