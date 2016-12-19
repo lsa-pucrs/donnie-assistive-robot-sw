@@ -2,10 +2,8 @@
 #include "Historic.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <string>
 #include <sstream>
 #include <iomanip>
-
 
 using namespace std;
 

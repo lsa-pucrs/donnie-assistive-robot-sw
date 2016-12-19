@@ -41,7 +41,7 @@ TARGET_LINK_LIBRARIES (GenericBlobfinder-test ${OpenCV_LIBS})
 # ${OpenCV_INCLUDE_DIRS} was already inserted. no need to do it again
 INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR})
 
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/GenericBlobfinder-test
+INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/GenericBlobfinder-test
 		DESTINATION ${DONNIE_PATH}/test/GenericBlobfinder
 )
 
