@@ -45,3 +45,4 @@ const char* variavelException::what() const throw()
 	return this->m_msg.c_str();
 }
 
+
