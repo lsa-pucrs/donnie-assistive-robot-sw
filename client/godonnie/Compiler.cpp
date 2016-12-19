@@ -510,11 +510,12 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case WAIT:
           {
 			if(tree->getToken(getChild(tree,0))->type != STRINGE){
-				int exp = run(getChild(tree,0));
+				int wait = run(getChild(tree,0));
 				#ifndef NDEBUG
-				cout << "WAIT: " << exp << endl;
+				cout << "WAIT: " << wait << endl;
 				#endif				
-				sleep(exp);
+				sleep(wait);
+				Donnie->speak("esperando " +  to_string (wait) + " segundos.");
 			}
             break;
           }
