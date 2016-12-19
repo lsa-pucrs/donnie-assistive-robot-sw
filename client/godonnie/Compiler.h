@@ -27,9 +27,11 @@
 #include <string>
 #include <iostream>
 
-#include "DonnieClient.h"
-#include "Historic.h"
 #include "utils.h"
+
+class DonnieClient;
+class Historic;
+ 
 
 using std::map;
 using std::vector;
@@ -37,10 +39,6 @@ using std::stack;
 using std::string;
 using std::cout;
 using std::endl;
-
-#define TERMINAL 1
-#define SCRIPT 0
-
 
 struct mem
 {
@@ -75,7 +73,6 @@ class ExprTreeEvaluator
     int memFlag;                    /// Flag de indicação variáves globais/locais
     bool for_itFlag;
     char* for_it;
-    int mode;
     bool done;
 
     DonnieClient *Donnie; /// pointer to Donnie middleware class
