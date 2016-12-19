@@ -22,12 +22,12 @@ export DONNIE_PORT=6665
 
 #required to run donnie
 export PATH=$PATH:$DONNIE_PATH/bin
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DONNIE_PATH/lib/player
 export LD_LIBRARY_PATH=/usr/lib:/usr/local/lib/:$LD_LIBRARY_PATH
 # Opencv lib path
 export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH
 # Player lib path
 export LD_LIBRARY_PATH=/usr/local/lib64/:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$DONNIE_PATH/lib/player:$LD_LIBRARY_PATH
 
 # required to compile donnie
 # run 'sudo find / -name "*.pc" -type f' to find all the pc files for pkg-config
