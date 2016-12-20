@@ -29,11 +29,14 @@ class DonnieClient{
   SoundProxy *sound;
   pos_t pos;
   double translation;
+  double translationError;
   double rotation;
+  double rotationError;
   int steps;
   int alertStepFlag;
   int alertBumperFlag;
   int alertRangerFlag;
+  bool onMovement;
 
   string SSTEP;   //Sound STEP
   string SSBACK;  //Sound Step BACK
