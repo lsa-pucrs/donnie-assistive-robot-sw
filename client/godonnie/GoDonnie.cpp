@@ -55,50 +55,73 @@ int main(int argc, char* argv[])
 {
 	bool termMode = 0, scriptMode=0;
 	string filename ;
-	int c=0;
+	int c=0, argcnt=0;
+	/// this is from getopt lib. it is used to reset de idx of the parameter list
+	extern int optind; 
 	
     if ( argc <= 1 ) {  // there is NO input...
-        cerr << "No argument provided!" << endl;
+        //Client.speak("No argument provided!");
+        Client.speak("Comando sem argumentos!");
         usage(argv[0]);
         return 1;
     }
-    
-   while ((c = getopt (argc, argv, "thf:")) != -1){
+
+   while ((c = getopt (argc, argv, "mthf:")) != -1){
     switch (c){
       case 't': // terminal mode
         termMode = 1;
 		if ( argc !=2 ) {  // check extra useless argumets in terminal mode
-			cerr << "Terminal mode requires only one argument" << endl;
+			//cerr << "Terminal mode requires only one argument" << endl;
+			Client.speak("Modo terminal requer somente um argumento.");
 			usage(argv[0]);
 			return 1;
-		}        
+		} 
         break;
       case 'f': // script file  mode
         filename = optarg;
         scriptMode=1;
 		if ( argc !=3 ) {  // check extra useless argumets in script mode
-			cerr << "Script mode requires only two arguments" << endl;
+			//cerr << "Script mode requires only two arguments" << endl;
+			Client.speak("Modo script requer somente dois argumentos.");
 			usage(argv[0]);
 			return 1;
-		}     
+		}
         // test if file exists
         if( access( optarg, F_OK ) == -1 ) {
-			cerr << "File " << filename << " not found!" << endl;
+			//cerr << "File " << filename << " not found!" << endl;
+			Client.speak("Arquivo " + string(filename) + " não encontrado.");
 			return 1;
 		}
         break;
+      case 'm':  // mute
+		 //if mute ('m') is on, do it first, before any other command
+		 if (argcnt == 0){
+			Client.muteTTS(true);
+			break;
+		 }else{
+			 Client.speak("Parâmetro m deve vir primeiro.");
+			 return 1;
+		 }
+		 break;
       case 'h':  // help 
 		usage(argv[0]);
         return 0;
       case '?': // error
         if (optopt == 'f'){
-          fprintf (stderr, "Option -%c requires a filename with GoDonnie code.\n", optopt);
+          //fprintf (stderr, "Option -%c requires a filename with GoDonnie code.\n", optopt);
+          Client.speak("Parâmetro -f requer um nome de arquivo com código GoDonnie.");
         }else if (isprint (optopt)){
-          fprintf (stderr, "Unknown option `-%c'.\n", optopt);
+          //fprintf (stderr, "Unknown option `-%c'.\n", optopt);
+          char buffer[50];
+          sprintf (buffer, "Parâmetro `-%c' desconhecido.", optopt);
+          Client.speak(string(buffer));
         }else{
-          fprintf (stderr,
-                   "Unknown option character `\\x%x'.\n",
-                   optopt);
+          //fprintf (stderr,
+          //         "Unknown option character `\\x%x'.\n",
+          //         optopt);
+          char buffer[50];
+          sprintf (buffer, "Parâmetro `\\x%x' desconhecido.", optopt);
+          Client.speak(string(buffer));
 	    }
 	    usage(argv[0]);
         return 1;
@@ -106,15 +129,18 @@ int main(int argc, char* argv[])
         usage(argv[0]);
         return 1;
       }
+      argcnt++;
   }
 
   if(!termMode && !scriptMode){
-	  cerr << "No mode selected" << endl;
+	 //cerr << "No mode selected" << endl;
+	 Client.speak("Nenhum modo selecionado.");
 	 usage(argv[0]);
 	 return 1;
   }
   if(termMode && scriptMode){
-	  cerr << "Cannot have both modes selected at the same time" << endl;
+	 //cerr << "Cannot have both modes selected at the same time" << endl;
+	 Client.speak("Não pode ter dois modos selecionados ao mesmo tempo.");
 	 usage(argv[0]);
 	 return 1;
   }
@@ -152,19 +178,33 @@ int main(int argc, char* argv[])
   }else if(scriptMode){    // script mode
   
 	if( Client.scriptMode((char *)filename.c_str()) != 0){
-		cerr << "Erro de sintaxe no arquivo " << filename << endl ;
+		Client.speak("Erro de sintaxe no arquivo " + string(filename));
 	}
   }
 
 }
 
 void usage(char *exec){
+	sleep(0.5);
+	Client.speak("Uso: " + string(exec) + " argumentos. \nArgumentos: \n\t-t: Executa em modo terminal; \n\t-f nome do arquivo: Executa em modo script; \n\t-m: Quando habilitado, imprime mensagens na tela; \n\t-h: Ajuda");
+
+/*	POR ALGUM MOTIVO O TTS NAO FUNCIONA C STRING NESTE FORMATO	 
+	Client.speak(
+		string(
+		 "Uso " + string(exec) + " <arg> \
+Argumentos:\
+   -t                   : Executa em modo terminal.\
+   -f <nome do arquivo> : Executa em modo script.\
+   -m                   : Quando habilitado, imprime\
+                            mensagens na tela.\
+   -h                   : Ajuda \n")	);
 	cout << endl
 		 << "\nUso: " << exec << " <arg>" << endl
 		 << "Argumentos:" << endl
 		 << "   -t                   : Executa em modo terminal." << endl 
 		 << "   -f <nome do arquivo> : Executa em modo script." << endl
 		 << "   -h                   : Ajuda " << endl << endl;
+		 */
 }
 
 //! this code is executed in terminal mode every time ESC key is pressed
@@ -180,7 +220,7 @@ int evalCode(int count, int key)
   }
   else
     rl_on_new_line ();
-  cout << "\nNão há código para ser executado" << endl;
+  Client.speak("\nNão há código para ser executado.");
   return 0;
   
 }
