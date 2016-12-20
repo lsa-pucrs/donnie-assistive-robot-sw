@@ -839,6 +839,16 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
     }
 }
 
+void ExprTreeEvaluator::speak(string text) 
+{ 
+	Donnie->speak(text);
+}
+
+void ExprTreeEvaluator::muteTTS(bool m) 
+{
+	Donnie->muteTTS(m);
+}
+
 pANTLR3_BASE_TREE getChild(pANTLR3_BASE_TREE tree, unsigned i)
 {
 	
