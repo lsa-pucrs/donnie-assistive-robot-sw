@@ -14,6 +14,10 @@ const double  FRONT_RANGER = 0.06;
 const double  BACK_RANGER = 0.05;
 
 
+#ifndef LANG 
+#define LANG "pt-br"
+#endif
+
 //Singleton. init pointer withou allocations
 DonnieClient *DonnieClient::singleton = NULL;
 
@@ -106,6 +110,103 @@ int DonnieClient::BackBumper()
     return 0;
 
 }
+
+
+
+string DonnieClient::value_to_color(int color_value)
+{
+
+	string color;
+	ostringstream oss;
+	unsigned int file_value;
+	
+
+
+	ifstream file;
+	string donnie_path = GetEnv("DONNIE_PATH");
+
+	if(LANG == "pt-br")
+		donnie_path = donnie_path + "/resources/color_files/rgb-pt-br.txt";
+	else if (LANG == "eng")
+		donnie_path = donnie_path + "/resources/color_files/rgb-en.txt";
+	else
+		donnie_path = donnie_path + "/resources/color_files/rgb-pt-br.txt";
+
+	file.open(donnie_path.c_str());
+
+	cout << std::hex << color_value<<endl; 
+	if(file.is_open()) //if there is no problem opening the file
+	{
+		unsigned int smaller= 0,smaller_buff=0xFFFFFFFF;
+		string color_buff;
+
+		getline (file,color); // get first line
+		while(getline(file,color,'\t')) //get the number of the color
+		{
+
+			stringstream str_buff;
+			str_buff << std::hex << color; //get hex value and convert to string.. 
+			str_buff >> file_value;		   //then put on an unsigned int 
+			getline(file,color, '\n');
+
+			smaller =  color_value - file_value;
+			if(smaller_buff < smaller) 
+			{
+				return color_buff;
+			}
+			smaller_buff = smaller;
+			color_buff = color;
+		}
+		file.close();
+	}
+	else
+		cout<<"ERRO AO ABRIR O ARQUIVO DE CORES \n"<<endl;
+	return color;
+}
+
+int DonnieClient::color_to_value(string input_color)
+{
+
+	ifstream file;
+	string color;
+	ostringstream oss;
+	unsigned int file_value;
+
+
+	string donnie_path = GetEnv("DONNIE_PATH");
+
+	if(LANG == "pt-br")
+		donnie_path = donnie_path + "/resources/color_files/rgb-pt-br.txt";
+	else if (LANG == "eng")
+		donnie_path = donnie_path + "/resources/color_files/rgb-en.txt";
+	else
+		donnie_path = donnie_path + "/resources/color_files/rgb-pt-br.txt";
+
+	file.open(donnie_path.c_str());
+	if(file.is_open())
+	{
+		getline (file,color); // get first line
+		while(getline(file,color,'\t')) //get the number of the color
+		{
+
+			stringstream str_buff;
+			str_buff << std::hex << color; //convert 
+			str_buff >> file_value;
+			getline(file,color, '\n');
+
+
+			if(input_color == color)
+				return file_value;
+		}
+		file.close();
+	}
+	else
+		cout<<"ERRO AO ABRIR O ARQUIVO DE CORES \n"<<endl;
+
+	return 0xFFFFFFFF;
+	
+}
+
 
 float DonnieClient::GetRange(int arg)
 {
@@ -495,22 +596,24 @@ void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
         {
 			//blob = bfinderProxy->GetBlob(i);
 			color = bfinderProxy->GetBlob(i).color;
-			// color is encodedd in 0x00RRGGBB format		
-			if(color > 0x0000FF00 && color <= 0x00FF0000) //red
-			{
-				color_str += "vermelho";
-			}
-			else if(color > 0x000000FF &&  color <= 0x0000FF00)//green
-			{
-				color_str += "verde";
-			}
-			else if(color <= 0x000000FF)//blue
-			{
-				color_str += "azul";
-			}
-			else //UNDEFINED COLOR
-				//color_str += to_string(color);
-				color_str += "desconhecida";
+			// color is encodedd in 0x00RRGGBB format	
+			color_str+=value_to_color(color);
+
+			//if(color > 0x0000FF00 && color <= 0x00FF0000) //red
+			//{
+			//	color_str += "vermelho";
+			//}
+			//else if(color > 0x000000FF &&  color <= 0x0000FF00)//green
+			//{
+			//	color_str += "verde";
+			//}
+			//else if(color <= 0x000000FF)//blue
+			//{
+			//	color_str += "azul";
+			//}
+			//else //UNDEFINED COLOR
+			//	//color_str += to_string(color);
+			//	color_str += "desconhecida";
 
 			// if it is the last
 			if (i+1 != *blobs_found)
@@ -570,23 +673,25 @@ int DonnieClient::Color(int color_code){
 	int blobs_found = 0;
 
 	std:string color_str;
-	if(color_code > 0x0000FF00 && color_code <= 0x00FF0000) //red
-	{
-		color_str = "vermelho";
-	}
-	else if(color_code > 0x000000FF &&  color_code <= 0x0000FF00)//green
-	{
-		color_str = "verde";
-	}
-	else if(color_code <= 0x000000FF)//blue
-	{
-		color_str = "azul";
-	}
-	else {//UNDEFINED COLOR
-		//color_str = to_string(color_code); //undefined color
-		speak("cor desconhecida");
-		return 0;
-	}
+	color_str = value_to_color(color_code);
+
+	//if(color_code > 0x0000FF00 && color_code <= 0x00FF0000) //red
+	//{
+	//	color_str = "vermelho";
+	//}
+	//else if(color_code > 0x000000FF &&  color_code <= 0x0000FF00)//green
+	//{
+	//	color_str = "verde";
+	//}
+	//else if(color_code <= 0x000000FF)//blue
+	//{
+	//	color_str = "azul";
+	//}
+	//else {//UNDEFINED COLOR
+	//	//color_str = to_string(color_code); //undefined color
+	//	speak("cor desconhecida");
+	//	return 0;
+	//}
 
 	speak("Procurando cor " + color_str);
 	do{
