@@ -327,31 +327,10 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           {
 			// get 7 sonar and blob readings by moving the head from 0o to 180o
 			// every 30 degrees
-			float sonar_readings[7];
-			int blobs_found[7];
-			Donnie->Scan(sonar_readings,blobs_found);
-            #ifndef NDEBUG
-				int graus = 0;
-				cout << "SCAN: "<< endl;
-				for(int i=0; i<7; i++){
-				   cout << blobs_found[i] << " objetos a " << int(sonar_readings[i]) << " passos no grau " << graus << endl; 
-				   graus+=30;
-				}              
-				cout << endl;
-            #endif
+			Donnie->Scan();
             break;
           }
 
-/*
-          case STATUS:
-          {
-			#ifndef NDEBUG
-            cout << "STATUS"<< endl;
-            #endif
-            cout << "Comando 'STATUS' nao implementado" << endl;
-            break;
-          }
-*/
           case RANGER:
           {
             int arg;
