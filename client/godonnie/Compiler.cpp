@@ -425,15 +425,21 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
 
 			// get the color id. color is encodedd in 0x00RRGGBB format
-			if (tokens[1] == COLOR_BLUE)
-				//arg = 0x000000FF;
-				arg = 138;
-			else if (tokens[1] == COLOR_GREEN)
-				arg = 0x0000FF00;
-			else if (tokens[1] == COLOR_RED)
-				arg = 0x00FF0000;
-			else 
-				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");        
+			//if (tokens[1] == COLOR_BLUE)
+			//	//arg = 0x000000FF;
+			//	arg = 138;
+			//else if (tokens[1] == COLOR_GREEN)
+			//	arg = 0x0000FF00;
+			//else if (tokens[1] == COLOR_RED)
+			//	arg = 0x00FF0000;
+			//else 
+			//	throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");        
+
+
+      arg = Donnie->color_to_value(tokens[1]);
+      //cout<<std::hex<<arg<<endl;
+      if(arg == 0xFFFFFFFF)
+        throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");     
 
 			// only report when there are blobs with the selected color
 			blobs = Donnie->Color(arg);

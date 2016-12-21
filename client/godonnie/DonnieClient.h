@@ -88,13 +88,7 @@ private:
 	*/
 	string value_to_color(int color_value);
 	
-	//MOD DANIEL
-	//! Returns the value of a known color (format: 0x00RRGGBB)
-	/*!
-		/param input_color name of the color in "eng" (english) or "pt-br" (brazilian portuguese), defined by "LANG".
-		/return number of the color in the format 0x00RRGGBB. If the color is unknown, return 0xFFFFFFFF.
-	*/
-	int color_to_value(string input_color);
+
 	
 public:
 	// create instante of singleton
@@ -138,7 +132,13 @@ public:
 	void speak(string text);
 
 
-
+	//MOD DANIEL
+	//! Returns the value of a known color (format: 0x00RRGGBB)
+	/*!
+		/param input_color name of the color in "eng" (english) or "pt-br" (brazilian portuguese), defined by "LANG".
+		/return number of the color in the format 0x00RRGGBB. If the color is unknown, return 0xFFFFFFFF.
+	*/
+	int color_to_value(string input_color);
 
 	
 };
