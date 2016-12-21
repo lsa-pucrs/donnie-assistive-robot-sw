@@ -80,6 +80,8 @@ ADD_CUSTOM_TARGET(GoDonnieParser ALL
    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/GoDonnie.tokens
 )
 
+add_compile_options(-fexec-charset=iso-8859-1 -std=c++0x)
+
 # hack to break the depedency. This is required if the file does not yet exist in compile time 
 # https://samthursfield.wordpress.com/2015/11/21/cmake-dependencies-between-targets-and-files-and-custom-commands/
 set_source_files_properties(

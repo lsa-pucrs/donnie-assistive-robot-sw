@@ -146,7 +146,7 @@ void DonnieClient::checkBumpers(){
                 cout << "BUMPED!:" << endl << endl;
                 alertBumperFlag=1;
                 sound->play((char *)SBUMPER.c_str());
-                speech->Say(" O robô colidiu com alguma coisa!\n");
+                speech->Say("O robô colidiu com alguma coisa!");
             }
         }
         else alertBumperFlag = 0;
@@ -173,7 +173,7 @@ void DonnieClient::checkRangers(){
                 cout << endl;
                 alertRangerFlag = 1;
                 sound->play((char *)SRANGER.c_str());
-                speech->Say(" Existem obstaculos no caminho\n");
+                speech->Say("Existem obstáculos no caminho");
             }
         }
         else alertRangerFlag = 0; 

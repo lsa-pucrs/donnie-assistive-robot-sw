@@ -234,6 +234,8 @@ sudo apt-get install -y libcurl4-openssl-dev
 sudo apt-get install -y libreadline-dev
 sudo apt-get install -y oracle-java8-installer
 sudo apt-get install -y libantlr3c-dev
+# std terminal used in several linux distributions
+apt-get install xterm
 #to compile docs
 sudo apt-get install -y doxygen
 # uses 3.058 MB in disk - not recommended for VMs
@@ -244,7 +246,6 @@ sudo apt-get install -y texlive texlive-lang-english texlive-lang-portuguese
 sudo apt-get install -y texlive-latex-extra
 # saves some 700MB in disk by removing docs
 sudo apt-get --purge remove -y tex.\*-doc$
-
 
 cd "${DONNIE_SOURCE_PATH}"
 mkdir -p build
