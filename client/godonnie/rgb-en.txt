@@ -1,0 +1,18 @@
+00RRGGBB	Color	#organized in ascending order of values. To add new colors, the order must be respected.
+00000000	black
+0000007F	dark blue
+000000FF	blue
+00007F00	dark green
+00007FFF	light blue
+0000FF00	green
+007F0000	dark red
+007F007F	purple
+007F7F00	dark yellow
+007F7F7F	grey
+00FF0000	red
+00FF007F	pink
+00FF7F00	orange
+00FF7F7F	orange
+00FFFF00	yellow
+00FFFFFF	white
+FFFFFFFF	unknown

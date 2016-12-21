@@ -14,6 +14,10 @@ const double  FRONT_RANGER = 0.06;
 const double  BACK_RANGER = 0.05;
 
 
+#ifndef LANG 
+#define LANG "pt-br"
+#endif
+
 //Singleton. init pointer withou allocations
 DonnieClient *DonnieClient::singleton = NULL;
 
@@ -106,6 +110,103 @@ int DonnieClient::BackBumper()
     return 0;
 
 }
+
+
+
+string DonnieClient::value_to_color(int color_value)
+{
+
+	string color;
+	ostringstream oss;
+	unsigned int file_value;
+	
+
+
+	ifstream file;
+	string donnie_path = GetEnv("DONNIE_PATH");
+
+	if(LANG == "pt-br")
+		donnie_path = donnie_path + "/resources/color_files/rgb-pt-br.txt";
+	else if (LANG == "eng")
+		donnie_path = donnie_path + "/resources/color_files/rgb-en.txt";
+	else
+		donnie_path = donnie_path + "/resources/color_files/rgb-pt-br.txt";
+
+	file.open(donnie_path.c_str());
+
+	if(file.is_open()) //if there is no problem opening the file
+	{
+		unsigned int smaller= 0,smaller_buff=0xFFFFFFFF;
+		string color_buff;
+
+		getline (file,color); // get first line
+		while(getline(file,color,'\t')) //get the number of the color
+		{
+
+			stringstream str_buff;
+			str_buff << std::hex << color; //get hex value and convert to string.. 
+			str_buff >> file_value;		   //then put on an unsigned int 
+			getline(file,color, '\n');
+
+			smaller =  color_value - file_value;
+			if(smaller_buff < smaller) 
+			{
+				return color_buff;
+			}
+			smaller_buff = smaller;
+			color_buff = color;
+		}
+		file.close();
+	}
+	else
+		cout<<"ERRO AO ABRIR O ARQUIVO DE CORES \n"<<endl;
+	
+	return color;
+}
+
+int DonnieClient::color_to_value(string input_color)
+{
+
+	ifstream file;
+	string color;
+	ostringstream oss;
+	unsigned int file_value;
+
+
+	string donnie_path = GetEnv("DONNIE_PATH");
+
+	if(LANG == "pt-br")
+		donnie_path = donnie_path + "/resources/color_files/rgb-pt-br.txt";
+	else if (LANG == "eng")
+		donnie_path = donnie_path + "/resources/color_files/rgb-en.txt";
+	else
+		donnie_path = donnie_path + "/resources/color_files/rgb-pt-br.txt";
+
+	file.open(donnie_path.c_str());
+	if(file.is_open())
+	{
+		getline (file,color); // get first line
+		while(getline(file,color,'\t')) //get the number of the color
+		{
+
+			stringstream str_buff;
+			str_buff << std::hex << color; //convert 
+			str_buff >> file_value;
+			getline(file,color, '\n');
+
+
+			if(input_color == color)
+				return file_value;
+		}
+		file.close();
+	}
+	else
+		cout<<"ERRO AO ABRIR O ARQUIVO DE CORES \n"<<endl;
+
+	return 0xFFFFFFFF;
+	
+}
+
 
 float DonnieClient::GetRange(int arg)
 {
@@ -274,7 +375,7 @@ int DonnieClient::moveForward(float arg)
 	if (bumped() || stop)
 		sayStr << "Andei " << int(passos) << " passos para frente. Houve colisão.";
 	else
-		sayStr << "Andei " << int(passos-1) << " passos para frente.";
+		sayStr << "Andei " << int(passos) << " passos para frente.";
 	speak(sayStr.str());
 
 	#ifndef NDEBUG
@@ -383,7 +484,7 @@ int DonnieClient::moveBackward(float arg)
 	if (bumped() || stop)
 		sayStr << "Andei " << int(passos) << " passos para traz. Houve colisão.";
 	else
-		sayStr << "Andei " << int(passos-1) << " passos para traz.";
+		sayStr << "Andei " << int(passos) << " passos para traz.";
 	speak(sayStr.str());
 		
 	#ifndef NDEBUG
@@ -465,7 +566,7 @@ int DonnieClient::headGoto(float pa){
 	p2d_headProxy->SetSpeed(0,0);
 	return 0;
 }
-
+//MOD DANIEL
 // TODO: is it necessary to return the blobs color ? 
 // it will require a struct to place all data. 
 void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
@@ -495,22 +596,24 @@ void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
         {
 			//blob = bfinderProxy->GetBlob(i);
 			color = bfinderProxy->GetBlob(i).color;
-			// color is encodedd in 0x00RRGGBB format		
-			if(color > 0x0000FF00 && color <= 0x00FF0000) //red
-			{
-				color_str += "vermelho";
-			}
-			else if(color > 0x000000FF &&  color <= 0x0000FF00)//green
-			{
-				color_str += "verde";
-			}
-			else if(color <= 0x000000FF)//blue
-			{
-				color_str += "azul";
-			}
-			else //UNDEFINED COLOR
-				//color_str += to_string(color);
-				color_str += "desconhecida";
+			// color is encodedd in 0x00RRGGBB format	
+			color_str+=value_to_color(color);
+
+			//if(color > 0x0000FF00 && color <= 0x00FF0000) //red
+			//{
+			//	color_str += "vermelho";
+			//}
+			//else if(color > 0x000000FF &&  color <= 0x0000FF00)//green
+			//{
+			//	color_str += "verde";
+			//}
+			//else if(color <= 0x000000FF)//blue
+			//{
+			//	color_str += "azul";
+			//}
+			//else //UNDEFINED COLOR
+			//	//color_str += to_string(color);
+			//	color_str += "desconhecida";
 
 			// if it is the last
 			if (i+1 != *blobs_found)
@@ -537,7 +640,15 @@ void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
 		speak(scanText.str());
 		// TODO gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
 		sleep(2);
-
+		/*
+		DEBUG_MSG("           "<< "TH POS:" << RTOD(p2d_headProxy->GetYaw()));
+		DEBUG_MSG("           "<< "TH SPEED:" << p2d_headProxy->GetYawSpeed());
+		DEBUG_MSG("           "<< "TARGET:" << DTOR(head_yawi));
+		//if(head_yawi<1&&head_yawi>-1) DEBUG_MSG("           "<< "FOWARD SONAR:" << sonarProxy->GetRange(1)/STEP_LENGHT); //debug para comparaçao
+		DEBUG_MSG("           "<< "HEAD SONAR:" << *sonar_readings << endl);
+		// print full information about blobs
+		cout << *bfinderProxy;
+		*/
 		scanText.str("");
 		scanText.clear();	
 		sonar_readings++;
@@ -562,23 +673,25 @@ int DonnieClient::Color(int color_code){
 	int blobs_found = 0;
 
 	std:string color_str;
-	if(color_code > 0x0000FF00 && color_code <= 0x00FF0000) //red
-	{
-		color_str = "vermelho";
-	}
-	else if(color_code > 0x000000FF &&  color_code <= 0x0000FF00)//green
-	{
-		color_str = "verde";
-	}
-	else if(color_code <= 0x000000FF)//blue
-	{
-		color_str = "azul";
-	}
-	else {//UNDEFINED COLOR
-		//color_str = to_string(color_code); //undefined color
-		speak("cor desconhecida");
-		return 0;
-	}
+	color_str = value_to_color(color_code);
+
+	//if(color_code > 0x0000FF00 && color_code <= 0x00FF0000) //red
+	//{
+	//	color_str = "vermelho";
+	//}
+	//else if(color_code > 0x000000FF &&  color_code <= 0x0000FF00)//green
+	//{
+	//	color_str = "verde";
+	//}
+	//else if(color_code <= 0x000000FF)//blue
+	//{
+	//	color_str = "azul";
+	//}
+	//else {//UNDEFINED COLOR
+	//	//color_str = to_string(color_code); //undefined color
+	//	speak("cor desconhecida");
+	//	return 0;
+	//}
 
 	speak("Procurando cor " + color_str);
 	do{
@@ -624,14 +737,12 @@ int DonnieClient::bumped(){
 		return 1;
 }
 
+
 void DonnieClient::speak(string text)
 {
 	if (muted)
-		cout << text << endl;
+		cout << text;
 	else{
-		#ifndef NDEBUG
-		cout << "SPEAK: " << text << endl;
-		#endif		
 		speechProxy->Say(text.c_str());
 		// TODO gambiarra
 		sleep(3);
