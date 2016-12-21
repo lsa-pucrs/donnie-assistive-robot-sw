@@ -1,0 +1,18 @@
+00RRGGBB	Cor	#organizado em ordem crescente. Para adicionar novas cores, ordem deve ser respeitada
+00000000	preto
+0000007F	azul escuro
+000000FF	azul
+00007F00	verde escuro
+00007FFF	azul claro
+0000FF00	verde
+007F0000	vermelho escuro
+007F007F	roxo
+007F7F00	amarelo escuro
+007F7F7F	cinza
+00FF0000	vermelho
+00FF007F	rosa
+00FF7F00	laranja
+00FF7F7F	laranja
+00FFFF00	amarelo
+00FFFFFF	branco
+FFFFFFFF	desconhecido
