@@ -80,6 +80,8 @@ ADD_CUSTOM_TARGET(GoDonnieParser ALL
    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/GoDonnie.tokens
 )
 
+add_compile_options(-fexec-charset=iso-8859-1 -std=c++0x)
+
 # hack to break the depedency. This is required if the file does not yet exist in compile time 
 # https://samthursfield.wordpress.com/2015/11/21/cmake-dependencies-between-targets-and-files-and-custom-commands/
 set_source_files_properties(
@@ -98,7 +100,7 @@ set_source_files_properties(
 INCLUDE (UsePlayerC++)
 
 PLAYER_ADD_PLAYERCPP_CLIENT (${CLIENTNAME} 
-	SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Compiler.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/DonnieClient.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/GoDonnie.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/../../utils/utils.cpp ${CMAKE_CURRENT_SOURCE_DIR}/Exception.cpp ${CMAKE_CURRENT_SOURCE_DIR}/Historic.cpp ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieLexer.c  ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieParser.c
+	SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Compiler.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/DonnieClient.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/GoDonnie.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/../../utils/utils.cpp ${CMAKE_CURRENT_SOURCE_DIR}/Exception.cpp ${CMAKE_CURRENT_SOURCE_DIR}/Historic.cpp ${CMAKE_CURRENT_SOURCE_DIR}/DonnieMemory.cpp  ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieLexer.c  ${CMAKE_CURRENT_BINARY_DIR}/GoDonnieParser.c
 	INCLUDEDIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../../utils/)
 
 # add the includes and libs to build it

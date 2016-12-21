@@ -28,7 +28,8 @@ Contents
 4. [Configuring Donnie](#configuring-donnie)
 5. [Contributors](#contributors)
 6. [Contributing](#contributing)
-7. [Papers](#papers)
+7. [Support](#support)
+8. [Papers](#papers)
 
 
 # Getting Started
@@ -46,37 +47,26 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
  Download this [VM](link) all Donnie software pre-installed and ready to run.
 
 
-### Install Donnie Software on a Desktop Computer
+### Install Donnie Software on a Desktop Computer 
 
- On a Linux computer, download this repository 
+ [**Ubuntu 14.04**](http://releases.ubuntu.com/14.04/) (Trusty Tahr) is the recommended OS distribution. 
+ For older computers or VMs, [Lubuntu 14.04](http://cdimage.ubuntu.com/lubuntu/releases/14.04/release/) or [Ubuntu Mate 14.04](https://ubuntu-mate.org/trusty/) are recommended.
+
+ Open a terminal, download this script (github login and read acess required!), and execute it
  
-	sudo apt-get install git
-	cd Downloads
- 	git clone  https://github.com/lsa-pucrs/donnie-assistive-robot-sw.git
-	<!---
-	wget https://raw.github.com/lsa-pucrs/donnie-assistive-robot-sw/feature-scripts/install.sh
-	-->
-	
- and type the following command:
-
-	cd donnie-assistive-robot-sw.git
+	mkdir ~/donnie; cd ~/donnie
+	wget https://github.com/lsa-pucrs/donnie-assistive-robot-sw/raw/devel/install.sh
 	chmod +x ./install.sh 
 	./install.sh
 
-
-
-
 ### Install Donnie Software on a Donnie's Embedded Computer (Raspberry Pi)
 
- Logon the Donnie's embedded computer, download this repository 
- 
-	sudo apt-get install git
-	cd Downloads
- 	git clone  https://github.com/lsa-pucrs/donnie-assistive-robot-sw.git
-	
- and type the following command:
+ [**Raspbian 8.0**](https://www.raspberrypi.org/downloads/raspbian/) (Jessie) is the recommended OS distribution for Donnie robot.
 
-	cd donnie-assistive-robot-sw.git
+ Logon the Donnie's embedded computer, open a terminal, download this script (github login and read acess required!), and execute it
+
+	mkdir ~/donnie; cd ~/donnie
+	wget https://github.com/lsa-pucrs/donnie-assistive-robot-sw/raw/devel/install-rpi.sh
 	chmod +x ./install-rpi.sh 
 	./install-rpi.sh
 
@@ -84,7 +74,7 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 ---------------
 
 * Robot programming environment for young students with or without visual impairment; 
-* Assistive programming language called GoDonnie;
+* Assistive programming language called GoDonnie. GoDonnie is TTS and screen reader friendly;
 * Integration with a Arduino-based robot with Player robotic middleware;
 * Extension of Stage simulator to generate sound clues while the robot is moving;
 * Software developed for the simulated robot is compatible with the real Donnie robot;
@@ -92,7 +82,7 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 # Building Your Donnie Robot
 ---------------
 
-To build your own Donnie robot, please refer to the following repositories:
+To build your own Donnie robot, please refer to the following repositories (github login and read acess required!):
 
 * [Donnie eletronics](https://github.com/lsa-pucrs/donnie-assistive-robot-hw)
 * [Donnie 3D printing](https://github.com/lsa-pucrs/donnie-assistive-robot-3d)
@@ -104,7 +94,7 @@ To build your own Donnie robot, please refer to the following repositories:
 The installation scripts make a standard instalation we believe is the most appropriated for the average user.
 However, advanced parameters can be set if the user has experience with the appropriate tools.
 
-The build system is based on CMake, so it is required to have some experience with Make and CMake.
+The build system is based on CMake, so it is required to have some experience with Linux, Make, and CMake.
 Every part of Donnie Software Stack is also based on CMake. These are the software parts that can be customized:
 
 - raspicam driver
@@ -127,13 +117,13 @@ Developers interested in customization might want to read the following files:
 
 The following list explains Donnie's main compilation parameters:
 
-	BUILD_DOCS                       OFF    Generate Donnie's documents
-	BUILD_DOXYGEN                    ON     This is the default document in HTML, meant only for developers.
-	BUILD_DOXYGEN_PDF                OFF    The same document before, but in PDF
-	BUILD_EXAMPLES                   OFF    Build the examples for each part of Donnie
-	BUILD_MANUAL                     OFF    Build the manuals: software manual, hardware manual, user nanual
-	CMAKE_BUILD_TYPE                 Release 
-	DOC_LANGUAGE                     en     The language used to build documents and the GoDonnie interpreter. Future work !
+	BUILD_DOCS           OFF              Generate Donnie's documents.
+	BUILD_DOXYGEN        ON               This is the default document in HTML, meant only for developers.
+	BUILD_DOXYGEN_PDF    OFF              The same document before, but in PDF.
+	BUILD_EXAMPLES       OFF              Build the examples for each part of Donnie.
+	BUILD_MANUAL         OFF              Build the manuals: software manual, hardware manual, user manual.
+	CMAKE_BUILD_TYPE     Release | Debug  Debug mode is for developers only !
+	DOC_LANGUAGE         en | pt-br | es  The language used to build documents and the GoDonnie interpreter. Future work !
 
 # Contributors
 ------------
@@ -162,8 +152,12 @@ This is a list of itens the core team wish to have some help:
 * More examples using GoDonnie language;
 * Porting to Windows. It currently works only on Linux, however, Windows has great assitive tools such as NVDA;
 * Integrate more assistive tools for blind users such as ORCA, NVDA, among others;
-* Feature requests and testing. Please use the Issue system to request new features and to report bugs;
+* Feature requests and testing. Please use the [Issue](https://github.com/lsa-pucrs/donnie-assistive-robot-sw/issues) system to request new features and to report bugs;
 
+# Support
+------------
+
+Please use the github [Issue](https://github.com/lsa-pucrs/donnie-assistive-robot-sw/issues) for support.
 
 # Papers
 ------------

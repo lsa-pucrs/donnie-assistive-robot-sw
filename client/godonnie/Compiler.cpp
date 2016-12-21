@@ -3,12 +3,15 @@
 #include <iomanip>
 #include "Compiler.h"
 #include "Exception.h"
+#include "DonnieClient.h"
+#include "Historic.h"
 
-// this parser uses antlr 3.4, with support to c++ code generation
+// this parser uses antlr 3.4, with support to C code generation
 // manual is available at 
 //https://theantlrguy.atlassian.net/wiki/display/ANTLR3/ANTLR+v3+printable+documentation
-//https://github.com/antlr/antlr3
 //http://www.antlr3.org/api/C/index.html
+// this is the source code of -lantlr3 library. run doxygen to generate the docs
+//https://github.com/antlr/antlr3/tree/master/runtime/C
 
 using std::map;
 using std::vector;
@@ -40,6 +43,8 @@ using std::endl;
 #define SOUND_ON "ligado"
 #define SOUND_OFF "desligado"
 
+DonnieMemory *DonnieMemory::singleton = 0;
+
 
 ExprTreeEvaluator::ExprTreeEvaluator()
 {
@@ -47,7 +52,6 @@ ExprTreeEvaluator::ExprTreeEvaluator()
 	Donnie = DonnieClient::getInstance();
 	History = Historic::getInstance();
 
-  	memFlag = 0;
   	for_itFlag = 0;
     done = 0;
 }
@@ -82,7 +86,7 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
   	{
       cout << "Out of memory trying to allocate token stream\n";
 	  exit(ANTLR3_ERR_NOMEM);  	  
-  	} 
+  	}
 
   	// Finally, now that we have our lexer constructed, we can create the parser
   	pGoDonnieParser parser = GoDonnieParserNew(tokens);
@@ -90,15 +94,16 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
   	{
   	  cout << "Out of memory trying to allocate parser\n";
 	  exit(ANTLR3_ERR_NOMEM);
-  	} 
+  	}
+
 
 	//try to parse the GoDonnie code
-	GoDonnieParser_prog_return r;
+	GoDonnieParser_start_rule_return r;
 	try{
 		// TODO: esta parte gera uma excecao qnd tem um comando invalido 
 		// que nao eh capturada pelo catch abaixo. teria q capturar para 
 		// evitar de executar o programa
-		r = parser->prog(parser);
+		r = parser->start_rule(parser);
 		//pANTLR3_BASE_TREE tree = r.tree;
 		if (r.tree == NULL)
 		{
@@ -121,15 +126,21 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
     // work out if there were errors if you are using the generic error messages
     // http://www.antlr3.org/api/Java/org/antlr/runtime/BaseRecognizer.html
     // http://www.antlr3.org/api/Java/org/antlr/runtime/RecognizerSharedState.html
-    if (parser->pParser->rec->state->errorCount > 0)
+    int errors = parser->pParser->rec->getNumberOfSyntaxErrors(parser->pParser->rec) + lex->pLexer->rec->getNumberOfSyntaxErrors(lex->pLexer->rec);
+    if (errors == 1)
     {
-		cout << "The parser returned " << parser->pParser->rec->state->errorCount << " errors, tree walking aborted.\n";
+		//cout << parser->pParser->rec->getNumberOfSyntaxErrors(parser->pParser->rec) + lex->pLexer->rec->getNumberOfSyntaxErrors(lex->pLexer->rec) << " errors. tree walking aborted." << endl;
+		Donnie->speak(to_string (errors) + " erro foi encontrado.");
 		// será q isso funciona p pegar a linha ? http://puredanger.github.io/tech.puredanger.com/2007/02/01/recovering-line-and-column-numbers-in-your-antlr-ast/
 		// este exemplo tb extende a classe token, para incluir informacoes uteis p msg de erro
 		// http://www.milk.com/kodebase/antlr-tutorial/
 		// http://www.milk.com/kodebase/antlr-tutorial/ExtentToken.java
 		// http://www.milk.com/kodebase/antlr-tutorial/ErrorFormatter.java
 		//cout << "Error in line " << parser->pParser->rec->state->tokenStartLine << " near " << parser->pParser->rec->state->text << endl;
+    } else if (errors > 1)
+    {
+		//cout << parser->pParser->rec->getNumberOfSyntaxErrors(parser->pParser->rec) + lex->pLexer->rec->getNumberOfSyntaxErrors(lex->pLexer->rec) << " errors. tree walking aborted." << endl;
+		Donnie->speak(to_string (errors) + " erros foram encontrados.");
  
     }else{
 		//if all tests passed, try to run the GoDonnie code
@@ -138,7 +149,9 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
 		}
 		catch(exception& e)
 		{
-			cout << e.what();
+			//cout << e.what();
+			Donnie->speak(e.what());
+			
 		}
 	}
 	
@@ -152,8 +165,6 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
 
 int ExprTreeEvaluator::terminalMode(char* textIn)
 {
-  mode = TERMINAL;
-
   uint8_t* bufferData = (uint8_t*)textIn;
     
   uint32_t bufferSize = strlen(textIn);
@@ -170,7 +181,6 @@ int ExprTreeEvaluator::terminalMode(char* textIn)
 
 int ExprTreeEvaluator::scriptMode(char* fileIn)
 {
-  mode = SCRIPT;
   pANTLR3_INPUT_STREAM input = antlr3AsciiFileStreamNew((pANTLR3_UINT8)fileIn);       //  Utilizar para modo script
 
   if ( input == NULL )
@@ -198,25 +208,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           }
 
           case ID:
-          {            
-            if (!memFlag)         // it tells whether the variable is global or local. recursive function is not supported  
-            {
-              if(memory.find(getText(tree)) != memory.end())
-              {
-                return memory[getText(tree)];
-              }
-              else
-                throw variavelException("Variavel " + string(getText(tree)) + " global não existe");
-            }
-            else
-            {
-              if(localMem.top().memory.find(getText(tree)) != localMem.top().memory.end())
-              {
-                return localMem.top().memory[getText(tree)]; // Variável local do primeiro item da stack
-              }
-              else
-                throw variavelException("Variavel " + string(getText(tree)) + " local não existe");
-            }
+          {
+            return DonnieMemory::getInstance()->getVar(getText(tree));
             break;              
           }
   
@@ -349,6 +342,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             break;
           }
 
+/*
           case STATUS:
           {
 			#ifndef NDEBUG
@@ -357,7 +351,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             cout << "Comando 'STATUS' nao implementado" << endl;
             break;
           }
-
+*/
           case RANGER:
           {
             int arg;
@@ -500,11 +494,12 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case WAIT:
           {
 			if(tree->getToken(getChild(tree,0))->type != STRINGE){
-				int exp = run(getChild(tree,0));
+				int wait = run(getChild(tree,0));
 				#ifndef NDEBUG
-				cout << "WAIT: " << exp << endl;
+				cout << "WAIT: " << wait << endl;
 				#endif				
-				sleep(exp);
+				sleep(wait);
+				Donnie->speak("esperando " +  to_string (wait) + " segundos.");
 			}
             break;
           }
@@ -512,19 +507,12 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case FORE:
           {
-            bool it_flag = 0;
-            char* it_var;
 
             for_itFlag = 1;
 
             run(getChild(tree,0));                              // Executa condição inicial
 
-            if(!for_itFlag)
-            {
-              it_flag = 1;
-              it_var = for_it;
-            }
-            for_itFlag = 0;
+            
 
             int a = run(getChild(tree,1));                      // Retorna o valor das variáveis na condição
             int b = run(getChild(tree,3));                      // #
@@ -539,17 +527,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
               ok = compare(run(getChild(tree,1)),run(getChild(tree,3)),c);  //Realiza comparação novamente
             }
 
-            if(it_flag)
-            {
-              if (!memFlag)
-              {
-                memory.erase(it_var);            
-              }
-              else
-              {
-                localMem.top().memory.erase(it_var);
-              }
-            }
+            if(!for_itFlag)
+              DonnieMemory::getInstance()->purgeForVar();
+            for_itFlag = 0;
 
             break;
           }
@@ -630,12 +610,6 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
                         
             char* var = (char*)getText(getChild(tree,0));
 
-            if(for_itFlag)
-            {
-              for_it = var;
-              for_itFlag = 0;
-            }
-
             int val;
             if (tree->getChildCount(tree) < 2)
             {
@@ -644,50 +618,19 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             else 
               val = run(getChild(tree,1));
 
-            if (!memFlag)
+            if(for_itFlag)
             {
-              if(memory.find(var) != memory.end())
-              {
-                cout << "Variavel " << var << " global já foi declarada" << endl;        // Se flag for zero e variável ainda não foi declarada cria-se uma variavel global 
-              }
-              else
-              {
-				#ifndef NDEBUG
-                cout << "MAKE: " << var << " = " << val << endl;
-                #endif
-                memory[var] = val;
-                return val;
-              }
-                
+              DonnieMemory::getInstance()->addForVar(var,val);
+              for_itFlag = 0;
             }
-              
-            else                                                                            // Se flag for diferente de zero cria-se uma local
-            {
-              if(localMem.top().memory.find(var) != localMem.top().memory.end())
-              {
-                cout << "Variavel " << var << " local já foi declarada" << endl;
-              }
-              else
-              {
-                #ifndef NDEBUG
-                cout << "MAKE: " << var << " = " << val << endl;
-                #endif
-                localMem.top().memory[var] = val;
-                return val;
-              }
-                
-            }
+            else
+              DonnieMemory::getInstance()->addVar(var,val);
+
             break;
             }
 
           case PROCINV:
           {
-            if(mode == TERMINAL)
-            {
-              cout << "Procedimentos não são aceitos no modo terminal" << endl;
-              break;
-            }
-
             char* name = (char*)getText(getChild(tree,0));
 
             mem local;                                      // Inicia dicionário local
@@ -695,25 +638,16 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             for (int f = 1; f <= proc[name].argNum ; f++)
               local.memory[proc[name].args[f-1]] = run(getChild(tree,f));   // Atribui as variaveis de argumento no dicionário
 
-            localMem.push(local);                      // Empilha dicionário 
-            memFlag++;                                 // Incrementa flag de memória
+            DonnieMemory::getInstance()->stackMemory(local);                      // Empilha dicionário 
 
             run(proc[name].node);                      // Executa procedimento 
 
-            localMem.pop();                            // Desempilha dicionário
-            memFlag--;                                 // Decrementa flag de memória
-
+            DonnieMemory::getInstance()->unstackMemory();                            // Desempilha dicionário
             break;
           }
 
           case PROCDEC:
           {
-            if(mode == TERMINAL)
-            {
-              cout << "Procedimentos não são aceitos no modo terminal" << endl;
-              break;
-            }
-
             char* name = (char*)getText(getChild(tree,0));
   
             int childNum = tree->getChildCount(tree);
@@ -795,28 +729,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             char* var = (char*)getText(getChild(tree,0));
             int val = run(getChild(tree,1));
 
-            if (!memFlag)
-            {
-              if(memory.find(var) != memory.end())
-              {
-                memory[var] = val;
-                return val;
-              }
-              else
-                cout << "Variavel " << var << " global não existe" << endl;
-                
-            }
-            else
-            {
-              if(localMem.top().memory.find(var) != localMem.top().memory.end())
-              {
-                localMem.top().memory[var] = val;
-                return val;
-              }
-              else
-                //cout << "Variavel " << var << " local não existe" << endl;
-                ;
-            }
+            DonnieMemory::getInstance()->assignVar(var,val);
             break;            
           }
   
@@ -834,6 +747,16 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
         }
         return r;
     }
+}
+
+void ExprTreeEvaluator::speak(string text) 
+{ 
+	Donnie->speak(text);
+}
+
+void ExprTreeEvaluator::muteTTS(bool m) 
+{
+	Donnie->muteTTS(m);
 }
 
 pANTLR3_BASE_TREE getChild(pANTLR3_BASE_TREE tree, unsigned i)

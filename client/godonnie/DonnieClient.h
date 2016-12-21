@@ -50,8 +50,7 @@ private:
   RangerProxy *headSonarProxy;
   SpeechProxy *speechProxy;
   
-  //! if on, it only play sound command Speak is explictly executed by user
-  /*! TO BE DONE*/
+  //! if on, it wont play any sound and it works like a printf
   bool muted;
 
   int FrontBumper();
@@ -102,8 +101,10 @@ public:
 	// delete singleton
 	static void ResetInstance();
 
-	/// 
+	//! move fd without using Goto
   	int moveForward(float arg);
+
+	//! move fd without using Goto
   	int moveBackward(float arg);
 
 	//! run Goto and run TTS
@@ -112,12 +113,11 @@ public:
 	//! turn TTS on/off
   	void muteTTS(bool m);
   	
-
+	//! please describe me
 	float GetRange(int arg);
-	float GetPos(string p2d,int arg);
-	
 
-	//float GetBumper(int arg);
+	//! please describe me
+	float GetPos(string p2d,int arg);
 	
 	//! scan 180 degree for obstacle using the sonar.
 	/*! ranges is writen with sonar readings every 30 degree.
@@ -134,7 +134,7 @@ public:
 	//! returns true when donnie bumped during the movements
 	int bumped();
 
-	//! call text-to-speech and print
+	//! call text-to-speech or print, depending if it is muted or not
 	void speak(string text);
 
 
