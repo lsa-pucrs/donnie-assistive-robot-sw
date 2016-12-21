@@ -50,7 +50,8 @@ private:
   RangerProxy *headSonarProxy;
   SpeechProxy *speechProxy;
   
-  //! if on, it wont play any sound and it works like a printf
+  //! if on, it only play sound command Speak is explictly executed by user
+  /*! TO BE DONE*/
   bool muted;
 
   int FrontBumper();
@@ -83,7 +84,7 @@ private:
 	//! Returns a string with the name of the color detected by the blobfinder. Uses files "rgb-pt-br.txt" and "rgb-en.txt" in the current version.
 	/*!
 		/param value identifier of the color detected by the blobfinder. 
-		/return string containing the name of the color. If the color was not identified, returns "unknown"(english) or "desconhecido"(portuguese), defined by  "LANG".
+		/return string containing the name of the color. If the color was not identified, returns "unknown"(english) or "desconhecido"(portuguese), defined by "LANG".
 	*/
 	string value_to_color(int color_value);
 	
@@ -101,10 +102,8 @@ public:
 	// delete singleton
 	static void ResetInstance();
 
-	//! move fd without using Goto
+	/// 
   	int moveForward(float arg);
-
-	//! move fd without using Goto
   	int moveBackward(float arg);
 
 	//! run Goto and run TTS
@@ -113,11 +112,12 @@ public:
 	//! turn TTS on/off
   	void muteTTS(bool m);
   	
-	//! please describe me
-	float GetRange(int arg);
 
-	//! please describe me
+	float GetRange(int arg);
 	float GetPos(string p2d,int arg);
+	
+
+	//float GetBumper(int arg);
 	
 	//! scan 180 degree for obstacle using the sonar.
 	/*! ranges is writen with sonar readings every 30 degree.
@@ -134,7 +134,7 @@ public:
 	//! returns true when donnie bumped during the movements
 	int bumped();
 
-	//! call text-to-speech or print, depending if it is muted or not
+	//! call text-to-speech and print
 	void speak(string text);
 
 
