@@ -688,7 +688,7 @@ int DonnieClient::Color(int color_code){
 		}else if (blobs_found == 1){
 			scanText << "1 objeto";
 		}else{
-			scanText << blobs_found << " objetos";
+			scanText << blobs_found << " objetos"; 
 		}			
 
 		speak(scanText.str());
