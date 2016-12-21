@@ -43,6 +43,8 @@ using std::endl;
 #define SOUND_ON "ligado"
 #define SOUND_OFF "desligado"
 
+DonnieMemory *DonnieMemory::singleton = 0;
+
 
 ExprTreeEvaluator::ExprTreeEvaluator()
 {
@@ -50,7 +52,6 @@ ExprTreeEvaluator::ExprTreeEvaluator()
 	Donnie = DonnieClient::getInstance();
 	History = Historic::getInstance();
 
-  	memFlag = 0;
   	for_itFlag = 0;
     done = 0;
 }
@@ -125,6 +126,7 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
     // work out if there were errors if you are using the generic error messages
     // http://www.antlr3.org/api/Java/org/antlr/runtime/BaseRecognizer.html
     // http://www.antlr3.org/api/Java/org/antlr/runtime/RecognizerSharedState.html
+    cout << "Lexxer Erros: " << lex->pLexer->rec->getNumberOfSyntaxErrors(lex->pLexer->rec) << endl;
     if (parser->pParser->rec->getNumberOfSyntaxErrors(parser->pParser->rec) > 0 or lex->pLexer->rec->getNumberOfSyntaxErrors(lex->pLexer->rec) > 0)
     {
 		cout << parser->pParser->rec->getNumberOfSyntaxErrors(parser->pParser->rec) + lex->pLexer->rec->getNumberOfSyntaxErrors(lex->pLexer->rec) << " errors. tree walking aborted." << endl;
@@ -201,25 +203,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           }
 
           case ID:
-          {            
-            if (!memFlag)         // it tells whether the variable is global or local. recursive function is not supported  
-            {
-              if(memory.find(getText(tree)) != memory.end())
-              {
-                return memory[getText(tree)];
-              }
-              else
-                throw variavelException("Variável global '" + string(getText(tree)) + "' não existe");
-            }
-            else
-            {
-              if(localMem.top().memory.find(getText(tree)) != localMem.top().memory.end())
-              {
-                return localMem.top().memory[getText(tree)]; // Variável local do primeiro item da stack
-              }
-              else
-                throw variavelException("Variável local '" + string(getText(tree)) + "' não existe");
-            }
+          {
+            return DonnieMemory::getInstance()->getVar(getText(tree));
             break;              
           }
   
@@ -516,19 +501,12 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case FORE:
           {
-            bool it_flag = 0;
-            char* it_var;
 
             for_itFlag = 1;
 
             run(getChild(tree,0));                              // Executa condição inicial
 
-            if(!for_itFlag)
-            {
-              it_flag = 1;
-              it_var = for_it;
-            }
-            for_itFlag = 0;
+            
 
             int a = run(getChild(tree,1));                      // Retorna o valor das variáveis na condição
             int b = run(getChild(tree,3));                      // #
@@ -543,17 +521,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
               ok = compare(run(getChild(tree,1)),run(getChild(tree,3)),c);  //Realiza comparação novamente
             }
 
-            if(it_flag)
-            {
-              if (!memFlag)
-              {
-                memory.erase(it_var);            
-              }
-              else
-              {
-                localMem.top().memory.erase(it_var);
-              }
-            }
+            if(!for_itFlag)
+              DonnieMemory::getInstance()->purgeForVar();
+            for_itFlag = 0;
 
             break;
           }
@@ -634,12 +604,6 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
                         
             char* var = (char*)getText(getChild(tree,0));
 
-            if(for_itFlag)
-            {
-              for_it = var;
-              for_itFlag = 0;
-            }
-
             int val;
             if (tree->getChildCount(tree) < 2)
             {
@@ -648,41 +612,14 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             else 
               val = run(getChild(tree,1));
 
-            if (!memFlag)
+            if(for_itFlag)
             {
-              if(memory.find(var) != memory.end())
-              {
-                //cout << "Variável " << var << " global já foi declarada" << endl;        // Se flag for zero e variável ainda não foi declarada cria-se uma variavel global 
-                throw variavelException("Variável global '" + string(var) + "' já foi declarada");
-              }
-              else
-              {
-				#ifndef NDEBUG
-                cout << "MAKE: " << var << " = " << val << endl;
-                #endif
-                memory[var] = val;
-                return val;
-              }
-                
+              DonnieMemory::getInstance()->addForVar(var,val);
+              for_itFlag = 0;
             }
-              
-            else                                                                            // Se flag for diferente de zero cria-se uma local
-            {
-              if(localMem.top().memory.find(var) != localMem.top().memory.end())
-              {
-                //cout << "Variável local '" << var << "' já foi declarada" << endl;
-                throw variavelException("Variável local '" + string(var) + "' já foi declarada");
-              }
-              else
-              {
-                #ifndef NDEBUG
-                cout << "MAKE: " << var << " = " << val << endl;
-                #endif
-                localMem.top().memory[var] = val;
-                return val;
-              }
-                
-            }
+            else
+              DonnieMemory::getInstance()->addVar(var,val);
+
             break;
             }
 
@@ -695,14 +632,11 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             for (int f = 1; f <= proc[name].argNum ; f++)
               local.memory[proc[name].args[f-1]] = run(getChild(tree,f));   // Atribui as variaveis de argumento no dicionário
 
-            localMem.push(local);                      // Empilha dicionário 
-            memFlag++;                                 // Incrementa flag de memória
+            DonnieMemory::getInstance()->stackMemory(local);                      // Empilha dicionário 
 
             run(proc[name].node);                      // Executa procedimento 
 
-            localMem.pop();                            // Desempilha dicionário
-            memFlag--;                                 // Decrementa flag de memória
-
+            DonnieMemory::getInstance()->unstackMemory();                            // Desempilha dicionário
             break;
           }
 
@@ -789,30 +723,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             char* var = (char*)getText(getChild(tree,0));
             int val = run(getChild(tree,1));
 
-            if (!memFlag)
-            {
-              if(memory.find(var) != memory.end())
-              {
-                memory[var] = val;
-                return val;
-              }
-              else{
-                //cout << "Variável " << var << " global não existe" << endl;
-                throw variavelException("Variável global " + string(getText(tree)) + " não existe");
-			  }
-            }
-            else
-            {
-              if(localMem.top().memory.find(var) != localMem.top().memory.end())
-              {
-                localMem.top().memory[var] = val;
-                return val;
-              }
-              else{
-                //cout << "Variável " << var << " local não existe" << endl;
-                throw variavelException("Variável global " + string(getText(tree)) + " não existe");
-              }
-            }
+            DonnieMemory::getInstance()->assignVar(var,val);
             break;            
           }
   

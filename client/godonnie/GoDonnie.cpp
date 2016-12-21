@@ -23,7 +23,7 @@ COMMAND commands[] = {
   { (char*)"pt ", (char*)"Movimenta para trás" },
   { (char*)"gd ", (char*)"Gira para direita" },
   { (char*)"ge ", (char*)"Gira para esquerda" },
-  { (char*)"distância ", (char*)"Sensor de distância" },
+  { (char*)"distância", (char*)"Sensor de distância" },
   { (char*)"espiar", (char*)"Observar objetos" },
   { (char*)"cor", (char*)"Procura por uma cor" },
   { (char*)"posição ", (char*)"Posição do robô" },
@@ -129,7 +129,12 @@ int main(int argc, char* argv[])
   // terminal mode
   if(termMode)
   {
+    //rl_attempted_completion_function = fileman_completion;
     rl_bind_key (27, evalCode); /* "27" ascii code for ESC */
+    //rl_unbind_key('\t');
+    //rl_bind_key('a',rl_complete);
+
+    cout << "func " << rl_function_of_keyseq ("\t", NULL, NULL) << endl;
     while(!done)
     {
         //temp = (char *)NULL;
@@ -195,7 +200,7 @@ void initialize_readline ()
   rl_attempted_completion_function = fileman_completion;
 }
 
-char ** fileman_completion (const char *text, int start, int end)
+char ** fileman_completion(const char *text, int start, int end)
 {
   char **matches;
 
@@ -210,7 +215,7 @@ char ** fileman_completion (const char *text, int start, int end)
   return (matches);
 }
 
-char * command_generator (const char *text, int state)
+char * command_generator(const char *text, int state)
 {
   static int list_index, len;
   char *name;
