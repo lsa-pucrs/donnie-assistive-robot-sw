@@ -1,9 +1,9 @@
 #include "alerts.h"
 
 // TODO: amory. criar include donnie_defs.h com todas as definicoes de tamanho do donnie
-#define STEP_YAW 10 //gradianos
+#define STEP_YAW 5 //gradianos
 #define STEP_LENGHT 0.05  //TODO ver se esta certo com o client do augusto
-#define STEP_LENGHT_ERROR 0.04  //!Define o erro do ultimo passo. Caso o robo pare sem marcar o som de passo
+#define STEP_LENGHT_ERROR 0.03  //!Define o erro do ultimo passo. Caso o robo pare sem marcar o som de passo
 #define SIDE_RANGER 0.05   //TODO ver se esta certo com o client do augusto
 #define FRONT_RANGER 0.06   //TODO ver se esta certo com o client do augusto
 #define BACK_RANGER 0.05  //TODO ver se esta certo com o client do augusto
@@ -54,7 +54,7 @@ DonnieClient::DonnieClient()
     alertBumperFlag = 0;
     alertRangerFlag = 0;
     onMovement = false;
-    robot->StartThread();
+    robot->StartThread(); //create an robot->Read() in a separated thread
 }
 
 pos_t DonnieClient::getPos(){
@@ -68,8 +68,6 @@ void DonnieClient::setPos(double x, double y, double a){
 }
 
 void DonnieClient::checkDir(){
-    robot->ReadIfWaiting();
-
     /*cout << "POS("
         << p2d->GetXPos() << ", "
         << p2d->GetYPos () << ", "
@@ -99,96 +97,88 @@ void DonnieClient::checkDir(){
     }
 
     //Rotation
-    if(p2d->GetYawSpeed()!=0){ //ge
-    	rotation = rotationError + radTOdeg(p2d->GetYaw() - pos.a);
-        if(rotation>=STEP_YAW){
-        	if(p2d->GetYawSpeed()>0) sound->play((char *)STLEFT.c_str());
-        	if(p2d->GetYawSpeed()<0) sound->play((char *)STRIGHT.c_str());
-        	rotationError = rotation - STEP_YAW;
-            setPos(pos.x,pos.y,p2d->GetYaw());
-        }
-    }
+    if(p2d->GetYawSpeed()>0){
+        rotation = p2d->GetYaw() - pos.a; //rotationError
+        if(rotation>0 && rotation>M_PI) rotation=rotation-2*M_PI; //ajusta o valor do rotation 
+        if(rotation<0 && rotation<-M_PI) rotation=rotation+2*M_PI;
+        cout << "Yaw:" << p2d->GetYaw() << endl;
+        cout << "rotation:" << rotation << endl;
+        cout << "target:" << DTOR(STEP_YAW) << endl;
+        cout << "targetError:" << DTOR(STEP_YAW) << endl;
 
-    //Rotation Error management
-    if(p2d->GetYawSpeed()==0){
-        if(rotation>=STEP_YAW-0.8){
-			if(p2d->GetYawSpeed()>0) sound->play((char *)STLEFT.c_str());
-        	if(p2d->GetYawSpeed()<0) sound->play((char *)STRIGHT.c_str());
-        }
-    	rotationError=0;
-    	setPos(pos.x,pos.y,p2d->GetYaw()); //update yaw pos
-    }
-
-    /*cout << "Yaw:" << radTOdeg(p2d->GetYaw()) << endl << endl;
-    if(p2d->GetYawSpeed()>0){ //ge
-    	rotation = radTOdeg(p2d->GetYaw() - pos.a);
-        if(rotation>=STEP_YAW){
-            cout << "ge Yaw-a:" << radTOdeg(p2d->GetYaw() - pos.a) << endl << endl;
-            setPos(pos.x,pos.y,p2d->GetYaw());
+        if(rotation>=DTOR(STEP_YAW)){ //-0.05 erro
             sound->play((char *)STLEFT.c_str());
-        }
-    }
-    else if(p2d->GetYawSpeed()<0){ //gd
-        if(radTOdeg(pos.a - p2d->GetYaw())>STEP_YAW){
-            cout << "gd Yaw-a:" << radTOdeg(pos.a - p2d->GetYaw()) << endl << endl;
+            rotation = rotation - DTOR(STEP_YAW);
             setPos(pos.x,pos.y,p2d->GetYaw());
-            sound->play((char *)STRIGHT.c_str());
+            cout << "NEW rotation:" << rotation << endl;
+            cout << "++++++++++++++++++++" << endl;
         }
-    }*/
+        cout << "=============:" << endl;
+    }
+    if(p2d->GetYawSpeed()<0){
+        rotation = p2d->GetYaw() - pos.a; //rotationError
+        if(rotation>0 && rotation>M_PI) rotation=rotation-2*M_PI; //ajusta o valor do rotation 
+        if(rotation<0 && rotation<-M_PI) rotation=rotation+2*M_PI;
+        cout << "Yaw:" << p2d->GetYaw() << endl;
+        cout << "rotation:" << rotation << endl;
+        cout << "target:" << -1*DTOR(STEP_YAW) << endl;
+         cout << "targetError:" << -1*DTOR(STEP_YAW)<< endl;
+
+        if(rotation<=-1*DTOR(STEP_YAW)){
+            sound->play((char *)STRIGHT.c_str());
+            rotation = rotation + DTOR(STEP_YAW);
+            setPos(pos.x,pos.y,p2d->GetYaw());
+            cout << "NEW rotation:" << rotation << endl;
+            cout << "++++++++++++++++++++" << endl;
+        }
+        cout << "=============:" << endl;
+    }
 }
 
 void DonnieClient::checkBumpers(){
-    //Check whether there is data waiting on the connection, blocking for up to timeout milliseconds (set to 0 to not block). 
-    if(robot->Peek(1)){
-        robot->Read();
-        if(bumper->IsAnyBumped()){
-            if(!alertBumperFlag){
-                cout << "BUMPED!:" << endl << endl;
-                alertBumperFlag=1;
-                sound->play((char *)SBUMPER.c_str());
-                speech->Say("O robô colidiu com alguma coisa!");
-            }
+    if(bumper->IsAnyBumped()){
+        if(!alertBumperFlag){
+            cout << "BUMPED!:" << endl << endl;
+            alertBumperFlag=1;
+            sound->play((char *)SBUMPER.c_str());
+            speech->Say("O robô colidiu com alguma coisa!");
         }
-        else alertBumperFlag = 0;
     }
+    else alertBumperFlag = 0;
+
 }
 
 void DonnieClient::checkRangers(){
-    //Check whether there is data waiting on the connection, blocking for up to timeout milliseconds (set to 0 to not block). 
-    if(robot->Peek(1)){
-        robot->Read();
-        ///100 to convert from metters to cm
-        if ((ranger->GetRange(0))<SIDE_RANGER || //fr 
-            (ranger->GetRange(1))<FRONT_RANGER || //front
-            (ranger->GetRange(2))<SIDE_RANGER || //fl
-            (ranger->GetRange(3))<SIDE_RANGER || //bl
-            (ranger->GetRange(4))<BACK_RANGER || //back
-            (ranger->GetRange(5))<SIDE_RANGER){  //br
-           
-            if(!alertRangerFlag){
-                cout << "RANGED!:" << endl << endl;
-                for(int i=0;i<6;i++){
-                   cout <<"ranger"<< i << ":" << (ranger->GetRange(i)) << endl;
-                }
-                cout << endl;
-                alertRangerFlag = 1;
-                sound->play((char *)SRANGER.c_str());
-                speech->Say("Existem obstáculos no caminho");
+    ///100 to convert from metters to cm
+    if ((ranger->GetRange(0))<SIDE_RANGER || //fr 
+        (ranger->GetRange(1))<FRONT_RANGER || //front
+        (ranger->GetRange(2))<SIDE_RANGER || //fl
+        (ranger->GetRange(3))<SIDE_RANGER || //bl
+        (ranger->GetRange(4))<BACK_RANGER || //back
+        (ranger->GetRange(5))<SIDE_RANGER){  //br
+       
+        if(!alertRangerFlag){
+            cout << "RANGED!:" << endl << endl;
+            for(int i=0;i<6;i++){
+               cout <<"ranger"<< i << ":" << (ranger->GetRange(i)) << endl;
             }
+            cout << endl;
+            alertRangerFlag = 1;
+            sound->play((char *)SRANGER.c_str());
+            speech->Say("Existem obstáculos no caminho");
         }
-        else alertRangerFlag = 0; 
     }
+    else alertRangerFlag = 0; 
 }
 
 
 int main(int argc, char *argv[]){
     DonnieClient *donnie1 = new DonnieClient();
     while(1){
+        usleep(100); //little delay
         donnie1->checkDir();
         donnie1->checkBumpers();
         donnie1->checkRangers();
-        //TODO : amory. Marques, acho q tem q colocar um sleep pequeno aqui pois vcs está fazendo requisições ao Read com muita frequencia
     }
-
     return 0;
 }
