@@ -9,9 +9,13 @@
 # go to Donnie source code dir
 #   $ cd <donnie source>
 # run this script
-#   $ sudo ./install.sh <parameters>
-# parameters:
-#   SIMULATION_ONLY= 1 / 0 # set to 1 if you dont have Donnie robot
+#   $ ./install.sh
+
+# Any subsequent(*) commands which fail will cause the shell script to exit immediately
+set -e
+
+#defensive script
+#http://www.davidpashley.com/articles/writing-robust-shell-scripts/#id2382181
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -19,14 +23,15 @@ ORANGE='\033[0;33m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-echo -e "${RED}Running Donnie Compilation Script for Lubuntu 14.04 ... ${NC}\n"
-
 if [ -z "$DONNIE_PATH" ]; then
     echo -e "${RED}ERROR:${NC} Need to set DONNIE_PATH environment variable\n"
     echo -e "Example: export DONNIE_PATH=/opt/donnie\n"
     exit 1
 fi  
 echo -e "DONNIE_PATH=${DONNIE_PATH}\n"
+export DONNIE_SOURCE_PATH=${PWD}/donnie-assistive-robot-sw
+echo -e "DONNIE_SOURCE_PATH=${DONNIE_SOURCE_PATH}\n"
+
 
 ##################################################
 # check the supported OS version and distribution
@@ -37,11 +42,11 @@ OS=$(lsb_release -si)
 VER=$(lsb_release -sr)
 OSNAME=$(lsb_release -sc)
 
-case ${OS} in 
+case "${OS}" in 
 	Ubuntu)
 		echo -e "${GREEN}NOTE:${NC} Ubuntu is only recommended for Destop computer, not VMs, and not Raspberry Pi\n"
 		echo -e "${GREEN}NOTE:${NC} Ubuntu 14.04 (trusty) is the recommended version for ${OS}\n"
-		case ${VER} in 
+		case "${VER}" in 
 			14.04)
 				echo -e "${GREEN}NOTE:${NC} ${OS} - ${VER} (${OSNAME} is the recommended OS version.\n"
 				;;
@@ -56,7 +61,7 @@ case ${OS} in
 	Lubuntu)
 		echo -e "${GREEN}NOTE:${NC} Lubuntu is recommended for both Destop computers and VMs, but not for Raspberry Pi\n"
 		echo -e "${GREEN}NOTE:${NC} Lubuntu 14.04 (trusty) is the recommended version for ${OS}\n"
-		case ${VER} in 
+		case "${VER}" in 
 			14.04)
 				echo -e "${GREEN}NOTE:${NC} ${OS} - ${VER} (${OSNAME} is the recommended OS version.\n"
 				;;
@@ -106,12 +111,6 @@ sudo apt-get install -y git
 sudo apt-get install -y pkg-config
 
 ##################################################
-# set environment variables
-##################################################
-source ./install/setup.sh
-echo "source $DONNIE_PATH/setup.sh" >> ~/.bashrc
-
-##################################################
 # install Player/Stage depedencies
 ##################################################
 echo -e "${GREEN}Installing Player/Stage Dependencies ... ${NC}\n"
@@ -140,10 +139,9 @@ sudo apt-get install -y python-dev swig
 sudo apt-get install -y libpq-dev libpqxx-dev
 
 ##################################################
-# Donwloading source code 
+# Downloading source code 
 ##################################################
 echo -e "${GREEN}Downloading Player source code from GitHub... ${NC}\n"
-cd ~/Downloads
 git clone https://github.com/lsa-pucrs/Player.git
 
 echo -e "${GREEN}Downloading Stage source code from GitHub... ${NC}\n"
@@ -156,36 +154,61 @@ echo -e "${GREEN}Downloading Donnie source code from GitHub... ${NC}\n"
 git clone -b devel https://github.com/lsa-pucrs/donnie-assistive-robot-sw.git
 
 ##################################################
+# set environment variables
+##################################################
+#required to run donnie
+export PATH=${PATH}:${DONNIE_PATH}/bin
+export LD_LIBRARY_PATH=/usr/lib:/usr/local/lib/:${LD_LIBRARY_PATH}
+# Opencv lib path
+export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/:${LD_LIBRARY_PATH}
+# Player lib path
+export LD_LIBRARY_PATH=/usr/local/lib64/:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=${DONNIE_PATH}/lib/player:${LD_LIBRARY_PATH}
+
+# required to compile donnie
+# run 'sudo find / -name "*.pc" -type f' to find all the pc files for pkg-config
+# run 'sudo find / -name "*.cmake" -type f' to find all the cmake files for cmake
+export CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-2.8/Modules/:/usr/share/cmake-2.8/Modules/Platform/:/usr/share/cmake-2.8/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib64/cmake/Stage/:/usr/lib/fltk/
+export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig/:/usr/lib/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig/:/usr/share/pkgconfig/:${PKG_CONFIG_PATH}
+
+##################################################
 # Compile and install Player/Stage 
 ##################################################
 cd Player
-echo -e "${GREEN}Patching Player for Lubuntu 14.04 ... ${NC}\n"
-patch -p1 < patch/festival/festival.patch
-patch -p1 < patch/install/player_3.0.2_14.04.patch
-patch -p1 < ../donnie-assistive-robot-sw/proxies/instalationSoundProxy.patch
-echo -e "${GREEN}Patching Player for Donnie ... ${NC}\n"
-mkdir build
+patch -p1 -N --dry-run --silent < patch/festival/festival.patch 2>/dev/null
+#If the patch has not been applied then the $? which is the exit status 
+#for last command would have a success status code = 0
+if [ $? -eq 0 ];
+then
+    #apply the patch
+	echo -e "${GREEN}Patching Player ... ${NC}\n"
+	patch -p1 < patch/festival/festival.patch
+	patch -p1 < patch/install/player_3.0.2_14.04.patch
+	patch -p1 < ../donnie-assistive-robot-sw/proxies/instalationSoundProxy.patch
+	echo -e "${GREEN}Patching Player for Donnie ... ${NC}\n"
+fi
+mkdir -p build # mkdir -p is safer !
 cd build
 # Mandatory
 # DEBUG_LEVEL=NONE <==== important !!!
 # Recommended: Build the Python bindings for the C client library
 # BUILD_PYTHONCPP_BINDINGS:BOOL=ON
 # BUILD_PYTHONC_BINDINGS:BOOL=ON
-echo -e "${GREEN}Configuring Player for Lubuntu 14.04 ... ${NC}\n"
-cmake -DCMAKE_BUILD_TYPE=Release -DDEBUG_LEVEL=NONE -BUILD_PYTHONC_BINDINGS:BOOL=ON ..
-echo -e "${GREEN}Compiling Player for Lubuntu 14.04 ... ${NC}\n"
+echo -e "${GREEN}Configuring Player ... ${NC}\n"
+cmake -DCMAKE_BUILD_TYPE=Release -DDEBUG_LEVEL=NONE -BUILD_PYTHONC_BINDINGS:BOOL=OFF ..
+echo -e "${GREEN}Compiling Player ... ${NC}\n"
 make -j ${NUM_CORES} 
 sudo make install
 echo -e "${GREEN}Player installed !!!! ${NC}\n"
 
 cd ../../Stage
-mkdir build
+mkdir -p build
 cd build
 # Mandatory
 # CMAKE_BUILD_TYPE=release <==== important !!!
-echo -e "${GREEN}Configuring Stage for Lubuntu 14.04 ... ${NC}\n"
+echo -e "${GREEN}Configuring Stage  ... ${NC}\n"
 cmake -DCMAKE_BUILD_TYPE=Release ..
-echo -e "${GREEN}Compiling Stage for Lubuntu 14.04 ... ${NC}\n"
+echo -e "${GREEN}Compiling Stage ... ${NC}\n"
 make -j ${NUM_CORES} 
 sudo make install
 echo -e "${GREEN}Stage installed !!!! ${NC}\n"
@@ -207,7 +230,7 @@ sudo apt-get install -y libsox-dev
 #to compile gtts driver
 #sudo apt-get install -y curl
 sudo apt-get install -y libcurl4-openssl-dev
-#to compile GoDonnie grammart interpreter
+#to compile GoDonnie interpreter
 sudo apt-get install -y libreadline-dev
 sudo apt-get install -y oracle-java8-installer
 sudo apt-get install -y libantlr3c-dev
@@ -223,10 +246,10 @@ sudo apt-get install -y texlive-latex-extra
 sudo apt-get --purge remove -y tex.\*-doc$
 
 
-cd ../../donnie-assistive-robot-sw
-mkdir build
+cd "${DONNIE_SOURCE_PATH}"
+mkdir -p build
 cd build
-echo -e "${GREEN}Configuring Donnie for Lubuntu 14.04 ... ${NC}\n"
+echo -e "${GREEN}Configuring Donnie ... ${NC}\n"
 cmake -DCMAKE_BUILD_TYPE=Release \
 	-DBUILD_EXAMPLES=ON \
 	-DBUILD_DOCS=ON  \
@@ -234,12 +257,17 @@ cmake -DCMAKE_BUILD_TYPE=Release \
 	-DBUILD_DOXYGEN_PDF=ON \
 	-DBUILD_MANUAL=ON \
     ..
-echo -e "${GREEN}Compiling Donnie for Lubuntu 14.04 ... ${NC}\n"
+echo -e "${GREEN}Compiling Donnie ... ${NC}\n"
 make -j ${NUM_CORES} 
 sudo make install
 echo -e "${GREEN}Donnie installed !!!! ${NC}\n"
 
 echo -e "${GREEN}End of installation !!!! ${NC}\n"
+
+##################################################
+# set environment variables for terminals
+##################################################
+echo "source $DONNIE_PATH/setup.sh" >> ~/.bashrc
 
 ##################################################
 # uninstall all dev packages to save space
