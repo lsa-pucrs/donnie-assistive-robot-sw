@@ -5,6 +5,8 @@
 #include <utility>
 #include <algorithm>
 
+#include "GoDonnieLexer.h"
+
 using namespace std;
 
 struct mem
@@ -12,12 +14,19 @@ struct mem
    map<string,int> memory;
 };
 
+typedef struct
+{
+  pANTLR3_BASE_TREE node;
+  int argNum;
+  vector<string> args;
+}procDec;
+
 class DonnieMemory
 {
 private:
 	stack<mem> Memory;
-	map<string,int>::iterator it;
 	stack<string> tempVar;
+	map<string,procDec> proc;
 
 	static DonnieMemory *singleton;
 public:
@@ -30,6 +39,7 @@ public:
 	// delete singleton
 	static void ResetInstance();
 
+///////////Variables///////////
 	int addVar(string name, int value);
 	int addVar(string name);
 	int assignVar(string name, int value);
@@ -38,4 +48,8 @@ public:
 	void unstackMemory();
 	int addForVar(string name, int value);
 	void purgeForVar();
+
+//////////Procedure////////////
+	void addProc(string name, procDec procedure);
+	procDec getProc(string name);
 };
