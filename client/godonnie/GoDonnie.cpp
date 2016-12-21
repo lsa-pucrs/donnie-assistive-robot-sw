@@ -17,6 +17,7 @@
 
 using namespace std;
 
+#define LANG "pt-br"
 
 COMMAND commands[] = {
   { (char*)"pf ", (char*)"Movimenta para frente" },

@@ -18,8 +18,13 @@
 #include <string>
 #include <iostream>
 #include <cmath>
+#include <fstream>
+#include <sstream>
 #include "utils.h"
 #include <libplayerc++/playerc++.h>
+
+
+
 
 using namespace std;
 //namespace for use with the player library
@@ -72,6 +77,24 @@ private:
 	~DonnieClient();
 	// instance pointer
 	static DonnieClient *singleton;
+
+	//to do: set the language!
+	string language;
+	//MOD DANIEL
+	//! Returns a string with the name of the color detected by the blobfinder. Uses files "rgb-pt-br.txt" and "rgb-en.txt" in the current version.
+	/*!
+		/param value identifier of the color detected by the blobfinder. 
+		/return string containing the name of the color. If the color was not identified, returns "unknown"(english) or "desconhecido"(portuguese), defined by  "LANG".
+	*/
+	string value_to_color(int color_value);
+	
+	//MOD DANIEL
+	//! Returns the value of a known color (format: 0x00RRGGBB)
+	/*!
+		/param input_color name of the color in "eng" (english) or "pt-br" (brazilian portuguese), defined by "LANG".
+		/return number of the color in the format 0x00RRGGBB. If the color is unknown, return 0xFFFFFFFF.
+	*/
+	int color_to_value(string input_color);
 	
 public:
 	// create instante of singleton
@@ -113,6 +136,10 @@ public:
 
 	//! call text-to-speech and print
 	void speak(string text);
+
+
+
+
 	
 };
 
