@@ -39,7 +39,6 @@ string toLowerCase(string input)
 {
 	for(int i = 0; input[i]; i++)
 	{
-		printf("%d\n", input[i]);
 		if(input[i] <= 90 && input[i] >= 65)
 			input[i] = tolower(input[i]);
 		else if(input[i] <= -60 && input[i] >= -90) //Converts ISO 8859-1 character with accent to lowercase

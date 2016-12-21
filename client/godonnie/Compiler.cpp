@@ -641,14 +641,22 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
             mem local;                                      // Inicia dicionário local
 
-            for (int f = 1; f <= proc[name].argNum ; f++)
-              local.memory[proc[name].args[f-1]] = run(getChild(tree,f));   // Atribui as variaveis de argumento no dicionário
+            procDec procedure = DonnieMemory::getInstance()->getProc(name);
 
-            DonnieMemory::getInstance()->stackMemory(local);                      // Empilha dicionário 
+            if(procedure.argNum == tree->getChildCount(tree)-1)
+            {
+              for (int f = 1; f <= procedure.argNum ; f++)
+                local.memory[procedure.args[f-1]] = run(getChild(tree,f));   // Atribui as variaveis de argumento no dicionário
 
-            run(proc[name].node);                      // Executa procedimento 
+              DonnieMemory::getInstance()->stackMemory(local);                      // Empilha dicionário 
 
-            DonnieMemory::getInstance()->unstackMemory();                            // Desempilha dicionário
+              run(procedure.node);                      // Executa procedimento 
+
+              DonnieMemory::getInstance()->unstackMemory();                            // Desempilha dicionário
+            }
+            else
+              cout << "Número de argumentos invalido" << endl;
+
             break;
           }
 
@@ -657,20 +665,24 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             char* name = (char*)getText(getChild(tree,0));
   
             int childNum = tree->getChildCount(tree);
+
+            procDec procedure;
   
             if(childNum < 3)
             {
-              proc[name].argNum = 0;                    // Caso procedimento não apresente parametros salva bloco do procedimento
-              proc[name].node = getChild(tree,1);
+              procedure.argNum = 0;                    // Caso procedimento não apresente parametros salva bloco do procedimento
+              procedure.node = getChild(tree,1);
             }
             else
             {
               for(int f = 1; f < childNum - 1; f++)
-                proc[name].args.push_back(getText(getChild(tree,f)));   // Caso tenha parametros salva numa lista 
+                procedure.args.push_back(getText(getChild(tree,f)));   // Caso tenha parametros salva numa lista 
   
-              proc[name].argNum = childNum - 2;
-              proc[name].node = getChild(tree,childNum - 1);      // Salva bloco do procedimento
+              procedure.argNum = childNum - 2;
+              procedure.node = getChild(tree,childNum - 1);      // Salva bloco do procedimento
             }
+
+            DonnieMemory::getInstance()->addProc(name, procedure);
             break;
           }
           
