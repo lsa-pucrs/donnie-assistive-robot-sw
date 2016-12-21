@@ -566,18 +566,19 @@ int DonnieClient::headGoto(float pa){
 	p2d_headProxy->SetSpeed(0,0);
 	return 0;
 }
-//MOD DANIEL
-// TODO: is it necessary to return the blobs color ? 
-// it will require a struct to place all data. 
-void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
+
+void DonnieClient::Scan(void){
 	float head_yawi = -90; //in degree. +90 due the servo default pos is 90 degre
 	//GOTO -90 to 90 in 30 by 30 steps
 	// texto de saida de exemplo: 
 		//verde, 40o a
 		//esquerda, 2 passos,
-		//vermelho, 90o a direita, 4 passos		
+		//vermelho, 90o a direita, 4 passos	
+	float sonar_readings[7];
+	int blobs_found[7];
+	int yaw_cnt=0;
+			
 	std::ostringstream scanText;
-	int color; //0x00RRGGBB
 	string color_str;
 	//playerc_blobfinder_blob_t blob;
 	speak("Espiando");
@@ -587,36 +588,17 @@ void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
 		robot->ReadIfWaiting();
 		// read sonar
 		headSonarProxy->GetRange(0)/100; ///STEP_LENGHT;  // read head sonar 
-		*sonar_readings = headSonarProxy->GetRange(0)/STEP_LENGHT;  // read head sonar 
-		*blobs_found = bfinderProxy->GetCount(); // get the number of blobs found
+		sonar_readings[yaw_cnt] = headSonarProxy->GetRange(0)/STEP_LENGHT;  // read head sonar 
+		blobs_found[yaw_cnt] = bfinderProxy->GetCount(); // get the number of blobs found
 		
 		// get the color of the blobs
 		color_str = "";
-        for(int i = 0; i < *blobs_found; i++)
+        for(int i = 0; i < blobs_found[yaw_cnt]; i++)
         {
-			//blob = bfinderProxy->GetBlob(i);
-			color = bfinderProxy->GetBlob(i).color;
 			// color is encodedd in 0x00RRGGBB format	
-			color_str+=value_to_color(color);
-
-			//if(color > 0x0000FF00 && color <= 0x00FF0000) //red
-			//{
-			//	color_str += "vermelho";
-			//}
-			//else if(color > 0x000000FF &&  color <= 0x0000FF00)//green
-			//{
-			//	color_str += "verde";
-			//}
-			//else if(color <= 0x000000FF)//blue
-			//{
-			//	color_str += "azul";
-			//}
-			//else //UNDEFINED COLOR
-			//	//color_str += to_string(color);
-			//	color_str += "desconhecida";
-
+			color_str+=value_to_color(bfinderProxy->GetBlob(i).color);
 			// if it is the last
-			if (i+1 != *blobs_found)
+			if (i+1 != blobs_found[yaw_cnt])
 				color_str += ",";
 		}		
 		
@@ -629,39 +611,39 @@ void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
 			scanText << "a " << head_yawi << " graus a esquerda: ";
 
 		// OBS: '(int)*sonar_readings' truncate the distance. perhaps 'round' would be better
-		if (*blobs_found == 0){
-			scanText << "0 objetos a " << (int)*sonar_readings << " passos";
-		}else if (*blobs_found == 1){
-			scanText << "1 objeto de cor " << color_str << " a " << (int)*sonar_readings << " passos";
+		if (blobs_found[yaw_cnt] == 0){
+			scanText << "0 objetos a " << (int)sonar_readings[yaw_cnt] << " passos";
+		}else if (blobs_found[yaw_cnt] == 1){
+			scanText << "1 objeto de cor " << color_str << " a " << (int)sonar_readings[yaw_cnt] << " passos";
 		}else{
-			scanText << *blobs_found << " objetos de cores " << color_str << " a " << (int)*sonar_readings << " passos";
+			scanText << blobs_found[yaw_cnt] << " objetos de cores " << color_str << " a " << (int)sonar_readings[yaw_cnt] << " passos";
 		}
 		
 		speak(scanText.str());
 		// TODO gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
 		sleep(2);
-		/*
-		DEBUG_MSG("           "<< "TH POS:" << RTOD(p2d_headProxy->GetYaw()));
-		DEBUG_MSG("           "<< "TH SPEED:" << p2d_headProxy->GetYawSpeed());
-		DEBUG_MSG("           "<< "TARGET:" << DTOR(head_yawi));
-		//if(head_yawi<1&&head_yawi>-1) DEBUG_MSG("           "<< "FOWARD SONAR:" << sonarProxy->GetRange(1)/STEP_LENGHT); //debug para comparaçao
-		DEBUG_MSG("           "<< "HEAD SONAR:" << *sonar_readings << endl);
-		// print full information about blobs
-		cout << *bfinderProxy;
-		*/
+
 		scanText.str("");
 		scanText.clear();	
-		sonar_readings++;
-		blobs_found++;
 		head_yawi = head_yawi + 30; // more + 30 degree 
+		yaw_cnt++;
 	}while (head_yawi < (90+30));
 
 	// go back to the initial position
 	headGoto(0);
 	robot->ReadIfWaiting(); 
+
+	#ifndef NDEBUG
+		int graus = 0;
+		cout << "SCAN: "<< endl;
+		for(int i=0; i<7; i++){
+		   cout << blobs_found[i] << " objetos a " << int(sonar_readings[i]) << " passos no grau " << graus << endl; 
+		   graus+=30;
+		}              
+		cout << endl;
+	#endif
 }
 
-//MOD DANIEL
 int DonnieClient::Color(int color_code){
 	float head_yawi = -90; //in degree. +90 due the servo default pos is 90 degre
 	//GOTO -90 to 90 in 30 by 30 steps
@@ -671,28 +653,11 @@ int DonnieClient::Color(int color_code){
 		//FALAR COR verde
 		//será falado 1	
 	int blobs_found = 0;
+	int total_blobs_found = 0;
 
+	std::ostringstream scanText;
 	std:string color_str;
 	color_str = value_to_color(color_code);
-
-	//if(color_code > 0x0000FF00 && color_code <= 0x00FF0000) //red
-	//{
-	//	color_str = "vermelho";
-	//}
-	//else if(color_code > 0x000000FF &&  color_code <= 0x0000FF00)//green
-	//{
-	//	color_str = "verde";
-	//}
-	//else if(color_code <= 0x000000FF)//blue
-	//{
-	//	color_str = "azul";
-	//}
-	//else {//UNDEFINED COLOR
-	//	//color_str = to_string(color_code); //undefined color
-	//	speak("cor desconhecida");
-	//	return 0;
-	//}
-
 	speak("Procurando cor " + color_str);
 	do{
 		// move head
@@ -703,13 +668,38 @@ int DonnieClient::Color(int color_code){
         for(int i = 0; i < bfinderProxy->GetCount(); i++)
         {
 			// color is encodedd in 0x00RRGGBB format
-			// TODO: extremelly simplistic color comparison. 
-			// It does not account for diff tones
+			// TODO: Amory. It will be better to use 
+			//if (color_str == value_to_color(bfinderProxy->GetBlob(i).color)))
 			if (color_code == bfinderProxy->GetBlob(i).color)
 				blobs_found++;
-		}		
+		}
+		
+		// build string
+		if (head_yawi == 0)
+			scanText << "a frente: ";
+		else if (head_yawi < 0)
+			scanText << "a " << -head_yawi << " graus a direita: ";
+		else 
+			scanText << "a " << head_yawi << " graus a esquerda: ";
 
+		// OBS: '(int)*sonar_readings' truncate the distance. perhaps 'round' would be better
+		if (blobs_found == 0){
+			scanText << "0 objetos";
+		}else if (blobs_found == 1){
+			scanText << "1 objeto";
+		}else{
+			scanText << blobs_found << " objetos";
+		}			
+
+		speak(scanText.str());
+		// TODO gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
+		sleep(2);
+
+		scanText.str("");
+		scanText.clear();	
 		head_yawi = head_yawi + 30; // more + 30 degree 
+		total_blobs_found += blobs_found;
+		blobs_found=0;
 	}while (head_yawi < (90+30));
 	
 	// go back to the initial position
@@ -717,13 +707,12 @@ int DonnieClient::Color(int color_code){
 	robot->ReadIfWaiting();
 
 	// generate output
-	std::ostringstream scanText;
-	if (blobs_found == 0){
+	if (total_blobs_found == 0){
 		scanText << "nenhum objeto encontrado com a cor " << color_str;
-	}else 	if (blobs_found == 1){
+	}else 	if (total_blobs_found == 1){
 		scanText << "1 objeto encontrado com a cor " << color_str;
 	}else	{
-		scanText << blobs_found << " objetos encontrados com a cor " << color_str;
+		scanText << total_blobs_found << " objetos encontrados com a cor " << color_str;
 	}
 	speak(scanText.str());
 	

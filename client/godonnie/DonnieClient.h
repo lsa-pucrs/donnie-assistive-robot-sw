@@ -113,14 +113,20 @@ public:
 
 	//float GetBumper(int arg);
 	
-	//! scan 180 degree for obstacle using the sonar.
-	/*! ranges is writen with sonar readings every 30 degree.
+	//! scan 180 degree for obstacle using the sonar and blobfinder.
+	/*! it does sonar readings every 30 degree.
 	    180/30 = 7 sonar readings. 0o, 30o, 60o, 90o, 120o, 150o, 180o.
 	*/ 
-	void Scan(float *sonar_readings, int *blobs_found);
+	void Scan(void);
 	
-	//! returns the number of times the color was found around the robot. 
-	/*! color is encodedd in 0x00RRGGBB format */
+	//! it searches for a single color around the robot.
+	/*! This command is similar to Scan, but it searches for a specific 
+	 *  color and it does not return distance (sonar readings). 
+	 *  The color parameter is encodedd in 0x00RRGGBB format.
+	 * 	It reads the blobfinder every 30 degree.
+	    180/30 = 7 blob readings. 0o, 30o, 60o, 90o, 120o, 150o, 180o.
+	    While reading, it speaks the angle and if the color was found.
+	 **/
 	int Color(int color);
 	
 	//void Status();
