@@ -462,7 +462,7 @@ define table_circular position
       point[11] [-1 -15.5]
       z [0 0.8]
    )
-   color "DarkBlue"	
+   color "blue"	
 )
 ##########################################
 
