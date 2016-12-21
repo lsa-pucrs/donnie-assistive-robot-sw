@@ -160,7 +160,7 @@ string DonnieClient::value_to_color(int color_value)
 	}
 	else
 		cout<<"ERRO AO ABRIR O ARQUIVO DE CORES \n"<<endl;
-	
+
 	return color;
 }
 
@@ -658,7 +658,7 @@ void DonnieClient::Scan(float *sonar_readings, int *blobs_found){
 
 	// go back to the initial position
 	headGoto(0);
-	robot->ReadIfWaiting();
+	robot->ReadIfWaiting(); 
 }
 
 //MOD DANIEL
