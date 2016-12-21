@@ -22,6 +22,9 @@ message(STATUS "SoX Include -- ${LSOX_INCLUDE_DIR}")
 # Include this CMake module to get most of the settings needed to build
 SET (CMAKE_MODULE_PATH "/usr/local/share/cmake/Modules")
 
+# required to support 'acentos' in Portuguese
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexec-charset=iso-8859-1")
+
 INCLUDE (UsePlayerC++)
 
 PLAYER_ADD_PLAYERCPP_CLIENT (${CLIENTNAME} 

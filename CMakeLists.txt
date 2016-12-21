@@ -16,6 +16,15 @@ else()
 endif()
 
 #####################################
+# check DONNIE_PATH
+if(DEFINED ENV{DONNIE_SOURCE_PATH})
+   SET(DONNIE_SOURCE_PATH "$ENV{DONNIE_SOURCE_PATH}")
+else()
+   SET(DONNIE_SOURCE_PATH "$ENV{PWD}")
+endif()
+message(STATUS "DONNIE_SOURCE_PATH = ${DONNIE_SOURCE_PATH}")
+
+#####################################
 # important varaiable used to find packages 
 if(DEFINED ENV{PKG_CONFIG_PATH})
 	SET (PKG_CONFIG_PATH $ENV{PKG_CONFIG_PATH})

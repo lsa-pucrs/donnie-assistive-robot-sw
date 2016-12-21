@@ -29,7 +29,7 @@ export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/:${LD_LIBRARY_PATH}
 export LD_LIBRARY_PATH=/usr/local/lib64/:${LD_LIBRARY_PATH}
 export LD_LIBRARY_PATH=${DONNIE_PATH}/lib/player:${LD_LIBRARY_PATH}
 
-# required to compile donnie
+# required to compile donnie 
 # run 'sudo find / -name "*.pc" -type f' to find all the pc files for pkg-config
 # run 'sudo find / -name "*.cmake" -type f' to find all the cmake files for cmake
 export CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-2.8/Modules/:/usr/share/cmake-2.8/Modules/Platform/:/usr/share/cmake-2.8/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib64/cmake/Stage/:/usr/lib/fltk/
@@ -40,6 +40,19 @@ export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig/:/usr/lib/pkgconfig:/usr/lib/x
 #export RPI_TOOLS_PATH=/opt/raspberrypi/tools
 
 alias ssh_donnie='ssh -X pi@${DONNIE_IP}'
+
+function donnie_check_var {
+	if [ -z "$DONNIE_PATH" ]; then
+		echo -e "${RED}ERROR:${NC} Need to set DONNIE_PATH environment variable\n"
+		echo -e "Example: export DONNIE_PATH=/opt/donnie\n"
+		exit 1
+	fi  
+	if [ -z "$DONNIE_SOURCE_PATH" ]; then
+		echo -e "${RED}ERROR:${NC} Need to set DONNIE_SOURCE_PATH environment variable\n"
+		echo -e "Example: export DONNIE_SOURCE_PATH=~/donnie/donnie-assistive-robot-sw\n"
+		exit 1
+	fi  	
+}
 
 function donnie_login {
 	ssh_donnie
@@ -54,6 +67,7 @@ function donnie_login {
 #}
 
 function donnie_desktop_update {
+	donnie_check_var
 	echo "Atualizando o Donnie no diretório ${DONNIE_SOURCE_PATH}"
     cd "${DONNIE_SOURCE_PATH}/build"
 	git pull origin devel
@@ -63,12 +77,12 @@ function donnie_desktop_update {
 }
 
 function donnie_player(){
-  echo "Executando Donnie software no diretório ${DONNIE_SOURCE_PATH}"
-  cd "${DONNIE_EXEC_PATH}"
-  gnome-terminal -e "player server_donnie.cfg"
+  donnie_check_var
+  echo "Executando Donnie software no diretório ${DONNIE_EXEC_PATH}"
+  #cd "${DONNIE_EXEC_PATH}"
+  xterm -e "player ${DONNIE_EXEC_PATH}/server_donnie.cfg" &
   sleep 5
-  alerts &
-  gnome-terminal -e "${DONNIE_PATH}/bin/alerts"
+  xterm -e "${DONNIE_PATH}/bin/alerts" &
   sleep 3
   echo "Donnie executando ..."
 }
