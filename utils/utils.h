@@ -25,6 +25,8 @@ double radTOdeg(double rad);
 
 double degTOrad(double deg);
 
+string toLowerCase(string input);
+
 //! Allow to use environments variables
 /*!	Used to avoid the need to recompile all code for little changes.\n
 	Examples: \n
