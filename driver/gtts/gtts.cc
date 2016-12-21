@@ -43,16 +43,12 @@ driver
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h> //sleep
-//#include <curl/curl.h> 
 #include <netinet/in.h> //TODO perguntar para henry oq isso faz
 //#include <assert.h>
+#include <fstream>      // std::ofstream
 
 
 #define DRIVERNAME "gtts"
-
-
-//CURL *curl;  
-//FILE *file;
 
 // Message levels
 #define MESSAGE_ERROR	0
@@ -118,8 +114,6 @@ int Gtts::MainSetup(){
 		return -1;
 	}
 
-	//puts("Gtts driver ready");
-	//PLAYER_MSG0(MESSAGE_INFO, "Gtts driver ready\n");
 	return(0);
 }
 
@@ -144,12 +138,7 @@ void Gtts::Main(){
 
 //deal with messages comming from the clients
 int Gtts::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, void * data){
-	//PLAYER_MSG0(0,"Msg Received in Driver Gtts");
-	/*if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_DATA, PLAYER_SOUND_DATA_STATE, sound_addr)){
-		Play(*reinterpret_cast<player_sound_data_t *>(data));
-		//PLAYER_WARN("sound data received");
-		return(0);
-	}*/
+
 	if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_CMD, PLAYER_SPEECH_CMD_SAY, speech_addr)){
 		ProcessSpeechCmd(hdr, *reinterpret_cast<player_speech_cmd_t*>(data));
 		return 0;
@@ -159,13 +148,11 @@ int Gtts::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, void * 
 }
 
 void Gtts::ProcessSpeechCmd(player_msghdr_t* hdr, player_speech_cmd_t &data){
-	/*
-	for(int i=0;i<data.string_count;i++){
-		std::cout << data.string[i];
-	}*/
 
 	char *palavra = data.string;
-	PLAYER_MSG1(MESSAGE_INFO,"[Gtts] Receiving phrase [%s] to be transformed to speech",palavra);
+	#ifndef NDEBUG
+	  PLAYER_MSG1(MESSAGE_INFO,"[Gtts] Receiving phrase [%s] to be transformed to speech",palavra);
+	#endif
 	//treat the white spaces ' '->%
 	int i = 0;
 	for(i = 0; i < data.string_count; i++)
@@ -175,7 +162,6 @@ void Gtts::ProcessSpeechCmd(player_msghdr_t* hdr, player_speech_cmd_t &data){
 			*(palavra+i) = '+';
 		}
 	}
-	//printf("%s\n", palavra);
 
 	char url[1000];
 	//FULL BASE URL strcpy(url,"http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&tl=PT-br&q=");
@@ -195,6 +181,7 @@ void Gtts::ProcessSpeechCmd(player_msghdr_t* hdr, player_speech_cmd_t &data){
 	//Download do arquivo com curl
     //file = fopen("download.mp3", "w");
     //curl = curl_easy_init();
+	  
     //curl_easy_setopt(curl, CURLOPT_URL, url);
     //curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
     //curl_easy_perform(curl);
@@ -203,17 +190,28 @@ void Gtts::ProcessSpeechCmd(player_msghdr_t* hdr, player_speech_cmd_t &data){
 
     //terminal example
     //wget -q -U Mozilla -O output.mp3 "http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&tl=PT-br&q=+mundo+inteiro+é+um+palco"
-    
-    char cmdcurl[1000];
-    strcpy(cmdcurl,"wget -q -U Mozilla -O download.mp3 \"");
-    strcat(cmdcurl,url);
-    strcat(cmdcurl,"\"");
-	if (system(cmdcurl) == -1){
-		PLAYER_ERROR("[Gtts] Cannot execute wget");
-		return;
+
+	//Temporary filename generation
+	char tmpName[1000];
+	if(tmpnam(tmpName)){
+		strcat(tmpName,".mp3"); //concat filetype
+
+		char cmdcurl[1000];
+	    strcpy(cmdcurl,"wget -q -U Mozilla -O ");
+	    strcat(cmdcurl,tmpName); //filename
+	    strcat(cmdcurl," \"");
+	    strcat(cmdcurl,url);
+	    strcat(cmdcurl,"\"");
+		if (system(cmdcurl) == -1){
+			PLAYER_ERROR("[Gtts] Cannot execute wget");
+			return;
+		}
+		// publish the filename
+	    Play(tmpName);
 	}
-    //printf("%s\n", cmdcurl);
-    Play("download.mp3");
+	else{
+		PLAYER_ERROR("[Gtts] Cannot generate the temp file");
+	} 
 }
 
 void Gtts::Play(char *fileAddr){
@@ -224,7 +222,6 @@ void Gtts::Play(char *fileAddr){
 	#ifndef NDEBUG
 	  PLAYER_MSG1(MESSAGE_INFO,"[Gtts] Sending filename [%s] to be played by sox",sfile.filename);
 	#endif	
-	//printf("Playing?[%s]\n",sfile.filename);
 
 	//send sox command
 	this->sound_dev->PutMsg(this->InQueue, 
@@ -255,10 +252,8 @@ void Gtts_Register(DriverTable* table){                                    //   
 /* need the extern to avoid C++ name-mangling  */                            //
 extern "C"{                                                                  //
 	int player_driver_init(DriverTable* table){                              //
-		//puts("Gtts driver initiallized");
 		PLAYER_MSG0(MESSAGE_INFO, "[Gtts] driver initiallized");
 		Gtts_Register(table);
-		//puts("waiting for client startup...");                               //
 		PLAYER_MSG0(MESSAGE_INFO, "[Gtts] waiting for client startup...");
 		return(0);                                                           //
 	}                                                                        //
