@@ -24,11 +24,11 @@ class Historic
 	private:
 		///Struct to save commands
 		struct Command {
-			string name;  ///name of command including parameters
+			string name;     ///name of command including parameters
 			string feedback; ///say if it bumped or not during the movement
-			double posx;
-			double posy;
-			double degree;
+			int posx;        /// in steps
+			int posy;        /// in steps
+			int degree;   /// in degrees
 			//TODO: implement << operator
 		};
 		/// list of commands

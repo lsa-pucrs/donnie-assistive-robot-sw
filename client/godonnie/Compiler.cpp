@@ -258,7 +258,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             if (((float)steps_taken < (distance-1.0)) || Donnie->bumped()){
               distanceStr << ", bateu";
             }else{
-		      distanceStr << ", nao bateu";
+		      distanceStr << ", não bateu";
             }
 			// save into history
             string command = string(getText(tree)) + " " + to_string(int(distance));
@@ -280,7 +280,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             if (((float)steps_taken < (distance-1.0)) || Donnie->bumped()){
               distanceStr << ", bateu";
             }else{
-		      distanceStr << ", nao bateu";
+		      distanceStr << ", não bateu";
             }
 			// save into history
             string command = string(getText(tree)) + " " + to_string(int(distance));
@@ -301,7 +301,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			// TODO: o comando pode ser interrompido por uma colizao.
 			// assim, está errado assumir que a distancia pedida será a distancia percorrida
             string command = string(getText(tree)) + " " + to_string(int(distance));
-            History->addCommand(command,(Donnie->bumped() ? "bateu" : "nao bateu"));            
+            History->addCommand(command,(Donnie->bumped() ? "bateu" : "não bateu"));            
             break;
           }
 
@@ -318,7 +318,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			// TODO: o comando pode ser interrompido por uma colizao.
 			// assim, está errado assumir que a distancia pedida será a distancia percorrida
             string command = string(getText(tree)) + " " + to_string(int(distance));
-            History->addCommand(command,(Donnie->bumped() ? "bateu" : "nao bateu"));            
+            History->addCommand(command,(Donnie->bumped() ? "bateu" : "não bateu"));            
             break;
 
           }
@@ -394,7 +394,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case COLOR:
           {
-            int arg, blobs;
+            int arg;
 			// get 7 sonar and blob readings by moving the head from 0o to 180o
 			// every 30 degrees. report only the blobs with requested color (r,g, or b)
 			
@@ -403,26 +403,12 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			if (tokens.size() != 2)
 				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
 
-			// get the color id. color is encodedd in 0x00RRGGBB format
-			//if (tokens[1] == COLOR_BLUE)
-			//	//arg = 0x000000FF;
-			//	arg = 138;
-			//else if (tokens[1] == COLOR_GREEN)
-			//	arg = 0x0000FF00;
-			//else if (tokens[1] == COLOR_RED)
-			//	arg = 0x00FF0000;
-			//else 
-			//	throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");        
-
-
-      arg = Donnie->color_to_value(tokens[1]);
-      //cout<<std::hex<<arg<<endl;
-      if(arg == 0xFFFFFFFF)
-        throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");     
+			arg = Donnie->color_to_value(tokens[1]);
+			if(arg == 0xFFFFFFFF)
+				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");     
 
 			// only report when there are blobs with the selected color
-			blobs = Donnie->Color(arg);
-            return blobs;
+            return Donnie->Color(arg);
             break;
           }
           
@@ -668,6 +654,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case HIST:
           {
 				//TODO (amory): implementar um clear para o historico
+				//TODO amory. usar TTS o histórico
 				cout << History->show();
 				break;
 		  }
@@ -680,9 +667,10 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 				output << History->getLast();
 			  }else{
 				output << "Nenhum comando executado, posição [" 
-				       << std::fixed << std::setprecision(2) <<  Donnie->GetPos("body",0)  <<  //POSITION_X
-				   "," << std::fixed << std::setprecision(2) <<  Donnie->GetPos("body",1)  <<  //POSITION_Y
-				   "," << std::fixed << std::setprecision(2) <<  Donnie->GetPos("body",2) << "]" << endl ; //POSITION_YAW
+				       << Donnie->GetPos("body",0)  <<  //POSITION_X in steps
+				   "," << Donnie->GetPos("body",1)  <<  //POSITION_Y in steps
+				   "," << Donnie->GetPos("body",2) << "]"; //POSITION_YAW in degrees 
+				   // dont add newline here !
 			  }
 				Donnie->speak(output.str());
 				break;

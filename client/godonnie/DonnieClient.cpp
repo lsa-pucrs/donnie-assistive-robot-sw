@@ -48,8 +48,8 @@ DonnieClient::DonnieClient()
 		#ifndef NDEBUG
 			cerr << e << endl;
 		#endif
-		cerr << "Nao foi possivel conectar no robo com IP " << host << " porta " << port << endl;
-		cerr << "Possivelmente o Player nao foi executado ou as variaveis DONNIE_IP e DONNIE_PORT estao erradas" << endl;
+		cerr << "Não foi possivel conectar no robô com IP " << host << " porta " << port << endl;
+		cerr << "Possivelmente o Player não foi executado ou as variaveis DONNIE_IP e DONNIE_PORT estão erradas" << endl;
 		exit(1);
 	}
 	
@@ -67,8 +67,8 @@ DonnieClient::DonnieClient()
 		#ifndef NDEBUG
 			cerr << e << endl;
 		#endif
-		cerr << "Nao foi possivel conectar no robo " << endl;
-		cerr << "Possivelmente o arquivo cfg esta incorreto." << endl;
+		cerr << "Não foi possivel conectar no robo " << endl;
+		cerr << "Possivelmente o arquivo cfg está incorreto." << endl;
 		exit(1);
 	}
 	
@@ -115,16 +115,14 @@ int DonnieClient::BackBumper()
 
 string DonnieClient::value_to_color(int color_value)
 {
-
 	string color;
 	ostringstream oss;
 	unsigned int file_value;
-	
-
 
 	ifstream file;
 	string donnie_path = GetEnv("DONNIE_PATH");
 
+	// read the color file according to the language
 	if(LANG == "pt-br")
 		donnie_path = donnie_path + "/resources/color_files/rgb-pt-br.txt";
 	else if (LANG == "eng")
@@ -158,23 +156,24 @@ string DonnieClient::value_to_color(int color_value)
 		}
 		file.close();
 	}
-	else
-		cout<<"ERRO AO ABRIR O ARQUIVO DE CORES \n"<<endl;
-
+	else{
+		cout << "Erro: arquivo de cores " << donnie_path << " não encontrado" << endl;
+		exit(1);
+	}
+	
 	return color;
 }
 
 int DonnieClient::color_to_value(string input_color)
 {
-
 	ifstream file;
 	string color;
 	ostringstream oss;
 	unsigned int file_value;
 
-
 	string donnie_path = GetEnv("DONNIE_PATH");
 
+	// read the color file according to the language
 	if(LANG == "pt-br")
 		donnie_path = donnie_path + "/resources/color_files/rgb-pt-br.txt";
 	else if (LANG == "eng")
@@ -200,9 +199,12 @@ int DonnieClient::color_to_value(string input_color)
 		}
 		file.close();
 	}
-	else
-		cout<<"ERRO AO ABRIR O ARQUIVO DE CORES \n"<<endl;
+	else{
+		cout << "Erro: arquivo de cores " << donnie_path << " não encontrado" << endl;
+		exit(1);
+	}
 
+	// return unknown color
 	return 0xFFFFFFFF;
 	
 }
@@ -249,12 +251,12 @@ float DonnieClient::GetRange(int arg)
     }
 }
 
-float DonnieClient::GetPos(string p2d, int arg)
+int DonnieClient::GetPos(string p2d, int arg)
 {
 	if (p2d == "head")
-		return GetPos(p2d_headProxy, arg);
+		return (int)GetPos(p2d_headProxy, arg);
 	else
-		return GetPos(p2dProxy, arg);
+		return (int)GetPos(p2dProxy, arg);
 }
 
 float DonnieClient::GetPos(Position2dProxy *p2d, int arg)
