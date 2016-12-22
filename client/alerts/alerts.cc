@@ -49,11 +49,8 @@ DonnieClient::DonnieClient()
     translationError = 0;
     rotation = 0;
     rotationError=0;
-    steps = 0;
-    alertStepFlag = 0;
     alertBumperFlag = 0;
     alertRangerFlag = 0;
-    onMovement = false;
     robot->StartThread(); //create an robot->Read() in a separated thread
 }
 
@@ -86,12 +83,16 @@ void DonnieClient::checkDir(){
     	}
     }
 
-    //Translation Error management
+    //Translation Error management. In case of not plaing the last step
     if(p2d->GetXSpeed()==0){
         if(translation>=STEP_LENGHT_ERROR){
-			if(p2d->GetXSpeed()>0)sound->play((char *)SSTEP.c_str());
-			if(p2d->GetXSpeed()<0)sound->play((char *)SSBACK.c_str());
+			/*if(dir>0)sound->play((char *)SSTEP.c_str());
+			if(dir<0)sound->play((char *)SSBACK.c_str());*/
+            #ifndef NDEBUG
+            cout << "translation>=STEP_LENGHT_ERROR:" << translation << endl;
+            #endif
         }
+        translation=0;
     	translationError=0;
     	setPos(p2d->GetXPos(),p2d->GetYPos(),pos.a); //update pos
     }
