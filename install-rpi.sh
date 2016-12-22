@@ -1,7 +1,7 @@
 #!/bin/bash
 #####################
 # Author: Alexandre Amory
-# Date: September/2016
+# Date: September/2016, December/2016
 # Laboratorio de Sistemas Autonomos - FACIN - PUCRS University
 # Description:
 #   This script installs all the required depedencies (packages) in the RPi.
@@ -24,6 +24,12 @@
 # distribuicao final. depois de cross compilado, seria possivel remover *-dev, e somente instalar 
 # as libs
 
+# Any subsequent(*) commands which fail will cause the shell script to exit immediately
+set -e
+
+#defensive script
+#http://www.davidpashley.com/articles/writing-robust-shell-scripts/#id2382181
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 ORANGE='\033[0;33m'
@@ -38,6 +44,9 @@ if [ -z "$DONNIE_PATH" ]; then
     exit 1
 fi  
 echo -e "DONNIE_PATH=${DONNIE_PATH}\n"
+export DONNIE_SOURCE_PATH=${PWD}/donnie-assistive-robot-sw
+echo -e "DONNIE_SOURCE_PATH=${DONNIE_SOURCE_PATH}\n"
+
 
 ##################################################
 # check the supported OS version and distribution
@@ -68,11 +77,9 @@ case ${OS} in
 		exit 1;
      ;;
 esac
-##################################################
-# set environment variables
-##################################################
-source ./install/setup-rpi.sh
-echo "source $DONNIE_PATH/setup.sh" >> ~/.bashrc
+
+NUM_CORES=`cat /proc/cpuinfo | grep processor | wc -l`
+echo -e "${GREEN}NOTE:${NC} This computer has ${NUM_CORES} cores ...\n"
 
 ##################################################
 # Setting up Raspberry Pi
@@ -185,7 +192,6 @@ sudo apt-get install -y timidity
 # Donwloading source code 
 ##################################################
 echo -e "${GREEN}Downloading Player source code from GitHub... ${NC}\n"
-cd ~/Downloads
 git clone https://github.com/lsa-pucrs/Player.git
 
 echo -e "${GREEN}Downloading Raspicam source code from GitHub... ${NC}\n"
@@ -198,12 +204,19 @@ git clone -b devel https://github.com/lsa-pucrs/donnie-assistive-robot-sw.git
 # Compile and install Player
 ##################################################
 cd Player
-echo -e "${GREEN}Patching Player for Donnie ... ${NC}\n"
-patch -p1 < patch/festival/festival.patch
-patch -p1 < patch/install/player_3.0.2_14.04.patch
-echo -e "${GREEN}Patching Player for Donnie ... ${NC}\n"
-patch -p1 < ../donnie-assistive-robot-sw/proxies/instalationSoundProxy.patch
-mkdir build
+patch -p1 -N --dry-run --silent < patch/festival/festival.patch 2>/dev/null
+#If the patch has not been applied then the $? which is the exit status 
+#for last command would have a success status code = 0
+if [ $? -eq 0 ];
+then
+    #apply the patch
+	echo -e "${GREEN}Patching Player ... ${NC}\n"
+	patch -p1 < patch/festival/festival.patch
+	patch -p1 < patch/install/player_3.0.2_14.04.patch
+	patch -p1 < ../donnie-assistive-robot-sw/proxies/instalationSoundProxy.patch
+	echo -e "${GREEN}Patching Player for Donnie ... ${NC}\n"
+fi
+mkdir -p build # mkdir -p is safer !
 cd build
 echo -e "${GREEN}Configuring Player ... ${NC}\n"
 #disablingCMAKE_INSTALL_PREFIX all the unused drivers and utils...
@@ -297,7 +310,7 @@ cmake -DCMAKE_INSTALL_PREFIX=/usr/local \
 	-DBUILD_CC_TESTS:BOOL=OFF \
 	.. 
 echo -e "${GREEN}Compiling Player ... ${NC}\n"
-make
+make -j ${NUM_CORES} 
 sudo make install
 echo -e "${GREEN}Player installed !!!! ${NC}\n"
 
@@ -306,13 +319,13 @@ echo -e "${GREEN}Player installed !!!! ${NC}\n"
 ##################################################
 #https://solderspot.wordpress.com/2016/02/04/cross-compiling-for-raspberry-pi-part-ii/
 cd ../../raspicam
-mkdir build
+mkdir -p build
 cd build
 echo -e "${GREEN}Configuring raspicam ... ${NC}\n"
 cmake -DCMAKE_BUILD_TYPE=Release \
 	..
 echo -e "${GREEN}Compiling raspicam ... ${NC}\n"
-make
+make -j ${NUM_CORES}
 sudo make install
 echo -e "${GREEN}Raspicam installed !!!! ${NC}\n"
 
@@ -331,16 +344,21 @@ sudo apt-get install -y vlc
 ##################################################
 # Compiling and installing Donnie
 ##################################################
-cd ../../donnie-assistive-robot-sw
-mkdir build
+cd "${DONNIE_SOURCE_PATH}"
+mkdir -p build
 cd build
 echo -e "${GREEN}Configuring Donnie ... ${NC}\n"
 # CMAKE_SYSTEM_PROCESSOR=arm is required to avoid compiling things not used by the robot computer
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_PROCESSOR=arm ..
 echo -e "${GREEN}Compiling Donnie ... ${NC}\n"
-make
+make -j ${NUM_CORES} 
 sudo make install
 echo -e "${GREEN}Donnie installed !!!! ${NC}\n"
+
+##################################################
+# set environment variables for terminals
+##################################################
+echo "source $DONNIE_PATH/setup.sh" >> ~/.bashrc
 
 ##################################################
 # uninstall all dev packages to save space
