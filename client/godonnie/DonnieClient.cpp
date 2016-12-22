@@ -377,7 +377,9 @@ int DonnieClient::moveForward(float arg)
 	if (bumped() || stop)
 		sayStr << "Andei " << int(passos) << " passos para frente. Houve colisão.";
 	else
-		sayStr << "Andei " << int(passos) << " passos para frente.";
+		sayStr << "Andei " << int(passos)-1 << " passos para frente.";
+	if (obstacle)
+		sayStr << "e encontrei obstáculo.";
 	speak(sayStr.str());
 
 	#ifndef NDEBUG
@@ -484,9 +486,11 @@ int DonnieClient::moveBackward(float arg)
 	// assim, está errado assumir que a distancia pedida será a distancia percorrida
 	std::ostringstream sayStr;
 	if (bumped() || stop)
-		sayStr << "Andei " << int(passos) << " passos para traz. Houve colisão.";
+		sayStr << "Andei " << int(passos) << " passos para trás. Houve colisão.";
 	else
-		sayStr << "Andei " << int(passos) << " passos para traz.";
+		sayStr << "Andei " << int(passos)-1 << " passos para trás.";
+	if (obstacle)
+		sayStr << "e encontrei obstáculo.";
 	speak(sayStr.str());
 		
 	#ifndef NDEBUG
