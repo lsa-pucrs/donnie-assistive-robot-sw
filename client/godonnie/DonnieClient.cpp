@@ -213,7 +213,7 @@ int DonnieClient::color_to_value(string input_color)
 float DonnieClient::GetRange(int arg)
 {
 	try{
-		robot->Read();
+		robot->ReadIfWaiting();
 		switch(arg)
 		{   // The order is NE N  NW SW S  SE HEAD
 			case 0: //frente - N
@@ -261,7 +261,7 @@ int DonnieClient::GetPos(string p2d, int arg)
 
 float DonnieClient::GetPos(Position2dProxy *p2d, int arg)
 {
-	robot->Read();
+	robot->ReadIfWaiting();
 
 	switch(arg)
 	{
@@ -285,7 +285,7 @@ int DonnieClient::moveForward(float arg)
 {
 	vector<float> path;
 
-	robot->Read();
+	robot->ReadIfWaiting();
 	double yaw = p2dProxy->GetYaw();    //Angulo do robo
 	double posxi = p2dProxy->GetXPos();   //Posicao inicial X do robo
 	double posyi = p2dProxy->GetYPos();   //Posicao inicial Y do robo
@@ -315,7 +315,7 @@ int DonnieClient::moveForward(float arg)
 	float erro;
 	float andou;
 
-	robot->Read();
+	robot->ReadIfWaiting();
 	if(sonarProxy->GetRange(1) > 0.15)
 	{
 	  stop = false;
@@ -323,7 +323,7 @@ int DonnieClient::moveForward(float arg)
 	  p2dProxy->SetSpeed(0.05,0);
 	}
 
-	robot->Read();
+	robot->ReadIfWaiting();
 	while(!stop)
 	{
 
@@ -392,7 +392,7 @@ int DonnieClient::moveBackward(float arg)
 {
 	vector<float> path;
 
-	robot->Read();
+	robot->ReadIfWaiting();
 	double yaw = p2dProxy->GetYaw();    //Angulo do robo
 	double posxi = p2dProxy->GetXPos();   //Posicao inicial X do robo
 	double posyi = p2dProxy->GetYPos();   //Posicao inicial Y do robo
@@ -718,7 +718,7 @@ int DonnieClient::Color(int color_code){
 	}
 	speak(scanText.str());
 	
-	return blobs_found;
+	return total_blobs_found;
 }
 
 int DonnieClient::bumped(){

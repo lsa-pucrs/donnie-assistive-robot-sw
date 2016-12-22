@@ -1,7 +1,7 @@
 #!/bin/bash
 #####################
 # Author: Alexandre Amory
-# Date: September/2016
+# Date: September/2016, December/2016
 # Laboratorio de Sistemas Autonomos - FACIN - PUCRS University
 # Description:
 #   This script installs Donnie software in the host computer (Player, Stage, Donnie drivers).
@@ -209,7 +209,7 @@ cd build
 echo -e "${GREEN}Configuring Stage  ... ${NC}\n"
 cmake -DCMAKE_BUILD_TYPE=Release ..
 echo -e "${GREEN}Compiling Stage ... ${NC}\n"
-make -j ${NUM_CORES} 
+make -j ${NUM_CORES}
 sudo make install
 echo -e "${GREEN}Stage installed !!!! ${NC}\n"
 
@@ -262,8 +262,6 @@ echo -e "${GREEN}Compiling Donnie ... ${NC}\n"
 make -j ${NUM_CORES} 
 sudo make install
 echo -e "${GREEN}Donnie installed !!!! ${NC}\n"
-
-echo -e "${GREEN}End of installation !!!! ${NC}\n"
 
 ##################################################
 # set environment variables for terminals
