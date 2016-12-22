@@ -71,7 +71,9 @@ function donnie_desktop_update {
 	echo "Atualizando o Donnie no diretório ${DONNIE_SOURCE_PATH}"
     cd "${DONNIE_SOURCE_PATH}/build"
 	git pull origin devel
-	sudo make install -j 8
+	cmake ..
+	make -j 8
+	sudo make install
 	cd -
 	echo "Atualização concluída"
 }
