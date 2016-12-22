@@ -377,7 +377,10 @@ int DonnieClient::moveForward(float arg)
 	if (bumped() || stop)
 		sayStr << "Andei " << int(passos) << " passos para frente. Houve colisão.";
 	else
+	{
 		sayStr << "Andei " << int(passos)-1 << " passos para frente.";
+		passos--;
+	}
 	if (obstacle)
 		sayStr << "e encontrei obstáculo.";
 	speak(sayStr.str());
@@ -488,7 +491,10 @@ int DonnieClient::moveBackward(float arg)
 	if (bumped() || stop)
 		sayStr << "Andei " << int(passos) << " passos para trás. Houve colisão.";
 	else
+	{
 		sayStr << "Andei " << int(passos)-1 << " passos para trás.";
+		passos--;
+	}
 	if (obstacle)
 		sayStr << "e encontrei obstáculo.";
 	speak(sayStr.str());
