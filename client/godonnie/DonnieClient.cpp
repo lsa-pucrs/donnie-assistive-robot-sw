@@ -719,7 +719,7 @@ int DonnieClient::Color(int color_code){
 	}
 	speak(scanText.str());
 	
-	return blobs_found;
+	return total_blobs_found;
 }
 
 int DonnieClient::bumped(){
