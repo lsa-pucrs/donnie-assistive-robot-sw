@@ -673,10 +673,7 @@ int DonnieClient::Color(int color_code){
 		// get the color of the blobs
         for(int i = 0; i < bfinderProxy->GetCount(); i++)
         {
-			// color is encodedd in 0x00RRGGBB format
-			// TODO: Amory. It will be better to use 
-			//if (color_str == value_to_color(bfinderProxy->GetBlob(i).color)))
-			if (color_code == bfinderProxy->GetBlob(i).color)
+			if (color_str == value_to_color(bfinderProxy->GetBlob(i).color))
 				blobs_found++;
 		}
 		
