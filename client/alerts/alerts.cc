@@ -1,7 +1,7 @@
 #include "alerts.h"
 
 // TODO: amory. criar include donnie_defs.h com todas as definicoes de tamanho do donnie
-#define STEP_YAW 5 //gradianos
+#define STEP_YAW 10 //gradianos
 #define STEP_LENGHT 0.05  //TODO ver se esta certo com o client do augusto
 #define STEP_LENGHT_ERROR 0.03  //!Define o erro do ultimo passo. Caso o robo pare sem marcar o som de passo
 #define SIDE_RANGER 0.05   //TODO ver se esta certo com o client do augusto
@@ -49,11 +49,8 @@ DonnieClient::DonnieClient()
     translationError = 0;
     rotation = 0;
     rotationError=0;
-    steps = 0;
-    alertStepFlag = 0;
     alertBumperFlag = 0;
     alertRangerFlag = 0;
-    onMovement = false;
     robot->StartThread(); //create an robot->Read() in a separated thread
 }
 
@@ -86,12 +83,16 @@ void DonnieClient::checkDir(){
     	}
     }
 
-    //Translation Error management
+    //Translation Error management. In case of not plaing the last step
     if(p2d->GetXSpeed()==0){
         if(translation>=STEP_LENGHT_ERROR){
-			if(p2d->GetXSpeed()>0)sound->play((char *)SSTEP.c_str());
-			if(p2d->GetXSpeed()<0)sound->play((char *)SSBACK.c_str());
+			/*if(dir>0)sound->play((char *)SSTEP.c_str());
+			if(dir<0)sound->play((char *)SSBACK.c_str());*/
+            #ifndef NDEBUG
+            cout << "translation>=STEP_LENGHT_ERROR:" << translation << endl;
+            #endif
         }
+        translation=0;
     	translationError=0;
     	setPos(p2d->GetXPos(),p2d->GetYPos(),pos.a); //update pos
     }
@@ -101,44 +102,38 @@ void DonnieClient::checkDir(){
         rotation = p2d->GetYaw() - pos.a; //rotationError
         if(rotation>0 && rotation>M_PI) rotation=rotation-2*M_PI; //ajusta o valor do rotation 
         if(rotation<0 && rotation<-M_PI) rotation=rotation+2*M_PI;
-        cout << "Yaw:" << p2d->GetYaw() << endl;
-        cout << "rotation:" << rotation << endl;
-        cout << "target:" << DTOR(STEP_YAW) << endl;
-        cout << "targetError:" << DTOR(STEP_YAW) << endl;
 
         if(rotation>=DTOR(STEP_YAW)){ //-0.05 erro
             sound->play((char *)STLEFT.c_str());
             rotation = rotation - DTOR(STEP_YAW);
             setPos(pos.x,pos.y,p2d->GetYaw());
-            cout << "NEW rotation:" << rotation << endl;
-            cout << "++++++++++++++++++++" << endl;
         }
-        cout << "=============:" << endl;
     }
     if(p2d->GetYawSpeed()<0){
         rotation = p2d->GetYaw() - pos.a; //rotationError
         if(rotation>0 && rotation>M_PI) rotation=rotation-2*M_PI; //ajusta o valor do rotation 
         if(rotation<0 && rotation<-M_PI) rotation=rotation+2*M_PI;
-        cout << "Yaw:" << p2d->GetYaw() << endl;
-        cout << "rotation:" << rotation << endl;
-        cout << "target:" << -1*DTOR(STEP_YAW) << endl;
-         cout << "targetError:" << -1*DTOR(STEP_YAW)<< endl;
 
         if(rotation<=-1*DTOR(STEP_YAW)){
             sound->play((char *)STRIGHT.c_str());
             rotation = rotation + DTOR(STEP_YAW);
             setPos(pos.x,pos.y,p2d->GetYaw());
-            cout << "NEW rotation:" << rotation << endl;
-            cout << "++++++++++++++++++++" << endl;
         }
-        cout << "=============:" << endl;
+    }
+
+    //Rotation Error management
+    if(p2d->GetYawSpeed()==0){
+        if(rotation>=DTOR(2))sound->play((char *)STLEFT.c_str()); //se tiver qualquer coisa no rotation quando parar gera um som
+        if(rotation<=-1*DTOR(2))sound->play((char *)STRIGHT.c_str());
+        rotation=0;
+        setPos(pos.x,pos.y,p2d->GetYaw());
     }
 }
 
 void DonnieClient::checkBumpers(){
     if(bumper->IsAnyBumped()){
         if(!alertBumperFlag){
-            cout << "BUMPED!:" << endl << endl;
+            //cout << "BUMPED!:" << endl << endl;
             alertBumperFlag=1;
             sound->play((char *)SBUMPER.c_str());
             speech->Say("O robô colidiu com alguma coisa!");
@@ -158,11 +153,11 @@ void DonnieClient::checkRangers(){
         (ranger->GetRange(5))<SIDE_RANGER){  //br
        
         if(!alertRangerFlag){
-            cout << "RANGED!:" << endl << endl;
+            //cout << "RANGED!:" << endl << endl;
             for(int i=0;i<6;i++){
-               cout <<"ranger"<< i << ":" << (ranger->GetRange(i)) << endl;
+               //cout <<"ranger"<< i << ":" << (ranger->GetRange(i)) << endl;
             }
-            cout << endl;
+            //cout << endl;
             alertRangerFlag = 1;
             sound->play((char *)SRANGER.c_str());
             speech->Say("Existem obstáculos no caminho");

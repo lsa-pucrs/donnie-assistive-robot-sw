@@ -23,9 +23,6 @@
 #include "utils.h"
 #include <libplayerc++/playerc++.h>
 
-
-
-
 using namespace std;
 //namespace for use with the player library
 using namespace PlayerCc;
@@ -35,9 +32,7 @@ struct PathNodes
   double posx, posy;
 };
 
-/**Class to comunicate with Player Proxy
-The default Player library proxies can be found at http://playerstage.sourceforge.net/doc/Player-2.0.0/player/classPlayerCc_1_1ClientProxy.html
-*/
+/**Class to comunicate with Player Proxy*/
 class DonnieClient
 {
 private:
@@ -50,8 +45,7 @@ private:
   RangerProxy *headSonarProxy;
   SpeechProxy *speechProxy;
   
-  //! if on, it only play sound command Speak is explictly executed by user
-  /*! TO BE DONE*/
+  //! if on, it will use TTS to speak, otherwise it will quietly print in the console
   bool muted;
 
   int FrontBumper();
@@ -80,7 +74,7 @@ private:
 
 	//to do: set the language!
 	string language;
-	//MOD DANIEL
+
 	//! Returns a string with the name of the color detected by the blobfinder. Uses files "rgb-pt-br.txt" and "rgb-en.txt" in the current version.
 	/*!
 		/param value identifier of the color detected by the blobfinder. 
@@ -108,38 +102,51 @@ public:
   	
 
 	float GetRange(int arg);
-	float GetPos(string p2d,int arg);
+	
+	//!  return X, Y, yaw position for donnie head and body
+	/*!
+	  /param p2d expect 'body' or 'head' to select the position2d to be used
+	  /param arg 0 for X, 1 for Y, 2 for yaw
+	  /return distance in steps
+	*/
+	int GetPos(string p2d,int arg);
 	
 
 	//float GetBumper(int arg);
 	
-	//! scan 180 degree for obstacle using the sonar.
-	/*! ranges is writen with sonar readings every 30 degree.
+	//! scan 180 degree for obstacle using the sonar and blobfinder.
+	/*! it does sonar readings every 30 degree.
 	    180/30 = 7 sonar readings. 0o, 30o, 60o, 90o, 120o, 150o, 180o.
 	*/ 
-	void Scan(float *sonar_readings, int *blobs_found);
+	void Scan(void);
 	
-	//! returns the number of times the color was found around the robot. 
-	/*! color is encodedd in 0x00RRGGBB format */
+	//! it searches for a single color around the robot.
+	/*! This command is similar to Scan, but it searches for a specific 
+	    color and it does not return distance (sonar readings). 
+	   	It reads the blobfinder every 30 degree.
+	    180/30 = 7 blob readings. 0o, 30o, 60o, 90o, 120o, 150o, 180o.
+	    While reading, it speaks the angle and if the color was found.
+
+	    /param color this parameter is the color (encodedd in 0x00RRGGBB format) to be searched.
+	    /return the total number of blobs found with the color
+	*/
 	int Color(int color);
 	
-	//void Status();
-
 	//! returns true when donnie bumped during the movements
 	int bumped();
 
-	//! call text-to-speech and print
+	//! call text-to-speech or print, depending of it is muted or not
+	/*!
+	  /param text is the spoken/printed text
+	*/
 	void speak(string text);
 
-
-	//MOD DANIEL
 	//! Returns the value of a known color (format: 0x00RRGGBB)
 	/*!
 		/param input_color name of the color in "eng" (english) or "pt-br" (brazilian portuguese), defined by "LANG".
 		/return number of the color in the format 0x00RRGGBB. If the color is unknown, return 0xFFFFFFFF.
 	*/
 	int color_to_value(string input_color);
-
 	
 };
 

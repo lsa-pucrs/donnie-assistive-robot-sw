@@ -37,9 +37,9 @@ bool Historic::addCommand(string name, string feedback)
 	Command temp = Command();
 	temp.name = name;
 	temp.feedback = feedback;
-	temp.posx = DonnieClient::getInstance()->GetPos("body",0);
-	temp.posy = DonnieClient::getInstance()->GetPos("body",1);
-	temp.degree = DonnieClient::getInstance()->GetPos("body",2);
+	temp.posx = (int)DonnieClient::getInstance()->GetPos("body",0);
+	temp.posy = (int)DonnieClient::getInstance()->GetPos("body",1);
+	temp.degree = (int)DonnieClient::getInstance()->GetPos("body",2);
 	this->commandsList.push_back(temp);
 	return true;
 }
@@ -57,9 +57,8 @@ string Historic::show()
 	history << "Histórico possui " << commandsList.size() << " comandos" << endl;
 	for (iterator = this->commandsList.begin(); iterator != this->commandsList.end(); ++iterator) {
 		history << "Comando " << cmdNum << " foi " << (*iterator).name << ", " <<  (*iterator).feedback << 
-		", posição [" << std::fixed << std::setprecision(2)  <<  (*iterator).posx  << 
-		"," << std::fixed << std::setprecision(2) <<  (*iterator).posy  << 
-		"," << std::fixed << std::setprecision(2) <<  (*iterator).degree << "]" << endl ;
+		", posição [" <<  (*iterator).posx  << ", " << (*iterator).posy  << 
+		", " << (*iterator).degree << "]" << endl ;
 		cmdNum++;
 	}
 
@@ -74,9 +73,8 @@ string Historic::getLast()
 	if (commandsList.size() > 0){
 		last = commandsList.back();
 		history << "Comando " << commandsList.size()-1 << " foi " << last.name << ", " <<  last.feedback << 
-		", posição [" << std::fixed << std::setprecision(2)  <<  last.posx  << 
-		"," << std::fixed << std::setprecision(2) <<  last.posy  << 
-		"," << std::fixed << std::setprecision(2) <<  last.degree << "]" << endl ;
+		", posição [" <<  last.posx  << ", " << last.posy  << 
+		", " << last.degree << "]"; // dont add newline here !
 	}
 
 	return history.str();

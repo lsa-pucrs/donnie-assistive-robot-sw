@@ -1,16 +1,20 @@
 criar a = 4
 
-aprender quadrado
+aprender quÁdrádO: a,b,c
 início
-	para criar b = 0; b < 4; b = b + 1 
+	para criar d = 0; d < c; d = d + 1 
 	faça
-		pf 4
-		ge 90
+		pf a
+		ge b
 	fim para
 fim aprender
 
 se a > 3 então falar "oi" fim se
 
-quadrado[]
+quÁdrádO[1,90,2]
+
+falar a
+falar b
+falar c
 
 falar "terminei"

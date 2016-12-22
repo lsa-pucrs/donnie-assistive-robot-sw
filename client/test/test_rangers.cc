@@ -13,7 +13,10 @@
  * TODO:  colocar o cfg para robo real e simulacao
  * 
  */ 
+#ifndef NDEBUG
 #define NDEBUG
+#endif
+
 #include <iostream>
 #include <libplayerc++/playerc++.h>
 #include "utils.h"
