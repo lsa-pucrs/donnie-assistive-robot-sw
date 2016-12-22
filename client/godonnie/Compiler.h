@@ -41,14 +41,6 @@ using std::string;
 using std::cout;
 using std::endl;
 
-
-struct procDec
-{
-  pANTLR3_BASE_TREE node;
-  int argNum;
-  vector<string> args;
-};
-
 typedef struct {
   char *name;     /* User printable name of the function. */
   char *doc;      /* Documentation for this function.  */

@@ -67,7 +67,7 @@ whileblock	:	DOIT^ cmd ( SEMICOLON!? cmd)* SEMICOLON!? ENDWHILE!;
 reptblock	:	REPTB^ cmd ( SEMICOLON!? cmd)* SEMICOLON!? ENDREPT!;
 
 
-procblock	:	PROCB^ cmd ( SEMICOLON!? cmd)* SEMICOLON!? ENDPROC!;
+procblock	:	DOIT^ cmd ( SEMICOLON!? cmd)* SEMICOLON!? ENDPROC!;
 
 
 ife	:	IFE^  comparison then elsee? ENDIF!;
@@ -91,7 +91,7 @@ assign	:	ID EQ^ expression;
 speake	:	SPEAKE^ (expression | STRINGE) ;
 
 
-commente  : COMENT;
+commente	:	COMENT;
 
 
 procedec	:	PROCDEC^ ID (':'! (ID) (','! (ID))*)? procblock;

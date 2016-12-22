@@ -101,11 +101,11 @@ donnie
 
 chair(name "chair1" color "red"  pose [1.5 1.25 0 90])
 sofa_small(name "sofa2" color "red"  pose [-0.03 1.41 0 90])
-sofa_large(name "sofa1" color "red"  pose [0.40 1.7 0 0])
+sofa_large(name "sofa1" color "blue"  pose [0.40 1.7 0 0])
 plantpot(name "plant" color "green" pose [-0.10 1.16 0 0])
 plantpot(name "plant2" color "green"  pose [1.76 1.76 0 0])
 table(name "table" color "red"  pose [1.7 1.26 0 90])
 table_circular(name "table2" color "IndianRed"  pose [0.5 0.98 0 0])
 trash_bin(name "trash" color "green"  pose [1.74 0.91 0 0])
-human(name "people" color "red"  pose [1.76 0.19 0 0])
+human(name "people" color "blue"  pose [1.76 0.19 0 0])
 
