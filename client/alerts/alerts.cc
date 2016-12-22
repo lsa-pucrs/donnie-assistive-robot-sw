@@ -7,6 +7,7 @@
 #define SIDE_RANGER 0.05   //TODO ver se esta certo com o client do augusto
 #define FRONT_RANGER 0.06   //TODO ver se esta certo com o client do augusto
 #define BACK_RANGER 0.05  //TODO ver se esta certo com o client do augusto
+#define SCAN_YAW 30 //gradianos
 
 
 DonnieClient::DonnieClient()
@@ -28,12 +29,13 @@ DonnieClient::DonnieClient()
 	STLEFT  = donnie_path+"/resources/sounds/126412normalcoin.wav"; //Sound Turn LEFT
 	SBUMPER = donnie_path+"/resources/sounds/mgs4_soundalert.wav"; //Sound Turn LEFT
 	SRANGER = donnie_path+"/resources/sounds/mgs4_soundalert.wav"; //Sound Turn LEFT
+    SSCAN   = donnie_path+"/resources/sounds/0-scan.wav"; //Sound Scan
 
 
     robot = new PlayerClient(host,port);
     //head = new PlayerClient("localhost",6666);
     p2d = new Position2dProxy(robot,0);
-    //p2d_headProxy = new Position2dProxy(robot,1);
+    p2dhead = new Position2dProxy(robot,1);
     //actuator = new ActArrayProxy(robot,0);
     bumper = new BumperProxy(robot,0);
     //BfinderProxy = new BlobfinderProxy(head,0);
@@ -64,7 +66,7 @@ void DonnieClient::setPos(double x, double y, double a){
     pos.a=a;
 }
 
-void DonnieClient::checkDir(){
+void DonnieClient::checkSteps(){
     /*cout << "POS("
         << p2d->GetXPos() << ", "
         << p2d->GetYPos () << ", "
@@ -167,13 +169,19 @@ void DonnieClient::checkRangers(){
 }
 
 
+void DonnieClient::checkHead(){
+    if(p2dhead->GetYawSpeed()!=0)
+        sound->play((char *)SSCAN.c_str());
+}
+
 int main(int argc, char *argv[]){
     DonnieClient *donnie1 = new DonnieClient();
     while(1){
         usleep(100); //little delay
-        donnie1->checkDir();
+        donnie1->checkSteps();
         donnie1->checkBumpers();
         donnie1->checkRangers();
+        donnie1->checkHead();
     }
     return 0;
 }
