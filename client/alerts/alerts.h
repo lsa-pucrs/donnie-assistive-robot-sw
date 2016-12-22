@@ -41,13 +41,15 @@ class DonnieClient{
   string STLEFT;  //Sound Turn LEFT
   string SBUMPER; //Sound Turn LEFT
   string SRANGER; //Sound Turn LEFT
+  string SSCAN; //Sound Scan
 
 
 public:
   DonnieClient();
   pos_t getPos();
   void setPos(double x, double y, double a);
-  void checkDir();
+  void checkSteps();
+  void checkHead();
   void checkBumpers();
   void checkRangers();
 };
