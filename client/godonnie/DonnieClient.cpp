@@ -67,7 +67,7 @@ DonnieClient::DonnieClient()
 		#ifndef NDEBUG
 			cerr << e << endl;
 		#endif
-		cerr << "Não foi possivel conectar no robo " << endl;
+		cerr << "Não foi possível conectar no robô " << endl;
 		cerr << "Possivelmente o arquivo cfg está incorreto." << endl;
 		exit(1);
 	}

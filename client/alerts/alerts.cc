@@ -32,18 +32,24 @@ DonnieClient::DonnieClient()
     SSCAN   = donnie_path+"/resources/sounds/0-scan.wav"; //Sound Scan
 
 
-    robot = new PlayerClient(host,port);
-    //head = new PlayerClient("localhost",6666);
-    p2d = new Position2dProxy(robot,0);
-    p2dhead = new Position2dProxy(robot,1);
-    //actuator = new ActArrayProxy(robot,0);
-    bumper = new BumperProxy(robot,0);
-    //BfinderProxy = new BlobfinderProxy(head,0);
-    ranger = new RangerProxy(robot,0);
-    //SHProxy = new RangerProxy(head,3);
-    sound = new SoundProxy(robot, 0);
 
-    speech = new SpeechProxy(robot,0);
+	try{		
+		robot = new PlayerClient(host,port);
+		p2d = new Position2dProxy(robot,0);
+		p2dhead = new Position2dProxy(robot,1);
+		bumper = new BumperProxy(robot,0);
+		if ((ranger = new RangerProxy(robot,0)) == NULL)
+			cout << "deu pau" << endl;
+		sound = new SoundProxy(robot, 0);
+		speech = new SpeechProxy(robot,0);
+	}catch (PlayerError e){
+		#ifndef NDEBUG
+			cerr << e << endl;
+		#endif
+		cerr << "Não foi possível conectar no robô " << endl;
+		cerr << "Possivelmente o arquivo cfg está incorreto." << endl;
+		exit(1);
+	}
 
 
     setPos(p2d->GetXPos(),p2d->GetYPos(),p2d->GetYaw());
@@ -53,7 +59,9 @@ DonnieClient::DonnieClient()
     rotationError=0;
     alertBumperFlag = 0;
     alertRangerFlag = 0;
+    cout << "1111" << endl;
     robot->StartThread(); //create an robot->Read() in a separated thread
+    cout << "1112" << endl;
 }
 
 pos_t DonnieClient::getPos(){
@@ -147,6 +155,15 @@ void DonnieClient::checkBumpers(){
 
 void DonnieClient::checkRangers(){
     ///100 to convert from metters to cm
+    cout << "0" << endl;
+    cout << ranger->GetRange(0) << endl;
+    cout << ranger->GetRange(1) << endl;
+    cout << ranger->GetRange(2) << endl;
+    cout << ranger->GetRange(3) << endl;
+    cout << ranger->GetRange(4) << endl;
+    cout << ranger->GetRange(5) << endl;
+    cout << "01" << endl;
+        
     if ((ranger->GetRange(0))<SIDE_RANGER || //fr 
         (ranger->GetRange(1))<FRONT_RANGER || //front
         (ranger->GetRange(2))<SIDE_RANGER || //fl
@@ -156,13 +173,16 @@ void DonnieClient::checkRangers(){
        
         if(!alertRangerFlag){
             //cout << "RANGED!:" << endl << endl;
-            for(int i=0;i<6;i++){
+            //for(int i=0;i<6;i++){
                //cout <<"ranger"<< i << ":" << (ranger->GetRange(i)) << endl;
-            }
+            //}
             //cout << endl;
             alertRangerFlag = 1;
+            cout << "2" << endl;
             sound->play((char *)SRANGER.c_str());
+            cout << "3" << endl;
             speech->Say("Existem obstáculos no caminho");
+            cout << "4" << endl;
         }
     }
     else alertRangerFlag = 0; 
@@ -178,10 +198,15 @@ int main(int argc, char *argv[]){
     DonnieClient *donnie1 = new DonnieClient();
     while(1){
         usleep(100); //little delay
+        cout << "1113" << endl;
         donnie1->checkSteps();
+        cout << "1114" << endl;
         donnie1->checkBumpers();
+        cout << "1115" << endl;
         donnie1->checkRangers();
+        cout << "1116" << endl;
         donnie1->checkHead();
+        cout << "1117" << endl;
     }
     return 0;
 }

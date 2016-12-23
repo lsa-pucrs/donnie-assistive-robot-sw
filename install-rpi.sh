@@ -172,6 +172,8 @@ sudo apt-get install -y libsox-dev
 sudo apt-get install -y libcurl4-openssl-dev
 #Instalar o TIMIDITY para poder usar os canais virtuais de MIDI (Virtual MIDI Port) e usar notas musicais no autofalante 
 sudo apt-get install -y timidity
+# std terminal used in several linux distributions
+apt-get install xterm
 
 #Testando saida do auto falante
 #$speaker-test -t sine -f 1000 -c 2
