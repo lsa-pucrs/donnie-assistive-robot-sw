@@ -7,6 +7,8 @@
 #include <cstring>
 #include <string>
 #include <unistd.h> //getopt
+#include <sys/stat.h>
+#include <time.h>
 
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -54,6 +56,7 @@ int evalCode(int count, int key);
 
 int main(int argc, char* argv[])
 {
+
 	bool termMode = 0, scriptMode=0;
 	string filename ;
 	int c=0, argcnt=0;
@@ -156,12 +159,30 @@ int main(int argc, char* argv[])
   // terminal mode
   if(termMode)
   {
+    FILE* log;
     //rl_attempted_completion_function = fileman_completion;
     rl_bind_key (27, evalCode); /* "27" ascii code for ESC */
     //rl_unbind_key('\t');
     //rl_bind_key('a',rl_complete);
 
-    cout << "func " << rl_function_of_keyseq ("\t", NULL, NULL) << endl;
+    mkdir("Log", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
+    time_t rawtime;
+    struct tm * timeinfo;
+    time (&rawtime);
+    timeinfo = localtime (&rawtime);
+
+    char fileName[40] = "";
+    sprintf(fileName, "Log/Log %s", asctime(timeinfo));
+    log = fopen(fileName, "w");
+
+    if (log == NULL)
+    {
+      cout << "Não foi possivel criar um log" << endl;
+    }
+    else
+      Client.logFile(log);
+
     while(!done)
     {
         //temp = (char *)NULL;
