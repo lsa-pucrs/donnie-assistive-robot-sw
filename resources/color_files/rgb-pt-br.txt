@@ -1,18 +1,71 @@
-00RRGGBB	Cor	#organizado em ordem crescente. Para adicionar novas cores, ordem deve ser respeitada
-00000000	preto
-0000007F	azul escuro
-000000FF	azul
-00007F00	verde escuro
-00007FFF	azul claro
+00RRGGBB	cor	#procurar cores no arquivo do Stage "rgb.txt"
+00006400	verde  
+00556B2F	verde
+008F008F	verde
+002E8B57	verde
+003CB371	verde
+0020B2AA	verde
+00980098	verde
+0000FF7F	verde
+007CFC00	verde
+0000FC00	verde
 0000FF00	verde
-007F0000	vermelho escuro
-007F007F	roxo
-007F7F00	amarelo escuro
-007F7F7F	cinza
-00FF0000	vermelho
-00FF007F	rosa
-00FF7F00	laranja
-00FF7F7F	laranja
+0000ED00	verde
+0000CD00	verde
+00008B00	verde
+0000EE00	verde
+00191970	azul
+00001980	azul
+006495EE	azul
+00483D8B	azul
+006A5ACD	azul
+006A5ACD	azul
+008470FF	azul
+000000FF	azul
+004169FF	azul
+000000FF	azul
+000000EE	azul
+000000CD	azul
+0000008B	azul
+00696969	cinza
+00708090	cinza
+00030303	preto
+00050505	preto
+00080808	preto
+000A0A0A	preto
+000D0D0D	preto
+00FFFFE0	amarelo
 00FFFF00	amarelo
-00FFFFFF	branco
+00EEDD82	amarelo
+00EEEE00	amarelo
+00CDCD00	amarelo
+008B8B00	amarelo
+00FF69B4	rosa
+00FF1493	rosa
+00FFC0CB	rosa
+00FFB6C1	rosa
+00EE3A8C	rosa
+00CD3278	rosa
+00FF82AB	rosa
+00FF00FF	rosa
+00FFA500	laranja
+00FFA500	laranja
+00FFA500	laranja
+00EE9A00	laranja
+00FF4500	laranja
+00CD9B9B	marrom
+008B6969	marrom
+00CD5555	marrom
+008B3A3A	marrom
+008B0000	marrom
+008B2323	marrom
+00FF6A6A	vermelho 
+00EE6363	vermelho
+00FF0000	vermelho
+00EE0000	vermelho
+00CD0000	vermelho
+008B0000	vermelho
+00EE0000	vermelho
+00CD0000	vermelho
+008B0000	vermelho
 FFFFFFFF	desconhecido

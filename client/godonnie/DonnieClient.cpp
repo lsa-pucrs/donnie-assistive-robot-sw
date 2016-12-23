@@ -134,8 +134,8 @@ string DonnieClient::value_to_color(int color_value)
 
 	if(file.is_open()) //if there is no problem opening the file
 	{
-		unsigned int smaller= 0,smaller_buff=0xFFFFFFFF;
-		string color_buff;
+		//unsigned int smaller= 0,smaller_buff=0xFFFFFFFF;
+		//string color_buff;
 
 		getline (file,color); // get first line
 		while(getline(file,color,'\t')) //get the number of the color
@@ -145,14 +145,18 @@ string DonnieClient::value_to_color(int color_value)
 			str_buff << std::hex << color; //get hex value and convert to string.. 
 			str_buff >> file_value;		   //then put on an unsigned int 
 			getline(file,color, '\n');
-
-			smaller =  color_value - file_value;
-			if(smaller_buff < smaller) 
+			
+			if(file_value == color_value || file_value == 0xFFFFFFFF) 
 			{
-				return color_buff;
+				return color;
 			}
-			smaller_buff = smaller;
-			color_buff = color;
+			//smaller =  color_value - file_value;
+			//if(smaller_buff < smaller) 
+			//{
+			//	return color_buff;
+			//}
+			//smaller_buff = smaller;
+			//color_buff = color;
 		}
 		file.close();
 	}
@@ -679,6 +683,8 @@ int DonnieClient::Color(int color_code){
 		// get the color of the blobs
         for(int i = 0; i < bfinderProxy->GetCount(); i++)
         {
+        	cout<< value_to_color(bfinderProxy->GetBlob(i).color)<<endl;
+        	cout<<std::hex <<bfinderProxy->GetBlob(i).color<<endl;
 			if (color_str == value_to_color(bfinderProxy->GetBlob(i).color))
 				blobs_found++;
 		}
