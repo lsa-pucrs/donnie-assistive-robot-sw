@@ -45,8 +45,8 @@ define donnie_bumper bumper
 define donnie_eyes blobfinder
 (
 
-	colors_count 7
-	colors ["orange" "DarkBlue" "blue" "brown" "green" "yellow" "red"]
+	colors_count 14
+	colors ["blue2" "DarkBlue" "blue" "green1" "green4" "red" "OrangeRed" "green3" "green2" "yellow" "orange" "pink" "grey" "red3"]
 	image [160 120] # resolution
 	range 5.00 		 # meters
 	fov 60 # fov (in unit_angle (degrees by def))

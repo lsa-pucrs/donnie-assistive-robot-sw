@@ -1,18 +1,71 @@
-00RRGGBB	Color	#organized in ascending order of values. To add new colors, the order must be respected.
-00000000	black
-0000007F	dark blue
-000000FF	blue
-00007F00	dark green
-00007FFF	light blue
+00RRGGBB	color #check colors at stage "rgb.txt" file
+00006400	green  
+00556B2F	green
+008F008F	green
+002E8B57	green
+003CB371	green
+0020B2AA	green
+00980098	green
+0000FF7F	green
+007CFC00	green
+0000FC00	green
 0000FF00	green
-007F0000	dark red
-007F007F	purple
-007F7F00	dark yellow
-007F7F7F	grey
-00FF0000	red
-00FF007F	pink
-00FF7F00	orange
-00FF7F7F	orange
+0000ED00	green
+0000CD00	green
+00008B00	green
+0000EE00	green
+00191970	blue
+00001980	blue
+006495EE	blue
+00483D8B	blue
+006A5ACD	blue
+006A5ACD	blue
+008470FF	blue
+000000FF	blue
+004169FF	blue
+000000FF	blue
+000000EE	blue
+000000CD	blue
+0000008B	blue
+00696969	grey
+00708090	grey
+00030303	black
+00050505	black
+00080808	black
+000A0A0A	black
+000D0D0D	black
+00FFFFE0	yellow
 00FFFF00	yellow
-00FFFFFF	white
-FFFFFFFF	unknown
+00EEDD82	yellow
+00EEEE00	yellow
+00CDCD00	yellow
+008B8B00	yellow
+00FF69B4	pink
+00FF1493	pink
+00FFC0CB	pink
+00FFB6C1	pink
+00EE3A8C	pink
+00CD3278	pink
+00FF82AB	pink
+00FF00FF	pink
+00FFA500	orange
+00FFA500	orange
+00FFA500	orange
+00EE9A00	orange
+00FF4500	orange
+00CD9B9B	brown
+008B6969	brown
+00CD5555	brown
+008B3A3A	brown
+008B0000	brown
+008B2323	brown
+00FF6A6A	red 
+00EE6363	red
+00FF0000	red
+00EE0000	red
+00CD0000	red
+008B0000	red
+00EE0000	red
+00CD0000	red
+008B0000	red
+FFFFFFFF	unkown
