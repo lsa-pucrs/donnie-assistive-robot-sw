@@ -54,6 +54,7 @@ ExprTreeEvaluator::ExprTreeEvaluator()
 
   	for_itFlag = 0;
     done = 0;
+    log = NULL;
 }
 
 ExprTreeEvaluator::~ExprTreeEvaluator()
@@ -65,7 +66,12 @@ ExprTreeEvaluator::~ExprTreeEvaluator()
 	History = NULL;
 }
 
-int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
+void ExprTreeEvaluator::logFile(FILE *file)
+{
+  log = file;
+}
+
+int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input, char *textCode)
 {
   	if (input == NULL)
   	{
@@ -144,6 +150,15 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
  
     }else{
 		//if all tests passed, try to run the GoDonnie code
+
+      if(log != NULL)
+      {
+        if(fprintf(log, "%s", textCode) == EOF)
+          cout << "Erro ao salvar comando no log" << endl;
+        else
+          fflush(log);
+      }
+
 		try{
 			this->run(r.tree);
 		}
@@ -163,6 +178,11 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
   	return 1;
 }
 
+int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
+{
+  return this->parser(input,NULL);
+}
+
 int ExprTreeEvaluator::terminalMode(char* textIn)
 {
   uint8_t* bufferData = (uint8_t*)textIn;
@@ -173,7 +193,7 @@ int ExprTreeEvaluator::terminalMode(char* textIn)
         
   pANTLR3_INPUT_STREAM input = antlr3NewAsciiStringInPlaceStream( bufferData, bufferSize, bufferName);
 
-  this->parser(input);
+  this->parser(input,textIn);
 
   return done;
 
@@ -181,6 +201,8 @@ int ExprTreeEvaluator::terminalMode(char* textIn)
 
 int ExprTreeEvaluator::scriptMode(char* fileIn)
 {
+  log = NULL;
+
   pANTLR3_INPUT_STREAM input = antlr3AsciiFileStreamNew((pANTLR3_UINT8)fileIn);       //  Utilizar para modo script
 
   if ( input == NULL )
@@ -704,6 +726,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             #ifndef NDEBUG
             cout << "EXIT" << endl;
             #endif
+            fclose(log);
             done = 1;
             break;
           }

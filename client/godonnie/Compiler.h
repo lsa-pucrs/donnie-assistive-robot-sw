@@ -46,12 +46,14 @@ typedef struct {
   char *doc;      /* Documentation for this function.  */
 } COMMAND;
 
+
 /// Main parser for GoDonnie language
 class ExprTreeEvaluator 
 {
-    map<string,procDec> proc;       /// Dicionário de procedimentos
     bool for_itFlag;
     bool done;
+
+    FILE *log;
 
     DonnieClient *Donnie; /// pointer to Donnie middleware class
     Historic *History;    /// pointer to History class
@@ -60,6 +62,7 @@ class ExprTreeEvaluator
 	 * build the parse tree and run if no parse errors were found
 	 */ 
     int parser(pANTLR3_INPUT_STREAM input);
+    int parser(pANTLR3_INPUT_STREAM input, char *textCode);
 
     /// main method of GoDonnie Interpreter where each GoDonnie command is executed
     int run(pANTLR3_BASE_TREE);
@@ -67,6 +70,7 @@ class ExprTreeEvaluator
 public:
     ExprTreeEvaluator();
     ~ExprTreeEvaluator();
+    void logFile(FILE *file);
     int terminalMode(char* textIn);
     int scriptMode(char* fileIn);
     void speak(string text);

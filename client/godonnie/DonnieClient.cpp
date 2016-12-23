@@ -381,7 +381,12 @@ int DonnieClient::moveForward(float arg)
 	if (bumped() || stop)
 		sayStr << "Andei " << int(passos) << " passos para frente. Houve colisão.";
 	else
-		sayStr << "Andei " << int(passos) << " passos para frente.";
+	{
+		sayStr << "Andei " << int(passos)-1 << " passos para frente.";
+		passos--;
+	}
+	if (obstacle)
+		sayStr << "e encontrei obstáculo.";
 	speak(sayStr.str());
 
 	#ifndef NDEBUG
@@ -488,9 +493,14 @@ int DonnieClient::moveBackward(float arg)
 	// assim, está errado assumir que a distancia pedida será a distancia percorrida
 	std::ostringstream sayStr;
 	if (bumped() || stop)
-		sayStr << "Andei " << int(passos) << " passos para traz. Houve colisão.";
+		sayStr << "Andei " << int(passos) << " passos para trás. Houve colisão.";
 	else
-		sayStr << "Andei " << int(passos) << " passos para traz.";
+	{
+		sayStr << "Andei " << int(passos)-1 << " passos para trás.";
+		passos--;
+	}
+	if (obstacle)
+		sayStr << "e encontrei obstáculo.";
 	speak(sayStr.str());
 		
 	#ifndef NDEBUG
@@ -721,7 +731,7 @@ int DonnieClient::Color(int color_code){
 	}
 	speak(scanText.str());
 	
-	return blobs_found;
+	return total_blobs_found;
 }
 
 int DonnieClient::bumped(){
