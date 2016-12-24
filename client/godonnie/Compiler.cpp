@@ -272,12 +272,12 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             cout << "PF: " << run(getChild(tree,0)) << endl;
             #endif
             // run the command
-            float distance = (float)run(getChild(tree,0));
+            int distance = (int)run(getChild(tree,0));
             int steps_taken = Donnie->moveForward(distance);
             // if less steps were taken, then report a bump
             std::ostringstream distanceStr;
             distanceStr << "andou " << steps_taken;
-            if (((float)steps_taken < (distance-1.0)) || Donnie->bumped()){
+            if ((steps_taken < distance) || Donnie->bumped()){
               distanceStr << ", bateu";
             }else{
 		      distanceStr << ", não bateu";
@@ -294,12 +294,12 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             cout << "PT: " << run(getChild(tree,0)) << endl;
             #endif
             // run the command
-            float distance = (float)run(getChild(tree,0));
+            int distance = (int)run(getChild(tree,0));
             int steps_taken = Donnie->moveBackward(distance);
             // if less steps were taken, then report a bump
             std::ostringstream distanceStr;
             distanceStr << "andou " << steps_taken;
-            if (((float)steps_taken < (distance-1.0)) || Donnie->bumped()){
+            if ((steps_taken < distance) || Donnie->bumped()){
               distanceStr << ", bateu";
             }else{
 		      distanceStr << ", não bateu";

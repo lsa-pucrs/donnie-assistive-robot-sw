@@ -285,83 +285,61 @@ float DonnieClient::GetPos(Position2dProxy *p2d, int arg)
 }
 
 
-int DonnieClient::moveForward(float arg)
+int DonnieClient::moveForward(int arg)
 {
-	vector<float> path;
-
 	robot->ReadIfWaiting();
 	double yaw = p2dProxy->GetYaw();    //Angulo do robo
 	double posxi = p2dProxy->GetXPos();   //Posicao inicial X do robo
 	double posyi = p2dProxy->GetYPos();   //Posicao inicial Y do robo
 
-
-	for(int i = 1; i <= (int)arg; i++)
-	{
-
-	  path.push_back(i*STEP_LENGHT);
-	  #ifndef NDEBUG // only print when it was compiled in debug mode. 'cmake -DCMAKE_BUILD_TYPE=Debug ..'
-	  cout << path[i-1] << endl;
-	  #endif
-	}
-
-	float fltPart = arg - (int)arg;
-
-	if(fltPart > 0)
-	{
-	  path.push_back(fltPart);
-	}
-
-	float Npassos = arg;
+	int Npassos = arg;
 	int passos = 0;
 
 	bool obstacle = false;
 	bool stop = true;
-	float erro;
-	float andou;
 
+	// movement stoped due to nearby obstacle
 	robot->ReadIfWaiting();
 	if(sonarProxy->GetRange(1) > 0.15)
 	{
 	  stop = false;
-	  //p2d_headProxy->SetSpeed(0,1); gg
 	  p2dProxy->SetSpeed(0.05,0);
 	}
 
 	robot->ReadIfWaiting();
 	while(!stop)
 	{
-
-		//cout << passos << " > " << Npassos << endl;
-	  if(passos > Npassos )
+      // movement finished as expected
+	  if(passos >= Npassos )
 	  {
-	  	//p2d_headProxy->SetSpeed(0,0); gg
 	    p2dProxy->SetSpeed(0,0);
 	    break;
 	  }
-
+	
+      // movement stoped due to collision
 	  robot->ReadIfWaiting();
 	  if(this->FrontBumper() != 0 or sonarProxy->GetRange(1) < FRONT_RANGER or sonarProxy->GetRange(2) < SIDE_RANGER or sonarProxy->GetRange(0) < SIDE_RANGER)
 	  {
-	  	//p2d_headProxy->SetSpeed(0,0); gg
-	    p2dProxy->SetSpeed(0,0);
 	    stop = true;
-	    andou = hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi);
-	    erro = andou - (int)andou;
+	    p2dProxy->SetSpeed(0,0);
 	    break;
 	  }
 	    
+      // movement stoped due to nearby obstacle
 	  robot->ReadIfWaiting();
 	  if(sonarProxy->GetRange(1) < 0.20 and !obstacle)
 	  {
-	    Npassos = passos + 1;
 	    obstacle = true;
+	    p2dProxy->SetSpeed(0,0);
+		break;
 	  }
 
 	  robot->ReadIfWaiting();
-	  if(hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) > path[passos])
+	  if(hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) > (STEP_LENGHT*(passos+1)))
 	  {
 	  		passos++;
 	  }
+
 	}
 /* se bateu, para mas nao volta
 	if(stop = true and erro < 0.8 and erro > 0.2)
@@ -372,105 +350,73 @@ int DonnieClient::moveForward(float arg)
 		this->moveBackward(erro);
 	}
 */
-	path.clear();
 
 	// say command
-	// TODO: o comando pode ser interrompido por uma colizao.
-	// assim, está errado assumir que a distancia pedida será a distancia percorrida
 	std::ostringstream sayStr;
+		sayStr << "Andei " << int(passos) << " passos para frente.";
 	if (bumped() || stop)
-		sayStr << "Andei " << int(passos) << " passos para frente. Houve colisão.";
-	else
-	{
-		sayStr << "Andei " << int(passos)-1 << " passos para frente.";
-		passos--;
-	}
+		sayStr << "Houve colisão.";
 	if (obstacle)
-		sayStr << "e encontrei obstáculo.";
+		sayStr << " Encontrei obstáculo.";
 	speak(sayStr.str());
 
 	#ifndef NDEBUG
-	cout << "parou: " << stop << ", erro: " << erro << ", obstaculo: " << obstacle << endl;
+	cout << "parou: " << stop << ", obstaculo: " << obstacle << endl;
 	#endif
 	
 	// number of steps actually taken
 	return passos;
 }
 
-int DonnieClient::moveBackward(float arg)
+int DonnieClient::moveBackward(int arg)
 {
-	vector<float> path;
-
 	robot->ReadIfWaiting();
 	double yaw = p2dProxy->GetYaw();    //Angulo do robo
 	double posxi = p2dProxy->GetXPos();   //Posicao inicial X do robo
 	double posyi = p2dProxy->GetYPos();   //Posicao inicial Y do robo
 
-	PathNodes Point;
-
-	for(int i = 1; i <= (int)arg; i++)
-	{
-
-	  path.push_back(i*STEP_LENGHT);
-	  #ifndef NDEBUG
-	  cout << path[i-1] << endl;
-	  #endif
-	}
-
-	float fltPart = arg - (int)arg;
-
-	if(fltPart > 0)
-	{
-	  path.push_back(fltPart);
-	  #ifndef NDEBUG
-	  cout << path[0];
-	  #endif
-	}
-
-	float Npassos = arg;
+	int Npassos = arg;
 	int passos = 0;
 
 	bool obstacle = false;
 	bool stop = true;
-	float erro;
-	float andou;
 
+	// movement stoped due to nearby obstacle
 	if(sonarProxy->GetRange(4) > 0.2)
 	{
 	  stop = false;
-	  //p2d_headProxy->SetSpeed(-1,0);
 	  p2dProxy->SetSpeed(-0.05,0);
 	}
 
 	while(!stop)
 	{
-	  if(passos > Npassos )
+	  // movement finished as expected
+	  if(passos >= Npassos )
 	  {
-	  	//p2d_headProxy->SetSpeed(0,0);
 	    p2dProxy->SetSpeed(0,0);
 	    break;
 	  }
 
+      // movement stoped due to collision
 	  robot->ReadIfWaiting();
 	  if(this->BackBumper() != 0 or sonarProxy->GetRange(4) < BACK_RANGER or sonarProxy->GetRange(3) < SIDE_RANGER or sonarProxy->GetRange(5) < SIDE_RANGER)
 	  {
-	  	//p2d_headProxy->SetSpeed(0,0);
-	    p2dProxy->SetSpeed(0,0);
 	    stop = true;
-	    andou = hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi);
-	    erro = andou - (int)andou;
+	    p2dProxy->SetSpeed(0,0);
 	    break;
 	  }
 	    
+      // movement stoped due to nearby obstacle
 	  robot->ReadIfWaiting();
 	  if(sonarProxy->GetRange(4) < 0.2 and !obstacle) // For donnie, do not work in stage.
 	  {
-	    Npassos = passos;
 	    obstacle = true;
+	    p2dProxy->SetSpeed(0,0);
+	    break;
 	  }
 
 	  robot->ReadIfWaiting();
-	  if(hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) > path[passos])
+	  if(hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) > (STEP_LENGHT*(passos+1)))
 	  {
 	  		passos++;
 	  }
@@ -486,25 +432,17 @@ int DonnieClient::moveBackward(float arg)
 		this->moveForward(erro);
 	}
 */
-	path.clear();
-	
 	// say command
-	// TODO: o comando pode ser interrompido por uma colizao.
-	// assim, está errado assumir que a distancia pedida será a distancia percorrida
 	std::ostringstream sayStr;
+	sayStr << "Andei " << passos << " passos para trás.";
 	if (bumped() || stop)
-		sayStr << "Andei " << int(passos) << " passos para trás. Houve colisão.";
-	else
-	{
-		sayStr << "Andei " << int(passos)-1 << " passos para trás.";
-		passos--;
-	}
+		sayStr << "Houve colisão.";
 	if (obstacle)
-		sayStr << "e encontrei obstáculo.";
+		sayStr << ". Encontrei obstáculo.";
 	speak(sayStr.str());
 		
 	#ifndef NDEBUG
-	cout << "parou: " << stop << ", erro: " << erro << ", obstaculo: " << obstacle << endl;
+	cout << "parou: " << stop << ", obstaculo: " << obstacle << endl;
 	#endif
 
 	// number of steps actually taken

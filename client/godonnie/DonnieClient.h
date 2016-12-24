@@ -91,8 +91,8 @@ public:
 	static void ResetInstance();
 
 	/// 
-  	int moveForward(float arg);
-  	int moveBackward(float arg);
+  	int moveForward(int arg);
+  	int moveBackward(int arg);
 
 	//! run Goto and run TTS
   	int GotoTTS(float pa);
