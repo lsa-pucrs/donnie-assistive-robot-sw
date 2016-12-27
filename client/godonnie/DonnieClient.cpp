@@ -284,85 +284,88 @@ float DonnieClient::GetPos(Position2dProxy *p2d, int arg)
 
 }
 
+int DonnieClient::meterToSteps(double m){
+	int steps;
+	steps=int(m/STEP_LENGHT);
+	return steps;
+}
 
 int DonnieClient::moveForward(int arg)
 {
 	robot->ReadIfWaiting();
-	double yaw = p2dProxy->GetYaw();    //Angulo do robo
+	//double yawi = p2dProxy->GetYaw();    //Angulo do robo
 	double posxi = p2dProxy->GetXPos();   //Posicao inicial X do robo
 	double posyi = p2dProxy->GetYPos();   //Posicao inicial Y do robo
 
-	int Npassos = arg;
 	int passos = 0;
+	int Npassos = arg;
 
 	bool obstacle = false;
-	bool stop = true;
+	bool collision = false;
 
-	// movement stoped due to nearby obstacle
-	robot->ReadIfWaiting();
-	if(sonarProxy->GetRange(1) > 0.15)
-	{
-	  stop = false;
-	  p2dProxy->SetSpeed(0.05,0);
+	double targetHypot = STEP_LENGHT*Npassos;
+
+	//validate step number
+	if(Npassos != 0){
+		//initial collision prevent - check if not are nearby obstacle to start movement
+		robot->ReadIfWaiting();
+		if(sonarProxy->GetRange(1) > 2*FRONT_RANGER)//Range South
+			p2dProxy->SetSpeed(0.05,0);
+		else obstacle = true;
+
+
+		while(hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) <= targetHypot && collision==false && obstacle==false)
+		{
+			#ifndef NDEBUG
+			cout << "targetHypot:" << targetHypot << endl;
+			cout << "Hypot:" << hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) << endl;
+			cout << "===============PF-PRECISION-TEST=================" << endl;
+			#endif
+
+			//collision detect
+			if(this->FrontBumper() != 0){
+				p2dProxy->SetSpeed(0,0);
+				collision = true;
+			}
+
+			//collision prevent
+			if(sonarProxy->GetRange(2) < SIDE_RANGER || sonarProxy->GetRange(1) < FRONT_RANGER || sonarProxy->GetRange(0) < SIDE_RANGER){
+				p2dProxy->SetSpeed(0,0);
+				obstacle = true;
+			}
+
+			//steps incrementation
+			if(hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) >= (STEP_LENGHT*(passos+1))){
+				passos++;
+			}
+			robot->ReadIfWaiting();
+		}
 	}
+	p2dProxy->SetSpeed(0,0);
 
-	robot->ReadIfWaiting();
-	while(!stop)
-	{
-      // movement finished as expected
-	  if(passos >= Npassos )
-	  {
-	    p2dProxy->SetSpeed(0,0);
-	    break;
-	  }
-	
-      // movement stoped due to collision
-	  robot->ReadIfWaiting();
-	  if(this->FrontBumper() != 0 or sonarProxy->GetRange(1) < FRONT_RANGER or sonarProxy->GetRange(2) < SIDE_RANGER or sonarProxy->GetRange(0) < SIDE_RANGER)
-	  {
-	    stop = true;
-	    p2dProxy->SetSpeed(0,0);
-	    break;
-	  }
-	    
-      // movement stoped due to nearby obstacle
-	  robot->ReadIfWaiting();
-	  if(sonarProxy->GetRange(1) < 0.20 and !obstacle)
-	  {
-	    obstacle = true;
-	    p2dProxy->SetSpeed(0,0);
-		break;
-	  }
-
-	  robot->ReadIfWaiting();
-	  if(hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) > (STEP_LENGHT*(passos+1)))
-	  {
-	  		passos++;
-	  }
-
-	}
-/* se bateu, para mas nao volta
-	if(stop = true and erro < 0.8 and erro > 0.2)
-	{
-		#ifndef NDEBUG
-		cout << "!"  << erro << endl;
-		#endif
-		this->moveBackward(erro);
-	}
-*/
+	/* se bateu, para mas nao volta
+		if(stop = true and erro < 0.8 and erro > 0.2)
+		{
+			#ifndef NDEBUG
+			cout << "!"  << erro << endl;
+			#endif
+			this->moveBackward(erro);
+		}
+	*/
 
 	// say command
 	std::ostringstream sayStr;
-		sayStr << "Andei " << int(passos) << " passos para frente.";
-	if (bumped() || stop)
-		sayStr << "Houve colisão.";
+		sayStr << "Andei " << ((collision||obstacle)?"somente ":"")  << int(passos) << " passos para frente.";
+	if (collision)
+		sayStr << "Houve colisão;"; //colisao frontal
 	if (obstacle)
-		sayStr << " Encontrei obstáculo.";
+		sayStr << "Encontrei obstáculo.";
 	speak(sayStr.str());
+	cout << sayStr.str() << endl;
 
-	#ifndef NDEBUG
-	cout << "parou: " << stop << ", obstaculo: " << obstacle << endl;
-	#endif
+	/*#ifndef NDEBUG
+	cout << "obstaculo: " << obstacle << endl;
+	#endif*/
 	
 	// number of steps actually taken
 	return passos;
