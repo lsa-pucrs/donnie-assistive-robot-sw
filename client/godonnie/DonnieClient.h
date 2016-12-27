@@ -90,6 +90,8 @@ public:
 	// delete singleton
 	static void ResetInstance();
 
+	int meterToSteps(double m);
+
 	/// 
   	int moveForward(int arg);
   	int moveBackward(int arg);
