@@ -111,9 +111,6 @@ public:
 	*/
 	int GetPos(string p2d,int arg);
 	
-
-	//float GetBumper(int arg);
-	
 	//! scan 180 degree for obstacle using the sonar and blobfinder.
 	/*! it does sonar readings every 30 degree.
 	    180/30 = 7 sonar readings. 0o, 30o, 60o, 90o, 120o, 150o, 180o.

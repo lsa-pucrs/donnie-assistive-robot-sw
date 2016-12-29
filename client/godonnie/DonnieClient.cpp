@@ -523,17 +523,12 @@ int DonnieClient::headGoto(float pa){
 void DonnieClient::Scan(void){
 	float head_yawi = -90; //in degree. +90 due the servo default pos is 90 degre
 	//GOTO -90 to 90 in 30 by 30 steps
-	// texto de saida de exemplo: 
-		//verde, 40o a
-		//esquerda, 2 passos,
-		//vermelho, 90o a direita, 4 passos	
 	float sonar_readings[7];
 	int blobs_found[7];
 	int yaw_cnt=0;
 			
 	std::ostringstream scanText;
 	string color_str;
-	//playerc_blobfinder_blob_t blob;
 	speak("Espiando");
 	do{
 		// move head
@@ -600,11 +595,6 @@ void DonnieClient::Scan(void){
 int DonnieClient::Color(int color_code){
 	float head_yawi = -90; //in degree. +90 due the servo default pos is 90 degre
 	//GOTO -90 to 90 in 30 by 30 steps
-	// texto de saida de exemplo: 
-		//FALAR COR azul
-		//será falado 2
-		//FALAR COR verde
-		//será falado 1	
 	int blobs_found = 0;
 	int total_blobs_found = 0;
 

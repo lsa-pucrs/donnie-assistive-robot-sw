@@ -54,6 +54,7 @@ class ExprTreeEvaluator
     /// this flag is true when command Exit is executed
     bool done;
 
+	/// this file pointer is used to log into file the commands executed in terminal mode
     FILE *log;
 
     DonnieClient *Donnie; /// pointer to Donnie middleware class
@@ -65,9 +66,14 @@ class ExprTreeEvaluator
 public:
     ExprTreeEvaluator();
     ~ExprTreeEvaluator();
+    
+    /// set the log file pointer, used only in terminal mode
     void logFile(FILE *file);
-    //int parse(char* textIn, bool enable_log);
+    
+    /// uses the TTS to say a sentence
     void speak(string text);
+    
+    /// mute the TTS and just print the sentence on the stdout
     void muteTTS(bool m);
 
 	/// parse input stream in GoDonnie syntax
@@ -76,8 +82,6 @@ public:
 	 * In Terminal mode, this also saves input stream into the log file
 	 */ 
     int parseGD(char* textIn, bool enable_log);
-    //int parser(pANTLR3_INPUT_STREAM input);
-
 
 };
 
@@ -87,6 +91,5 @@ bool compare (int a, int b, string comp);
 void split(const std::string &s, char delim, std::vector<std::string> &elems);
 /// remove all the special characters (accentuation such as çãáé ...) to avoid antlr error
 string cleanAccents(string code);
-
 
 #endif

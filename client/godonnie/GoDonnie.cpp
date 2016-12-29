@@ -151,11 +151,7 @@ int main(int argc, char* argv[])
   
   initialize_readline ();
   static char *temp = (char *)NULL; 
-  //char *temp, *prompt; 
   string preCode;
-
-  //temp = (char *)NULL;
-  //prompt = (char*)"GoDonnie$ ";
 
   // terminal mode
   if(termMode)
@@ -186,10 +182,7 @@ int main(int argc, char* argv[])
 
     while(!done)
     {
-        //temp = (char *)NULL;
-        //memset(&temp,0,sizeof(temp));
-	    /* If the buffer has already been allocated, return the memory
-		 to the free pool. */
+	    // If the buffer has already been allocated, return the memory to the free pool.
 	    if (temp){
 		  free (temp);
 		  temp = (char *)NULL;
@@ -200,16 +193,13 @@ int main(int argc, char* argv[])
         exit (1);
 
 		// If the line has any text in it, save it on the history.
-        //if (*temp and strcmp(temp,"") != 0)
         if (temp && *temp)
         {
-          //fprintf (stderr, "%s\r\n", temp);
           add_history (temp);
           code += "\n" + string(temp);
         }
         else
           rl_on_new_line ();
-        //free(temp);
       
     };
     // save remaining buffered data on disk and close the log file
@@ -258,11 +248,9 @@ Argumentos:\
 //! this code is executed in terminal mode every time ESC key is pressed
 int evalCode(int count, int key) 
 {
-  //if (code != "")
   if (!code.empty())
   {
     cout << code << endl;
-    //done = Client.parser(&code[0],true);
     done = Client.parseGD((char *)code.c_str(),true);
     code.clear();
     code = "";
