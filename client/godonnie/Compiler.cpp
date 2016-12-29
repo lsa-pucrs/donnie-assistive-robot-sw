@@ -119,11 +119,8 @@ int ExprTreeEvaluator::parseGD(char* textIn, bool enable_log)
 	//try to parse the GoDonnie code
 	GoDonnieParser_start_rule_return r;
 	try{
-		// TODO: esta parte gera uma excecao qnd tem um comando invalido 
-		// que nao eh capturada pelo catch abaixo. teria q capturar para 
-		// evitar de executar o programa
+		// parsing
 		r = parser->start_rule(parser);
-		//pANTLR3_BASE_TREE tree = r.tree;
 		if (r.tree == NULL)
 		{
 		  cout << "Parse error" << endl;
@@ -148,7 +145,6 @@ int ExprTreeEvaluator::parseGD(char* textIn, bool enable_log)
     int errors = parser->pParser->rec->getNumberOfSyntaxErrors(parser->pParser->rec) + lex->pLexer->rec->getNumberOfSyntaxErrors(lex->pLexer->rec);
     if (errors == 1)
     {
-		//cout << parser->pParser->rec->getNumberOfSyntaxErrors(parser->pParser->rec) + lex->pLexer->rec->getNumberOfSyntaxErrors(lex->pLexer->rec) << " errors. tree walking aborted." << endl;
 		Donnie->speak(to_string (errors) + " erro foi encontrado.");
 		// será q isso funciona p pegar a linha ? http://puredanger.github.io/tech.puredanger.com/2007/02/01/recovering-line-and-column-numbers-in-your-antlr-ast/
 		// este exemplo tb extende a classe token, para incluir informacoes uteis p msg de erro
@@ -158,7 +154,6 @@ int ExprTreeEvaluator::parseGD(char* textIn, bool enable_log)
 		//cout << "Error in line " << parser->pParser->rec->state->tokenStartLine << " near " << parser->pParser->rec->state->text << endl;
     } else if (errors > 1)
     {
-		//cout << parser->pParser->rec->getNumberOfSyntaxErrors(parser->pParser->rec) + lex->pLexer->rec->getNumberOfSyntaxErrors(lex->pLexer->rec) << " errors. tree walking aborted." << endl;
 		Donnie->speak(to_string (errors) + " erros foram encontrados.");
  
     }else{
@@ -180,7 +175,6 @@ int ExprTreeEvaluator::parseGD(char* textIn, bool enable_log)
 		}
 		catch(exception& e)
 		{
-			//cout << e.what();
 			Donnie->speak(e.what());
 		}
 	}
@@ -192,88 +186,6 @@ int ExprTreeEvaluator::parseGD(char* textIn, bool enable_log)
   	
   	return done;
 }
-
-/*
-int ExprTreeEvaluator::parse(char* textIn, bool enable_log)
-{
-  // remove accented characters
-  string code = cleanAccents(string(textIn));
-  uint8_t* bufferData = (uint8_t*)code.c_str();
-    
-  uint32_t bufferSize = strlen(textIn);
-    
-  pANTLR3_UINT8 bufferName = (pANTLR3_UINT8)"INPUT text";
-        
-  pANTLR3_INPUT_STREAM input = antlr3NewAsciiStringInPlaceStream( bufferData, bufferSize, bufferName);
-
-
-
-  // https://github.com/antlr/antlr3/blob/master/runtime/C/src/antlr3filestream.c
-  // https://github.com/esteve/libantlr3c/blob/master/src/antlr3filestream.c
-  // ao olhar o arquivo /usr/include/antlr3input.h, tudo indica que o pacote libantlr3c-dev
-  // contem uma varsao antiga da lib, sem alguns recursos de encoding como:
-  //   input->encoding
-  //   antlr3UTF8SetupStream
-  // arquivo /usr/include/antlr3convertutf.h possuem algumas fucoes q podem ser uteis
-  // pANTLR3_INPUT_STREAM input = antlr3StringStreamNew(bufferData, ANTLR3_ENC_UTF8, bufferSize, bufferName);
-
-
-  // TODO: pode ser necessario p setar o nro de linhas p tratamento de excecao
-  // Pointer to function to set the current line number in the input stream
-  //void		(*setLine)		  (struct ANTLR3_INPUT_STREAM_struct * input, ANTLR3_UINT32 line);
-
-// /home/lsa/donnie/mint/donnie-assistive-robot-sw/client/godonnie/Compiler.cpp: In member function ‘int ExprTreeEvaluator::terminalMode(char*)’:
-// /home/lsa/donnie/mint/donnie-assistive-robot-sw/client/godonnie/Compiler.cpp:207:67: error: ‘struct ANTLR3_INPUT_STREAM_struct’ has no member named ‘encoding’
-//   cout << "BSize: " << input->charByteSize << " ENC: " <<  input->encoding << endl;
-                                                                   ^
-// /home/lsa/donnie/mint/donnie-assistive-robot-sw/client/godonnie/Compiler.cpp:210:30: error: ‘antlr3UTF8SetupStream’ was not declared in this scope
-//   antlr3UTF8SetupStream(input);
-  //cout << "BSize: " << input->charByteSize << " ENC: " <<  input->encoding << endl;
-  
-  
-  //antlr3UTF8SetupStream(input);
-  
-  //https://github.com/antlr/antlr3/blob/master/runtime/C/src/antlr3convertutf.c
-  //static ANTLR3_BOOLEAN isLegalUTF8(const UTF8 *source, int length) {
-
-  if (this->parser(input) == 1){
-	// if text is parsed without error and logging is enabled, then save log
-	if (enable_log){
-	  if(log != NULL)
-	  {
-		if(fprintf(log, "%s", textIn) == EOF)
-		  cout << "Erro ao salvar comando no log" << endl;
-		else
-		  fflush(log);
-	  }
-	}
-  }
-
-  return done;
-
-}
-*/
-
-/*
-int ExprTreeEvaluator::scriptMode(char* fileIn)
-{
-  log = NULL;
-
-  pANTLR3_INPUT_STREAM input = antlr3AsciiFileStreamNew((pANTLR3_UINT8)fileIn);       //  Utilizar para modo script
-
-  if ( input == NULL )
-  {
-	cout << "Unable to open file " << fileIn << endl;
-	exit(1);
-  }
-
-  this->parser(input);
-
-  return 0;
-
-}
-
-*/
 
 int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 {
@@ -641,7 +553,6 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case ELSEE:
           case DOIT:
           case REPTB:
-          //case PROCB:
           {
 			#ifndef NDEBUG
             cout << "N Fi: " << tree->getChildCount(tree) << endl;
@@ -909,8 +820,6 @@ string cleanAccents(string code){
         code.replace(index, 6, "entao ");	
     while ((index = code.find("trás")) != string::npos)
         code.replace(index, 5, "tras ");	
-    while ((index = code.find("início")) != string::npos)
-        code.replace(index, 7, "inicio ");	
 	
 	return code;
 }
