@@ -1,6 +1,6 @@
 
 aprender teste : a, b
-inicio
+faça
 	se a < b então  
 		repita 3 vezes falar "oi"
 			para criar c = 0; c < 2; c = c + 1 faça 
