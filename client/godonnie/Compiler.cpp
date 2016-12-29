@@ -71,18 +71,31 @@ void ExprTreeEvaluator::logFile(FILE *file)
   log = file;
 }
 
-int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input, char *textCode)
+int ExprTreeEvaluator::parseGD(char* textIn, bool enable_log)
 {
-  	if (input == NULL)
-  	{
-  	  cout << "Input file error" << endl;
-  	  return -1;
-  	}
+  // remove accented characters
+  string code = cleanAccents(string(textIn));
+  uint8_t* bufferData = (uint8_t*)code.c_str();
+  uint32_t bufferSize = strlen(code.c_str());
+  //uint8_t* bufferData = (uint8_t*)textIn;
+  //uint32_t bufferSize = strlen(textIn);
+  pANTLR3_UINT8 bufferName = (pANTLR3_UINT8)"INPUT text";
+  pANTLR3_INPUT_STREAM input = antlr3NewAsciiStringInPlaceStream( bufferData, bufferSize, bufferName);
+  if (input == NULL) {
+      cout << "Out of memory trying to allocate ANTLR input stream\n";
+	  exit(ANTLR3_ERR_NOMEM);
+  }
+
+  //TODO: amory. com esta funcao eu acredito que eh possivel tornar a linguagem case insentive, 
+  // simplificando o arquivo .g
+  //https://github.com/antlr/antlr3/blob/master/runtime/C/include/antlr3input.h#L152
+  //https://track.hpccsystems.com/browse/WSSQL-118
+  //input->setUcaseLA(input,ANTLR3_TRUE)
 
   	pGoDonnieLexer lex = GoDonnieLexerNew(input);
   	if (lex == NULL)
   	{
-      cout << "Unable to create the lexer due to malloc() failure1\n";
+      cout << "Unable to create the lexer due to malloc() failure\n";
 	  exit(ANTLR3_ERR_NOMEM);
   	  
   	} 
@@ -149,16 +162,19 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input, char *textCode)
 		Donnie->speak(to_string (errors) + " erros foram encontrados.");
  
     }else{
+		// if text is parsed without error and logging is enabled, then save log
+		// log is enabled only in terminal mode and not in the script mode
+		if (enable_log){
+		  if(log != NULL)
+		  {
+			if(fprintf(log, "%s", textIn) == EOF)
+			  cout << "Erro ao salvar comando no log" << endl;
+			else
+			  fflush(log);
+		  }
+		}  	
+		
 		//if all tests passed, try to run the GoDonnie code
-
-      if(log != NULL)
-      {
-        if(fprintf(log, "%s", textCode) == EOF)
-          cout << "Erro ao salvar comando no log" << endl;
-        else
-          fflush(log);
-      }
-
 		try{
 			this->run(r.tree);
 		}
@@ -166,7 +182,6 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input, char *textCode)
 		{
 			//cout << e.what();
 			Donnie->speak(e.what());
-			
 		}
 	}
 	
@@ -175,17 +190,15 @@ int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input, char *textCode)
   	lex->free(lex);
   	input->close(input);
   	
-  	return 1;
+  	return done;
 }
 
-int ExprTreeEvaluator::parser(pANTLR3_INPUT_STREAM input)
+/*
+int ExprTreeEvaluator::parse(char* textIn, bool enable_log)
 {
-  return this->parser(input,NULL);
-}
-
-int ExprTreeEvaluator::terminalMode(char* textIn)
-{
-  uint8_t* bufferData = (uint8_t*)textIn;
+  // remove accented characters
+  string code = cleanAccents(string(textIn));
+  uint8_t* bufferData = (uint8_t*)code.c_str();
     
   uint32_t bufferSize = strlen(textIn);
     
@@ -193,12 +206,55 @@ int ExprTreeEvaluator::terminalMode(char* textIn)
         
   pANTLR3_INPUT_STREAM input = antlr3NewAsciiStringInPlaceStream( bufferData, bufferSize, bufferName);
 
-  this->parser(input,textIn);
+
+
+  // https://github.com/antlr/antlr3/blob/master/runtime/C/src/antlr3filestream.c
+  // https://github.com/esteve/libantlr3c/blob/master/src/antlr3filestream.c
+  // ao olhar o arquivo /usr/include/antlr3input.h, tudo indica que o pacote libantlr3c-dev
+  // contem uma varsao antiga da lib, sem alguns recursos de encoding como:
+  //   input->encoding
+  //   antlr3UTF8SetupStream
+  // arquivo /usr/include/antlr3convertutf.h possuem algumas fucoes q podem ser uteis
+  // pANTLR3_INPUT_STREAM input = antlr3StringStreamNew(bufferData, ANTLR3_ENC_UTF8, bufferSize, bufferName);
+
+
+  // TODO: pode ser necessario p setar o nro de linhas p tratamento de excecao
+  // Pointer to function to set the current line number in the input stream
+  //void		(*setLine)		  (struct ANTLR3_INPUT_STREAM_struct * input, ANTLR3_UINT32 line);
+
+// /home/lsa/donnie/mint/donnie-assistive-robot-sw/client/godonnie/Compiler.cpp: In member function ‘int ExprTreeEvaluator::terminalMode(char*)’:
+// /home/lsa/donnie/mint/donnie-assistive-robot-sw/client/godonnie/Compiler.cpp:207:67: error: ‘struct ANTLR3_INPUT_STREAM_struct’ has no member named ‘encoding’
+//   cout << "BSize: " << input->charByteSize << " ENC: " <<  input->encoding << endl;
+                                                                   ^
+// /home/lsa/donnie/mint/donnie-assistive-robot-sw/client/godonnie/Compiler.cpp:210:30: error: ‘antlr3UTF8SetupStream’ was not declared in this scope
+//   antlr3UTF8SetupStream(input);
+  //cout << "BSize: " << input->charByteSize << " ENC: " <<  input->encoding << endl;
+  
+  
+  //antlr3UTF8SetupStream(input);
+  
+  //https://github.com/antlr/antlr3/blob/master/runtime/C/src/antlr3convertutf.c
+  //static ANTLR3_BOOLEAN isLegalUTF8(const UTF8 *source, int length) {
+
+  if (this->parser(input) == 1){
+	// if text is parsed without error and logging is enabled, then save log
+	if (enable_log){
+	  if(log != NULL)
+	  {
+		if(fprintf(log, "%s", textIn) == EOF)
+		  cout << "Erro ao salvar comando no log" << endl;
+		else
+		  fflush(log);
+	  }
+	}
+  }
 
   return done;
 
 }
+*/
 
+/*
 int ExprTreeEvaluator::scriptMode(char* fileIn)
 {
   log = NULL;
@@ -216,6 +272,8 @@ int ExprTreeEvaluator::scriptMode(char* fileIn)
   return 0;
 
 }
+
+*/
 
 int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 {
@@ -583,7 +641,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case ELSEE:
           case DOIT:
           case REPTB:
-          case PROCB:
+          //case PROCB:
           {
 			#ifndef NDEBUG
             cout << "N Fi: " << tree->getChildCount(tree) << endl;
@@ -726,7 +784,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             #ifndef NDEBUG
             cout << "EXIT" << endl;
             #endif
-            fclose(log);
+            //fclose(log);
             done = 1;
             break;
           }
@@ -829,4 +887,30 @@ void split(const std::string &s, char delim, std::vector<std::string> &elems) {
     while (std::getline(ss, item, delim)) {
         elems.push_back(item);
     }
+}
+
+
+string cleanAccents(string code){
+	
+	//TODO does not replace character if it is within double quotes, like in the Speak command
+	// note that acented character uses 2 bytes, thus, extra space is required for each accented character
+    size_t index;
+    while ((index = code.find("faça")) != string::npos)
+        code.replace(index, 5, "faca ");	
+    while ((index = code.find("posição")) != string::npos)
+        code.replace(index, 9, "posicao  ");	
+    while ((index = code.find("distância")) != string::npos)
+        code.replace(index, 10, "distancia ");	
+    while ((index = code.find("histórico")) != string::npos)
+        code.replace(index, 10, "historico ");	
+    while ((index = code.find("senão")) != string::npos)
+        code.replace(index, 6, "senao ");	
+    while ((index = code.find("então")) != string::npos)
+        code.replace(index, 6, "entao ");	
+    while ((index = code.find("trás")) != string::npos)
+        code.replace(index, 5, "tras ");	
+    while ((index = code.find("início")) != string::npos)
+        code.replace(index, 7, "inicio ");	
+	
+	return code;
 }

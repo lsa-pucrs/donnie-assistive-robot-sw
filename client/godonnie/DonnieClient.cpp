@@ -465,10 +465,9 @@ int DonnieClient::GotoTTS(float pa){
 	// TODO: o comando pode ser interrompido por uma colizao.
 	// assim, está errado assumir que a distancia pedida será a distancia percorrida
 	std::ostringstream sayStr;
+	sayStr << "Girei " << int(pa) << " graus para " << direction << ".";
 	if (bumped())
-		sayStr << "Girei " << int(pa) << " graus para " << direction << ". Houve colisão.";
-	else
-		sayStr << "Girei " << int(pa) << " graus para " << direction;
+		sayStr << " Houve colisão.";
 	speak(sayStr.str());
 
 	return 0;	
@@ -687,7 +686,7 @@ void DonnieClient::speak(string text)
 	else{
 		speechProxy->Say(text.c_str());
 		// TODO gambiarra
-		sleep(3);
+		sleep(2);
 	}	
 }
 
