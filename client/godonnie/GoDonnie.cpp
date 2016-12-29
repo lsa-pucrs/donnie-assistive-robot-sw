@@ -44,7 +44,7 @@ COMMAND commands[] = {
   { (char *)NULL, (char *)NULL }
 };
 
-string code;
+string code = "";
 bool done = 0;
 ExprTreeEvaluator Client;
 
@@ -150,11 +150,12 @@ int main(int argc, char* argv[])
   }
   
   initialize_readline ();
-  char *temp, *prompt; 
+  static char *temp = (char *)NULL; 
+  //char *temp, *prompt; 
   string preCode;
 
-  temp = (char *)NULL;
-  prompt = (char*)"GoDonnie$ ";
+  //temp = (char *)NULL;
+  //prompt = (char*)"GoDonnie$ ";
 
   // terminal mode
   if(termMode)
@@ -178,7 +179,7 @@ int main(int argc, char* argv[])
 
     if (log == NULL)
     {
-      cout << "Não foi possivel criar um log" << endl;
+      Client.speak("Não foi possivel criar o arquivo de log");
     }
     else
       Client.logFile(log);
@@ -186,13 +187,21 @@ int main(int argc, char* argv[])
     while(!done)
     {
         //temp = (char *)NULL;
-        memset(&temp,0,sizeof(temp));
-        temp = readline (prompt);
+        //memset(&temp,0,sizeof(temp));
+	    /* If the buffer has already been allocated, return the memory
+		 to the free pool. */
+	    if (temp){
+		  free (temp);
+		  temp = (char *)NULL;
+		}        
+        temp = readline ("GoDonnie$ ");
 
         if (!temp)
         exit (1);
 
-        if (*temp and strcmp(temp,"") != 0)
+		// If the line has any text in it, save it on the history.
+        //if (*temp and strcmp(temp,"") != 0)
+        if (temp && *temp)
         {
           //fprintf (stderr, "%s\r\n", temp);
           add_history (temp);
@@ -200,13 +209,25 @@ int main(int argc, char* argv[])
         }
         else
           rl_on_new_line ();
+        //free(temp);
       
     };
+    // save remaining buffered data on disk and close the log file
+    fflush(log);
+    fclose(log);
   }else if(scriptMode){    // script mode
-  
-	if( Client.scriptMode((char *)filename.c_str()) != 0){
-		Client.speak("Erro de sintaxe no arquivo " + string(filename));
+	// read the entire file
+	std::ifstream t(filename.c_str());
+	std::stringstream buffer;
+	
+	if(t.is_open()) {
+		// read the entire file
+		buffer << t.rdbuf();
+		Client.parseGD((char *)buffer.str().c_str(),false);
+	}else{
+		Client.speak("Erro ao abrir arquivo " + string(filename));
 	}
+	t.close();
   }
 
 }
@@ -237,16 +258,20 @@ Argumentos:\
 //! this code is executed in terminal mode every time ESC key is pressed
 int evalCode(int count, int key) 
 {
-  if (code != "")
+  //if (code != "")
+  if (!code.empty())
   {
     cout << code << endl;
-    done = Client.terminalMode(&code[0]);
+    //done = Client.parser(&code[0],true);
+    done = Client.parseGD((char *)code.c_str(),true);
+    code.clear();
     code = "";
     rl_on_new_line ();
     return 1;
   }
   else
     rl_on_new_line ();
+  code.clear();
   Client.speak("\nNão há código para ser executado.");
   return 0;
   
@@ -303,3 +328,4 @@ char * command_generator(const char *text, int state)
   /* If no names matched, then return NULL. */
   return ((char *)NULL);
 }
+

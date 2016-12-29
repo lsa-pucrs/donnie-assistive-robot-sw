@@ -23,7 +23,7 @@ else()
         message(FATAL "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 # required to support 'acentos' in Portuguese
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexec-charset=iso-8859-1")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexec-charset=iso-8859-1")
 
 
 # Include this CMake module to get most of the settings needed to build
@@ -80,7 +80,7 @@ ADD_CUSTOM_TARGET(GoDonnieParser ALL
    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/GoDonnie.tokens
 )
 
-add_compile_options(-fexec-charset=iso-8859-1 -std=c++0x)
+#add_compile_options(-fexec-charset=iso-8859-1 -std=c++0x)
 
 # hack to break the depedency. This is required if the file does not yet exist in compile time 
 # https://samthursfield.wordpress.com/2015/11/21/cmake-dependencies-between-targets-and-files-and-custom-commands/

@@ -166,12 +166,13 @@ void Gtts::ProcessSpeechCmd(player_msghdr_t* hdr, player_speech_cmd_t &data){
 	char url[1000];
 	//FULL BASE URL strcpy(url,"http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&tl=PT-br&q=");
 	strcpy(url,"http://translate.google.com/translate_tts?");
-	strcat(url,"ie=UTF-8");
+	strcat(url,"ie=UTF-8");  // TODO. Assuming UTF8. It is required to read the current system encoding
+	//strcat(url,"ie=ISO-8859-1");
 	strcat(url,"&total=1");
 	strcat(url,"&idx=0");
 	strcat(url,"&textlen=32");
 	strcat(url,"&client=tw-ob");
-	strcat(url,"&tl=PT-br");
+	strcat(url,"&tl=PT-br");  // TODO. Assuming pt-br, this must change for internationalization
 	strcat(url,"&q=");
 	strcat(url, palavra);
 	#ifndef NDEBUG

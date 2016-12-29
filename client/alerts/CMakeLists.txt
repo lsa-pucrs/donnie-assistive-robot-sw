@@ -23,7 +23,7 @@ message(STATUS "SoX Include -- ${LSOX_INCLUDE_DIR}")
 SET (CMAKE_MODULE_PATH "/usr/local/share/cmake/Modules")
 
 # required to support 'acentos' in Portuguese
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexec-charset=iso-8859-1")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexec-charset=iso-8859-1")
 
 INCLUDE (UsePlayerC++)
 

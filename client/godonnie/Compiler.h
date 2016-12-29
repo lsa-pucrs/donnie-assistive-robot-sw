@@ -51,18 +51,13 @@ typedef struct {
 class ExprTreeEvaluator 
 {
     bool for_itFlag;
+    /// this flag is true when command Exit is executed
     bool done;
 
     FILE *log;
 
     DonnieClient *Donnie; /// pointer to Donnie middleware class
     Historic *History;    /// pointer to History class
-
-	/*! build the ANTLR objects (lexer and parser), 
-	 * build the parse tree and run if no parse errors were found
-	 */ 
-    int parser(pANTLR3_INPUT_STREAM input);
-    int parser(pANTLR3_INPUT_STREAM input, char *textCode);
 
     /// main method of GoDonnie Interpreter where each GoDonnie command is executed
     int run(pANTLR3_BASE_TREE);
@@ -71,10 +66,18 @@ public:
     ExprTreeEvaluator();
     ~ExprTreeEvaluator();
     void logFile(FILE *file);
-    int terminalMode(char* textIn);
-    int scriptMode(char* fileIn);
+    //int parse(char* textIn, bool enable_log);
     void speak(string text);
     void muteTTS(bool m);
+
+	/// parse input stream in GoDonnie syntax
+	/*! build the ANTLR objects (lexer and parser), 
+	 * build the parse tree and run if no parse errors were found.
+	 * In Terminal mode, this also saves input stream into the log file
+	 */ 
+    int parseGD(char* textIn, bool enable_log);
+    //int parser(pANTLR3_INPUT_STREAM input);
+
 
 };
 
@@ -82,5 +85,8 @@ pANTLR3_BASE_TREE getChild(pANTLR3_BASE_TREE, unsigned);
 const char* getText(pANTLR3_BASE_TREE tree);
 bool compare (int a, int b, string comp);
 void split(const std::string &s, char delim, std::vector<std::string> &elems);
+/// remove all the special characters (accentuation such as çãáé ...) to avoid antlr error
+string cleanAccents(string code);
+
 
 #endif
