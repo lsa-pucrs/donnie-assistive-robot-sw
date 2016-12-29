@@ -7,8 +7,6 @@
 #include <cstring>
 #include <string>
 #include <unistd.h> //getopt
-#include <sys/stat.h>
-#include <time.h>
 
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -162,15 +160,20 @@ int main(int argc, char* argv[])
     //rl_unbind_key('\t');
     //rl_bind_key('a',rl_complete);
 
-    mkdir("Log", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-
-    time_t rawtime;
-    struct tm * timeinfo;
-    time (&rawtime);
-    timeinfo = localtime (&rawtime);
-
+    // find the appropriate file number to the log file. it follows sequential order
+    int fileno=0;
+    bool success = true;
     char fileName[40] = "";
-    sprintf(fileName, "Log/Log %s", asctime(timeinfo));
+    ifstream ifs;
+    while(success &&fileno < 999) {
+	   sprintf(fileName, "log_%03d.txt", fileno);
+	   ifs.open(fileName, std::ifstream::in);// attempt read file to check if it exists
+	   success = ifs.good();
+	   ifs.close();
+	   fileno++;//increase by one to get a new file name
+    } 
+
+    sprintf(fileName, "log_%03d.txt", fileno-1);
     log = fopen(fileName, "w");
 
     if (log == NULL)
