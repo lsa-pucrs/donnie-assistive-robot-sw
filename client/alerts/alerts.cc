@@ -2,11 +2,11 @@
 
 // TODO: amory. criar include donnie_defs.h com todas as definicoes de tamanho do donnie
 #define STEP_YAW 10 //gradianos
-#define STEP_LENGHT 0.05  //TODO ver se esta certo com o client do augusto
+#define STEP_LENGHT 0.05
 #define STEP_LENGHT_ERROR 0.03  //!Define o erro do ultimo passo. Caso o robo pare sem marcar o som de passo
-#define SIDE_RANGER 0.05   //TODO ver se esta certo com o client do augusto
-#define FRONT_RANGER 0.06   //TODO ver se esta certo com o client do augusto
-#define BACK_RANGER 0.05  //TODO ver se esta certo com o client do augusto
+#define SIDE_RANGER 0.05
+#define FRONT_RANGER 0.06
+#define BACK_RANGER 0.05
 #define SCAN_YAW 30 //gradianos
 
 
@@ -40,7 +40,7 @@ DonnieClient::DonnieClient()
 		bumper = new BumperProxy(robot,0);
 		ranger = new RangerProxy(robot,0);
 		sound = new SoundProxy(robot, 0);
-		speech = new SpeechProxy(robot,0);
+		//speech = new SpeechProxy(robot,0);
 	}catch (PlayerError e){
 		#ifndef NDEBUG
 			cerr << e << endl;
@@ -143,7 +143,7 @@ void DonnieClient::checkBumpers(){
             //cout << "BUMPED!:" << endl << endl;
             alertBumperFlag=1;
             sound->play((char *)SBUMPER.c_str());
-            speech->Say("O robô colidiu com alguma coisa!");
+            //speech->Say("O robô colidiu com alguma coisa!");
         }
     }
     else alertBumperFlag = 0;
@@ -167,7 +167,7 @@ void DonnieClient::checkRangers(){
             //cout << endl;
             alertRangerFlag = 1;
             sound->play((char *)SRANGER.c_str());
-            speech->Say("Existem obstáculos no caminho");
+            //speech->Say("Existem obstáculos no caminho");
         }
     }
     else alertRangerFlag = 0; 
