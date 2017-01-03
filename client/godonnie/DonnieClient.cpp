@@ -374,82 +374,82 @@ int DonnieClient::moveForward(int arg)
 int DonnieClient::moveBackward(int arg)
 {
 	robot->ReadIfWaiting();
-	double yaw = p2dProxy->GetYaw();    //Angulo do robo
+	//double yawi = p2dProxy->GetYaw();    //Angulo do robo
 	double posxi = p2dProxy->GetXPos();   //Posicao inicial X do robo
 	double posyi = p2dProxy->GetYPos();   //Posicao inicial Y do robo
 
-	int Npassos = arg;
 	int passos = 0;
+	int Npassos = arg;
 
 	bool obstacle = false;
-	bool stop = true;
+	bool collision = false;
 
-	// movement stoped due to nearby obstacle
-	if(sonarProxy->GetRange(4) > 0.2)
-	{
-	  stop = false;
-	  p2dProxy->SetSpeed(-0.05,0);
+	double targetHypot = STEP_LENGHT*Npassos;
+
+	//validate step number
+	if(Npassos != 0){
+		//initial collision prevent - check if not are nearby obstacle to start movement
+		robot->ReadIfWaiting();
+		if(sonarProxy->GetRange(4) > 2*FRONT_RANGER)//Range South
+			p2dProxy->SetSpeed(-0.05,0);
+		else obstacle = true;
+
+
+		while(hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) <= targetHypot && collision==false && obstacle==false)
+		{
+			//#ifndef NDEBUG
+			//cout << "targetHypot:" << targetHypot << endl;
+			//cout << "Hypot:" << hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) << endl;
+			//cout << "===============PF-PRECISION-TEST=================" << endl;
+			//#endif
+
+			//collision detect
+			if(this->FrontBumper() != 0){
+				p2dProxy->SetSpeed(0,0);
+				collision = true;
+			}
+
+			//collision prevent
+			if(sonarProxy->GetRange(4) < SIDE_RANGER || sonarProxy->GetRange(3) < FRONT_RANGER || sonarProxy->GetRange(5) < SIDE_RANGER){
+				p2dProxy->SetSpeed(0,0);
+				obstacle = true;
+			}
+
+			//steps incrementation
+			if(hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) >= (STEP_LENGHT*(passos+1))){
+				passos++;
+			}
+			robot->ReadIfWaiting();
+		}
 	}
+	p2dProxy->SetSpeed(0,0);
 
-	while(!stop)
-	{
-	  // movement finished as expected
-	  if(passos >= Npassos )
-	  {
-	    p2dProxy->SetSpeed(0,0);
-	    break;
-	  }
+	/* se bateu, para mas nao volta
+		if(stop = true and erro < 0.8 and erro > 0.2)
+		{
+			#ifndef NDEBUG
+			cout << "!"  << erro << endl;
+			#endif
+			this->moveBackward(erro);
+		}
+	*/
 
-      // movement stoped due to collision
-	  robot->ReadIfWaiting();
-	  if(this->BackBumper() != 0 or sonarProxy->GetRange(4) < BACK_RANGER or sonarProxy->GetRange(3) < SIDE_RANGER or sonarProxy->GetRange(5) < SIDE_RANGER)
-	  {
-	    stop = true;
-	    p2dProxy->SetSpeed(0,0);
-	    break;
-	  }
-	    
-      // movement stoped due to nearby obstacle
-	  robot->ReadIfWaiting();
-	  if(sonarProxy->GetRange(4) < 0.2 and !obstacle) // For donnie, do not work in stage.
-	  {
-	    obstacle = true;
-	    p2dProxy->SetSpeed(0,0);
-	    break;
-	  }
-
-	  robot->ReadIfWaiting();
-	  if(hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) > (STEP_LENGHT*(passos+1)))
-	  {
-	  		passos++;
-	  }
-
-	}
-
-/* se bateu, para mas nao volta
-	if(stop = true and erro < 0.8 and erro > 0.2)
-	{	
-		#ifndef NDEBUG
-		cout << "!"  << endl<< endl;
-		#endif
-		this->moveForward(erro);
-	}
-*/
 	// say command
 	std::ostringstream sayStr;
-	sayStr << "Andei " << passos << " passos para trás.";
-	if (bumped() || stop)
-		sayStr << "Houve colisão.";
+		sayStr << "Andei " << ((collision||obstacle)?"somente ":"")  << int(passos) << " passos para trás.";
+	if (collision)
+		sayStr << "Houve colisão;"; //colisao frontal
 	if (obstacle)
-		sayStr << ". Encontrei obstáculo.";
+		sayStr << "Encontrei obstáculo.";
 	speak(sayStr.str());
-		
-	#ifndef NDEBUG
-	cout << "parou: " << stop << ", obstaculo: " << obstacle << endl;
-	#endif
+	cout << sayStr.str() << endl;
 
+	/*#ifndef NDEBUG
+	cout << "obstaculo: " << obstacle << endl;
+	#endif*/
+	
 	// number of steps actually taken
-	return passos;	
+	return passos;
 }
 
 int DonnieClient::GotoTTS(float pa){
@@ -679,7 +679,7 @@ void DonnieClient::speak(string text)
 	else{
 		speechProxy->Say(text.c_str());
 		// TODO gambiarra
-		sleep(2);
+		sleep(3);
 	}	
 }
 
