@@ -316,11 +316,11 @@ int DonnieClient::moveForward(int arg)
 
 		while(hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) <= targetHypot && collision==false && obstacle==false)
 		{
-			#ifndef NDEBUG
-			cout << "targetHypot:" << targetHypot << endl;
-			cout << "Hypot:" << hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) << endl;
-			cout << "===============PF-PRECISION-TEST=================" << endl;
-			#endif
+			//#ifndef NDEBUG
+			//cout << "targetHypot:" << targetHypot << endl;
+			//cout << "Hypot:" << hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) << endl;
+			//cout << "===============PF-PRECISION-TEST=================" << endl;
+			//#endif
 
 			//collision detect
 			if(this->FrontBumper() != 0){
@@ -678,8 +678,8 @@ void DonnieClient::speak(string text)
 		cout << text << endl;
 	else{
 		speechProxy->Say(text.c_str());
-		// TODO gambiarra
-		sleep(3);
+		//wait to complete speech (9 chars/seg)
+		sleep(text.length()/9.0);
 	}	
 }
 
