@@ -21,6 +21,14 @@ static void *getMissingSymbolNew(pANTLR3_BASE_RECOGNIZER recognizer, pANTLR3_INT
 #endif
 }
 
+@lexer::header{
+#include "lexerExtra.h"
+}
+
+@lexer::apifuncs {
+  //rec->displayRecognitionError = displayRecognitionErrorNew;
+  RECOGNIZER->displayRecognitionError = displayRecognitionErrorNewLexer;
+}
 
 
 @parser::members{
@@ -93,7 +101,7 @@ static void *getMissingSymbolNew(pANTLR3_BASE_RECOGNIZER recognizer, pANTLR3_INT
 				if (theToken->type == ANTLR3_TOKEN_EOF)
 				{
 					//ANTLR3_FPRINTF(stderr, ", at <EOF>");
-					ANTLR3_FPRINTF(stderr, ", no fim do arquivo.");
+					ANTLR3_FPRINTF(stderr, " no fim do arquivo.");
 				}
 				else
 				{
@@ -386,6 +394,9 @@ static void *getMissingSymbolNew(pANTLR3_BASE_RECOGNIZER recognizer, pANTLR3_INT
   RECOGNIZER->displayRecognitionError = displayRecognitionErrorNew;
   RECOGNIZER->getMissingSymbol            = getMissingSymbolNew;
 }
+
+
+
 
 
 start_rule	:	prog;

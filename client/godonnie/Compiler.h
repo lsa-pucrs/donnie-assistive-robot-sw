@@ -27,9 +27,11 @@
 #include <string>
 #include <iostream>
 
-#include "DonnieClient.h"
-#include "Historic.h"
 #include "utils.h"
+
+class DonnieClient;
+class Historic;
+ 
 
 using std::map;
 using std::vector;
@@ -37,10 +39,6 @@ using std::stack;
 using std::string;
 using std::cout;
 using std::endl;
-
-#define TERMINAL 1
-#define SCRIPT 0
-
 
 struct mem
 {
@@ -75,20 +73,26 @@ class ExprTreeEvaluator
     int memFlag;                    /// Flag de indicação variáves globais/locais
     bool for_itFlag;
     char* for_it;
-    int mode;
     bool done;
 
     DonnieClient *Donnie; /// pointer to Donnie middleware class
     Historic *History;    /// pointer to History class
 
+	/*! build the ANTLR objects (lexer and parser), 
+	 * build the parse tree and run if no parse errors were found
+	 */ 
     int parser(pANTLR3_INPUT_STREAM input);
+
+    /// main method of GoDonnie Interpreter where each GoDonnie command is executed
+    int run(pANTLR3_BASE_TREE);
 
 public:
     ExprTreeEvaluator();
     ~ExprTreeEvaluator();
-    int run(pANTLR3_BASE_TREE);
     int terminalMode(char* textIn);
     int scriptMode(char* fileIn);
+    void speak(string text);
+    void muteTTS(bool m);
 
 };
 
