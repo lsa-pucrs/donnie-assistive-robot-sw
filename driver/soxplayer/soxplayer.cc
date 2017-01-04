@@ -59,6 +59,12 @@ class Soxplayer : public ThreadedDriver{
 
 	private:
 		player_devaddr_t sound_addr;  //speech interface
+
+		//sox effects
+		std::string speed_str;
+		std::string pitch_str;
+		std::string tempo_str;
+
 		virtual int MainSetup();
 		virtual void MainQuit();
 		virtual void Main();
@@ -89,6 +95,9 @@ Soxplayer::Soxplayer(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 		SetError(-1);
 	}
 
+	speed_str = cf->ReadString (section, "speed", "");
+	pitch_str = cf->ReadString (section, "pitch", "");
+	tempo_str = cf->ReadString (section, "tempo", "");
 }
 Soxplayer::~Soxplayer(){
 	sox_quit();
@@ -184,7 +193,39 @@ int Soxplayer::Play(char *fileAddr){
 	//assert(sox_add_effect(chain, e, &interm_signal, &in->signal) == SOX_SUCCESS);
 	sox_add_effect(chain, e, &interm_signal, &in->signal);
 	free(e);
+
+	std::cout << "SPEED:" << speed_str << std::endl;
+	std::cout << "PITCH:" << pitch_str << std::endl;
+	std::cout << "TEMPO:" << tempo_str << std::endl;
+
+	//Create SPEED Effect
+	if(!speed_str.empty()){
+		e = sox_create_effect(sox_find_effect("speed"));
+		//args[0] = "1.8" , sox_effect_options(e, 1, args);  //default 1; fast <1; slow >1  
+		args[0] = (char *)speed_str.c_str(), sox_effect_options(e, 1, args);
+		sox_add_effect(chain, e, &out->signal, &out->signal);
+		free(e);
+	}
+
 	
+	//Create PITCH Effect
+	if(!pitch_str.empty()){
+		e = sox_create_effect(sox_find_effect("pitch"));
+		//args[0] = "1", sox_effect_options(e, 1, args);
+		args[0] = (char *)pitch_str.c_str(), sox_effect_options(e, 1, args);
+		sox_add_effect(chain, e,  &out->signal, &out->signal);
+		free(e);		
+	}
+	
+	////Create TEMPO Effect
+	if(!tempo_str.empty()){
+		e = sox_create_effect(sox_find_effect("tempo"));
+		//args[0] = "0.6" , sox_effect_options(e, 1, args);  //default 1; fast >1; slow <1  
+		args[0] = (char *)tempo_str.c_str(), sox_effect_options(e, 1, args);
+		sox_add_effect(chain, e,  &out->signal, &out->signal);
+		free(e);
+	}
+
 	#ifndef NDEBUG
 	  PLAYER_MSG2(MESSAGE_INFO, "[soxplayer] rate %d %d", (int)in->signal.rate, (int)out->signal.rate);
 	#endif
