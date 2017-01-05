@@ -25,7 +25,7 @@ class DonnieClient{
   //BlobfinderProxy *BfinderProxy;
   RangerProxy *ranger;
   //RangerProxy *SHProxy;
-  SpeechProxy *speech;
+  //SpeechProxy *speech;
   SoundProxy *sound;
   pos_t pos;
   double translation;
