@@ -45,4 +45,13 @@ class variavelException: public exception
 		virtual const char* what() const throw();
 };
 
+class invalidValueException: public exception
+{
+		string m_msg;
+	public:
+		invalidValueException(string error);
+		invalidValueException();
+		virtual const char* what() const throw();
+};
+
 #endif

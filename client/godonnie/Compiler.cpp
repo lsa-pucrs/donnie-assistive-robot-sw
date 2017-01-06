@@ -329,8 +329,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             float range;
             vector<string> tokens;
             split((char*)getText(tree),' ',tokens);
-			if (tokens.size() != 2)
-				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
+			//if (tokens.size() != 2)
+				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
 
 			// get the ranger id
 			if (tokens[1] == RANGER_N)
@@ -347,8 +347,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 				arg = 5;
 			//else if (tokens[1] == RANGER_HEAD)
 			//	arg = 6;
-			else 
-				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");        
+			//else 
+				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");        
 
             range  = Donnie->GetRange(arg);
 			#ifndef NDEBUG
@@ -364,8 +364,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             vector<string> tokens;
             split((char*)getText(tree),' ',tokens);
 
-			if (tokens.size() != 2)
-				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
+			//if (tokens.size() != 2)
+				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
 
 			// get the ranger id
 			if (tokens[1] == POSITION_X)
@@ -374,8 +374,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 				arg = 1;
 			else if (tokens[1] == POSITION_YAW)
 				arg = 2;
-			else  
-				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
+			//else  
+				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
 				
 			pos = Donnie->GetPos("body",arg);             
 			#ifndef NDEBUG
@@ -392,8 +392,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			
             vector<string> tokens;
             split((char*)getText(tree),' ',tokens);
-			if (tokens.size() != 2)
-				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
+			//if (tokens.size() != 2)
+				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
 
 			arg = Donnie->color_to_value(tokens[1]);
 			if(arg == 0xFFFFFFFF)
@@ -408,16 +408,16 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           {
             vector<string> tokens;
             split((char*)getText(tree),' ',tokens);
-			if (tokens.size() != 2)
-				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
+			//if (tokens.size() != 2)
+				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
 
 			// sound on or off
 			if (tokens[1] == SOUND_ON)
 				Donnie->muteTTS(false);
 			else if (tokens[1] == SOUND_OFF)
 				Donnie->muteTTS(true);
-			else 
-				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");        
+			//else 
+				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");        
 
             return 0;
             break;
@@ -741,7 +741,7 @@ pANTLR3_BASE_TREE getChild(pANTLR3_BASE_TREE tree, unsigned i)
 {
 	
     //assert(i < tree->getChildCount(tree));
-    if(!(i < tree->getChildCount(tree))) throw sintaxeException();
+    //if(!(i < tree->getChildCount(tree))) throw sintaxeException();
     
     return (pANTLR3_BASE_TREE) tree->getChild(tree, i);
 }

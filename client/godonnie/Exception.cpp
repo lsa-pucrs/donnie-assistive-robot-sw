@@ -45,3 +45,17 @@ const char* variavelException::what() const throw()
 	return this->m_msg.c_str();
 }
 
+invalidValueException::invalidValueException(string error)
+{
+	this->m_msg = error;
+}
+invalidValueException::invalidValueException()
+{
+	this->m_msg = "Valor Invalido para o Parametro\n";
+}
+const char* invalidValueException::what() const throw()
+{
+	return this->m_msg.c_str();
+}
+
+
