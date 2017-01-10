@@ -379,8 +379,8 @@ int main(int argc, char** argv){
 	PlayerClient    robot(host,port);
 	DioProxy systemDio(&robot,0);
 	RangerProxy myranger(&robot,0);
-	Position2dProxy mymotors(&robot, 1);
-	Position2dProxy neckServo(&robot, 0);
+	Position2dProxy mymotors(&robot, 0);
+	Position2dProxy neckServo(&robot, 1);
 	BumperProxy mybumper(&robot, 0);
 	PowerProxy mypower(&robot, 0);
 	//BeepProxy mybeep(&robot, 0);
