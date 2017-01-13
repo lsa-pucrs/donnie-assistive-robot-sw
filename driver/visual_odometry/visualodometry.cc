@@ -1,29 +1,27 @@
-/*
- *  Player - One Hell of a Robot Server
- *  Copyright (C) 2003  
- *     Brian Gerkey
- *                      
- * 
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- */
+/*!
+* Desc: Player-based visual odometry using OpenCv.
+* Author: Joice Marek
+* Date: January 2017
+* Laboratório de Sistemas Autônomos
+* - https://lsa.pucrs.br/
+* - https://github.com/lsa-pucrs
+* Faculdade de Informática - PUCRS
+* - www.inf.pucrs.br
+*/
 
-/*
- * A simple example of how to write a driver that will be built as a
- * shared object.
- */
+/*! visualodometry configuration file syntax:
+
+driver
+(
+	name "visualodometry"
+	plugin "/opt/player-stage/src/player-3.0.2/build/examples/plugins/visualodometry/libvisualodometry.so"
+	provides ["position2d:2"]
+	requires ["camera:0"]
+	max_corners 1800 # Default value is 2000
+	min_feats 1200 # Default value is 1000
+)
+
+*/
 
 // ONLY if you need something that was #define'd as a result of configure 
 // (e.g., HAVE_CFMAKERAW), then #include <config.h>, like so:
@@ -46,17 +44,9 @@
 using namespace cv;
 using namespace std;
 
-//Global Variables
-//const int max_corners = 100; //Parameter for Shi-Tomasi detector
-//const int max_frames = 920; //Run for a specified number of frames
-
-//Minimal number of features required for tracking
-//const int min_feats = 80;
-//const int step = 2; //FPS = FPS/step
-//const int init_frame = 0; //Initial frame of the sequence
-const int x_init = 300; //For plotting
+//! For plotting trajectory
+const int x_init = 300; 
 const int y_init = 300; 
-
 //! Text parameters
 char text[100];
 int fontFace = FONT_HERSHEY_PLAIN;
@@ -228,12 +218,12 @@ VisualOdometry::VisualOdometry(ConfigFile* cf, int section)
 	Mat(5, 1, CV_64F, data_D).copyTo(D); //! Distortion coefficients
 
 	//! Detector parameters
-	qualityLevel = cf->ReadFloat(section, "qualityLevel", 0.01);
-	minDistance = cf->ReadInt(section, "minDistance", 10);
-	blockSize = cf->ReadInt(section, "blockSize", 3);
+	qualityLevel = 0.01;
+	minDistance = 10;
+	blockSize = 3;
 
-	max_corners = cf->ReadInt(section, "max_corners", 200);
-	min_feats = cf->ReadInt(section, "min_feats", 100);
+	max_corners = cf->ReadInt(section, "max_corners", 2000);
+	min_feats = cf->ReadInt(section, "min_feats", 1000);
 
 	//! From intrinsical parameters matrix K
 	pp.x = 319.5;
