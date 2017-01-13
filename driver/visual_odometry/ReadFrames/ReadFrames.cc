@@ -1,29 +1,38 @@
-/*
- *  Player - One Hell of a Robot Server
- *  Copyright (C) 2003  
- *     Brian Gerkey
- *                      
- * 
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- */
+/*!
+* Desc: Player-based read frames driver.
+* Author: Joice Marek
+* Date: January 2017
+* Laboratório de Sistemas Autônomos
+* - https://lsa.pucrs.br/
+* - https://github.com/lsa-pucrs
+* Faculdade de Informática - PUCRS
+* - www.inf.pucrs.br
+*/
 
-/*
- * A simple example of how to write a driver that will be built as a
- * shared object.
- */
+/*! visualodometry configuration file syntax:
+
+driver
+(
+	name "ReadFrames"
+	plugin "/opt/player-stage/src/player-3.0.2/build/examples/plugins/ReadFrames/libReadFrames.so"
+	provides ["camera:0"]
+    #Specify the height (in pixels) of the camera image. Default value is 480.
+    height 480
+    #Specify the width (in pixels) of the camera image. Default value is 640.
+    width 640
+    #Specify the number of channels for the camera. Value 1 is a greyscale image and 3 a RGB image.
+    channels 1
+    #Specify the step for reading. This can decrease the trajectory capture FPS. FPS = FPS/step.
+	step 1
+    #Specify the maximun number of frames. Default 100
+	max_frames 350
+    #Specify the frame to start reading. Default is 0
+	init_frame 0
+    #Specify the path to the list of frames
+	path "/home/user/frames"
+
+)
+*/
 
 // ONLY if you need something that was #define'd as a result of configure 
 // (e.g., HAVE_CFMAKERAW), then #include <config.h>, like so:
@@ -54,31 +63,45 @@ class ReadFrames : public ThreadedDriver
 {
   public:
     
-    // Constructor; need that
+    //! Constructor
     ReadFrames(ConfigFile* cf, int section);
 
-    //This method will be invoked on each incoming message
+    //!This method will be invoked on each incoming message
     virtual int ProcessMessage(QueuePointer &resp_queue, 
                                player_msghdr * hdr,
                                void * data);
 
   private:
 
-    // Main function for device thread.
+    //! Main function for device thread.
     virtual void Main();
+    //! Runs when a client connects to this driver.
     virtual int MainSetup();
+    //! Runs when a client disconnects from this driver.
     virtual void MainQuit();
+    
     int readframe();
 
-    VideoCapture capture;
-    player_devaddr_t camera_addr; // camera a ser enviada
-    Mat frame;
+    //! Camera interface
+    player_devaddr_t camera_addr;
+    //! Camera data
     player_camera_data_t * data;
+    
+    //! Frame to be publish
+    Mat frame;
+    //! Frame characteristcs. 
     int height, width, channels;
-    int cont, max_frames, init_frame;
+    //! Frame to start reading
+    int init_frame;
+    //! Maximun number of frames
+    int max_frames;
+    //! Step for reading. FPS = FPS/step
     int step;
-
+    //! Count frames
+    int cont;
+    //! Path to the list of frames
     const char* path;
+    //! Path to each frame
     char imgpath[80];
 };
 
@@ -119,16 +142,16 @@ ReadFrames::ReadFrames(ConfigFile* cf, int section)
     this->SetError(-1);
     return;
   }
+        
+  cont = init_frame;
+        
   height = cf->ReadInt(section, "height", 480);
   width = cf->ReadInt(section, "width", 640);
   channels = cf->ReadInt(section, "channels", 3);
-  max_frames = cf->ReadInt(section, "max_frames", 1);
-  init_frame = cf->ReadInt(section, "init_frame", 0);
-  cont = init_frame; 
-
+  max_frames = cf->ReadInt(section, "max_frames", 100);
+  init_frame = cf->ReadInt(section, "init_frame", 0) 
   step = cf->ReadInt(section, "step", 1);
-  path = cf->ReadString(section, "path", "/home/lsa/Desktop/frames");
-  cout << "path: " << path << endl;
+  path = cf->ReadString(section, "path", "/home/user/frames");
 
   return;
 }
@@ -178,7 +201,7 @@ int ReadFrames::readframe()
 {
     int i;
     //sleep(delay);
-    //get image from path
+    //! Get image from path
     sprintf(imgpath, "%s/%06d.png", path, cont);
     frame = imread(imgpath);
 
@@ -194,18 +217,18 @@ int ReadFrames::readframe()
       return -1;
     }
     
-    //alteração de channels conforme .cfg
+    //! Changing channels to the specified in configuration file
     if(frame.channels() == 3 && channels == 1)
       cvtColor(frame, frame, CV_BGR2GRAY, 1);
     if(frame.channels() == 1 && channels == 3)
       cvtColor(frame, frame, CV_GRAY2BGR, 3);
-
+    //! Resize frame to the specified size in the configuration file
     Size size(width,height);
     resize(frame,frame,size);
 
-    cout << "frame channels " << frame.channels() << endl;
-    cout << "height " << frame.size().height << endl;
-    cout << "width " << frame.size().width << endl;
+    //cout << "frame channels " << frame.channels() << endl;
+    //cout << "height " << frame.size().height << endl;
+    //cout << "width " << frame.size().width << endl;
     assert((frame.channels()) > 0);
     data->image = reinterpret_cast<unsigned char *>(calloc(height*width,sizeof(uint8_t)*channels));
 
@@ -263,7 +286,7 @@ void ReadFrames::Main()
     // Interact with the device, and push out the resulting data, using
     // Driver::Publish()
 
-    //lê um numero max de frames especificado no .cfg
+    //! Read untill max number of frames specified in the configuration file
     if(cont < max_frames)
       readframe();
     else{
@@ -282,9 +305,9 @@ void ReadFrames::Main()
 extern "C" {
   int player_driver_init(DriverTable* table)
   {
-    puts("Example driver initializing  " );
+    puts("ReadFrames driver initializing  " );
     ReadFrames_Register(table);
-    puts("Example driver done");
+    puts("ReadFrames driver done");
     return(0);
   }
 }
