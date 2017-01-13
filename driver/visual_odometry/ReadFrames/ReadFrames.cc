@@ -143,15 +143,15 @@ ReadFrames::ReadFrames(ConfigFile* cf, int section)
     return;
   }
         
-  cont = init_frame;
-        
   height = cf->ReadInt(section, "height", 480);
   width = cf->ReadInt(section, "width", 640);
   channels = cf->ReadInt(section, "channels", 3);
   max_frames = cf->ReadInt(section, "max_frames", 100);
-  init_frame = cf->ReadInt(section, "init_frame", 0) 
+  init_frame = cf->ReadInt(section, "init_frame", 0) ;
   step = cf->ReadInt(section, "step", 1);
   path = cf->ReadString(section, "path", "/home/user/frames");
+	    
+	cont = init_frame;
 
   return;
 }
@@ -169,7 +169,6 @@ int ReadFrames::MainSetup()
 
   return(0);
 }
-
 
 
 ////////////////////////////////////////////////////////////////////////////////
