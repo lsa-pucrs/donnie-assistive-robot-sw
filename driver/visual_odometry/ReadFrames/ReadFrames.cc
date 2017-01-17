@@ -9,7 +9,7 @@
 * - www.inf.pucrs.br
 */
 
-/*! visualodometry configuration file syntax:
+/*! ReadFrames configuration file syntax:
 
 driver
 (
@@ -59,6 +59,7 @@ using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
 // The class for the driver
+/*! This driver reads frames from a list of images and publishes them, so a client or other driver can receive it. */
 class ReadFrames : public ThreadedDriver
 {
   public:
