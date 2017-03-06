@@ -663,7 +663,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 				   "," << Donnie->GetPos("body",2) << "]"; //POSITION_YAW in degrees 
 				   // dont add newline here !
 			  }
-				cout << output << endl;
+				cout << output.str() << endl;
 				Donnie->speak(output.str());
 				break;
 		  }
