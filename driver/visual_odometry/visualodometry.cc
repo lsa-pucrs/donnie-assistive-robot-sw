@@ -273,8 +273,14 @@ void VisualOdometry::MainQuit()
 int VisualOdometry::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, void * data)
 {
   PLAYER_WARN("New message received");
-
-  if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_DATA, PLAYER_CAMERA_DATA_STATE, cam_addr)){
+	
+	if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_REQ, PLAYER_POSITION2D_REQ_GET_GEOM, odom_addr)){
+      PLAYER_WARN("position2d update geometry request received");
+      Publish(odom_addr, PLAYER_MSGTYPE_RESP_ACK, PLAYER_POSITION2D_REQ_GET_GEOM, 
+              &odom, sizeof(odom), NULL);
+      return 0;
+  }
+  else if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_DATA, PLAYER_CAMERA_DATA_STATE, cam_addr)){
       PLAYER_WARN("requires cam received");
       cam_data = reinterpret_cast<player_camera_data_t *>(data); 
       //cout << "cont " << cont << endl;
