@@ -582,8 +582,10 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
             if(for_itFlag)
             {
-              DonnieMemory::getInstance()->addForVar(var,val);
-              for_itFlag = 0;
+              if(!DonnieMemory::getInstance()->addForVar(var,val))
+                for_itFlag = 1;                 // Caso Variavel ja exista não sera necessario excluir ela ao fim da repetição
+              else
+                for_itFlag = 0;                 // Sera necessario excluir a variavel temporaria da repetição
             }
             else
               DonnieMemory::getInstance()->addVar(var,val);
