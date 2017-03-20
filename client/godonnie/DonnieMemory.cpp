@@ -44,7 +44,7 @@ int DonnieMemory::addVar(string name, int value)
         	cout << "MAKE: " << var << " = " << value << endl;
         #endif
 		Memory.top().memory[var] = value;
-		return value;
+		return 1;
 	}
 }
 
@@ -100,7 +100,7 @@ int DonnieMemory::addForVar(string name, int value)
 	{
 		addVar(var, value);
 		tempVar.push(var);
-		return value;
+		return 1;
 	}
 	return 0;
 
