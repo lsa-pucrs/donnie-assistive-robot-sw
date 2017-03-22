@@ -50,7 +50,7 @@ typedef struct {
 /// Main parser for GoDonnie language
 class ExprTreeEvaluator 
 {
-    bool for_itFlag;
+    int for_itFlag;
     /// this flag is true when command Exit is executed
     bool done;
 

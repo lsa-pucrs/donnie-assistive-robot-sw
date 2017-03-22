@@ -43,6 +43,14 @@ using std::endl;
 #define SOUND_ON "ligado"
 #define SOUND_OFF "desligado"
 
+/// definition of variable return tokens
+#define IDLE 4
+#define WAITING 3
+#define ASSIGNED 2
+#define CREATED 1
+#define NEXIST 0
+#define EXIST -1
+
 DonnieMemory *DonnieMemory::singleton = 0;
 
 
@@ -52,7 +60,7 @@ ExprTreeEvaluator::ExprTreeEvaluator()
 	Donnie = DonnieClient::getInstance();
 	History = Historic::getInstance();
 
-  	for_itFlag = 0;
+  	for_itFlag = IDLE;
     done = 0;
     log = NULL;
 }
@@ -471,11 +479,12 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case FORE:
           {
 
-            for_itFlag = 1;
+            for_itFlag = WAITING;
 
             run(getChild(tree,0));                              // Executa condição inicial
 
-            
+            if(for_itFlag == EXIST)
+              break;
 
             int a = run(getChild(tree,1));                      // Retorna o valor das variáveis na condição
             int b = run(getChild(tree,3));                      // #
@@ -490,9 +499,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
               ok = compare(run(getChild(tree,1)),run(getChild(tree,3)),c);  //Realiza comparação novamente
             }
 
-            if(!for_itFlag)
+            if(for_itFlag == CREATED)
               DonnieMemory::getInstance()->purgeForVar();
-            for_itFlag = 0;
+            for_itFlag = IDLE;
 
             break;
           }
@@ -580,13 +589,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             else 
               val = run(getChild(tree,1));
 
-            if(for_itFlag)
-            {
-              if(!DonnieMemory::getInstance()->addForVar(var,val))
-                for_itFlag = 1;                 // Caso Variavel ja exista não sera necessario excluir ela ao fim da repetição
-              else
-                for_itFlag = 0;                 // Sera necessario excluir a variavel temporaria da repetição
-            }
+            if(for_itFlag == WAITING)
+              for_itFlag = DonnieMemory::getInstance()->addForVar(var,val);
             else
               DonnieMemory::getInstance()->addVar(var,val);
 
