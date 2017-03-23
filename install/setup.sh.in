@@ -82,11 +82,30 @@ function donnie_player(){
   donnie_check_var
   echo "Executando Donnie software no diretório ${DONNIE_EXEC_PATH}"
   #nohup player ${DONNIE_EXEC_PATH}/server_donnie.cfg &> /dev/null &
-  xterm -e "player ${DONNIE_EXEC_PATH}/server_donnie.cfg &> /dev/null" &
-  sleep 5
-  xterm -e "${DONNIE_PATH}/bin/alerts  &> /dev/null" &
-  sleep 3
-  echo "Donnie executando ..."
+  
+  #Parse options
+  if [ "$1" = "-nogui" ] 
+  then
+    xterm -e "player ${DONNIE_EXEC_PATH}/server_donnie_nogui.cfg &> /dev/null" &
+	sleep 5
+	xterm -e "${DONNIE_PATH}/bin/alerts  &> /dev/null" &
+	sleep 3
+	echo "Donnie executando ..."
+  elif [ "$1" = "--help" ] || [ "$1" = "-h" ] 
+  then
+	echo "Donnie Player launcher"
+	echo "USAGE:  donnie_player [options]"
+	echo -e "\nWhere [options] can be:"
+	echo "  -h, --help         : print this message."
+	echo "  --nogui            : launch player interface without graphic interface."
+	#echo "  -c                : acess launch config."
+  else  #default
+	xterm -e "player ${DONNIE_EXEC_PATH}/server_donnie.cfg &> /dev/null" &
+	sleep 5
+	xterm -e "${DONNIE_PATH}/bin/alerts  &> /dev/null" &
+	sleep 3
+	echo "Donnie executando ..."
+  fi
 }
 
 function donnie_kill(){
