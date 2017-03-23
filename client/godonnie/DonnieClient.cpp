@@ -618,15 +618,17 @@ int DonnieClient::Color(int color_code){
 			if (color_str == value_to_color(bfinderProxy->GetBlob(i).color))
 				blobs_found++;
 		}
-		
+
+		/* Color has no feedback
 		// build string
 		if (head_yawi == 0)
-			scanText << "a frente: ";
+			scanText << " frente: ";
 		else if (head_yawi < 0)
-			scanText << "a " << -head_yawi << " graus a direita: ";
+			scanText << -head_yawi << " graus a direita: ";
 		else 
-			scanText << "a " << head_yawi << " graus a esquerda: ";
+			scanText << head_yawi << " graus a esquerda: ";
 
+		
 		// OBS: '(int)*sonar_readings' truncate the distance. perhaps 'round' would be better
 		if (blobs_found == 0){
 			scanText << "0 objetos";
@@ -635,13 +637,17 @@ int DonnieClient::Color(int color_code){
 		}else{
 			scanText << blobs_found << " objetos"; 
 		}			
-
+			
+		
+		
 		speak(scanText.str());
 		// TODO gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
 		sleep(2);
 
 		scanText.str("");
 		scanText.clear();	
+		*/
+
 		head_yawi = head_yawi + 30; // more + 30 degree 
 		total_blobs_found += blobs_found;
 		blobs_found=0;
@@ -651,6 +657,7 @@ int DonnieClient::Color(int color_code){
 	headGoto(0);
 	robot->ReadIfWaiting();
 
+	/* Color has no feedback
 	// generate output
 	if (total_blobs_found == 0){
 		scanText << "nenhum objeto encontrado com a cor " << color_str;
@@ -660,6 +667,7 @@ int DonnieClient::Color(int color_code){
 		scanText << total_blobs_found << " objetos encontrados com a cor " << color_str;
 	}
 	speak(scanText.str());
+	*/
 	
 	return total_blobs_found;
 }
