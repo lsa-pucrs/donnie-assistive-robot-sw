@@ -45,6 +45,7 @@ using std::endl;
 
 DonnieMemory *DonnieMemory::singleton = 0;
 
+extern "C" char messageError[2000]; //from grammatic file (GoDonnie.g)
 
 ExprTreeEvaluator::ExprTreeEvaluator()
 {
@@ -143,20 +144,33 @@ int ExprTreeEvaluator::parseGD(char* textIn, bool enable_log)
     // http://www.antlr3.org/api/Java/org/antlr/runtime/BaseRecognizer.html
     // http://www.antlr3.org/api/Java/org/antlr/runtime/RecognizerSharedState.html
     int errors = parser->pParser->rec->getNumberOfSyntaxErrors(parser->pParser->rec) + lex->pLexer->rec->getNumberOfSyntaxErrors(lex->pLexer->rec);
+    if (errors > 0)
+    {
+		cout << messageError << endl;
+		Donnie->speak(messageError);
+	}	
+    /*
     if (errors == 1)
     {
 		Donnie->speak(to_string (errors) + " erro foi encontrado.");
+		//int errorLine = parser->pParser->rec->state->exception->line;
+		//int errorCol = parser->pParser->rec->state->exception->charPositionInLine+1;
+		//Donnie->speak("Erro na linha " + to_string (errorLine) + " e coluna " + to_string (errorCol));
+		//cout << "Error in line " << errorLine << " near " << errorCol << endl;
+		
 		// será q isso funciona p pegar a linha ? http://puredanger.github.io/tech.puredanger.com/2007/02/01/recovering-line-and-column-numbers-in-your-antlr-ast/
 		// este exemplo tb extende a classe token, para incluir informacoes uteis p msg de erro
 		// http://www.milk.com/kodebase/antlr-tutorial/
 		// http://www.milk.com/kodebase/antlr-tutorial/ExtentToken.java
 		// http://www.milk.com/kodebase/antlr-tutorial/ErrorFormatter.java
 		//cout << "Error in line " << parser->pParser->rec->state->tokenStartLine << " near " << parser->pParser->rec->state->text << endl;
+		
     } else if (errors > 1)
     {
 		Donnie->speak(to_string (errors) + " erros foram encontrados.");
- 
-    }else{
+    }
+    */
+    else{
 		// if text is parsed without error and logging is enabled, then save log
 		// log is enabled only in terminal mode and not in the script mode
 		if (enable_log){

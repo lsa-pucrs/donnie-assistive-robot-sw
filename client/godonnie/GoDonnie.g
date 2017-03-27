@@ -10,6 +10,7 @@ options
 // MUdando para a nova exception
 
 
+
 // Header 
 @parser::header{
 #include <antlr3baserecognizer.h>
@@ -19,6 +20,13 @@ options
 static void	displayRecognitionErrorNew(pANTLR3_BASE_RECOGNIZER recognizer, pANTLR3_UINT8 * tokenNames);
 static void *getMissingSymbolNew(pANTLR3_BASE_RECOGNIZER recognizer, pANTLR3_INT_STREAM	istream, pANTLR3_EXCEPTION	e, ANTLR3_UINT32 expectedTokenType, pANTLR3_BITSET_LIST follow);
 #endif
+
+
+}
+
+//declaration of global variable in GoDonnieParser.c
+@parser::postinclude{
+char messageError[2000];
 }
 
 @lexer::header{
@@ -32,9 +40,10 @@ static void *getMissingSymbolNew(pANTLR3_BASE_RECOGNIZER recognizer, pANTLR3_INT
 
 
 @parser::members{
-
+	
 	static void displayRecognitionErrorNew(pANTLR3_BASE_RECOGNIZER recognizer, pANTLR3_UINT8 * tokenNames)
 	{
+		char messageAux[100];
 		
 		//ANTLR3_FPRINTF(stderr, "TESTE DE ERRO");
 		
@@ -74,8 +83,10 @@ static void *getMissingSymbolNew(pANTLR3_BASE_RECOGNIZER recognizer, pANTLR3_INT
 
 		// Next comes the line number
 		//
-
-		ANTLR3_FPRINTF(stderr, "Erro na linha \%d ", recognizer->state->exception->line);
+		
+		sprintf(messageAux, "Erro na linha \%d ", recognizer->state->exception->line);
+		strcat(messageError, messageAux);
+		//ANTLR3_FPRINTF(stderr, "Erro na linha \%d ", recognizer->state->exception->line);
 		//ANTLR3_FPRINTF(stderr, " : error \%d : \%s", recognizer->state->exception->type, (pANTLR3_UINT8)(recognizer->state->exception->message));
 
 
@@ -95,13 +106,17 @@ static void *getMissingSymbolNew(pANTLR3_BASE_RECOGNIZER recognizer, pANTLR3_INT
 			ttext	    = theToken->toString(theToken);
 
 			//ANTLR3_FPRINTF(stderr, ", at offset \%d", recognizer->state->exception->charPositionInLine);
-			ANTLR3_FPRINTF(stderr, "e na coluna \%d. ", (recognizer->state->exception->charPositionInLine+1));
+			//ANTLR3_FPRINTF(stderr, "e na coluna \%d. ", (recognizer->state->exception->charPositionInLine+1));
+			sprintf(messageAux, "e na coluna \%d. ", recognizer->state->exception->charPositionInLine+1);
+			strcat(messageError, messageAux);
 			if  (theToken != NULL)
 			{
 				if (theToken->type == ANTLR3_TOKEN_EOF)
 				{
 					//ANTLR3_FPRINTF(stderr, ", at <EOF>");
-					ANTLR3_FPRINTF(stderr, " no fim do arquivo.");
+					//ANTLR3_FPRINTF(stderr, " no fim do arquivo.");
+					sprintf(messageAux, "no fim do arquivo.");
+					strcat(messageError, messageAux);
 				}
 				else
 				{
@@ -113,7 +128,9 @@ static void *getMissingSymbolNew(pANTLR3_BASE_RECOGNIZER recognizer, pANTLR3_INT
 					pANTLR3_STRING ttext2 = theToken->getText(theToken);
 					
 					//ANTLR3_FPRINTF(stderr, "\n\n \%s \n\n", ttext->chars);
-					ANTLR3_FPRINTF(stderr, "Verificar comando \%s", ttext == NULL ? (pANTLR3_UINT8)"<palavra não identificada>" : ttext2->chars);
+					//ANTLR3_FPRINTF(stderr, "Verificar comando \%s", ttext == NULL ? (pANTLR3_UINT8)"<palavra não identificada>" : ttext2->chars);
+					sprintf(messageAux, "Verificar comando \%s", ttext == NULL ? (pANTLR3_UINT8)"<palavra não identificada>" : ttext2->chars);
+					strcat(messageError, messageAux);
 				}
 			}
 			break;
@@ -134,10 +151,13 @@ static void *getMissingSymbolNew(pANTLR3_BASE_RECOGNIZER recognizer, pANTLR3_INT
 				{
 					theToken	= (pANTLR3_COMMON_TOKEN)    theBaseTree->getToken(theBaseTree);
 				}
-				ANTLR3_FPRINTF(stderr, ", na coluna \%d", (theBaseTree->getCharPositionInLine(theBaseTree)+1));
+				//ANTLR3_FPRINTF(stderr, ", na coluna \%d", (theBaseTree->getCharPositionInLine(theBaseTree)+1));
+				sprintf(messageAux, ", na coluna \%d", (theBaseTree->getCharPositionInLine(theBaseTree)+1));
+				strcat(messageError, messageAux);
 				
-				
-				ANTLR3_FPRINTF(stderr, ", na palavra \%s", ttext->chars);
+				//ANTLR3_FPRINTF(stderr, ", na palavra \%s", ttext->chars);
+				sprintf(messageAux, ", na palavra \%s", ttext->chars);
+				strcat(messageError, messageAux);
 			}
 			break;
 
@@ -173,19 +193,26 @@ static void *getMissingSymbolNew(pANTLR3_BASE_RECOGNIZER recognizer, pANTLR3_INT
 			if	(tokenNames == NULL)
 			{
 				//ANTLR3_FPRINTF(stderr, " : Extraneous input...");
-				ANTLR3_FPRINTF(stderr, " : Entrada desconhecida...");
+				//ANTLR3_FPRINTF(stderr, " : Entrada desconhecida...");
+				sprintf(messageAux, " : Entrada desconhecida...");
+				strcat(messageError, messageAux);
+				
 			}
 			else
 			{
 				if	(ex->expecting == ANTLR3_TOKEN_EOF)
 				{
 					//ANTLR3_FPRINTF(stderr, " : Extraneous input - expected <EOF>\n");
-					ANTLR3_FPRINTF(stderr, " : Entrada desconhecida - Esperava o fim do arquivo\n");
+					//ANTLR3_FPRINTF(stderr, " : Entrada desconhecida - Esperava o fim do arquivo\n");
+					sprintf(messageAux, " : Entrada desconhecida - Esperava o fim do arquivo\n");
+					strcat(messageError, messageAux);
 				}
 				else
 				{
 					//ANTLR3_FPRINTF(stderr, " : Extraneous input - expected \%s ...\n", tokenNames[ex->expecting]);
-					ANTLR3_FPRINTF(stderr, " : Entrada desconhecida - esperando \%s ...\n", tokenNames[ex->expecting]);
+					//ANTLR3_FPRINTF(stderr, " : Entrada desconhecida - esperando \%s ...\n", tokenNames[ex->expecting]);
+					sprintf(messageAux, " : Entrada desconhecida - esperando \%s ...\n", tokenNames[ex->expecting]);
+					strcat(messageError, messageAux);
 				}
 			}
 			break;
@@ -200,20 +227,26 @@ static void *getMissingSymbolNew(pANTLR3_BASE_RECOGNIZER recognizer, pANTLR3_INT
 			if	(tokenNames == NULL)
 			{
 				//ANTLR3_FPRINTF(stderr, " : Missing token (\%d)...\n", ex->expecting);
-				ANTLR3_FPRINTF(stderr, " : token faltando (\%d)...\n", ex->expecting);
+				//ANTLR3_FPRINTF(stderr, " : token faltando (\%d)...\n", ex->expecting);
+				sprintf(messageAux, " : token faltando (\%d)...\n", ex->expecting);
+				strcat(messageError, messageAux);
 			}
 			else
 			{
 				if	(ex->expecting == ANTLR3_TOKEN_EOF)
 				{
 					//ANTLR3_FPRINTF(stderr, " : Missing <EOF>\n");
-					ANTLR3_FPRINTF(stderr, " : Faltando fim do aquivo\n");
+					//ANTLR3_FPRINTF(stderr, " : Faltando fim do aquivo\n");
+					sprintf(messageAux, " : Faltando fim do aquivo\n");
+					strcat(messageError, messageAux);
 				}
 				else
 				{
 					//ANTLR3_FPRINTF(stderr, " : Missing \%s \n", tokenNames[ex->expecting]);
 					//ANTLR3_FPRINTF(stderr, " : Faltandoaa \%d \n", ex->expecting);
-					ANTLR3_FPRINTF(stderr, "\n");
+					//ANTLR3_FPRINTF(stderr, "\n");
+					sprintf(messageAux, "\n");
+					strcat(messageError, messageAux);
 				}
 			}
 			break;
@@ -227,7 +260,9 @@ static void *getMissingSymbolNew(pANTLR3_BASE_RECOGNIZER recognizer, pANTLR3_INT
 			// to complete a parse for instance.
 			//
 			//ANTLR3_FPRINTF(stderr, " : syntax error...\n");  
-			ANTLR3_FPRINTF(stderr, " : Erro de sintaxe...\n");   
+			//ANTLR3_FPRINTF(stderr, " : Erro de sintaxe...\n");   
+			sprintf(messageAux, " : Erro de sintaxe...\n");   
+			strcat(messageError, messageAux);
 			break;
 
 		case    ANTLR3_MISMATCHED_TOKEN_EXCEPTION:
@@ -244,19 +279,25 @@ static void *getMissingSymbolNew(pANTLR3_BASE_RECOGNIZER recognizer, pANTLR3_INT
 			if	(tokenNames == NULL)
 			{
 				//ANTLR3_FPRINTF(stderr, " : syntax error...\n");
-				ANTLR3_FPRINTF(stderr, " : Erro de sintaxe...\n");
+				//ANTLR3_FPRINTF(stderr, " : Erro de sintaxe...\n");
+				sprintf(messageAux, " : Erro de sintaxe...\n");   
+				strcat(messageError, messageAux);
 			}
 			else
 			{
 				if	(ex->expecting == ANTLR3_TOKEN_EOF)
 				{
 					//ANTLR3_FPRINTF(stderr, " : expected <EOF>\n");
-					ANTLR3_FPRINTF(stderr, " : esperando fim do arquivo\n");
+					//ANTLR3_FPRINTF(stderr, " : esperando fim do arquivo\n");
+					sprintf(messageAux, " : esperando fim do arquivo\n");
+					strcat(messageError, messageAux);
 				}
 				else
 				{
 					//ANTLR3_FPRINTF(stderr, " : expected \%s ...\n", tokenNames[ex->expecting]);
-					ANTLR3_FPRINTF(stderr, " : esperando \%s ...\n", tokenNames[ex->expecting]);
+					//ANTLR3_FPRINTF(stderr, " : esperando \%s ...\n", tokenNames[ex->expecting]);
+					sprintf(messageAux, " : esperando \%s ...\n", tokenNames[ex->expecting]);
+					strcat(messageError, messageAux);
 				}
 			}
 			break;
@@ -269,7 +310,9 @@ static void *getMissingSymbolNew(pANTLR3_BASE_RECOGNIZER recognizer, pANTLR3_INT
 			// that the DFA indicates nowhere to go from here.
 			//
 			//ANTLR3_FPRINTF(stderr, " : entrada desconhecida...\n");
-			ANTLR3_FPRINTF(stderr, "\n");
+			//ANTLR3_FPRINTF(stderr, "\n");
+			sprintf(messageAux, "\n");
+			strcat(messageError, messageAux);
 			
 			break;
 
@@ -331,7 +374,9 @@ static void *getMissingSymbolNew(pANTLR3_BASE_RECOGNIZER recognizer, pANTLR3_INT
 			// we should have done.
 			//
 			//ANTLR3_FPRINTF(stderr, " : missing elements...\n");
-			ANTLR3_FPRINTF(stderr, " :  faltando elementos...\n");
+			//ANTLR3_FPRINTF(stderr, " :  faltando elementos...\n");
+			sprintf(messageAux, " :  faltando elementos...\n");
+			strcat(messageError, messageAux);
 			break;
 
 		default:
@@ -342,7 +387,9 @@ static void *getMissingSymbolNew(pANTLR3_BASE_RECOGNIZER recognizer, pANTLR3_INT
 			// token.
 			//
 			//ANTLR3_FPRINTF(stderr, " : syntax not recognized...\n");
-			ANTLR3_FPRINTF(stderr, " : sintaxe não reconhecida...\n");
+			//ANTLR3_FPRINTF(stderr, " : sintaxe não reconhecida...\n");
+			sprintf(messageAux, " : sintaxe não reconhecida...\n");
+			strcat(messageError, messageAux);
 			break;
 		}
 
@@ -356,6 +403,7 @@ static void *getMissingSymbolNew(pANTLR3_BASE_RECOGNIZER recognizer, pANTLR3_INT
 		// to do something like that.
 		// Here is where you do it though :-).
 		//
+
 	}
 	
 	
