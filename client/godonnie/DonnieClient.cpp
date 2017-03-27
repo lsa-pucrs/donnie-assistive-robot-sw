@@ -292,7 +292,7 @@ int DonnieClient::meterToSteps(double m){
 
 int DonnieClient::moveForward(int arg)
 {
-	robot->ReadIfWaiting();
+	robot->Read();
 	//double yawi = p2dProxy->GetYaw();    //Angulo do robo
 	double posxi = p2dProxy->GetXPos();   //Posicao inicial X do robo
 	double posyi = p2dProxy->GetYPos();   //Posicao inicial Y do robo
@@ -308,13 +308,13 @@ int DonnieClient::moveForward(int arg)
 	//validate step number
 	if(Npassos != 0){
 		//initial collision prevent - check if not are nearby obstacle to start movement
-		robot->ReadIfWaiting();
+		robot->Read();
 		if(sonarProxy->GetRange(1) > 2*FRONT_RANGER)//Range South
 			p2dProxy->SetSpeed(0.05,0);
 		else obstacle = true;
 
-
-		while(hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) <= targetHypot && collision==false && obstacle==false)
+		//hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) <= targetHypot
+		while(passos < Npassos && collision==false && obstacle==false)
 		{
 			//#ifndef NDEBUG
 			//cout << "targetHypot:" << targetHypot << endl;
@@ -328,6 +328,7 @@ int DonnieClient::moveForward(int arg)
 				collision = true;
 			}
 
+			robot->ReadIfWaiting();
 			//collision prevent
 			if(sonarProxy->GetRange(2) < SIDE_RANGER || sonarProxy->GetRange(1) < FRONT_RANGER || sonarProxy->GetRange(0) < SIDE_RANGER){
 				p2dProxy->SetSpeed(0,0);
@@ -373,7 +374,7 @@ int DonnieClient::moveForward(int arg)
 
 int DonnieClient::moveBackward(int arg)
 {
-	robot->ReadIfWaiting();
+	robot->Read();
 	//double yawi = p2dProxy->GetYaw();    //Angulo do robo
 	double posxi = p2dProxy->GetXPos();   //Posicao inicial X do robo
 	double posyi = p2dProxy->GetYPos();   //Posicao inicial Y do robo
@@ -389,13 +390,13 @@ int DonnieClient::moveBackward(int arg)
 	//validate step number
 	if(Npassos != 0){
 		//initial collision prevent - check if not are nearby obstacle to start movement
-		robot->ReadIfWaiting();
+		robot->Read();
 		if(sonarProxy->GetRange(4) > 2*FRONT_RANGER)//Range South
 			p2dProxy->SetSpeed(-0.05,0);
 		else obstacle = true;
 
-
-		while(hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) <= targetHypot && collision==false && obstacle==false)
+		// hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) <= targetHypot 
+		while(passos < Npassos && collision==false && obstacle==false)
 		{
 			//#ifndef NDEBUG
 			//cout << "targetHypot:" << targetHypot << endl;
@@ -409,6 +410,7 @@ int DonnieClient::moveBackward(int arg)
 				collision = true;
 			}
 
+			robot->ReadIfWaiting();
 			//collision prevent
 			if(sonarProxy->GetRange(4) < SIDE_RANGER || sonarProxy->GetRange(3) < FRONT_RANGER || sonarProxy->GetRange(5) < SIDE_RANGER){
 				p2dProxy->SetSpeed(0,0);
