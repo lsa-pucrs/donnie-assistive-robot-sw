@@ -4,6 +4,13 @@
 
 using namespace std;
 
+/// definition of variable return tokens
+#define WAITING 3
+#define ASSIGNED 2
+#define CREATED 1
+#define NEXIST 0
+#define EXIST -1
+
 
 DonnieMemory::DonnieMemory()
 {
@@ -35,8 +42,8 @@ int DonnieMemory::addVar(string name, int value)
 	//cout << "variavel " << var << endl;
 	if(Memory.top().memory.find(var) != Memory.top().memory.end())
 	{
-		cout << "Variavel ja existe." << endl;
-		return 0;
+		cout << "Variável \"" << name << "\" já existe." << endl;
+		return EXIST;
 	}
 	else
 	{
@@ -44,7 +51,7 @@ int DonnieMemory::addVar(string name, int value)
         	cout << "MAKE: " << var << " = " << value << endl;
         #endif
 		Memory.top().memory[var] = value;
-		return value;
+		return CREATED;
 	}
 }
 
@@ -60,11 +67,11 @@ int DonnieMemory::assignVar(string name, int value)
 	if(Memory.top().memory.find(var) != Memory.top().memory.end())
     {
       Memory.top().memory[var] = value;
-      return value;
+      return ASSIGNED;
     }
     else
-    	cout << "Variável não existe" << endl;
-    return 0;
+    	cout << "Variável \"" << name << "\" não existe" << endl;
+    return NEXIST;
 }
 
 int DonnieMemory::getVar(string name)
@@ -76,8 +83,8 @@ int DonnieMemory::getVar(string name)
 	  	return Memory.top().memory[var]; // Variável local do primeiro item da stack
 	}
 	else
-	  cout << "Variável não existe" << endl;
-	return 0;
+	  cout << "Variável \"" << name << "\" não existe" << endl;
+	return NEXIST;
 }
 
 void DonnieMemory::stackMemory(mem local)
@@ -95,14 +102,14 @@ int DonnieMemory::addForVar(string name, int value)
 	string var = toLowerCase(name);
 	//cout << "variavel " << var << endl;
 	if(Memory.top().memory.find(var) != Memory.top().memory.end())
-		cout << "Variavel for ja existe" << endl;
+		cout << "Variável PARA \"" << name << "\" já existe" << endl;
 	else
 	{
 		addVar(var, value);
 		tempVar.push(var);
-		return value;
+		return CREATED;
 	}
-	return 0;
+	return EXIST;
 
 }
 
@@ -118,7 +125,7 @@ void DonnieMemory::addProc(string name, procDec procedure)
 	string var = toLowerCase(name);
 	if(proc.find(var) != proc.end())
 	{
-		cout << "Procedimento já foi declarado " << endl;
+		cout << "Procedimento \"" << name << "\" já foi declarado " << endl;
 	}
 	else
 		proc[var] = procedure;
@@ -132,5 +139,5 @@ procDec DonnieMemory::getProc(string name)
 		return proc[var];
 	}
 	else
-		cout << "Procedimento não existe " << endl;
+		cout << "Procedimento \"" << name << "\" não existe " << endl;
 }

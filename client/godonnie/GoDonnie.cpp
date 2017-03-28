@@ -7,6 +7,9 @@
 #include <cstring>
 #include <string>
 #include <unistd.h> //getopt
+#include <sys/types.h>
+#include <sys/stat.h>
+
 
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -164,16 +167,22 @@ int main(int argc, char* argv[])
     int fileno=0;
     bool success = true;
     char fileName[40] = "";
+
+    struct stat info;
+
+    if( stat( "Log", &info ) != 0 )
+        mkdir("Log", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); //Log directory does not exist. Creating log directory.
+    
     ifstream ifs;
     while(success &&fileno < 999) {
-	   sprintf(fileName, "log_%03d.txt", fileno);
+	   sprintf(fileName, "Log/log_%03d.txt", fileno);
 	   ifs.open(fileName, std::ifstream::in);// attempt read file to check if it exists
 	   success = ifs.good();
 	   ifs.close();
 	   fileno++;//increase by one to get a new file name
     } 
 
-    sprintf(fileName, "log_%03d.txt", fileno-1);
+    sprintf(fileName, "Log/log_%03d.txt", fileno-1);
     log = fopen(fileName, "w");
 
     if (log == NULL)
