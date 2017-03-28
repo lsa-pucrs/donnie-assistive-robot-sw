@@ -292,7 +292,7 @@ int DonnieClient::meterToSteps(double m){
 
 int DonnieClient::moveForward(int arg)
 {
-	robot->ReadIfWaiting();
+	robot->Read();
 	//double yawi = p2dProxy->GetYaw();    //Angulo do robo
 	double posxi = p2dProxy->GetXPos();   //Posicao inicial X do robo
 	double posyi = p2dProxy->GetYPos();   //Posicao inicial Y do robo
@@ -308,13 +308,13 @@ int DonnieClient::moveForward(int arg)
 	//validate step number
 	if(Npassos != 0){
 		//initial collision prevent - check if not are nearby obstacle to start movement
-		robot->ReadIfWaiting();
+		robot->Read();
 		if(sonarProxy->GetRange(1) > 2*FRONT_RANGER)//Range South
 			p2dProxy->SetSpeed(0.05,0);
 		else obstacle = true;
 
-
-		while(hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) <= targetHypot && collision==false && obstacle==false)
+		//hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) <= targetHypot
+		while(passos < Npassos && collision==false && obstacle==false)
 		{
 			//#ifndef NDEBUG
 			//cout << "targetHypot:" << targetHypot << endl;
@@ -328,6 +328,7 @@ int DonnieClient::moveForward(int arg)
 				collision = true;
 			}
 
+			robot->ReadIfWaiting();
 			//collision prevent
 			if(sonarProxy->GetRange(2) < SIDE_RANGER || sonarProxy->GetRange(1) < FRONT_RANGER || sonarProxy->GetRange(0) < SIDE_RANGER){
 				p2dProxy->SetSpeed(0,0);
@@ -373,7 +374,7 @@ int DonnieClient::moveForward(int arg)
 
 int DonnieClient::moveBackward(int arg)
 {
-	robot->ReadIfWaiting();
+	robot->Read();
 	//double yawi = p2dProxy->GetYaw();    //Angulo do robo
 	double posxi = p2dProxy->GetXPos();   //Posicao inicial X do robo
 	double posyi = p2dProxy->GetYPos();   //Posicao inicial Y do robo
@@ -389,13 +390,13 @@ int DonnieClient::moveBackward(int arg)
 	//validate step number
 	if(Npassos != 0){
 		//initial collision prevent - check if not are nearby obstacle to start movement
-		robot->ReadIfWaiting();
+		robot->Read();
 		if(sonarProxy->GetRange(4) > 2*FRONT_RANGER)//Range South
 			p2dProxy->SetSpeed(-0.05,0);
 		else obstacle = true;
 
-
-		while(hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) <= targetHypot && collision==false && obstacle==false)
+		// hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) <= targetHypot 
+		while(passos < Npassos && collision==false && obstacle==false)
 		{
 			//#ifndef NDEBUG
 			//cout << "targetHypot:" << targetHypot << endl;
@@ -409,6 +410,7 @@ int DonnieClient::moveBackward(int arg)
 				collision = true;
 			}
 
+			robot->ReadIfWaiting();
 			//collision prevent
 			if(sonarProxy->GetRange(4) < SIDE_RANGER || sonarProxy->GetRange(3) < FRONT_RANGER || sonarProxy->GetRange(5) < SIDE_RANGER){
 				p2dProxy->SetSpeed(0,0);
@@ -618,15 +620,17 @@ int DonnieClient::Color(int color_code){
 			if (color_str == value_to_color(bfinderProxy->GetBlob(i).color))
 				blobs_found++;
 		}
-		
+
+		/* Color has no feedback
 		// build string
 		if (head_yawi == 0)
-			scanText << "a frente: ";
+			scanText << " frente: ";
 		else if (head_yawi < 0)
-			scanText << "a " << -head_yawi << " graus a direita: ";
+			scanText << -head_yawi << " graus a direita: ";
 		else 
-			scanText << "a " << head_yawi << " graus a esquerda: ";
+			scanText << head_yawi << " graus a esquerda: ";
 
+		
 		// OBS: '(int)*sonar_readings' truncate the distance. perhaps 'round' would be better
 		if (blobs_found == 0){
 			scanText << "0 objetos";
@@ -635,13 +639,17 @@ int DonnieClient::Color(int color_code){
 		}else{
 			scanText << blobs_found << " objetos"; 
 		}			
-
+			
+		
+		
 		speak(scanText.str());
 		// TODO gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
 		sleep(2);
 
 		scanText.str("");
 		scanText.clear();	
+		*/
+
 		head_yawi = head_yawi + 30; // more + 30 degree 
 		total_blobs_found += blobs_found;
 		blobs_found=0;
@@ -651,6 +659,7 @@ int DonnieClient::Color(int color_code){
 	headGoto(0);
 	robot->ReadIfWaiting();
 
+	/* Color has no feedback
 	// generate output
 	if (total_blobs_found == 0){
 		scanText << "nenhum objeto encontrado com a cor " << color_str;
@@ -660,6 +669,7 @@ int DonnieClient::Color(int color_code){
 		scanText << total_blobs_found << " objetos encontrados com a cor " << color_str;
 	}
 	speak(scanText.str());
+	*/
 	
 	return total_blobs_found;
 }
