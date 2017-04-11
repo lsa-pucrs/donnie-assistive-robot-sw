@@ -114,7 +114,7 @@ define donnie_head position
 
 	obstacle_return 0
 
-	color "green"
+	color "red"
 
 	donnie_HS()
 	donnie_eyes( )
