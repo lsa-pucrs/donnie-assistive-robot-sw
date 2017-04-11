@@ -93,7 +93,7 @@ floorplan
 donnie
 (
 		  name "donnie"
-		  pose [0 0 0 0]
+		  pose [0 0 0 90]
 		  color "red"
 )
 
