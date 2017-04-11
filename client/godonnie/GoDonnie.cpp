@@ -208,7 +208,10 @@ int main(int argc, char* argv[])
         if (temp && *temp)
         {
           add_history (temp);
-          code += "\n" + string(temp);
+          if(code.empty())
+			code += string(temp);
+		  else
+			code += "\n" + string(temp);
         }
         else
           rl_on_new_line ();
