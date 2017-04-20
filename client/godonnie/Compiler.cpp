@@ -366,19 +366,21 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           {
             int arg;
             float pos;
-            vector<string> tokens;
-            split((char*)getText(tree),' ',tokens);
+            char* tokens;
+            tokens = strtok((char*)getText(tree)," ");
 
 			//if (tokens.size() != 2)
 				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
 
 			// get the ranger id
-			if (tokens[1] == POSITION_X)
+			if (tokens == POSITION_X)
 				arg = 0;
-			else if (tokens[1] == POSITION_Y)
+			else if (tokens == POSITION_Y)
 				arg = 1;
-			else if (tokens[1] == POSITION_YAW)
+			else if (tokens == POSITION_YAW)
 				arg = 2;
+      else
+        arg = 3;
 			//else  
 				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
 				
