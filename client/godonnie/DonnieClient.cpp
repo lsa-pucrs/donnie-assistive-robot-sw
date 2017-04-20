@@ -266,6 +266,7 @@ int DonnieClient::GetPos(string p2d, int arg)
 float DonnieClient::GetPos(Position2dProxy *p2d, int arg)
 {
 	robot->ReadIfWaiting();
+	std::ostringstream sayStr;
 
 	switch(arg)
 	{
@@ -275,6 +276,10 @@ float DonnieClient::GetPos(Position2dProxy *p2d, int arg)
 			return p2d->GetYPos()/STEP_LENGHT;
 		case 2:
 			return radTOdeg(p2d->GetYaw());
+		case 3:
+			sayStr << "Estou no x " << (int)(p2d->GetXPos()/STEP_LENGHT) << ", no y " << (int)(p2d->GetYPos()/STEP_LENGHT) << " e virado para " << (int)(radTOdeg(p2d->GetYaw())) << " graus.";
+			speak(sayStr.str());
+			return 0;
 		default:
 			ostringstream buf;
 			buf << "Position id "<< arg << "invalid" << endl;
