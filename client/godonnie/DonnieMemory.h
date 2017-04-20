@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "GoDonnieLexer.h"
+#include "DonnieClient.h"
 
 using namespace std;
 
@@ -28,6 +29,7 @@ private:
 	stack<mem> Memory;
 	stack<string> tempVar;
 	map<string,procDec> proc;
+	DonnieClient *Donnie;
 
 	static DonnieMemory *singleton;
 public:
