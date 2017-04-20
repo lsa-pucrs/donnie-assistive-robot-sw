@@ -16,6 +16,7 @@ DonnieMemory::DonnieMemory()
 {
 	mem global;
 	Memory.push(global);
+	Donnie = DonnieClient::getInstance();
 }
 
 DonnieMemory::~DonnieMemory()
@@ -38,11 +39,14 @@ void DonnieMemory::ResetInstance()
 
 int DonnieMemory::addVar(string name, int value)
 {
+	std::ostringstream sayStr;
 	string var = toLowerCase(name);
 	//cout << "variavel " << var << endl;
 	if(Memory.top().memory.find(var) != Memory.top().memory.end())
 	{
-		cout << "Variável \"" << name << "\" já existe." << endl;
+		sayStr << "Variável \"" << name << "\" já existe.";
+		Donnie->speak(sayStr.str());
+		cout << sayStr.str() << endl;
 		return EXIST;
 	}
 	else
@@ -62,6 +66,7 @@ int DonnieMemory::addVar(string name)
 
 int DonnieMemory::assignVar(string name, int value)
 {
+	std::ostringstream sayStr;
 	string var = toLowerCase(name);
 	//cout << "variavel " << var << endl;
 	if(Memory.top().memory.find(var) != Memory.top().memory.end())
@@ -70,12 +75,17 @@ int DonnieMemory::assignVar(string name, int value)
       return ASSIGNED;
     }
     else
-    	cout << "Variável \"" << name << "\" não existe" << endl;
+    {
+    	sayStr << "Variável \"" << name << "\" não existe.";
+    	Donnie->speak(sayStr.str());
+		cout << sayStr.str() << endl;
+    }
     return NEXIST;
 }
 
 int DonnieMemory::getVar(string name)
 {
+	std::ostringstream sayStr;
 	string var = toLowerCase(name);
 	//cout << "variavel " << var << endl;
 	if(Memory.top().memory.find(var) != Memory.top().memory.end())
@@ -83,7 +93,11 @@ int DonnieMemory::getVar(string name)
 	  	return Memory.top().memory[var]; // Variável local do primeiro item da stack
 	}
 	else
-	  cout << "Variável \"" << name << "\" não existe" << endl;
+	{
+		sayStr << "Variável \"" << name << "\" não existe.";
+		Donnie->speak(sayStr.str());
+		cout << sayStr.str() << endl;
+	}
 	return NEXIST;
 }
 
@@ -99,10 +113,15 @@ void DonnieMemory::unstackMemory()
 
 int DonnieMemory::addForVar(string name, int value)
 {
+	std::ostringstream sayStr;
 	string var = toLowerCase(name);
 	//cout << "variavel " << var << endl;
 	if(Memory.top().memory.find(var) != Memory.top().memory.end())
-		cout << "Variável PARA \"" << name << "\" já existe" << endl;
+	{
+		sayStr << "Variável PARA \"" << name << "\" já existe.";
+		Donnie->speak(sayStr.str());
+		cout << sayStr.str() << endl;
+	}
 	else
 	{
 		addVar(var, value);
@@ -122,10 +141,13 @@ void DonnieMemory::purgeForVar()
 
 void DonnieMemory::addProc(string name, procDec procedure)
 {
+	std::ostringstream sayStr;
 	string var = toLowerCase(name);
 	if(proc.find(var) != proc.end())
 	{
-		cout << "Procedimento \"" << name << "\" já foi declarado " << endl;
+		sayStr << "Procedimento \"" << name << "\" já foi declarado.";
+		Donnie->speak(sayStr.str());
+		cout << sayStr.str() << endl;
 	}
 	else
 		proc[var] = procedure;
@@ -133,11 +155,16 @@ void DonnieMemory::addProc(string name, procDec procedure)
 
 procDec DonnieMemory::getProc(string name)
 {
+	std::ostringstream sayStr;
 	string var = toLowerCase(name);
 	if(proc.find(var) != proc.end())
 	{
 		return proc[var];
 	}
 	else
-		cout << "Procedimento \"" << name << "\" não existe " << endl;
+	{
+		sayStr << "Procedimento \"" << name << "\" não existe.";
+		Donnie->speak(sayStr.str());
+		cout << sayStr.str() << endl;
+	}
 }

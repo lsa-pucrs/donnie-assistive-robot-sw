@@ -194,7 +194,7 @@ int ExprTreeEvaluator::parseGD(char* textIn, bool enable_log)
 
 int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 {
-	
+	  std::ostringstream sayStr;
     pANTLR3_COMMON_TOKEN tok = tree->getToken(tree);
     if(tok) {
         switch(tok->type) {
@@ -599,7 +599,6 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case PROCINV:
           {
             char* name = (char*)getText(getChild(tree,0));
-
             mem local;                                      // Inicia dicionário local
 
             procDec procedure = DonnieMemory::getInstance()->getProc(name);
@@ -616,7 +615,12 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
               DonnieMemory::getInstance()->unstackMemory();                            // Desempilha dicionário
             }
             else
-              cout << "Número de argumentos invalido" << endl;
+            {
+              sayStr << "Número de argumentos invalido.";
+              Donnie->speak(sayStr.str());
+              cout << sayStr << endl;
+
+            }
 
             break;
           }
