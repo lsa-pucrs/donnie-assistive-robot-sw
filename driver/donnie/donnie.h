@@ -24,23 +24,39 @@
 //#define DEFAULT_AXLE_LENGTH	0.301
 
 
-//! Timer to count time in seconds. 
+//! Timer to count time in seconds, milliseconds or microseconds. 
 /*! Used to count time for ping messages */
 class Timer
 {
 public:
-    Timer() { clock_gettime(CLOCK_REALTIME, &beg_); }
+	Timer() {
+		clock_gettime(CLOCK_REALTIME, &beg_); 
+		gettimeofday(&tbeg_, NULL);
+	}
 
-    double elapsed() {
-        clock_gettime(CLOCK_REALTIME, &end_);
-        return end_.tv_sec - beg_.tv_sec +
-            (end_.tv_nsec - beg_.tv_nsec) / 1000000000.;
-    }
-
-    void reset() { clock_gettime(CLOCK_REALTIME, &beg_); }
+	double elapsed() {
+		clock_gettime(CLOCK_REALTIME, &end_);
+		// printf("seconds: %.2lf\n", seconds);
+		return (end_.tv_sec - beg_.tv_sec) +
+			(end_.tv_nsec - beg_.tv_nsec) / 1000000000.;
+	}
+	unsigned long long elapsedms() { //current timestamp in ms
+		gettimeofday(&tend_, NULL); // get current time
+		// printf("milliseconds: %Lu\n", milliseconds);
+		return (tend_.tv_sec-tbeg_.tv_sec)*1000LL + 
+				(tend_.tv_usec-tbeg_.tv_usec)/1000;// caculate milliseconds
+	}
+	unsigned long long elapsedus() { //current timestamp in us
+		gettimeofday(&tend_, NULL); // get current time
+		// printf("microseconds: %Lu\n", microseconds);
+		return (tend_.tv_usec-tbeg_.tv_usec)+
+				(tend_.tv_sec-tbeg_.tv_sec)*(uint64_t)1000000; // caculate microseconds
+	}
+	void reset() { clock_gettime(CLOCK_REALTIME, &beg_); }
 
 private:
-    timespec beg_, end_;
+	struct timeval tbeg_, tend_;
+	timespec beg_, end_;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -177,6 +193,7 @@ class Donnie : public ThreadedDriver{
 
 		//!Debug parameters
 		int print_debug_messages;
+		int print_debug_encoder;
 
 		//!Others parameters
 		double step_length;
