@@ -13,6 +13,7 @@ PARA COMPILAR USAR IDE ARDUINO 1.2 OU SUPERIOR
 #include "bumper.h"
 #include <Servo.h>
 #include "pitches.h"
+#include "TimerThree.h"
 
 Servo neckServo;
 
@@ -26,11 +27,13 @@ robot status:
 */
 
 uint32_t counter = 0;
-uint32_t millisLastTime = 0;
-uint32_t millisTimeStamp;
 
 //SENSORS DATA GLOBAL VARIABLES 
 uint8_t systemDio_data = 0;
+
+//timestamp vars 
+unsigned long timestamp;
+unsigned long encoderTimestamp; //time stamp
 
 float BytesToFloat(uint8_t *data, uint8_t first){
 	uint8_t aux[4];
@@ -187,9 +190,12 @@ void sendData(){
 		}
 	}
 	if(counter % SEND_ENCODER_FRQ == 0){
+		timestamp = micros();
 		sendEncoderMsg(m.counterR,m.counterL,m.getSpeedR(),m.getSpeedL());
+		encoderTimestamp = micros() - timestamp;
+		systemMsg(String("Ec:")+String(encoderTimestamp)+",us\n");
 		//systemMsg(String("Enc_R:")+String(m.counterR));
-		//systemMsg(String("Enc_L:")+String(m.counterL));
+		//systemMsg(String("|Enc_L:")+String(m.counterL)+"\n");
 	}
 	if(counter % SEND_SYSTEMMSG_FRQ == 0){
 		//systemMsg("Mensagem default");
@@ -200,6 +206,10 @@ void sendData(){
 }
 
 void driver_config(){
+	neckServo.attach(PIN_SERVO_NECK);
+	Timer3.initialize(10000);
+	Timer3.attachInterrupt(updateCounter);
+
 	waitingConfigFlag = 1;
 	//blink fast when no config received yet
 	do{
@@ -207,99 +217,24 @@ void driver_config(){
 		readCommand();
 		battery_update();
 		updateAlerts();
-		updateCounter(); 
+		//updateCounter(); 
 	}while(!receivedConfigCmd());
+	tone(PIN_BUZZER, 988, 100);
 	waitingConfigFlag = 0;
 	//updateConfigParameters()
 }
 
-
-
-
-/*
-mi E  7
-re D  7
-do C  7
-si B  6             //Dó – ré – mi – fá – sol – Lá – si   
-la A  6              //C –  D –  E –  F –  G –   A –  B (inglês)  
-Sol G 6 <-
-fa F  6
-mi E  6 
-re D  6
-do C  6
-si B  5
-la A  5
-*/
-
-
-int oDeAlegriaP1[]       = {NOTE_E7, NOTE_E7, NOTE_F7, NOTE_G7,           NOTE_G7, NOTE_F7, NOTE_E7, NOTE_D7,           NOTE_C7, NOTE_C7, NOTE_D7, NOTE_E7,          NOTE_E7, NOTE_C7, NOTE_C7         };
-int oDeAlegriaBeatsP1[]  = {4,       4,       4,       4,                 4,       4,       4,       4,                 4,      4,       4,       4,                 3,       6,       2,              };
-int oDeAlegriaP2[]       = {NOTE_E7, NOTE_E7, NOTE_F7, NOTE_G7,           NOTE_G7, NOTE_F7, NOTE_E7, NOTE_D7,           NOTE_C7, NOTE_C7, NOTE_D7, NOTE_E7,          NOTE_D7, NOTE_B6, NOTE_C7         };
-int oDeAlegriaBeatsP2[]  = {4,       4,       4,       4,                 4,       4,       4,       4,                 4,      4,       4,       4,                 3,       6,       2,              };
-int oDeAlegriaP3[]       = {NOTE_D7,          NOTE_E7, NOTE_C7,           NOTE_D7,  NOTE_F7, NOTE_E7, NOTE_C7,          NOTE_D7,  NOTE_F7, NOTE_E7, NOTE_C7,         NOTE_D7, NOTE_G7, NOTE_G7         };
-int oDeAlegriaBeatsP3[]  = {2,                4,       4,                 4,        4,       4,       4,                4,        4,       4,       4,               4,       4,       2,              };
-
-
-int imperialMarch[]       = {NOTE_G4, 0, NOTE_G4, NOTE_G4,           NOTE_G4, NOTE_G4, NOTE_G4, NOTE_G4,           NOTE_E4, NOTE_E4, NOTE_G4, 0, NOTE_G4, NOTE_G4, NOTE_G4, NOTE_G4, NOTE_G4,           NOTE_E4, NOTE_E4, NOTE_G4     };
-int imperialMarchBeats[]  = {2,       4,       2,       4,                 4,       8,       8,       8,                 4,      4,       2,  4,     2,         4,       8,       8,       8,                 4,      4,       2        };
-
-int imperialMarch2[]       = {NOTE_A4,   NOTE_A4, NOTE_A4,           NOTE_F4, NOTE_C4, NOTE_A4, NOTE_F4,           NOTE_C4, NOTE_A4, NOTE_E4,  NOTE_E4, NOTE_E4, NOTE_F4, NOTE_C4, NOTE_GS4,           NOTE_F4, NOTE_C4, NOTE_A4     };
-int imperialMarchBeats2[]  = {4,             4,       4,                 4,       8,      4,       8,                 8,      4,       8,       2,         2,       4,       4,       4,                 4,      4,       4       };
-
-
-
-void melody(int *notes,int  *noteDurations, int length) {
-  // iterate over the notes of the melody:
-  for (int thisNote = 0; thisNote < length; thisNote++) { 
-
-    // to calculate the note duration, take one second
-    // divided by the note type.
-    //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
-    int noteDuration = 1000 / noteDurations[thisNote];
-    tone(PIN_BUZZER, notes[thisNote], noteDuration);
-
-    // to distinguish the notes, set a minimum time between them.
-    // the note's duration + 30% seems to work well:
-    int pauseBetweenNotes = noteDuration * 1.30;
-    delay(pauseBetweenNotes);
-    // stop the tone playing:
-    noTone(PIN_BUZZER);
-  }
-}
-
-
-
-
-
-
 void setup(){
-	//melody(oDeAlegriaP1,oDeAlegriaBeatsP1,15);
-    //melody(oDeAlegriaP2,oDeAlegriaBeatsP2,15);
-    //melody(oDeAlegriaP3,oDeAlegriaBeatsP3,14);
-    //melody(oDeAlegriaP1,oDeAlegriaBeatsP1,15);
-    //melody(oDeAlegriaP2,oDeAlegriaBeatsP2,15);
-    //melody(imperialMarch,imperialMarchBeats,18);
-
-
-
 	protocol_config();
 	status_config();
     driver_config(); //after status_config beacuse led connection
 	ranger_config();
 	bumper_config();
 	motors_config();
-
-	neckServo.attach(PIN_SERVO_NECK);
-
 }
 
 void updateCounter(){
-  millisTimeStamp = millisTimeStamp + (micros() - millisLastTime); 
-  if(millisTimeStamp >= 1000){
-		++counter;  //each counter means 1ms
-		millisTimeStamp = millisTimeStamp - 1000; //discont the microsseconds that overload timeStamp
-		millisLastTime = micros();
-  }
+  counter+=10;  //each counter means 10ms
 }
 
 
@@ -321,7 +256,4 @@ void loop(){
 
 	//update the moviment of motors.
 	updateActuators();
-
-	//increment the counter each 1ms (1000us)
-	updateCounter(); 
 }
