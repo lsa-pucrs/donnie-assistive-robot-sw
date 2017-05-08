@@ -63,150 +63,6 @@ TODO:  colocar exemplo c todos os parametros
 #include <cmath>
 
 
-////////////////////////////////////////////////////////////////////////////////
-// The class for timer
-
-class Timer
-{
-public:
-    Timer() { clock_gettime(CLOCK_REALTIME, &beg_); }
-
-    double elapsed() {
-        clock_gettime(CLOCK_REALTIME, &end_);
-        return end_.tv_sec - beg_.tv_sec +
-            (end_.tv_nsec - beg_.tv_nsec) / 1000000000.;
-    }
-
-    void reset() { clock_gettime(CLOCK_REALTIME, &beg_); }
-
-private:
-    timespec beg_, end_;
-};
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-// The class for the driver
-class Donnie : public ThreadedDriver{
-	public:
-
-		// Constructor; need that
-		Donnie(ConfigFile* cf, int section);
-
-		// This method will be invoked on each incoming message
-		virtual int ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, void * data);
-
-	private:
-		// Main function for device thread.
-		virtual void Main();
-
-		int processIncomingData(); //g
-
-		void ProcessDioCommand(player_msghdr_t* hdr, player_dio_cmd_t &data);   
-		void ProcessNeckPos2dVelCmd(player_msghdr_t* hdr, player_position2d_cmd_vel_t &data);
-		void ProcessPos2dVelCmd(player_msghdr_t* hdr, player_position2d_cmd_vel_t &data);
-		void ProcessPos2dPosCmd(player_msghdr_t* hdr, player_position2d_cmd_pos_t &data);
-		void ProcessPos2dGeomReq(player_msghdr_t* hdr);
-
-		void ProcessDioData();
-		void ProcessRangerData();
-		void ProcessBumperData();
-		void ProcessPowerData();
-		void ProcessSystemMessageData();
-		void ProcessRequestConfig();
-		void ProcessRequestPing();
-		void ProcessEncoderData();
-		void Odometry();
-		void FloatToBytes(float value, uint8_t *data);
-		void Uint16_tToBytes(uint16_t value, uint8_t *data);
-		void Uint32_tToBytes(uint32_t value, uint8_t *data);
-		//void ProcessBeepCmd(player_msghdr_t* hdr, player_beep_cmd_t &data);
-
-		//void Beep(uint16_t frequency,uint32_t duration);
-		void MotorsOff();
-
-
-
-	/*  
-	Definition:
-
-	player_dio_cmd_t struct: 
-		uint32_t count; 
-		uint32_t digout;
-
-	player_dio_data:
-		uint32_t count;
-		uint32_t bits;
-
-	Source: player-3.0.2/build/libplayerinterface/player_interfaces.h 
-	*/
-		Timer tmr; //to get the execution time
-
-		std::string port;
-
-		Serial *arduino;
-		uint8_t rx_data[BUFFER_SIZE], tx_data[BUFFER_SIZE]; //g
-		unsigned int rx_data_count, tx_data_count; //g
- 
-
-		// My dio interface
-		player_devaddr_t m_dio_addr;  
-		// My ranger interface
-		player_devaddr_t m_ranger_addr;
-		// My Neck position interface
-		player_devaddr_t m_neck_position_addr;
-		// My odometry interface
-		player_devaddr_t m_position_addr;
-		// My bumper interface
-		player_devaddr_t bumper_addr;
-		// My power interface
-		player_devaddr_t power_addr;
-		// My Odometry interface
-		//player_devaddr_t m_beep_addr;
-		//My Beep interface
-
-		//Odometry data
-		player_position2d_data_t m_pos_data;
-
-
-		// Odometry stuff
-		int32_t last_posLeft;
-		int32_t last_posRight;
-		int16_t ticksR; 
-		int16_t ticksL;
-
-		//robot geometry members
-		double robot_width;
-		double robot_length;
-		double robot_height;
-
-		//robot parameters 
-		double linear_max_vel;
-		double ang_max_vel;
-
-
-		double pid_kp; 
-		double pid_ki; 
-		double pid_kd; 
-		double pid_setpoint;
-		int pid_offset_r;
-		int pid_offset_l;
-
-		double step_lenght;
-
-		int print_debug_messages;
-
-		//double angular_offset;
-
-
-
-
-
-		virtual int MainSetup();
-		virtual void MainQuit();
-};
-
-
 // A factory creation function, declared outside of the class so that it
 // can be invoked without any object context (alternatively, you can
 // declare it static in the class).  In this function, we create and return
@@ -343,9 +199,10 @@ Donnie::Donnie(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 	pid_offset_r = cf->ReadInt(section, "pid_offset_r", 0);
 	pid_offset_l = cf->ReadInt(section, "pid_offset_l", 0);
 
-	step_lenght = cf->ReadFloat(section, "step_lenght", 0);
+	step_length = cf->ReadFloat(section, "step_length", 0);
 
 	print_debug_messages = cf->ReadInt(section, "print_debug_messages", 0);
+	print_debug_encoder  = cf->ReadInt(section, "print_debug_encoder", 0);
 
 	
 
@@ -424,7 +281,9 @@ int Donnie::processIncomingData(){
 // Main function for device thread
 void Donnie::Main(){
 	// The main loop; interact with the device here
+		double mainLoopLag,mainLoopLagLast;
 	for(;;){
+		//mainLoopLag = tmr.elapsedus(); //to rimestamp main loop
 		// test if we are supposed to cancel
 		pthread_testcancel();
 
@@ -436,6 +295,9 @@ void Donnie::Main(){
 
 		//give robot a chance to change state May this can lag the sonar update
 		usleep(10); //Warning: This can lag sonar's readings
+		//mainLoopLag = mainLoopLag - tmr.elapsedus();
+		//if(mainLoopLag!=mainLoopLagLast) printf("MainLoopLag:%.2lf us.\n",mainLoopLag);
+		//mainLoopLagLast = mainLoopLag; 
 	}
 	return;
 }
@@ -831,7 +693,10 @@ int32_t change_left = 0;
 	int32_t rotchange = 0;
 
 void Donnie::ProcessEncoderData(){
-	uint8_t i;/*
+	double encoderPackLag;
+	encoderPackLag = tmr.elapsedus();
+	uint8_t i;
+	/*
 	printf("ENCODERPACK:");
 	for(i=0;i<rx_data_count-1;i++){
 		printf("%.2X",rx_data[i+1]); //+1 devido a prosicao zero ser o typo da mensagem
@@ -862,6 +727,9 @@ void Donnie::ProcessEncoderData(){
  	this->ticksR = auxTicksR;
  	this->ticksL = auxTicksL;
  	Odometry();
+
+ 	//if(print_debug_encoder) printf("Encoder L:%d|R:%d\n",auxTicksL,auxTicksR);
+
  	/*
  	ou um ou outro
  	speedR = (int16_t) rx_data[5];
@@ -887,6 +755,8 @@ void Donnie::ProcessEncoderData(){
 		  PLAYER_MSGTYPE_DATA,PLAYER_POSITION2D_DATA_STATE,
 		  (void*)&(this->m_pos_data), sizeof(this->m_pos_data), NULL); //sizeof(player_position2d_data_t), NULL);
 */
+	encoderPackLag = encoderPackLag - tmr.elapsedus();
+	printf("EncoderPackTS:%.2lf us.\n",encoderPackLag);
 }
 
 
@@ -917,8 +787,9 @@ int robot_cpr = 24;//count per revolution
 int cpr = 12;
 int lasttickR=0,lasttickL=0;
 
-void Donnie::Odometry()
-{
+void Donnie::Odometry(){
+	double odomLag = tmr.elapsedus();
+
 	int diff;// = abs(ticksR) - abs(ticksL);
 	float Dr,Dl,Dc;
 
@@ -1004,6 +875,8 @@ void Donnie::Odometry()
     this->Publish(this->m_position_addr,
 		  PLAYER_MSGTYPE_DATA,PLAYER_POSITION2D_DATA_STATE,
 		  (void*)&(this->m_pos_data), sizeof(this->m_pos_data), NULL); //sizeof(player_position2d_data_t), NULL);
+    odomLag = tmr.elapsedus()- odomLag;
+    printf("OdometryCalcTS:%.2lf us.\n",odomLag);
 }
 
 

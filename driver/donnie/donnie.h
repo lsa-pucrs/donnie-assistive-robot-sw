@@ -52,6 +52,11 @@ public:
 		return (tend_.tv_usec-tbeg_.tv_usec)+
 				(tend_.tv_sec-tbeg_.tv_sec)*(uint64_t)1000000; // caculate microseconds
 	}
+	void toPrint(){
+		printf("Timestamp:%.Lu us.\n",elapsedus());
+		printf("Timestamp:%.Lu ms.\n",elapsedms());
+		printf("Timestamp:%.2lf sec.\n",elapsed());
+	}
 	void reset() { clock_gettime(CLOCK_REALTIME, &beg_); }
 
 private:
