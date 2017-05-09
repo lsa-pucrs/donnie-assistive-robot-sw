@@ -261,9 +261,12 @@ void Donnie::MainQuit(){
 }
 
 
+	double processIncomingDataLag;
 int Donnie::processIncomingData(){
 	//uint8_t i;
 	if(arduino->readData(rx_data,&rx_data_count)){
+		processIncomingDataLag = tmr.elapsedus() - processIncomingDataLag ;
+		printf("IncomingDataTS:%.2lf us, PACK:%x.\n",processIncomingDataLag,rx_data[0]);
 		if(rx_data[0]==DIOPACK) ProcessDioData();
 		else if(rx_data[0]==RANGERPACK) ProcessRangerData();
 		else if(rx_data[0]==BUMPERPACK) ProcessBumperData();
@@ -273,7 +276,9 @@ int Donnie::processIncomingData(){
 		else if(rx_data[0]==PINGPACK) ProcessRequestPing();
 		else if(rx_data[0]==ENCODERPACK) ProcessEncoderData();
 		else printf("unknown message, protocol type: %.2X\n\n",rx_data[0]);
+		processIncomingDataLag = tmr.elapsedus();
 	}
+
 	return 0;
 }
 
@@ -283,7 +288,7 @@ void Donnie::Main(){
 	// The main loop; interact with the device here
 		double mainLoopLag,mainLoopLagLast;
 	for(;;){
-		//mainLoopLag = tmr.elapsedus(); //to rimestamp main loop
+		mainLoopLag = tmr.elapsedus(); //to rimestamp main loop
 		// test if we are supposed to cancel
 		pthread_testcancel();
 
@@ -295,9 +300,9 @@ void Donnie::Main(){
 
 		//give robot a chance to change state May this can lag the sonar update
 		usleep(10); //Warning: This can lag sonar's readings
-		//mainLoopLag = mainLoopLag - tmr.elapsedus();
-		//if(mainLoopLag!=mainLoopLagLast) printf("MainLoopLag:%.2lf us.\n",mainLoopLag);
-		//mainLoopLagLast = mainLoopLag; 
+		mainLoopLag = tmr.elapsedus() - mainLoopLag;
+		if(mainLoopLag!=mainLoopLagLast) printf("MainLoopLag:%.2lf us.\n",mainLoopLag);
+		mainLoopLagLast = mainLoopLag; 
 	}
 	return;
 }
@@ -687,13 +692,15 @@ void Donnie::ProcessRequestPing(){
 
 
 
-int32_t change_left = 0;
+	int32_t change_left = 0;
 	int32_t change_right = 0;
 	int32_t transchange = 0;
 	int32_t rotchange = 0;
-
-void Donnie::ProcessEncoderData(){
 	double encoderPackLag;
+	
+void Donnie::ProcessEncoderData(){
+	encoderPackLag = tmr.elapsedus() - encoderPackLag ;
+	printf("EncoderPackTS:%.2lf us.\n",encoderPackLag);
 	encoderPackLag = tmr.elapsedus();
 	uint8_t i;
 	/*
@@ -755,8 +762,6 @@ void Donnie::ProcessEncoderData(){
 		  PLAYER_MSGTYPE_DATA,PLAYER_POSITION2D_DATA_STATE,
 		  (void*)&(this->m_pos_data), sizeof(this->m_pos_data), NULL); //sizeof(player_position2d_data_t), NULL);
 */
-	encoderPackLag = encoderPackLag - tmr.elapsedus();
-	printf("EncoderPackTS:%.2lf us.\n",encoderPackLag);
 }
 
 
