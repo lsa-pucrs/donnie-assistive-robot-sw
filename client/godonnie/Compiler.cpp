@@ -367,23 +367,27 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             int arg;
             float pos;
             char* tokens;
-            tokens = strtok((char*)getText(tree)," ");
-
+            //tokens = strtok((char*)getText(tree)," ");
+            tokens = strpbrk((char*)getText(tree), "xya"); //verifica qual é o argumento de POS: x, y, a ou NULL
+			
 			//if (tokens.size() != 2)
 				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
 
 			// get the ranger id
-			if (tokens == POSITION_X)
-				arg = 0;
-			else if (tokens == POSITION_Y)
-				arg = 1;
-			else if (tokens == POSITION_YAW)
-				arg = 2;
-      else
-        arg = 3;
+			if (tokens != NULL){
+				if (strcmp(tokens,POSITION_X) == 0)
+					arg = 0;
+				else if (strcmp(tokens,POSITION_Y) == 0)
+					arg = 1;
+				else if (strcmp(tokens,POSITION_YAW) == 0)
+					arg = 2;
+			}
+		    else
+				arg = 3;	
+			
 			//else  
 				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
-				
+			
 			pos = Donnie->GetPos("body",arg);             
 			#ifndef NDEBUG
             cout << "POS: " << arg << " " << (int)pos << endl;
