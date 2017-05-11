@@ -218,8 +218,8 @@ void sendData(){
 			ping_flag = 1;
 		}
 	}
-	if(millis() - sendRangerLastPrd >= SEND_ENCODER_FRQ){
-		sendRangerLastPrd = millis();
+	if(millis() - sendEncoderLastPrd >= SEND_ENCODER_FRQ){
+		sendEncoderLastPrd = millis();
 		encoderTimestamp = micros() - encoderTimestamp;
 		sendEncoderMsg(m.counterR,m.counterL,m.getSpeedR(),m.getSpeedL());
 		systemMsg(String("Ec:")+String(encoderTimestamp)+",us\n");
