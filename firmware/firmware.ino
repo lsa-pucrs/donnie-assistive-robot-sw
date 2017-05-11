@@ -26,7 +26,7 @@ robot status:
 	critical baterry
 */
 
-uint32_t counter = 0;
+//uint32_t counter = 0;
 
 //SENSORS DATA GLOBAL VARIABLES 
 uint8_t systemDio_data = 0;
@@ -34,6 +34,24 @@ uint8_t systemDio_data = 0;
 //timestamp vars 
 unsigned long timestamp;
 unsigned long encoderTimestamp; //time stamp
+
+//Protocol times TODO Usar a biblioteca Arduino Scheduler para deixar o codigo mais limpo ao tratar dessas chamadas
+unsigned long updateDioLastPrd, 
+	updateRangerLastPrd, 
+	updateBumperLastPrd, 
+	updateBatteryLastPrd, 
+	updateEncoderLastPrd, 
+	updateMotorsLastPrd, 
+	updateServosLastPrd, 
+	updatePingLastPrd, 
+	sendDioLastPrd, 
+	sendRangerLastPrd, 
+	sendBumperLastPrd, 
+	sendBatteryLastPrd, 
+	sendEncoderLastPrd, 
+	sendSystemMsgLastPrd, 
+	sendPingLastPrd,
+	sendRequestLastPrd;
 
 float BytesToFloat(uint8_t *data, uint8_t first){
 	uint8_t aux[4];
@@ -128,16 +146,20 @@ void processCommand(){
 
 /*void updateActuators(){
 	//motorsCommandProcess(B10011001);
-	if(counter % UPDATE_MOTORS_FRQ == 0){
+	if(millis() - updateMotorsLastPrd >= UPDATE_MOTORS_FRQ){
+		updateMotorsLastPrd = millis();
+		updateMotorsLastPrd = millis();
 		motorsUpdate();   //update pid
 	}
-	/*if(counter % UPDATE_SERVOS_FRQ == 0){
+	/*if(millis() - updateServosLastPrd >= UPDATE_SERVOS_FRQ){
+		updateServosLastPrd = millis();
 		neckServo.write(pos);
 	}
 }*/
 
 void updateSensors(){
-	if(counter % UPDATE_DIO_FRQ == 0){
+	if(millis() - updateDioLastPrd >= UPDATE_DIO_FRQ){
+		updateDioLastPrd = millis();
 		systemDio_data = 0; //0000 0000
 		systemDio_data = systemDio_data | digitalRead(PIN_LED_BATTERY); //0000 000X
 		systemDio_data = systemDio_data | (digitalRead(PIN_LED_CONNECTION) << 1); //0000 00X0   desloca a esquerda o valor lido e faz or com o tx_data. Ex: Lido(01) << 1 = 10
@@ -146,11 +168,13 @@ void updateSensors(){
 		systemDio_data = systemDio_data | (digitalRead(PIN_BUZZER) << 4);
 	}
 	
-	if(counter % UPDATE_RANGER_FRQ == 0){
+	if(millis() - updateRangerLastPrd >= UPDATE_RANGER_FRQ){
+		updateRangerLastPrd = millis();
 		ranger_update();
 	}
 
-	if(counter % 200 == 0){
+	if(millis() - updateBatteryLastPrd >= UPDATE_BATTERY_FRQ){
+		updateBatteryLastPrd = millis();
 		battery_update();
 	}
 
@@ -162,16 +186,20 @@ void updateSensors(){
 void sendData(){
 	int i;
 
-	if(counter % SEND_DIO_FRQ == 0){
+	if(millis() - sendDioLastPrd >= SEND_DIO_FRQ){
+		sendDioLastPrd = millis();
 		sendSystemDioMsg(systemDio_data,5); //value(ex: 00 1110 0011), bitfield(ex: 10)
 	}
-	if(counter % SEND_RANGER_FRQ == 0){
+	if(millis() - sendRangerLastPrd >= SEND_RANGER_FRQ){
+		sendRangerLastPrd = millis();
 		sendRangerMsg(range,7);
 	}
-	if(counter % SEND_BUMPER_FRQ == 0){
+	if(millis() - sendBumperLastPrd >= SEND_BUMPER_FRQ){
+		sendBumperLastPrd = millis();
 		sendBumperMsg(bumper,6);
 	}
-	if(counter % SEND_BATTERY_FRQ == 0){
+	if(millis() - sendBatteryLastPrd >= SEND_BATTERY_FRQ){
+		sendBatteryLastPrd = millis();
 		sendPowerMsg(battery);
 		int rawValue = analogRead(PIN_BATTERY); //read the analogic input
 		float volts = map(rawValue,ANALOG_EQUIV_EMPTY,ANALOG_EQUIV_FULL,BATTERY_EMPTY*10,BATTERY_FULL*10)/10.0;
@@ -179,7 +207,8 @@ void sendData(){
 		//systemMsg(String(rawValue));
 		//systemMsg(String(volts));
 	}
-	if(counter % SEND_PING_FRQ == 0){
+	if(millis() - sendPingLastPrd >= SEND_PING_FRQ){
+		sendPingLastPrd = millis();
 		if(ping_flag){
 			sendPing();
 			lostConnectionFlag = 1;
@@ -189,7 +218,8 @@ void sendData(){
 			ping_flag = 1;
 		}
 	}
-	if(counter % SEND_ENCODER_FRQ == 0){
+	if(millis() - sendRangerLastPrd >= SEND_ENCODER_FRQ){
+		sendRangerLastPrd = millis();
 		encoderTimestamp = micros() - encoderTimestamp;
 		sendEncoderMsg(m.counterR,m.counterL,m.getSpeedR(),m.getSpeedL());
 		systemMsg(String("Ec:")+String(encoderTimestamp)+",us\n");
@@ -197,12 +227,15 @@ void sendData(){
 		//systemMsg(String("Enc_R:")+String(m.counterR));
 		//systemMsg(String("|Enc_L:")+String(m.counterL)+"\n");
 	}
-	if(counter % SEND_SYSTEMMSG_FRQ == 0){
+	if(millis() - sendSystemMsgLastPrd >= SEND_SYSTEMMSG_FRQ){
+		sendSystemMsgLastPrd = millis();
 		//systemMsg("Mensagem default");
 		//convertToUint8_t(battery,2);
 	}
 
-	//if(counter % SEND_RANGER_FRQ == 0) sendEncoderTicks();
+	//if(millis() - sendRangerLastPrd >= SEND_RANGER_FRQ == 0) sendEncoderTicks(){
+	//sendRangerLastPrd = millis();
+	//}	
 }
 
 void driver_config(){
@@ -213,7 +246,10 @@ void driver_config(){
 	waitingConfigFlag = 1;
 	//blink fast when no config received yet
 	do{
-		if(counter % SEND_REQUESTCONFIG_FRQ == 0) sendRequestConfig();
+		if(millis() - sendRequestLastPrd >= SEND_REQUESTCONFIG_FRQ){
+			sendRequestLastPrd = millis();
+			sendRequestConfig();
+		}
 		readCommand();
 		battery_update();
 		updateAlerts();
@@ -237,7 +273,7 @@ void setup(){
 void updateCounter(){
 	//update the moviment of motors.
 	motorsUpdate();   //update pid, must be call in a fix amount of time (10 ms in this case)
-	counter+=10;  //each counter means 10ms
+	//counter+=10;  //each counter means 10ms
 }
 
 
