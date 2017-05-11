@@ -298,7 +298,7 @@ void Motors::calibrate_motors(int Speed)
 {
 	if(i<iterations)
 	{
-    moveLeftWheel(MOTOR_L, Speed, 1);
+		moveLeftWheel(MOTOR_L, Speed, 1);
     moveRightWheel(MOTOR_R, Speed, 0);
 		i++;
 	}
@@ -312,7 +312,7 @@ void Motors::calibrate_motors(int Speed)
 
 		setpoint = (mediaR+mediaL)/2;
 		i=0; 
-		systemMsg("setpoint!!!!!!!!!!!!!!!!!!!!!"+String(setpoint));
+		systemMsg("setpoint!!!!!!!!!!!!!!!!!!!!"+String(setpoint));
 		counterL=0;
 		counterR=0; 
 	}
@@ -378,26 +378,26 @@ void Motors::control_movement()
 	  if(motorLTurn==1 && motorRTurn==0) //move forward
 	  {
 	    move_forward(motorLspeed,motorRspeed);
-	    //counterL=0;
-	    //counterR=0;
+	    counterL=0;
+	    counterR=0;
 	  }
 	  else if ((motorLTurn==0) && (motorRTurn==1))//mofe backward
 	  {
 	    move_backward(motorLspeed,motorRspeed);
-	    //counterL=0;
-	    //counterR=0;
+	    counterL=0;
+	    counterR=0;
 	  }
 	  else if(motorLTurn==1 && motorRTurn==1)//turn right
 	  {
 	    turn_right(motorsDefaultAngularSpeed,motorsDefaultAngularSpeed);
-	    //counterL=0;
-	    //counterR=0;
+	    counterL=0;
+	    counterR=0;
 	  }
 	  else if(motorLTurn==0 && motorRTurn==0)//turn left
 	  {
 	    turn_left(motorsDefaultAngularSpeed,motorsDefaultAngularSpeed);
-	    //counterL=0;
-	    //counterR=0;
+	    counterL=0;
+	    counterR=0;
 	  }
 	}
 	else stop();

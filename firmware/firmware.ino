@@ -126,15 +126,15 @@ void processCommand(){
 	clearCommand();
 }
 
-void updateActuators(){
+/*void updateActuators(){
 	//motorsCommandProcess(B10011001);
 	if(counter % UPDATE_MOTORS_FRQ == 0){
 		motorsUpdate();   //update pid
 	}
 	/*if(counter % UPDATE_SERVOS_FRQ == 0){
 		neckServo.write(pos);
-	}*/
-}
+	}
+}*/
 
 void updateSensors(){
 	if(counter % UPDATE_DIO_FRQ == 0){
@@ -190,10 +190,10 @@ void sendData(){
 		}
 	}
 	if(counter % SEND_ENCODER_FRQ == 0){
-		timestamp = micros();
+		encoderTimestamp = micros() - encoderTimestamp;
 		sendEncoderMsg(m.counterR,m.counterL,m.getSpeedR(),m.getSpeedL());
-		encoderTimestamp = micros() - timestamp;
 		systemMsg(String("Ec:")+String(encoderTimestamp)+",us\n");
+		encoderTimestamp = micros();
 		//systemMsg(String("Enc_R:")+String(m.counterR));
 		//systemMsg(String("|Enc_L:")+String(m.counterL)+"\n");
 	}
@@ -207,7 +207,7 @@ void sendData(){
 
 void driver_config(){
 	neckServo.attach(PIN_SERVO_NECK);
-	Timer3.initialize(10000);
+	Timer3.initialize(10000); //10ms = 10000
 	Timer3.attachInterrupt(updateCounter);
 
 	waitingConfigFlag = 1;
@@ -233,8 +233,11 @@ void setup(){
 	motors_config();
 }
 
+//!timer3 interruption
 void updateCounter(){
-  counter+=10;  //each counter means 10ms
+	//update the moviment of motors.
+	motorsUpdate();   //update pid, must be call in a fix amount of time (10 ms in this case)
+	counter+=10;  //each counter means 10ms
 }
 
 
@@ -255,5 +258,5 @@ void loop(){
 	sendData();
 
 	//update the moviment of motors.
-	updateActuators();
+	//updateActuators();
 }
