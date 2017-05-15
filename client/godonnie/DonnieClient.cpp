@@ -737,7 +737,7 @@ void DonnieClient::Scan(void){
 							total_yaws[total_counter] = head_yawi;//graus;
 							total_counter++;
 							blob_flag = false;
-							cout<<buffer_color<<" ("<<value_to_color(buffer_color)<<") adicionado! no meio e left, iguais"<<endl;
+							//cout<<buffer_color<<" ("<<value_to_color(buffer_color)<<") adicionado! no meio e left, iguais"<<endl;
 							//blob_buffer =  bfinderProxy->GetBlob(b);
 
 						}
@@ -750,7 +750,7 @@ void DonnieClient::Scan(void){
 							//nro_blobs++; 
 							blob_flag = false;
 
-							cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<<" (" <<value_to_color(buffer_color)<<") blob adicionado! 2x (left e sozinho)"<<endl;
+							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<<" (" <<value_to_color(buffer_color)<<") blob adicionado! 2x (left e sozinho)"<<endl;
 							//blob_buffer = bfinderProxy->GetBlob(b);
 
 							//then buffers the current blob.
