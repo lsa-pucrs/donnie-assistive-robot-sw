@@ -470,7 +470,7 @@ void setup_Environment(int interrup1, int interrup2)
 
 void motors_config()
 {
-  setup_Environment(0,1);
+  setup_Environment(pololuAL,pololuAR);
 }
 
 void motorsUpdate()
