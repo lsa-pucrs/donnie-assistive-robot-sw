@@ -157,6 +157,10 @@ void processCommand(){
 	}
 }*/
 
+//Debug Timestamp
+//unsigned int bumperTsFlag=0,rangerTsFlag=0;
+//unsigned long bumperTs,rangerTs;
+//#Debug Timestamp
 void updateSensors(){
 	if(millis() - updateDioLastPrd >= UPDATE_DIO_FRQ){
 		updateDioLastPrd = millis();
@@ -179,7 +183,27 @@ void updateSensors(){
 	}
 
 	bumper_update();
-	//motorsUpdate();   //update pid
+
+	//Debug Timestamp
+	/*if((bumper[0]==1 or bumper[1]==1 or bumper[2]==1) && bumperTsFlag==0 & motorRActive==1 && motorLActive==1){ 
+		bumperTs = millis();
+		bumperTsFlag=1;
+	}
+	if(motorRActive==0 && motorLActive==0 && bumperTsFlag ==1){
+		bumperTs = millis() - bumperTs;
+		systemMsg(String("BumperTs:")+String(bumperTs)+"ms\n");
+		bumperTsFlag=0;
+	}*/
+	/*if(range[1] <= 15 && rangerTsFlag==0 & motorRActive==1 && motorLActive==1){ 
+		rangerTs = millis();
+		rangerTsFlag=1;
+	}
+	if(motorRActive==0 && motorLActive==0 && rangerTsFlag ==1){
+		rangerTs = millis() - rangerTs;
+		systemMsg(String("Front Ranger:")+String(range[1])+"cm,"+String("Ts:")+String(rangerTs)+"ms\n");
+		rangerTsFlag=0;
+	}*/
+	//#Debug Timestamp
 }
 
 
@@ -219,11 +243,11 @@ void sendData(){
 		}
 	}
 	if(millis() - sendEncoderLastPrd >= SEND_ENCODER_FRQ){
-		sendEncoderLastPrd = millis();
-		encoderTimestamp = micros() - encoderTimestamp;
+		//sendEncoderLastPrd = millis();  //debug timestamp
+		//encoderTimestamp = micros() - encoderTimestamp; //debug timestamp
 		sendEncoderMsg(m.counterR,m.counterL,m.getSpeedR(),m.getSpeedL());
-		systemMsg(String("Ec:")+String(encoderTimestamp)+",us\n");
-		encoderTimestamp = micros();
+		//systemMsg(String("Ec:")+String(encoderTimestamp)+",us\n"); //debug timestamp
+		//encoderTimestamp = micros(); //debug timestamp
 		//systemMsg(String("Enc_R:")+String(m.counterR));
 		//systemMsg(String("|Enc_L:")+String(m.counterL)+"\n");
 	}
