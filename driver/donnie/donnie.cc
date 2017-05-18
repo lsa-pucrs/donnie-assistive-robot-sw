@@ -201,8 +201,11 @@ Donnie::Donnie(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 
 	step_length = cf->ReadFloat(section, "step_length", 0);
 
-	print_debug_messages = cf->ReadInt(section, "print_debug_messages", 0);
-	print_debug_encoder  = cf->ReadInt(section, "print_debug_encoder", 0);
+	//!Debug Messages Level
+	/* 0 Print no Messages 
+	** 1 or more print debug messages or some expecific messages
+	*/
+	print_debug_messages = cf->ReadInt(section, "print_debug_messages", 0); 
 
 	
 
@@ -265,8 +268,8 @@ void Donnie::MainQuit(){
 int Donnie::processIncomingData(){
 	//uint8_t i;
 	if(arduino->readData(rx_data,&rx_data_count)){
-		processIncomingDataLag = tmr.elapsedus() - processIncomingDataLag ;
-		printf("IncomingDataTS:%.2lf us, PACK:%x.\n",processIncomingDataLag,rx_data[0]);
+		//processIncomingDataLag = tmr.elapsedus() - processIncomingDataLag ;
+		//printf("IncomingDataTS:%.2lf us, PACK:%x.\n",processIncomingDataLag,rx_data[0]);
 		if(rx_data[0]==DIOPACK) ProcessDioData();
 		else if(rx_data[0]==RANGERPACK) ProcessRangerData();
 		else if(rx_data[0]==BUMPERPACK) ProcessBumperData();
@@ -276,7 +279,7 @@ int Donnie::processIncomingData(){
 		else if(rx_data[0]==PINGPACK) ProcessRequestPing();
 		else if(rx_data[0]==ENCODERPACK) ProcessEncoderData();
 		else printf("unknown message, protocol type: %.2X\n\n",rx_data[0]);
-		processIncomingDataLag = tmr.elapsedus();
+		//processIncomingDataLag = tmr.elapsedus();
 	}
 
 	return 0;
@@ -286,9 +289,9 @@ int Donnie::processIncomingData(){
 // Main function for device thread
 void Donnie::Main(){
 	// The main loop; interact with the device here
-		double mainLoopLag,mainLoopLagLast;
+		//double mainLoopLag,mainLoopLagLast;
 	for(;;){
-		mainLoopLag = tmr.elapsedus(); //to rimestamp main loop
+		//mainLoopLag = tmr.elapsedus(); //to rimestamp main loop
 		// test if we are supposed to cancel
 		pthread_testcancel();
 
@@ -300,9 +303,9 @@ void Donnie::Main(){
 
 		//give robot a chance to change state May this can lag the sonar update
 		usleep(10); //Warning: This can lag sonar's readings
-		mainLoopLag = tmr.elapsedus() - mainLoopLag;
-		if(mainLoopLag!=mainLoopLagLast) printf("MainLoopLag:%.2lf us.\n",mainLoopLag);
-		mainLoopLagLast = mainLoopLag; 
+		//mainLoopLag = tmr.elapsedus() - mainLoopLag;
+		//if(mainLoopLag!=mainLoopLagLast) printf("MainLoopLag:%.2lf us.\n",mainLoopLag);
+		//mainLoopLagLast = mainLoopLag; 
 	}
 	return;
 }
@@ -318,13 +321,13 @@ int Donnie::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, void 
 	 }
 	 else if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_DATA, PLAYER_DIO_DATA_VALUES, m_dio_addr)){
 			//ProcessDioData(hdr, *reinterpret_cast<player_dio_data_t *>(data));
-			if(print_debug_messages) PLAYER_WARN("Dio data received");
+			if(print_debug_messages==1) PLAYER_WARN("Dio data received");
 			return(0);
 	 }
 	 //neck position 2D
 	 else if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_CMD, PLAYER_POSITION2D_CMD_VEL, m_neck_position_addr)){
 			//to use foo.SetSpeed (double aXSpeed, double aYawSpeed)
-			if(print_debug_messages) PLAYER_WARN("NECK position2d vel cmd received");
+			if(print_debug_messages==1) PLAYER_WARN("NECK position2d vel cmd received");
 			assert(hdr->size == sizeof(player_position2d_cmd_vel_t));
 			ProcessNeckPos2dVelCmd(hdr, *reinterpret_cast<player_position2d_cmd_vel_t *>(data));
 			return(0);
@@ -332,7 +335,7 @@ int Donnie::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, void 
 	 //base position 2D
 	 else if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_CMD, PLAYER_POSITION2D_CMD_POS, m_position_addr)){
 			//to use foo.GoTo (player_pose2d_t pos, player_pose2d_t vel)
-			if(print_debug_messages) PLAYER_WARN("position2d goto cmd received");
+			if(print_debug_messages==1) PLAYER_WARN("position2d goto cmd received");
 			assert(hdr->size == sizeof(player_position2d_cmd_pos_t)); //g if this is false then call eception error
 			ProcessPos2dPosCmd(hdr, *reinterpret_cast<player_position2d_cmd_pos_t *>(data));
 			return(0);
@@ -346,13 +349,13 @@ int Donnie::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, void 
 	 }
 	 else if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_REQ, PLAYER_POSITION2D_REQ_MOTOR_POWER, m_position_addr)){
 			//to use foo.SetMotorEnable(bool enable)
-			if(print_debug_messages) PLAYER_WARN("position2d motor power cmd received");
+			if(print_debug_messages==1) PLAYER_WARN("position2d motor power cmd received");
 			this->Publish(m_position_addr, resp_queue, PLAYER_MSGTYPE_RESP_ACK, PLAYER_POSITION2D_REQ_MOTOR_POWER);
 			return 0;
 	 }
 	 else if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_REQ, PLAYER_POSITION2D_REQ_GET_GEOM, m_position_addr)){
 			//to use foo.RequestGeom()
-			if(print_debug_messages) PLAYER_WARN("position2d update geometry request received");
+			if(print_debug_messages==1) PLAYER_WARN("position2d update geometry request received");
 			ProcessPos2dGeomReq(hdr);
 			return(0);
 	 }
@@ -370,7 +373,7 @@ int Donnie::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, void 
 }
 
 void Donnie::ProcessDioCommand(player_msghdr_t* hdr, player_dio_cmd_t &data){
-	 if(print_debug_messages) PLAYER_WARN("Message ProcessDioCommand");
+	 if(print_debug_messages==1) PLAYER_WARN("Message ProcessDioCommand");
 
 	 std::cout << "Dio count:" << data.count << std::endl; //bits qnt
 	 std::cout << "Dio digout:" << std::hex << data.digout << std::endl; //decimal value
@@ -627,7 +630,7 @@ void Donnie::ProcessRequestConfig(){
 	}
 	printf("\n\n");*/
 
-	if(print_debug_messages) printf("RECEIVED REQUEST CONFIG. Sending Arduino Config...\n\n");
+	if(print_debug_messages==1) printf("RECEIVED REQUEST CONFIG. Sending Arduino Config...\n\n");
 
 	// update arduino config variables
 	uint8_t converted[10]; //10 valor que caiba as conversoes
@@ -684,7 +687,7 @@ void Donnie::ProcessRequestPing(){
 	tx_data[0]=PINGPACK;
 	tx_data[1]=43;
 	arduino->writeData(tx_data,tx_data_count);
-	printf(".\n");
+	if(print_debug_messages==1) printf(".\n");
 }
 
 
@@ -699,9 +702,9 @@ void Donnie::ProcessRequestPing(){
 	double encoderPackLag;
 	
 void Donnie::ProcessEncoderData(){
-	encoderPackLag = tmr.elapsedus() - encoderPackLag ;
-	printf("EncoderPackTS:%.2lf us.\n",encoderPackLag);
-	encoderPackLag = tmr.elapsedus();
+	//encoderPackLag = tmr.elapsedus() - encoderPackLag ;
+	//printf("EncoderPackTS:%.2lf us.\n",encoderPackLag);
+	//encoderPackLag = tmr.elapsedus();
 	uint8_t i;
 	/*
 	printf("ENCODERPACK:");
@@ -793,7 +796,7 @@ int cpr = 12;
 int lasttickR=0,lasttickL=0;
 
 void Donnie::Odometry(){
-	double odomLag = tmr.elapsedus();
+	//double odomLag = tmr.elapsedus();
 
 	int diff;// = abs(ticksR) - abs(ticksL);
 	float Dr,Dl,Dc;
@@ -833,7 +836,7 @@ void Donnie::Odometry(){
 			//if(th>6.28||th<-6.28) th = th/6.28;
 			if(th>PI) th = -PI+(th-PI); //marques
 			else if(th<-PI) th = PI-(th+PI); //marques
-			std::cout << "actual th_:" << th_ << ", actual th:" << th << ", ticksR"<< ticksR << ", ticksL"<< ticksL << std::endl;
+			//std::cout << "actual th_:" << th_ << ", actual th:" << th << ", ticksR"<< ticksR << ", ticksL"<< ticksL << std::endl;
 			th_= th;
 			//Beep(300,200);
 		}
@@ -845,20 +848,18 @@ void Donnie::Odometry(){
 				diff=-1;
 			}
 			else diff = -1*(abs(ticksR-lasttickR) + abs(ticksL-lasttickL))/2; //marques
-			std::cout << "diff:" << diff << ", abs(ticksR-lasttickR):" << abs(ticksR-lasttickR) << ", abs(ticksL-lasttickL):" << abs(ticksL-lasttickL) << std::endl;
+			//std::cout << "diff:" << diff << ", abs(ticksR-lasttickR):" << abs(ticksR-lasttickR) << ", abs(ticksL-lasttickL):" << abs(ticksL-lasttickL) << std::endl;
 			//th = th_ + PI/180*(diff*360/9.0); //9.0 obtido na tentativa e erro para se obter 90 graus de giro
 			th = th_ + PI/180*(diff*360/robot_cpr);
 			//if(th>6.28||th<-6.28) th = th/6.28;
 			if(th>PI) th = -PI+(th-PI); //marques
 			else if(th<-PI) th = PI-(th+PI); //marques
 			//th = th+angular_offset; //marques gd
-			std::cout << "actual th_:" << th_ << ", actual th:" << th << ", ticksR"<< ticksR << ", ticksL"<< ticksL << std::endl << std::endl;
+			//std::cout << "actual th_:" << th_ << ", actual th:" << th << ", ticksR"<< ticksR << ", ticksL"<< ticksL << std::endl << std::endl;
 			th_= th;
 			//Beep(1000,200);
 		}
 	}
-	lasttickR=ticksR;
-	lasttickL=ticksL;
 
 	this->m_pos_data.pos.px = x_ / 100;
 	this->m_pos_data.pos.py = y_ / 100;
@@ -876,12 +877,26 @@ void Donnie::Odometry(){
 	//std::cout << "final th_:" << th_ << " final th:" << th;
 	//std::cout << std::endl;
 
+	// Print only messages of encoderpack (81)
+	if(print_debug_messages==ENCODERPACK){
+		if(abs(ticksR-lasttickR)!=0 || abs(ticksL-lasttickL)!=0){ //marques
+			std::cout 	<< "x:" << this->m_pos_data.pos.px << ","
+					<< "y:" << this->m_pos_data.pos.py << ","
+					<< "th:" << this->m_pos_data.pos.pa << ","
+					<< "ts:" << tmr.elapsedus()
+					<< std::endl; //toPlot
+		}
+	}
+
 	//update odometry data (code source: server/drivers/mixed/wbr/914/wbr914.cc)
     this->Publish(this->m_position_addr,
 		  PLAYER_MSGTYPE_DATA,PLAYER_POSITION2D_DATA_STATE,
 		  (void*)&(this->m_pos_data), sizeof(this->m_pos_data), NULL); //sizeof(player_position2d_data_t), NULL);
-    odomLag = tmr.elapsedus()- odomLag;
-    printf("OdometryCalcTS:%.2lf us.\n",odomLag);
+    //odomLag = tmr.elapsedus()- odomLag;
+    //printf("OdometryCalcTS:%.2lf us.\n",odomLag);
+
+	lasttickR=ticksR;
+	lasttickL=ticksL;
 }
 
 
