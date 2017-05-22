@@ -590,7 +590,7 @@ void DonnieClient::Scan(void){
 				total_blobs_found[total_counter] = blob_buffer;
 				total_yaws[total_counter] = yaw_buffer;
 				total_counter++;
-				nro_blobs++; 
+				//nro_blobs++; 
 				blob_flag = false;
 				//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") blob adicionado! no 0!"<<endl;
 			}
@@ -798,17 +798,43 @@ void DonnieClient::Scan(void){
 	}
 
 
+//str1.compare(str2) != 0
+
+
+
+//for(int i=0; i<total_counter; i++)
+//	{
+//
+//			cout<<value_to_color(total_blobs_found[i].color)<<endl;
+//
+//	}
+
+
+
+
+
+
+
 
 
 	//gambiarra
+	nro_blobs= 0;
+
 	for(int i=0; i<total_counter; i++)
 	{
-		if(total_blobs_found[i].color != 1) 
+		//if((total_blobs_found[i].color != 1)) 
+		string buff = value_to_color(total_blobs_found[i].color);
+		
+		//cout << buff<<endl;
+		//cout<<buff.compare("desconhecido")<<" "<<nro_blobs<<endl;
+
+		if((buff.compare("desconhecido") != 0) && (total_yaws[i] <360))
 		{
 			_total_blobs_found[nro_blobs] = total_blobs_found[i];
 			_total_yaws[nro_blobs] = total_yaws[i];
 			nro_blobs++;
 		}
+		//contador++;
 
 	}
 
@@ -1115,7 +1141,6 @@ int DonnieClient::Color(int color_code){
 
 	}while (head_yawi < (90+30));
 	
-
 
 	//gambiarra
 	for(int i=0; i<total_counter; i++)
