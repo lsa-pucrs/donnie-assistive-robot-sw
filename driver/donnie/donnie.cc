@@ -787,82 +787,41 @@ void Donnie::ProcessEncoderData(){
 
 */
 
-//#define DEFAULT_AXLE_LENGTH	0.083 //marques
 //#define WHEEL_AXLE_PERIMETER	0.26075 //marques
 
 float x=0,x_=0,y=0,y_=0,th=0,th_=0;
 int robot_cpr = 24;//count per revolution
 int cpr = 12;
 int lasttickR=0,lasttickL=0;
+int diff;// = abs(ticksR) - abs(ticksL);
+float Dr,Dl,Dc;
 
 void Donnie::Odometry(){
 	//double odomLag = tmr.elapsedus();
+	
+	Dr= 2* PI* WHEEL_RADIUS * (ticksR-lasttickR)/cpr;//distancia que a roda r andou
+	Dl= 2* PI* WHEEL_RADIUS * (ticksL-lasttickL)/cpr; //distancia que a roda l andou
+	Dc= (Dr+Dl)/2.0; //o quanto o meio do robo andou.
+	th = th_ + (Dr-Dl)/DEFAULT_AXLE_LENGTH; //marques
 
-	int diff;// = abs(ticksR) - abs(ticksL);
-	float Dr,Dl,Dc;
+	// force th to the range 0 to 2 pi
+	if (th > 2.0 * PI) th = th - (2.0 * PI); //marques
+	if (th < 0.0)      th = th + (2.0 * PI); //marques
 
-	if(ticksR!=0||ticksL!=0){
-		if((this->m_pos_data.vel.px != 0) && (this->m_pos_data.vel.pa ==0)) //pf e pt
-		{
-			//std::cout << "ticksR:" << ticksR << " ticksL:" << ticksL << std::endl;
-			//std::cout << "lasttickR:" << lasttickR << " lasttickL:" << lasttickL << std::endl;
+	x= x_ + Dc *cos(th);
+	y= y_ + Dc *sin(th);
 
-			diff = abs(ticksR-lasttickR) - abs(ticksL-lasttickL);
-			th = PI/180*(diff*360/robot_cpr);
-			Dr= 2* PI* WHEEL_RADIUS * (ticksR-lasttickR)/cpr;//distancia que a roda r andou
-	    	Dl= 2* PI* WHEEL_RADIUS * (ticksL-lasttickL)/cpr; //distancia que a roda l andou
-	    	Dc= (Dr+Dl)/2; //o quanto o meio do robo andou.
-			x= x_ + Dc *cos(th);
-			y= y_ + Dc *sin(th);
-			//if(th>6.28||th<-6.28) th = th/6.28;
-			if(th>PI) th = -PI+(th-PI); //marques
-			else if(th<-PI) th = PI-(th+PI); //marques
+	x_ = x;
+	y_=y;
+	th_= th;
 
-			x_ = x;
-			y_=y;
-
-			//std::cout << "==================================================" << std::endl;
-		}
-		if ((this->m_pos_data.vel.px == 0) && (this->m_pos_data.vel.pa > 0)) //ge
-		{
-			//faz com que sempre que ocorra um tick a odometria atualiza
-			if(	abs(ticksR-lasttickR)==0&&abs(ticksL-lasttickL)>0 ||
-				abs(ticksR-lasttickR)>0&&abs(ticksL-lasttickL)==0){ //marques
-				diff=1;
-			}
-			else diff = (abs(ticksR-lasttickR) + abs(ticksL-lasttickL))/2;
-			//th = th_ + PI/180*(diff*360/9.0); //9.0 obtido na tentativa e erro para se obter 90 graus de giro
-			th = th_ + PI/180*(diff*360/robot_cpr);
-			//if(th>6.28||th<-6.28) th = th/6.28;
-			if(th>PI) th = -PI+(th-PI); //marques
-			else if(th<-PI) th = PI-(th+PI); //marques
-			//std::cout << "actual th_:" << th_ << ", actual th:" << th << ", ticksR"<< ticksR << ", ticksL"<< ticksL << std::endl;
-			th_= th;
-			//Beep(300,200);
-		}
-		if ((this->m_pos_data.vel.px == 0) && (this->m_pos_data.vel.pa < 0)) //gd
-		{
-			//faz com que sempre que ocorra um tick a odometria atualiza
-			if(	abs(ticksR-lasttickR)==0&&abs(ticksL-lasttickL)>0 ||
-				abs(ticksR-lasttickR)>0&&abs(ticksL-lasttickL)==0){ //marques
-				diff=-1;
-			}
-			else diff = -1*(abs(ticksR-lasttickR) + abs(ticksL-lasttickL))/2; //marques
-			//std::cout << "diff:" << diff << ", abs(ticksR-lasttickR):" << abs(ticksR-lasttickR) << ", abs(ticksL-lasttickL):" << abs(ticksL-lasttickL) << std::endl;
-			//th = th_ + PI/180*(diff*360/9.0); //9.0 obtido na tentativa e erro para se obter 90 graus de giro
-			th = th_ + PI/180*(diff*360/robot_cpr);
-			//if(th>6.28||th<-6.28) th = th/6.28;
-			if(th>PI) th = -PI+(th-PI); //marques
-			else if(th<-PI) th = PI-(th+PI); //marques
-			//th = th+angular_offset; //marques gd
-			//std::cout << "actual th_:" << th_ << ", actual th:" << th << ", ticksR"<< ticksR << ", ticksL"<< ticksL << std::endl << std::endl;
-			th_= th;
-			//Beep(1000,200);
-		}
-	}
-
-	this->m_pos_data.pos.px = x_ / 100;
-	this->m_pos_data.pos.py = y_ / 100;
+	/*
+	if((this->m_pos_data.vel.px != 0) && (this->m_pos_data.vel.pa ==0)){ //pf e pt
+	if ((this->m_pos_data.vel.px == 0) && (this->m_pos_data.vel.pa != 0)){ //ge e gd
+	*/
+	
+	this->m_pos_data.pos.px = x_;// / 100;
+	this->m_pos_data.pos.py = y_;// / 100;
 	//std::cout << "test x_:" << x_ << std::endl;
 	//std::cout << "test y_:" << y_ << std::endl;
 	//std::cout << "this->m_pos_data.pos.px:" << this->m_pos_data.pos.px << std::endl;

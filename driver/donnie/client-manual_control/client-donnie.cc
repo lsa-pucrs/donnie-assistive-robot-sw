@@ -33,7 +33,7 @@
 
 //Parameters
 #define LINEAR_DEFAULT_VEL 0.04    //[m/s]
-#define FRONT_RANGER_STALL_SETPOINT 0.15  //[m]
+#define FRONT_RANGER_STALL_SETPOINT -1 //0.15  //[m]
 
 #define KEYCODE_A 0x61
 #define KEYCODE_B 0x62
@@ -434,22 +434,22 @@ int main(int argc, char** argv){
 					break;
 					default:
 						robot.Read();
-						if(myranger[1]>frontRangerStallSetpoint){
-							if(!mybumper.IsAnyBumped()){
+						// if(myranger[1]>frontRangerStallSetpoint){
+						// 	if(!mybumper.IsAnyBumped()){
 								float linear_default_vel = 0.04; //[m/s]
 								if(cont.speed == 0 && cont.turnrate == 0) mymotors.SetSpeed(0,0);	//stop
 								else if(cont.speed == 1 && cont.turnrate == 0) mymotors.SetSpeed(linear_default_vel,0); //forward
 								else if(cont.speed == 0 && cont.turnrate == 1) mymotors.SetSpeed(0,linear_default_vel);//left
 								else if(cont.speed == 0 && cont.turnrate == -1) mymotors.SetSpeed(0,-linear_default_vel); //right
 								else if(cont.speed == -1 && cont.turnrate == 0) mymotors.SetSpeed(-linear_default_vel,0); //backward
-							}
-							else{
-								mymotors.SetSpeed(0,0);	//stop
-							}
-						}
-						else{
-							mymotors.SetSpeed(0,0);	//stop
-						}
+						// 	}
+						// 	else{
+						// 		mymotors.SetSpeed(0,0);	//stop
+						// 	}
+						// }
+						// else{
+						// 	mymotors.SetSpeed(0,0);	//stop
+						// }
 					break;
 
 				}

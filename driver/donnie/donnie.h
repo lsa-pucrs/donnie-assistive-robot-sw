@@ -18,10 +18,9 @@
 #define CENTRE_TO_WHEEL 0.135 //[m]
 #define PULSE_TO_RPM 1.83  //[rpm] (SEC_PR_MIN*MSEC_PR_SEC) / GEAR_RATIO / PULSES_PR_REV
 
-#define WHEEL_RADIUS  2.1 // [mm]0.04 //[m]
+#define WHEEL_RADIUS 0.021 //[m] 0.04 //[m]
 #define WHEEL_DIAMETER (WHEEL_RADIUS*2)
-#define DEFAULT_AXLE_LENGTH	0.083
-//#define DEFAULT_AXLE_LENGTH	0.301
+#define DEFAULT_AXLE_LENGTH	0.083 //[m]
 
 
 //! Timer to count time in seconds, milliseconds or microseconds. 
