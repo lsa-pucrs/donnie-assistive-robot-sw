@@ -838,7 +838,7 @@ void DonnieClient::Scan(void){
 		else 
 			scanText << "a " << _total_yaws[i] << " graus a esquerda: ";
 
-		scanText << " uma blob de cor " << value_to_color(_total_blobs_found[i].color) << " a " << int(sonar_readings[i]) << " passos";
+		scanText << " um objeto de cor " << value_to_color(_total_blobs_found[i].color) << " a " << int(sonar_readings[i]) << " passos";
 	
 		speak(scanText.str());
 
@@ -1061,7 +1061,7 @@ int DonnieClient::Color(int color_code){
 							total_yaws[total_counter] = graus;
 							total_counter++;
 							blob_flag = false;
-							cout<<buffer_color<<" ("<<value_to_color(buffer_color)<<") adicionado! no meio e left, iguais"<<endl;
+							//cout<<buffer_color<<" ("<<value_to_color(buffer_color)<<") adicionado! no meio e left, iguais"<<endl;
 							//blob_buffer =  bfinderProxy->GetBlob(b);
 
 						}
@@ -1074,7 +1074,7 @@ int DonnieClient::Color(int color_code){
 							//nro_blobs++; 
 							blob_flag = false;
 
-							cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<<" (" <<value_to_color(buffer_color)<<") blob adicionado! 2x (left e sozinho)"<<endl;
+							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<<" (" <<value_to_color(buffer_color)<<") blob adicionado! 2x (left e sozinho)"<<endl;
 							//blob_buffer = bfinderProxy->GetBlob(b);
 
 							//then buffers the current blob.
