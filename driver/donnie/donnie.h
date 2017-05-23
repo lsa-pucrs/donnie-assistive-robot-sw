@@ -20,7 +20,7 @@
 
 #define WHEEL_RADIUS 0.021 //[m] 0.04 //[m]
 #define WHEEL_DIAMETER (WHEEL_RADIUS*2)
-#define DEFAULT_AXLE_LENGTH	0.083 //[m]
+#define DEFAULT_AXLE_LENGTH	0.068 //0.083 //[m]
 
 
 //! Timer to count time in seconds, milliseconds or microseconds. 

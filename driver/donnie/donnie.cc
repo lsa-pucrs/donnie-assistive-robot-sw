@@ -789,12 +789,12 @@ void Donnie::ProcessEncoderData(){
 
 //#define WHEEL_AXLE_PERIMETER	0.26075 //marques
 
-float x=0,x_=0,y=0,y_=0,th=0,th_=0;
-int robot_cpr = 24;//count per revolution
-int cpr = 12;
+double x=0,x_=0,y=0,y_=0,th=0,th_=0;
+//int robot_cpr = 24;//count per revolution
+double cpr = 900.0;//12;
 int lasttickR=0,lasttickL=0;
-int diff;// = abs(ticksR) - abs(ticksL);
-float Dr,Dl,Dc;
+//int diff;// = abs(ticksR) - abs(ticksL);
+double Dr,Dl,Dc;
 
 void Donnie::Odometry(){
 	//double odomLag = tmr.elapsedus();
