@@ -201,6 +201,11 @@ Donnie::Donnie(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 
 	step_length = cf->ReadFloat(section, "step_length", 0);
 
+	//odometry
+	wheel_radius = cf->ReadFloat(section, "wheel_radius", DEFAULT_WHEEL_RADIUS);
+	axle_length = cf->ReadFloat(section, "axle_length", DEFAULT_AXLE_LENGTH);
+	cpr = cf->ReadFloat(section, "encoder_cpr", DEFAULT_CPR);
+
 	//!Debug Messages Level
 	/* 0 Print no Messages 
 	** 1 or more print debug messages or some expecific messages
@@ -231,7 +236,12 @@ int Donnie::MainSetup(){
 	last_posRight = 0;
 	ticksR = 0;
 	ticksL = 0;
-
+	//odometry
+	x=0;
+	y=0;
+	th=0;
+	lasttickR=0;
+	lasttickL=0;
 
 	if(arduino==NULL) 
 		arduino = new Serial(port.c_str());  //c_str() convert string to const char*
@@ -767,74 +777,23 @@ void Donnie::ProcessEncoderData(){
 */
 }
 
-
-
-
-
-
-
-/*
-#define PI 3.141592653
-#define DIAMETER 0.44 //[m]
-#define RADIUS (DONNIE_DIAMETER * 0.5) //[m]
-#define CIRCUMFERENCE (2 * PI * DONNIE_RADIUS) //[m]
-#define CENTRE_TO_WHEEL 0.135 //[m]
-#define PULSE_TO_RPM 1.83  //[rpm] (SEC_PR_MIN*MSEC_PR_SEC) / GEAR_RATIO / PULSES_PR_REV
-
-#define WHEEL_RADIUS 0.04 //[m]
-#define WHEEL_DIAMETER (WHEEL_RADIUS*2)
-#define DEFAULT_AXLE_LENGTH	0.301
-
-*/
-
-//#define WHEEL_AXLE_PERIMETER	0.26075 //marques
-
-double x=0,x_=0,y=0,y_=0,th=0,th_=0;
-//int robot_cpr = 24;//count per revolution
-double cpr = 900.0;//12;
-int lasttickR=0,lasttickL=0;
-//int diff;// = abs(ticksR) - abs(ticksL);
-double Dr,Dl,Dc;
-
 void Donnie::Odometry(){
-	//double odomLag = tmr.elapsedus();
-	
-	Dr= 2* PI* WHEEL_RADIUS * (ticksR-lasttickR)/cpr;//distancia que a roda r andou
-	Dl= 2* PI* WHEEL_RADIUS * (ticksL-lasttickL)/cpr; //distancia que a roda l andou
-	Dc= (Dr+Dl)/2.0; //o quanto o meio do robo andou.
-	th = th_ + (Dr-Dl)/DEFAULT_AXLE_LENGTH; //marques
+	//M_PI is defined in math.h
+	Dr=(2* M_PI* wheel_radius)/cpr * (ticksR-lasttickR); //(meters per ticks) * deltaTick 
+	Dl=(2* M_PI* wheel_radius)/cpr * (ticksL-lasttickL); //(meters per ticks) * deltaTick 
+	Dc= (Dr+Dl)/2.0; // robot center translation
+	th = th + (Dr-Dl)/axle_length; // affects the odometry directly
 
-	// force th to the range 0 to 2 pi
-	if (th > 2.0 * PI) th = th - (2.0 * PI); //marques
-	if (th < 0.0)      th = th + (2.0 * PI); //marques
+	// force th to be in the range 0 to 6.28 pi
+	if (th > 2.0 * M_PI) th = th - (2.0 * M_PI); //marques
+	if (th < 0.0)      th = th + (2.0 * M_PI); //marques
 
-	x= x_ + Dc *cos(th);
-	y= y_ + Dc *sin(th);
+	x= x + Dc *cos(th);
+	y= y + Dc *sin(th);
 
-	x_ = x;
-	y_=y;
-	th_= th;
-
-	/*
-	if((this->m_pos_data.vel.px != 0) && (this->m_pos_data.vel.pa ==0)){ //pf e pt
-	if ((this->m_pos_data.vel.px == 0) && (this->m_pos_data.vel.pa != 0)){ //ge e gd
-	*/
-	
-	this->m_pos_data.pos.px = x_;// / 100;
-	this->m_pos_data.pos.py = y_;// / 100;
-	//std::cout << "test x_:" << x_ << std::endl;
-	//std::cout << "test y_:" << y_ << std::endl;
-	//std::cout << "this->m_pos_data.pos.px:" << this->m_pos_data.pos.px << std::endl;
-	//std::cout << "this->m_pos_data.pos.py:" << this->m_pos_data.pos.py << std::endl;
-	//std::cout << "=================================" << std::endl;	
-	this->m_pos_data.pos.pa = th_;
-	/*this->m_pos_data.vel.px = speedR;
-	this->m_pos_data.vel.py = speedL;
-	this->m_pos_data.vel.pa = 42;*/
-
-	//std::cout << "pos.px" << x_ << " pos.py:" << y_ ;
-	//std::cout << "final th_:" << th_ << " final th:" << th;
-	//std::cout << std::endl;
+	this->m_pos_data.pos.px = x;
+	this->m_pos_data.pos.py = y;
+	this->m_pos_data.pos.pa = th;
 
 	// Print only messages of encoderpack (81)
 	if(print_debug_messages==ENCODERPACK){
@@ -847,15 +806,13 @@ void Donnie::Odometry(){
 		}
 	}
 
+	lasttickR=ticksR;
+	lasttickL=ticksL;
+
 	//update odometry data (code source: server/drivers/mixed/wbr/914/wbr914.cc)
     this->Publish(this->m_position_addr,
 		  PLAYER_MSGTYPE_DATA,PLAYER_POSITION2D_DATA_STATE,
-		  (void*)&(this->m_pos_data), sizeof(this->m_pos_data), NULL); //sizeof(player_position2d_data_t), NULL);
-    //odomLag = tmr.elapsedus()- odomLag;
-    //printf("OdometryCalcTS:%.2lf us.\n",odomLag);
-
-	lasttickR=ticksR;
-	lasttickL=ticksL;
+		  (void*)&(this->m_pos_data), sizeof(this->m_pos_data), NULL);
 }
 
 
