@@ -197,7 +197,8 @@ class Donnie : public ThreadedDriver{
 
 		//!Debug parameters
 		int print_debug_messages;
-		int print_debug_encoder;
+		int odometry_log;
+		int encoder_log;
 
 		//!Others parameters
 		double step_length;

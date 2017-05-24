@@ -206,11 +206,9 @@ Donnie::Donnie(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 	axle_length = cf->ReadFloat(section, "axle_length", DEFAULT_AXLE_LENGTH);
 	cpr = cf->ReadFloat(section, "encoder_cpr", DEFAULT_CPR);
 
-	//!Debug Messages Level
-	/* 0 Print no Messages 
-	** 1 or more print debug messages or some expecific messages
-	*/
-	print_debug_messages = cf->ReadInt(section, "print_debug_messages", 0); 
+	//!Debug Messages
+	print_debug_messages = cf->ReadInt(section, "print_debug_messages", 0);
+	odometry_log = cf->ReadInt(section, "odometry_log", 0);
 
 	
 
@@ -796,7 +794,7 @@ void Donnie::Odometry(){
 	this->m_pos_data.pos.pa = th;
 
 	// Print only messages of encoderpack (81)
-	if(print_debug_messages==ENCODERPACK){
+	if(odometry_log){
 		if(abs(ticksR-lasttickR)!=0 || abs(ticksL-lasttickL)!=0){ //marques
 			std::cout 	<< "x:" << this->m_pos_data.pos.px << ","
 					<< "y:" << this->m_pos_data.pos.py << ","
