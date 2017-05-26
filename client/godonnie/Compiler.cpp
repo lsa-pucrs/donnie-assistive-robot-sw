@@ -1,8 +1,6 @@
 #include <algorithm> // remove
 #include <sstream>
 #include <iomanip>
-#include <locale>
-//#include <codecvt>
 #include "Compiler.h"
 #include "Exception.h"
 #include "DonnieClient.h"
