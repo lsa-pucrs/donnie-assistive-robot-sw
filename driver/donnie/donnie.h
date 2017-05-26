@@ -10,18 +10,11 @@
 
 #define BUFFER_SIZE 200
 
-//!Robot Defines
-#define PI 3.141592653
-#define DIAMETER 0.44 //[m]
-#define RADIUS (DONNIE_DIAMETER * 0.5) //[m]
-#define CIRCUMFERENCE (2 * PI * DONNIE_RADIUS) //[m]
-#define CENTRE_TO_WHEEL 0.135 //[m]
-#define PULSE_TO_RPM 1.83  //[rpm] (SEC_PR_MIN*MSEC_PR_SEC) / GEAR_RATIO / PULSES_PR_REV
+//!Robot Default Defines
+#define DEFAULT_WHEEL_RADIUS 0.021 //[m]  
+#define DEFAULT_AXLE_LENGTH	0.068 //[m] distante between wheels (at the single point of contact at the ground plane)
+#define DEFAULT_CPR 900.0
 
-#define WHEEL_RADIUS  2.1 // [mm]0.04 //[m]
-#define WHEEL_DIAMETER (WHEEL_RADIUS*2)
-#define DEFAULT_AXLE_LENGTH	0.083
-//#define DEFAULT_AXLE_LENGTH	0.301
 
 
 //! Timer to count time in seconds, milliseconds or microseconds. 
@@ -177,6 +170,12 @@ class Donnie : public ThreadedDriver{
 		int32_t last_posRight;
 		int16_t ticksR; 
 		int16_t ticksL;
+		double x,y,th;
+		double cpr; //[ticks] counts per revolution
+		int16_t lasttickR,lasttickL;
+		double Dr,Dl,Dc;
+		double wheel_radius;
+		double axle_length;
 
 		//!Robot Geometry parameters
 		double robot_width;
@@ -198,7 +197,8 @@ class Donnie : public ThreadedDriver{
 
 		//!Debug parameters
 		int print_debug_messages;
-		int print_debug_encoder;
+		int odometry_log;
+		int encoder_log;
 
 		//!Others parameters
 		double step_length;

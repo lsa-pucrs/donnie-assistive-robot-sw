@@ -184,7 +184,7 @@ then
 	echo -e "${GREEN}Patching Player ... ${NC}\n"
 	patch -p1 < patch/festival/festival.patch
 	patch -p1 < patch/install/player_3.0.2_14.04.patch
-	patch -p1 < ../donnie-assistive-robot-sw/proxies/instalationSoundProxy.patch
+	patch -p1 < patch/donnie/instalationSoundProxy.patch
 	echo -e "${GREEN}Patching Player for Donnie ... ${NC}\n"
 fi
 mkdir -p build # mkdir -p is safer !
