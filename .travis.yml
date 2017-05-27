@@ -43,7 +43,7 @@ before_install:
 - cd build
 - cmake -DCMAKE_BUILD_TYPE=Release ..
 - make -j 8
-- make install
+- sudo make install
 - cd ..
 
 # install Donnie's depedency
@@ -63,4 +63,4 @@ script:
 - cd build
 - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -DBUILD_DOCS=OFF -DBUILD_DOXYGEN=OFF -DBUILD_DOXYGEN_PDF=OFF -DBUILD_MANUAL=OFF -DCMAKE_INSTALL_PREFIX=$(pwd)/install ..
 - make -j 8
-- make install
+- sudo rtavismake install
