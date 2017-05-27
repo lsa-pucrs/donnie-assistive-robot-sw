@@ -1,0 +1,17 @@
+language: cpp
+dist: trusty
+compiler:
+  - gcc
+
+# add the patch
+#before_install:
+#- patch -p1 < patch/festival/festival.patch
+
+# Install all of the dependencies:
+#install:
+#  - sudo apt-get -qq update
+#  - sudo apt-get install -y libgnomecanvasmm-2.6-dev
+
+# Execute all of the commands which should make the build pass or fail
+script:
+  - ./install.sh
