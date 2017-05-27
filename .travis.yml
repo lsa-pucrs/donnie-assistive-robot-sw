@@ -55,7 +55,7 @@ install:
   #sudo apt-get install -y oracle-java8-installer
   - sudo apt-get install -y openjdk-7-jdk
   - sudo apt-get install -y libantlr3c-dev
-  - apt-get install xterm
+  - sudo apt-get install -y xterm
 
 
 # Execute all of the commands which should make the build pass or fail
