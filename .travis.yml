@@ -11,9 +11,9 @@ branches:
   - devel
 #  - master
 
-# add the patch
-#before_install:
-#- patch -p1 < patch/festival/festival.patch
+before_install:
+- sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+- sudo apt-get update -qq
 
 # Install all of the dependencies:
 #install:
