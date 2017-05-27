@@ -21,4 +21,5 @@ branches:
 
 # Execute all of the commands which should make the build pass or fail
 script:
+  - export DONNIE_PATH=$(pwd)/donnie
   - ./install.sh
