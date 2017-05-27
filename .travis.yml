@@ -3,6 +3,13 @@ dist: trusty
 compiler:
   - gcc
 
+
+# safelist
+branches:
+  only:
+  - devel
+#  - master
+
 # add the patch
 #before_install:
 #- patch -p1 < patch/festival/festival.patch
