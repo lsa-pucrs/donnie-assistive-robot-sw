@@ -66,6 +66,8 @@ script:
 - echo "Building Donnie"
 - echo $(pwd)
 - export DONNIE_PATH=$(pwd)/install
+- export CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-2.8/Modules/:/usr/share/cmake-2.8/Modules/Platform/:/usr/share/cmake-2.8/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib64/cmake/Stage/:/usr/lib/fltk/
+- export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig/:/usr/lib/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig/:/usr/share/pkgconfig/:${PKG_CONFIG_PATH}
 - mkdir -p build
 - cd build
 - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -DBUILD_DOCS=OFF -DBUILD_DOXYGEN=OFF -DBUILD_DOXYGEN_PDF=OFF -DBUILD_MANUAL=OFF -DCMAKE_INSTALL_PREFIX=$(DONNIE_PATH) ..
