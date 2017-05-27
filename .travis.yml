@@ -76,12 +76,6 @@ script:
   - cd ..
   - mkdir -p build
   - cd build
-  - cmake -DCMAKE_BUILD_TYPE=Release \
-  	 -DBUILD_EXAMPLES=ON \
-	   -DBUILD_DOCS=OFF  \
-	   -DBUILD_DOXYGEN=OFF \
-	   -DBUILD_DOXYGEN_PDF=OFF \
-	   -DBUILD_MANUAL=OFF \
-     -DCMAKE_INSTALL_PREFIX=$(pwd)/install ..
+  - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -DBUILD_DOCS=OFF -DBUILD_DOXYGEN=OFF -DBUILD_DOXYGEN_PDF=OFF -DBUILD_MANUAL=OFF -DCMAKE_INSTALL_PREFIX=$(pwd)/install ..
   - make -j 8
   - make install
