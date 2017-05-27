@@ -8,7 +8,10 @@
 
 [//]: #[master]: https://travis-ci.org/forexample/package-example.svg?branch=master
 [//]: #[repo]: https://travis-ci.org/forexample/package-example
+
+[![Build Status](https://travis-ci.org/lsa-pucrs/donnie-assistive-robot-sw.svg?branch=devel)](https://travis-ci.org/lsa-pucrs/donnie-assistive-robot-sw)
 -->
+
 
 # Donnie Software Stack
 
