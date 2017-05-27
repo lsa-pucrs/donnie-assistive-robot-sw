@@ -93,10 +93,10 @@ echo -e "${GREEN}NOTE:${NC} This computer has ${NUM_CORES} cores ...\n"
 #sudo apt-get update
 sudo apt-get install -y build-essential
 
-# update VBoX Additions
-sudo apt-get install -y module-assistant
-sudo apt-get install -y virtualbox-guest-dkms
-sudo m-a prepare
+# update VBoX Additions - required only when using Donnie in a VM
+#sudo apt-get install -y module-assistant
+#sudo apt-get install -y virtualbox-guest-dkms
+#sudo m-a prepare
 
 # nice to have, not mandatory
 #sudo apt-get install -y geany
@@ -122,7 +122,8 @@ sudo apt-get install -y libltdl-dev
 sudo apt-get install -y libdb5.1-stl
 sudo apt-get install -y libgnomecanvasmm-2.6-dev
 sudo apt-get install -y python-gnome2
-sudo apt-get install -y libboost-all-dev  # overkill, the actually required libraries are boostthread, boostsignal, boostsystem
+#sudo apt-get install -y libboost-all-dev  # overkill, the actually required libraries are boostthread, boostsignal, boostsystem
+sudo apt-get install -y libboost-signals-dev libboost-system-dev libboost-thread-dev
 # old OpenCV for older Player drivers
 sudo apt-get install -y libopencv-dev libopencv-core-dev libcv-dev libcvaux-dev libhighgui-dev
 # alsa - sound player
@@ -185,7 +186,6 @@ then
 	patch -p1 < patch/festival/festival.patch
 	patch -p1 < patch/install/player_3.0.2_14.04.patch
 	patch -p1 < patch/donnie/instalationSoundProxy.patch
-	echo -e "${GREEN}Patching Player for Donnie ... ${NC}\n"
 fi
 mkdir -p build # mkdir -p is safer !
 cd build
