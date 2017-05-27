@@ -89,8 +89,8 @@ echo -e "${GREEN}NOTE:${NC} This computer has ${NUM_CORES} cores ...\n"
 # install commom packages
 ##################################################
 # required to install Oracle's java
-sudo apt-add-repository ppa:webupd8team/java
-sudo apt-get update
+#sudo apt-add-repository ppa:webupd8team/java
+#sudo apt-get update
 sudo apt-get install -y build-essential
 
 # update VBoX Additions
@@ -99,8 +99,8 @@ sudo apt-get install -y virtualbox-guest-dkms
 sudo m-a prepare
 
 # nice to have, not mandatory
-sudo apt-get install -y geany
-sudo apt-get install -y google-chrome-stable
+#sudo apt-get install -y geany
+#sudo apt-get install -y google-chrome-stable
 
 #compilation utils
 echo -e "${GREEN}Installing Compilation Utils ... ${NC}\n"
@@ -232,7 +232,8 @@ sudo apt-get install -y libsox-dev
 sudo apt-get install -y libcurl4-openssl-dev
 #to compile GoDonnie interpreter
 sudo apt-get install -y libreadline-dev
-sudo apt-get install -y oracle-java8-installer
+#sudo apt-get install -y oracle-java8-installer
+sudo apt-get install -y openjdk-7-jdk
 sudo apt-get install -y libantlr3c-dev
 # std terminal used in several linux distributions
 apt-get install xterm
