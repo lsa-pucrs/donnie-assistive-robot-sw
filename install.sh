@@ -236,7 +236,7 @@ sudo apt-get install -y libreadline-dev
 sudo apt-get install -y openjdk-7-jdk
 sudo apt-get install -y libantlr3c-dev
 # std terminal used in several linux distributions
-apt-get install xterm
+sudo apt-get install -y xterm
 #to compile docs
 sudo apt-get install -y doxygen
 # uses 3.058 MB in disk - not recommended for VMs
