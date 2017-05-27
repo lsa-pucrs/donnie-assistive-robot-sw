@@ -15,69 +15,52 @@ branches:
 before_install:
 - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
 - sudo apt-get update -qq
-- git clone https://github.com/lsa-pucrs/Player.git
-- git clone https://github.com/lsa-pucrs/Stage.git
-# Player patches
+# install Player Stage deps
+- sudo apt-get install -y pkg-config
+# install Player/Stage depedencies
+- sudo apt-get install -y libfltk1.1-dev freeglut3-dev libpng12-dev libltdl-dev libdb5.1-stl libgnomecanvasmm-2.6-dev python-gnome2
+#sudo apt-get install -y libboost-all-dev  # overkill, the actually required libraries are boostthread, boostsignal, boostsystem
+- sudo apt-get install -y libboost-signals-dev libboost-system-dev libboost-thread-dev
+# old OpenCV for older Player drivers
+- sudo apt-get install -y libopencv-dev libopencv-core-dev libcv-dev libcvaux-dev libhighgui-dev
+- sudo apt-get install -y libasound2-dev libgsl0-dev libxmu-dev libpq-dev libpqxx-dev
+# install Player
+- git clone https://github.com/lsa-pucrs/Player.git Player
 - cd Player
 - patch -p1 < patch/festival/festival.patch
 - patch -p1 < patch/install/player_3.0.2_14.04.patch
 - patch -p1 < patch/donnie/instalationSoundProxy.patch
+- mkdir -p build # mkdir -p is safer !
+- cd build
+- cmake -DCMAKE_BUILD_TYPE=Release -DDEBUG_LEVEL=NONE -BUILD_PYTHONC_BINDINGS:BOOL=OFF ..
+- make -j 8
+- sudo make install  
+- cd ..
+# install Stage
+- git clone https://github.com/lsa-pucrs/Stage.git Stage
+- cd Stage
+- mkdir -p build
+- cd build
+- cmake -DCMAKE_BUILD_TYPE=Release ..
+- make -j 8
+- make install
 - cd ..
 
-# Install all of the dependencies:
-install:
-  - sudo apt-get install -y autoconf
-  - sudo apt-get install -y cmake
-  - sudo apt-get install -y cmake-curses-gui
-  - sudo apt-get install -y pkg-config
-# install Player/Stage depedencies
-  - sudo apt-get install -y libfltk1.1-dev 
-  - sudo apt-get install -y freeglut3-dev 
-  - sudo apt-get install -y libpng12-dev 
-  - sudo apt-get install -y libltdl-dev 
-   #libltdl7 
-  - sudo apt-get install -y libdb5.1-stl
-  - sudo apt-get install -y libgnomecanvasmm-2.6-dev
-  - sudo apt-get install -y python-gnome2
-  #sudo apt-get install -y libboost-all-dev  # overkill, the actually required libraries are boostthread, boostsignal, boostsystem
-  - sudo apt-get install -y libboost-signals-dev libboost-system-dev libboost-thread-dev
-  # old OpenCV for older Player drivers
-  - sudo apt-get install -y libopencv-dev libopencv-core-dev libcv-dev libcvaux-dev libhighgui-dev
-  - sudo apt-get install -y libasound2-dev
-  - sudo apt-get install -y libgsl0-dev libxmu-dev
-  #- sudo apt-get install -y python-dev swig
-  # PostGIS for a Player driver
-  - sudo apt-get install -y libpq-dev libpqxx-dev
 # install Donnie's depedency
-  - sudo apt-get install -y libsox-dev 
-  - sudo apt-get install -y libcurl4-openssl-dev
-  - sudo apt-get install -y libreadline-dev
-  #sudo apt-get install -y oracle-java8-installer
-  - sudo apt-get install -y openjdk-7-jdk
-  - sudo apt-get install -y libantlr3c-dev
-  - sudo apt-get install -y xterm
-
+install:
+- sudo apt-get install -y libsox-dev 
+- sudo apt-get install -y libcurl4-openssl-dev
+- sudo apt-get install -y libreadline-dev
+#sudo apt-get install -y oracle-java8-installer
+- sudo apt-get install -y openjdk-7-jdk
+- sudo apt-get install -y libantlr3c-dev
+- sudo apt-get install -y xterm
 
 # Execute all of the commands which should make the build pass or fail
 script:
-# compile and install Player
-  - cd Player
-  - mkdir -p build # mkdir -p is safer !
-  - cd build
-  - cmake -DCMAKE_BUILD_TYPE=Release -DDEBUG_LEVEL=NONE -BUILD_PYTHONC_BINDINGS:BOOL=OFF ..
-  - make -j 8
-  - sudo make install  
-# compile and install Stage
-  - cd ../Stage
-  - mkdir -p build
-  - cd build
-  - cmake -DCMAKE_BUILD_TYPE=Release ..
-  - make -j 8
-  - make install
 # compile and install Donnie
-  - cd ..
-  - mkdir -p build
-  - cd build
-  - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -DBUILD_DOCS=OFF -DBUILD_DOXYGEN=OFF -DBUILD_DOXYGEN_PDF=OFF -DBUILD_MANUAL=OFF -DCMAKE_INSTALL_PREFIX=$(pwd)/install ..
-  - make -j 8
-  - make install
+- mkdir -p build
+- cd build
+- cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -DBUILD_DOCS=OFF -DBUILD_DOXYGEN=OFF -DBUILD_DOXYGEN_PDF=OFF -DBUILD_MANUAL=OFF -DCMAKE_INSTALL_PREFIX=$(pwd)/install ..
+- make -j 8
+- make install
