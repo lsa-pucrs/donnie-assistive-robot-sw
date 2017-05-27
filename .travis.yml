@@ -25,6 +25,8 @@ before_install:
 - sudo apt-get install -y libopencv-dev libopencv-core-dev libcv-dev libcvaux-dev libhighgui-dev
 - sudo apt-get install -y libasound2-dev libgsl0-dev libxmu-dev libpq-dev libpqxx-dev
 # install Player
+- echo "Building Player"
+- echo $(pwd)
 - git clone https://github.com/lsa-pucrs/Player.git Player
 - cd Player
 - patch -p1 < patch/festival/festival.patch
@@ -35,8 +37,10 @@ before_install:
 - cmake -DCMAKE_BUILD_TYPE=Release -DDEBUG_LEVEL=NONE -BUILD_PYTHONC_BINDINGS:BOOL=OFF ..
 - make -j 8
 - sudo make install  
-- cd ..
+- cd ../..
 # install Stage
+- echo "Building Stage"
+- echo $(pwd)
 - git clone https://github.com/lsa-pucrs/Stage.git Stage
 - cd Stage
 - mkdir -p build
@@ -44,7 +48,7 @@ before_install:
 - cmake -DCMAKE_BUILD_TYPE=Release ..
 - make -j 8
 - sudo make install
-- cd ..
+- cd ../..
 
 # install Donnie's depedency
 install:
@@ -59,8 +63,11 @@ install:
 # Execute all of the commands which should make the build pass or fail
 script:
 # compile and install Donnie
+- echo "Building Donnie"
+- echo $(pwd)
 - mkdir -p build
 - cd build
 - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -DBUILD_DOCS=OFF -DBUILD_DOXYGEN=OFF -DBUILD_DOXYGEN_PDF=OFF -DBUILD_MANUAL=OFF -DCMAKE_INSTALL_PREFIX=$(pwd)/install ..
 - make -j 8
-- sudo rtavismake install
+- sudo make install
+- cd ..
