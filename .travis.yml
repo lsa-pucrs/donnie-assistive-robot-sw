@@ -18,9 +18,11 @@ before_install:
 - git clone https://github.com/lsa-pucrs/Player.git
 - git clone https://github.com/lsa-pucrs/Stage.git
 # Player patches
+- cd Player
 - patch -p1 < patch/festival/festival.patch
 - patch -p1 < patch/install/player_3.0.2_14.04.patch
 - patch -p1 < patch/donnie/instalationSoundProxy.patch
+- cd ..
 
 # Install all of the dependencies:
 install:
