@@ -65,16 +65,16 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
  [**Ubuntu 14.04**](http://releases.ubuntu.com/14.04/) (Trusty Tahr) is the recommended OS distribution. 
  For older computers or VMs, [Lubuntu 14.04](http://cdimage.ubuntu.com/lubuntu/releases/14.04/release/) or [Ubuntu Mate 14.04](https://ubuntu-mate.org/trusty/) are recommended.
  
- Download the [package](releases/latest) and execute the following steps in the terminal:
+ Download the [package](https://github.com/lsa-pucrs/donnie-assistive-robot-sw/releases) and execute the following steps in the terminal:
  
  * It is recommended to update your packages before the instalation:
 > sudo apt-get install update
 * To install, you can double-click it or execute:
-> sudo dpkg -i donnie_1.0.0_amd64.deb
+> sudo dpkg -i donnie-player-stage_0.1_amd64.deb
 * In case of missing dependencies, try: 
-> sudo apt-get install -f
+> sudo apt-get -f install
 * To unistall:
-> sudo dpkg -r donnie
+> sudo dpkg -r donnie-player-stage
 
 ## Compile and Install Donnie Software on a Desktop Computer 
 
