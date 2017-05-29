@@ -10,37 +10,51 @@
 
 #define BUFFER_SIZE 200
 
-//!Robot Defines
-#define PI 3.141592653
-#define DIAMETER 0.44 //[m]
-#define RADIUS (DONNIE_DIAMETER * 0.5) //[m]
-#define CIRCUMFERENCE (2 * PI * DONNIE_RADIUS) //[m]
-#define CENTRE_TO_WHEEL 0.135 //[m]
-#define PULSE_TO_RPM 1.83  //[rpm] (SEC_PR_MIN*MSEC_PR_SEC) / GEAR_RATIO / PULSES_PR_REV
-
-#define WHEEL_RADIUS  2.1 // [mm]0.04 //[m]
-#define WHEEL_DIAMETER (WHEEL_RADIUS*2)
-#define DEFAULT_AXLE_LENGTH	0.083
-//#define DEFAULT_AXLE_LENGTH	0.301
+//!Robot Default Defines
+#define DEFAULT_WHEEL_RADIUS 0.021 //[m]  
+#define DEFAULT_AXLE_LENGTH	0.068 //[m] distante between wheels (at the single point of contact at the ground plane)
+#define DEFAULT_CPR 900.0
 
 
-//! Timer to count time in seconds. 
+
+//! Timer to count time in seconds, milliseconds or microseconds. 
 /*! Used to count time for ping messages */
 class Timer
 {
 public:
-    Timer() { clock_gettime(CLOCK_REALTIME, &beg_); }
+	Timer() {
+		clock_gettime(CLOCK_REALTIME, &beg_); 
+		gettimeofday(&tbeg_, NULL);
+	}
 
-    double elapsed() {
-        clock_gettime(CLOCK_REALTIME, &end_);
-        return end_.tv_sec - beg_.tv_sec +
-            (end_.tv_nsec - beg_.tv_nsec) / 1000000000.;
-    }
-
-    void reset() { clock_gettime(CLOCK_REALTIME, &beg_); }
+	double elapsed() {
+		clock_gettime(CLOCK_REALTIME, &end_);
+		// printf("seconds: %.2lf\n", seconds);
+		return (end_.tv_sec - beg_.tv_sec) +
+			(end_.tv_nsec - beg_.tv_nsec) / 1000000000.;
+	}
+	unsigned long long elapsedms() { //current timestamp in ms
+		gettimeofday(&tend_, NULL); // get current time
+		// printf("milliseconds: %Lu\n", milliseconds);
+		return (tend_.tv_sec-tbeg_.tv_sec)*1000LL + 
+				(tend_.tv_usec-tbeg_.tv_usec)/1000;// caculate milliseconds
+	}
+	unsigned long long elapsedus() { //current timestamp in us
+		gettimeofday(&tend_, NULL); // get current time
+		// printf("microseconds: %Lu\n", microseconds);
+		return (tend_.tv_usec-tbeg_.tv_usec)+
+				(tend_.tv_sec-tbeg_.tv_sec)*(uint64_t)1000000; // caculate microseconds
+	}
+	void toPrint(){
+		printf("Timestamp:%.Lu us.\n",elapsedus());
+		printf("Timestamp:%.Lu ms.\n",elapsedms());
+		printf("Timestamp:%.2lf sec.\n",elapsed());
+	}
+	void reset() { clock_gettime(CLOCK_REALTIME, &beg_); }
 
 private:
-    timespec beg_, end_;
+	struct timeval tbeg_, tend_;
+	timespec beg_, end_;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -156,6 +170,12 @@ class Donnie : public ThreadedDriver{
 		int32_t last_posRight;
 		int16_t ticksR; 
 		int16_t ticksL;
+		double x,y,th;
+		double cpr; //[ticks] counts per revolution
+		int16_t lasttickR,lasttickL;
+		double Dr,Dl,Dc;
+		double wheel_radius;
+		double axle_length;
 
 		//!Robot Geometry parameters
 		double robot_width;
@@ -177,6 +197,8 @@ class Donnie : public ThreadedDriver{
 
 		//!Debug parameters
 		int print_debug_messages;
+		int odometry_log;
+		int encoder_log;
 
 		//!Others parameters
 		double step_length;
