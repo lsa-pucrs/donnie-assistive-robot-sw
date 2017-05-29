@@ -7,13 +7,14 @@
 
 
 //?to daniel: tem algum motivo de nao comecar tudo setado em zero ??
-int motorsDefaultSpeed = 195;
+//int motorsDefaultSpeed = 195; //daniel
+int motorsDefaultSpeed = 120; //marques
 int motorsDefaultAngularSpeed = 60;
 int motorRActive=0;
 int motorRspeed=motorsDefaultSpeed;//setado a 195
 int motorRTurn=0;
 int motorLActive=0;
-int motorLspeed=motorsDefaultSpeed;//setado a 195
+int motorLspeed=motorsDefaultSpeed;//setado a 195 
 int motorLTurn=0;
 
 
@@ -120,8 +121,8 @@ void Motors::init_Motors(int defSpeed, int newSpeedMax, int newSpeedMin)
   erro=0;                                      
   ultimoL = 0;
   ultimoR = 0;
-  offsetR=3;
-	offsetL=-3;
+  offsetR=0;//3;
+	offsetL=0;//-3;
 
   i=0;// -> mudar de nome, i é mais genérico que a vida
   setpoint=5; // valor de ticks que a gente quer controlar o PID. o "padrão", o nosso 100%
@@ -177,8 +178,10 @@ void Motors::turn_right(int PIDSpeedL, int PIDSpeedR)// 1,-1 para direita, -1,1 
    {
      // if((1*counterL<number_of_ticks) || (-1*counterR<number_of_ticks))
      // {
-            moveRightWheel(MOTOR_R, PIDSpeedR, 1);
-            moveLeftWheel(MOTOR_L, PIDSpeedL, 1);
+            //moveRightWheel(MOTOR_R, PIDSpeedR, 1);
+            //moveLeftWheel(MOTOR_L, PIDSpeedL, 1);
+            moveRightWheel(MOTOR_R, motorsDefaultAngularSpeed-3, 1);
+            moveLeftWheel(MOTOR_L, motorsDefaultAngularSpeed, 1);
     //  }
     //  else
     //  {
@@ -195,8 +198,10 @@ void Motors::turn_left(int PIDSpeedL, int PIDSpeedR)// 1,-1 para direita, -1,1 p
    {
      // if((-1*counterL<number_of_ticks) || (1*counterR<number_of_ticks))
       //{
-            moveRightWheel(MOTOR_R, PIDSpeedR, 0);
-            moveLeftWheel(MOTOR_L, PIDSpeedL, 0);
+            //moveRightWheel(MOTOR_R, PIDSpeedR, 0);
+            //moveLeftWheel(MOTOR_L, PIDSpeedL, 0);
+            moveRightWheel(MOTOR_R, motorsDefaultAngularSpeed-3, 0);
+            moveLeftWheel(MOTOR_L, motorsDefaultAngularSpeed, 0);
   //    }
   //    else
   //    {
@@ -242,8 +247,10 @@ void Motors::move_backward(int PIDSpeedL, int PIDSpeedR)
 	{
 		i++;
 	}
-  moveRightWheel(MOTOR_R, PIDSpeedR+-1*offsetR, 1);
-	moveLeftWheel(MOTOR_L, PIDSpeedL+-1*offsetL, 0);
+  //moveRightWheel(MOTOR_R, PIDSpeedR+-1*offsetR, 1);
+	//moveLeftWheel(MOTOR_L, PIDSpeedL+-1*offsetL, 0);
+  moveRightWheel(MOTOR_R, motorsDefaultSpeed, 1);
+  moveLeftWheel(MOTOR_L, motorsDefaultSpeed, 0);
 }
 
 
@@ -290,16 +297,20 @@ void Motors::move_forward(int SpeedL, int SpeedR)
 	{
 		i++;
 	}
-  moveRightWheel(MOTOR_R, PIDSpeedR+offsetR, 0);
-	moveLeftWheel(MOTOR_L, PIDSpeedL+offsetL, 1);
+  //moveRightWheel(MOTOR_R, PIDSpeedR+offsetR, 0);
+	//moveLeftWheel(MOTOR_L, PIDSpeedL+offsetL, 1);
+  moveRightWheel(MOTOR_R, motorsDefaultSpeed-5, 0);
+  moveLeftWheel(MOTOR_L, motorsDefaultSpeed, 1);
 }
 
 void Motors::calibrate_motors(int Speed)
 {
 	if(i<iterations)
 	{
-    moveLeftWheel(MOTOR_L, Speed, 1);
-    moveRightWheel(MOTOR_R, Speed, 0);
+		//moveLeftWheel(MOTOR_L, Speed, 1);
+    //moveRightWheel(MOTOR_R, Speed, 0);
+    moveLeftWheel(MOTOR_L, motorsDefaultSpeed, 1);
+    moveRightWheel(MOTOR_R, motorsDefaultSpeed, 0);
 		i++;
 	}
 	else
@@ -312,7 +323,7 @@ void Motors::calibrate_motors(int Speed)
 
 		setpoint = (mediaR+mediaL)/2;
 		i=0; 
-		systemMsg("setpoint!!!!!!!!!!!!!!!!!!!!!"+String(setpoint));
+		systemMsg("setpoint!!!!!!!!!!!!!!!!!!!!"+String(setpoint));
 		counterL=0;
 		counterR=0; 
 	}
@@ -365,8 +376,8 @@ void Motors::moveLeftWheel(int motor, int speed, int direction)
 void Motors::stop(){
   //enable standby  
   digitalWrite(STBY, LOW); 
-  counterR=0;
-  counterL=0;
+  //counterR=0;
+  //counterL=0;
 }
 
 /*
@@ -378,26 +389,26 @@ void Motors::control_movement()
 	  if(motorLTurn==1 && motorRTurn==0) //move forward
 	  {
 	    move_forward(motorLspeed,motorRspeed);
-	    //counterL=0;
-	    //counterR=0;
+	    // counterL=0;
+	    // counterR=0;
 	  }
 	  else if ((motorLTurn==0) && (motorRTurn==1))//mofe backward
 	  {
 	    move_backward(motorLspeed,motorRspeed);
-	    //counterL=0;
-	    //counterR=0;
+	    // counterL=0;
+	    // counterR=0;
 	  }
 	  else if(motorLTurn==1 && motorRTurn==1)//turn right
 	  {
 	    turn_right(motorsDefaultAngularSpeed,motorsDefaultAngularSpeed);
-	    //counterL=0;
-	    //counterR=0;
+	    // counterL=0;
+	    // counterR=0;
 	  }
 	  else if(motorLTurn==0 && motorRTurn==0)//turn left
 	  {
 	    turn_left(motorsDefaultAngularSpeed,motorsDefaultAngularSpeed);
-	    //counterL=0;
-	    //counterR=0;
+	    // counterL=0;
+	    // counterR=0;
 	  }
 	}
 	else stop();
@@ -470,7 +481,7 @@ void setup_Environment(int interrup1, int interrup2)
 
 void motors_config()
 {
-  setup_Environment(0,1);
+  setup_Environment(pololuAL,pololuAR);
 }
 
 void motorsUpdate()

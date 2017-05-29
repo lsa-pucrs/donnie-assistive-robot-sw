@@ -31,6 +31,10 @@
 #include <libplayerc++/playerc++.h>
 #include <cmath>
 
+//Parameters
+#define LINEAR_DEFAULT_VEL 0.04    //[m/s]
+#define FRONT_RANGER_STALL_SETPOINT -1 //0.15  //[m]
+
 #define KEYCODE_A 0x61
 #define KEYCODE_B 0x62
 #define KEYCODE_C 0x63
@@ -44,6 +48,7 @@
 #define KEYCODE_O 0x6F
 #define KEYCODE_Q 0x71
 #define KEYCODE_R 0x72
+#define KEYCODE_S 0x73
 #define KEYCODE_T 0x74
 #define KEYCODE_U 0x75
 #define KEYCODE_V 0x76
@@ -227,6 +232,12 @@ void* keyboard_handler(void* arg)
 		break;
 	  case KEYCODE_R:
 		break;
+	  case KEYCODE_S:
+	  	lastKey = 's';
+		max_rv -= max_rv / 10.0;
+		if(always_command)
+		  cont->dirty = true;
+		break;
 	  case KEYCODE_V:
 		break;
 	  case KEYCODE_B:
@@ -379,8 +390,8 @@ int main(int argc, char** argv){
 	PlayerClient    robot(host,port);
 	DioProxy systemDio(&robot,0);
 	RangerProxy myranger(&robot,0);
-	Position2dProxy mymotors(&robot, 1);
-	Position2dProxy neckServo(&robot, 0);
+	Position2dProxy mymotors(&robot, 0);
+	Position2dProxy neckServo(&robot, 1);
 	BumperProxy mybumper(&robot, 0);
 	PowerProxy mypower(&robot, 0);
 	//BeepProxy mybeep(&robot, 0);
@@ -394,6 +405,7 @@ int main(int argc, char** argv){
   memset( &cont, 0, sizeof(cont) );
   pthread_t dummy;
 
+  	float frontRangerStallSetpoint=FRONT_RANGER_STALL_SETPOINT; //[m]
 	while( true ){
   		pthread_create(&dummy, NULL, &keyboard_handler, (void*)&cont);
 		while(lastKey!='c'){
@@ -421,12 +433,23 @@ int main(int argc, char** argv){
 						//mybeep.playTone(NOTE_B6,200);
 					break;
 					default:
-						float linear_default_vel = 0.04; //[m/s]
-						if(cont.speed == 0 && cont.turnrate == 0) mymotors.SetSpeed(0,0);	//stop
-						else if(cont.speed == 1 && cont.turnrate == 0) mymotors.SetSpeed(linear_default_vel,0); //forward
-						else if(cont.speed == 0 && cont.turnrate == 1) mymotors.SetSpeed(0,linear_default_vel);//left
-						else if(cont.speed == 0 && cont.turnrate == -1) mymotors.SetSpeed(0,-linear_default_vel); //right
-						else if(cont.speed == -1 && cont.turnrate == 0) mymotors.SetSpeed(-linear_default_vel,0); //backward
+						robot.Read();
+						// if(myranger[1]>frontRangerStallSetpoint){
+						// 	if(!mybumper.IsAnyBumped()){
+								float linear_default_vel = 0.04; //[m/s]
+								if(cont.speed == 0 && cont.turnrate == 0) mymotors.SetSpeed(0,0);	//stop
+								else if(cont.speed == 1 && cont.turnrate == 0) mymotors.SetSpeed(linear_default_vel,0); //forward
+								else if(cont.speed == 0 && cont.turnrate == 1) mymotors.SetSpeed(0,linear_default_vel);//left
+								else if(cont.speed == 0 && cont.turnrate == -1) mymotors.SetSpeed(0,-linear_default_vel); //right
+								else if(cont.speed == -1 && cont.turnrate == 0) mymotors.SetSpeed(-linear_default_vel,0); //backward
+						// 	}
+						// 	else{
+						// 		mymotors.SetSpeed(0,0);	//stop
+						// 	}
+						// }
+						// else{
+						// 	mymotors.SetSpeed(0,0);	//stop
+						// }
 					break;
 
 				}
@@ -445,7 +468,7 @@ int main(int argc, char** argv){
 			puts("---------------------------");
 			puts("Moving around:");
 			puts("        i         c = command mode");
-			puts("   j    k    l");
+			puts("   j    k    l ");
 			puts("        ,     ");
 			puts("button release : stop");
 			puts("---------------------------");
@@ -485,8 +508,6 @@ int main(int argc, char** argv){
 			cout << "Qnt:" << myranger.GetRangeCount() << endl;
 			cout << "          1   2   3   4   5   6   7" << endl;
 			//////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 			robot.Read(); //update proxies  // esta aqui no fim pq se botar antes ddos prints ele nao printa nada
 		}
 

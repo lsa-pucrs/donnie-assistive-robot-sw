@@ -266,6 +266,7 @@ int DonnieClient::GetPos(string p2d, int arg)
 float DonnieClient::GetPos(Position2dProxy *p2d, int arg)
 {
 	robot->ReadIfWaiting();
+	std::ostringstream sayStr;
 
 	switch(arg)
 	{
@@ -275,6 +276,10 @@ float DonnieClient::GetPos(Position2dProxy *p2d, int arg)
 			return p2d->GetYPos()/STEP_LENGHT;
 		case 2:
 			return radTOdeg(p2d->GetYaw());
+		case 3:
+			sayStr << "Estou no x " << (int)(p2d->GetXPos()/STEP_LENGHT) << ", no y " << (int)(p2d->GetYPos()/STEP_LENGHT) << " e virado para " << (int)(radTOdeg(p2d->GetYaw())) << " graus.";
+			speak(sayStr.str());
+			return 0;
 		default:
 			ostringstream buf;
 			buf << "Position id "<< arg << "invalid" << endl;
@@ -292,7 +297,7 @@ int DonnieClient::meterToSteps(double m){
 
 int DonnieClient::moveForward(int arg)
 {
-	robot->ReadIfWaiting();
+	robot->Read();
 	//double yawi = p2dProxy->GetYaw();    //Angulo do robo
 	double posxi = p2dProxy->GetXPos();   //Posicao inicial X do robo
 	double posyi = p2dProxy->GetYPos();   //Posicao inicial Y do robo
@@ -308,13 +313,13 @@ int DonnieClient::moveForward(int arg)
 	//validate step number
 	if(Npassos != 0){
 		//initial collision prevent - check if not are nearby obstacle to start movement
-		robot->ReadIfWaiting();
+		robot->Read();
 		if(sonarProxy->GetRange(1) > 2*FRONT_RANGER)//Range South
 			p2dProxy->SetSpeed(0.05,0);
 		else obstacle = true;
 
-
-		while(hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) <= targetHypot && collision==false && obstacle==false)
+		//hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) <= targetHypot
+		while(passos < Npassos && collision==false && obstacle==false)
 		{
 			//#ifndef NDEBUG
 			//cout << "targetHypot:" << targetHypot << endl;
@@ -328,6 +333,7 @@ int DonnieClient::moveForward(int arg)
 				collision = true;
 			}
 
+			robot->ReadIfWaiting();
 			//collision prevent
 			if(sonarProxy->GetRange(2) < SIDE_RANGER || sonarProxy->GetRange(1) < FRONT_RANGER || sonarProxy->GetRange(0) < SIDE_RANGER){
 				p2dProxy->SetSpeed(0,0);
@@ -373,7 +379,7 @@ int DonnieClient::moveForward(int arg)
 
 int DonnieClient::moveBackward(int arg)
 {
-	robot->ReadIfWaiting();
+	robot->Read();
 	//double yawi = p2dProxy->GetYaw();    //Angulo do robo
 	double posxi = p2dProxy->GetXPos();   //Posicao inicial X do robo
 	double posyi = p2dProxy->GetYPos();   //Posicao inicial Y do robo
@@ -389,13 +395,13 @@ int DonnieClient::moveBackward(int arg)
 	//validate step number
 	if(Npassos != 0){
 		//initial collision prevent - check if not are nearby obstacle to start movement
-		robot->ReadIfWaiting();
+		robot->Read();
 		if(sonarProxy->GetRange(4) > 2*FRONT_RANGER)//Range South
 			p2dProxy->SetSpeed(-0.05,0);
 		else obstacle = true;
 
-
-		while(hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) <= targetHypot && collision==false && obstacle==false)
+		// hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) <= targetHypot 
+		while(passos < Npassos && collision==false && obstacle==false)
 		{
 			//#ifndef NDEBUG
 			//cout << "targetHypot:" << targetHypot << endl;
@@ -409,6 +415,7 @@ int DonnieClient::moveBackward(int arg)
 				collision = true;
 			}
 
+			robot->ReadIfWaiting();
 			//collision prevent
 			if(sonarProxy->GetRange(4) < SIDE_RANGER || sonarProxy->GetRange(3) < FRONT_RANGER || sonarProxy->GetRange(5) < SIDE_RANGER){
 				p2dProxy->SetSpeed(0,0);
@@ -529,139 +536,652 @@ void DonnieClient::Scan(void){
 	float sonar_readings[7];
 	int blobs_found[7];
 	int yaw_cnt=0;
-			
+	int blobs_counter_buffer;	
 	std::ostringstream scanText;
 	string color_str;
+
+
+
+
+	bool blob_flag = false;
+	int camera_width = bfinderProxy->GetWidth() - 1;  
+	int nro_blobs = 0;
+	int nro_blobs_buffer = 0;
+
+	int yaw_buffer = 0;
+	playerc_blobfinder_blob_t blob_buffer;
+	blob_buffer.color =0;
+
+	playerc_blobfinder_blob_t total_blobs_found[20];
+	playerc_blobfinder_blob_t _total_blobs_found[20];
+	int total_yaws[20];
+	int _total_yaws[20];
+	int total_counter=0;
+	int graus = 0;
+
+	//playerc_blobfinder_blob_t teste;
+
+
 	speak("Espiando");
 	do{
-		// move head
+		// move headd
 		headGoto(head_yawi);
 		robot->ReadIfWaiting();
+		sleep(1);
+
 		// read sonar
 		headSonarProxy->GetRange(0)/100; ///STEP_LENGHT;  // read head sonar 
 		sonar_readings[yaw_cnt] = headSonarProxy->GetRange(0)/STEP_LENGHT;  // read head sonar 
 		blobs_found[yaw_cnt] = bfinderProxy->GetCount(); // get the number of blobs found
-		
-		// get the color of the blobs
-		color_str = "";
-        for(int i = 0; i < blobs_found[yaw_cnt]; i++)
-        {
-			// color is encodedd in 0x00RRGGBB format	
-			color_str+=value_to_color(bfinderProxy->GetBlob(i).color);
-			// if it is the last
-			if (i+1 != blobs_found[yaw_cnt])
-				color_str += ",";
-		}		
-		
-		// build string
-		if (head_yawi == 0)
-			scanText << "a frente: ";
-		else if (head_yawi < 0)
-			scanText << "a " << -head_yawi << " graus a direita: ";
-		else 
-			scanText << "a " << head_yawi << " graus a esquerda: ";
+		blobs_counter_buffer = blobs_found[yaw_cnt];
 
-		// OBS: '(int)*sonar_readings' truncate the distance. perhaps 'round' would be better
-		if (blobs_found[yaw_cnt] == 0){
-			scanText << "0 objetos a " << (int)sonar_readings[yaw_cnt] << " passos";
-		}else if (blobs_found[yaw_cnt] == 1){
-			scanText << "1 objeto de cor " << color_str << " a " << (int)sonar_readings[yaw_cnt] << " passos";
-		}else{
-			scanText << blobs_found[yaw_cnt] << " objetos de cores " << color_str << " a " << (int)sonar_readings[yaw_cnt] << " passos";
+
+	
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		nro_blobs_buffer = bfinderProxy->GetCount();
+		if(nro_blobs_buffer == 0 ) // caso nao tenha blobs, ainda tem que analisar pra ver se tem algum incompleto.
+		{
+			if (blob_flag ==true)
+			{
+				total_blobs_found[total_counter] = blob_buffer;
+				total_yaws[total_counter] = yaw_buffer;
+				total_counter++;
+				//nro_blobs++; 
+				blob_flag = false;
+				//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") blob adicionado! no 0!"<<endl;
+			}
 		}
-		
-		speak(scanText.str());
+		else
+		{
+			//nro_blobs += nro_blobs_buffer;
+			for(int b = 0; b<nro_blobs_buffer;b++)
+			{
+
+				usleep(100);
+				int buffer_color =bfinderProxy->GetBlob(b).color;
+				//cout<<"numero de blobs "<<nro_blobs_buffer<<" ["<<b<<"] cor da blob:"<< buffer_color<<endl;
+				//cout<<"blob buffered:" << blob_buffer.color<<endl;
+				//cout<<"testando "<<teste.color<<endl;
+
+				if(bfinderProxy->GetBlob(b).right != (camera_width) && bfinderProxy->GetBlob(b).left==0) /// inacabado na ESQUERDA. 
+				{
+					if (blob_flag ==true) 
+					{
+						if(blob_buffer.color !=buffer_color) // blobs with same colors! Para evitar que pegue a mesma blob 2x. Pode ocorrer outros erros.
+						{
+							//add the buffered blob.
+							total_blobs_found[total_counter] = blob_buffer;
+							total_yaws[total_counter] = yaw_buffer;
+							total_counter++;
+							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<")"<<" blob adicionado! left antigo"<<endl;
+							//nro_blobs++; //don't change the number of blobs. one in, one out.
+							//blob_flag = false; keep the flag true!
+	
+							//then buffers the current blob.
+							//blob_buffer = bfinderProxy->GetBlob(b);
+
+							//mod aqui
+							yaw_buffer  = head_yawi;
+							//yaw_buffer = graus;
+						}
+						
+					}
+					else
+					{
+						//blob_buffer = bfinderProxy->GetBlob(b);
+						//modificado aqui
+						//yaw_buffer = graus;				//cout<<"blob adicionado! 2x (right e cor diferente)"<<endl;
+						yaw_buffer = head_yawi;
+						//nro_blobs--;
+						blob_flag = true; 
+					}
+				}	
+				else if(bfinderProxy->GetBlob(b).right == (camera_width) && bfinderProxy->GetBlob(b).left !=0) //inacabado na DIREITA.
+				{
+					if (blob_flag ==true)
+					{
+						if(blob_buffer.color == buffer_color) // blobs with same colors!
+						{
+							total_blobs_found[total_counter] = blob_buffer;
+							//mod aqui
+							//total_yaws[total_counter] = (graus+yaw_buffer)/2;
+							total_yaws[total_counter] = (head_yawi+yaw_buffer)/2;
+							total_counter++;
+							blob_flag = false;
+							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color )<<") blob adicionado! right"<<endl;
+							//blob_buffer = bfinderProxy->GetBlob(b);
+
+						}
+						else  // blobs with different colors!
+						{
+							//add the previous blob
+							total_blobs_found[total_counter] = blob_buffer;
+							total_yaws[total_counter] = yaw_buffer;
+							total_counter++;
+
+
+							total_blobs_found[total_counter] =  bfinderProxy->GetBlob(b);
+							//mod aqui
+							total_yaws[total_counter] = head_yawi;//graus;
+							total_counter++;
+							blob_flag = false;
+						//	cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<<" ("<<value_to_color(buffer_color)<<") blob adicionado! 2x (right e cor diferente)"<<endl;
+							//blob_buffer = bfinderProxy->GetBlob(b);
+						}
+					}
+					else
+					{
+						if(blob_buffer.color != buffer_color) // blobs with same colors!Para evitar que pegue a mesma blob 2x. Pode ocorrer outros erros.
+						{
+							total_blobs_found[total_counter] =  bfinderProxy->GetBlob(b);
+							//mod aqui
+							total_yaws[total_counter] = head_yawi;//graus;
+							//cout<<"do buffer! "<<blob_buffer.color<<"iaiaia"<<endl;
+							//cout<<buffer_color<<" ("<<value_to_color(buffer_color)<<") blob adicionado! right sozinho"<<endl;
+							total_counter++;
+							//blob_buffer = bfinderProxy->GetBlob(b);
+						}
+
+					}
+				}
+				else if(bfinderProxy->GetBlob(b).right == (camera_width) && bfinderProxy->GetBlob(b).left==0) // inacabado nas DUAS pontas. 
+				{
+					if (blob_flag ==true)
+					{
+						if(blob_buffer.color == bfinderProxy->GetBlob(b).color)
+						{
+							blob_buffer = bfinderProxy->GetBlob(b);
+							//cout<<"ueahieauhea"<<endl;kkk
+							//nro_blobs--;
+						}
+						else
+						{
+							//add the previous blob
+							total_blobs_found[total_counter] = blob_buffer;
+							total_yaws[total_counter] = yaw_buffer;
+							total_counter++;
+							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<< " ("<<value_to_color(buffer_color)<<") blob adicionado! middle de outra cor"<<endl;
+
+
+							//blob_buffer = bfinderProxy->GetBlob(b);
+							//mod aqui
+							yaw_buffer = head_yawi;//graus; 
+
+						}
+
+					}
+					else
+					{
+
+						//blob_buffer = bfinderProxy->GetBlob(b);
+						//mod aqui
+						yaw_buffer = head_yawi;//graus;
+					//	nro_blobs--;
+						blob_flag = true; 
+						
+					}
+				}
+				else // ok, tudo certo :}
+				{
+					if (blob_flag ==true) 
+					{
+
+						if(blob_buffer.color == buffer_color)
+						{
+							total_blobs_found[total_counter] =  bfinderProxy->GetBlob(b);
+							//mod aqui
+							total_yaws[total_counter] = head_yawi;//graus;
+							total_counter++;
+							blob_flag = false;
+							//cout<<buffer_color<<" ("<<value_to_color(buffer_color)<<") adicionado! no meio e left, iguais"<<endl;
+							//blob_buffer =  bfinderProxy->GetBlob(b);
+
+						}
+						else
+						{
+							//add the buffered blob.
+							total_blobs_found[total_counter] = blob_buffer;
+							total_yaws[total_counter] = yaw_buffer;
+							total_counter++;
+							//nro_blobs++; 
+							blob_flag = false;
+
+							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<<" (" <<value_to_color(buffer_color)<<") blob adicionado! 2x (left e sozinho)"<<endl;
+							//blob_buffer = bfinderProxy->GetBlob(b);
+
+							//then buffers the current blob.
+							total_blobs_found[total_counter] =  blob_buffer;
+							//mod aqui
+							total_yaws[total_counter] = head_yawi;//graus;
+							total_counter++;
+						}
+						
+					}
+					else
+					{
+						total_blobs_found[total_counter] =  bfinderProxy->GetBlob(b);
+						//mod aqui
+						total_yaws[total_counter] = head_yawi;// graus;
+						total_counter++;
+						//cout<<buffer_color<<" "<<value_to_color(buffer_color)<<" blob adicionado!sozinho!!"<<endl;
+						//blob_buffer = bfinderProxy->GetBlob(b);
+					}
+				}
+			//cout<<"!!!!!!!!!!!!!!blob buffered:" << bfinderProxy->GetBlob(b).color<<endl;
+			blob_buffer = bfinderProxy->GetBlob(b);
+			//teste = blob_buffer;
+			//cout<<"!!!!!!!!!!!!!!blob buffered:" << blob_buffer.color<<endl;
+			}	
+		}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+		graus +=30;
 		// TODO gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
 		sleep(2);
-
-		scanText.str("");
-		scanText.clear();	
 		head_yawi = head_yawi + 30; // more + 30 degree 
 		yaw_cnt++;
 	}while (head_yawi < (90+30));
+	if(blob_flag ==true)
+	{
+		total_blobs_found[total_counter] = blob_buffer;
+		total_yaws[total_counter] = yaw_buffer;
+		total_counter++;
+		blob_flag = false;
+	}
+
+
+//str1.compare(str2) != 0
+
+
+
+//for(int i=0; i<total_counter; i++)
+//	{
+//
+//			cout<<value_to_color(total_blobs_found[i].color)<<endl;
+//
+//	}
+
+
+
+
+
+
+
+
+
+	//gambiarra
+	nro_blobs= 0;
+
+	for(int i=0; i<total_counter; i++)
+	{
+		//if((total_blobs_found[i].color != 1)) 
+		string buff = value_to_color(total_blobs_found[i].color);
+		
+		//cout << buff<<endl;
+		//cout<<buff.compare("desconhecido")<<" "<<nro_blobs<<endl;
+
+		if((buff.compare("desconhecido") != 0) && (total_yaws[i] <360))
+		{
+			_total_blobs_found[nro_blobs] = total_blobs_found[i];
+			_total_yaws[nro_blobs] = total_yaws[i];
+			nro_blobs++;
+		}
+		//contador++;
+
+	}
+
+//	#ifndef NDEBUG
+//	cout<<endl<<endl<< "total blobs:"<< nro_blobs<<endl<<endl;
+//	for(int i=0; i<nro_blobs; i++)
+//	{
+//		   cout<<_total_blobs_found[i].color<<endl;
+//		   cout<<"objeto "<<i<<" de cor " << value_to_color(_total_blobs_found[i].color) << " a " << int(sonar_readings[i]) << " passos no grau " << _total_yaws[i] << endl; 
+//	}
+//	#endif
+
 
 	// go back to the initial position
 	headGoto(0);
 	robot->ReadIfWaiting(); 
 
-	#ifndef NDEBUG
-		int graus = 0;
-		cout << "SCAN: "<< endl;
-		for(int i=0; i<7; i++){
-		   cout << blobs_found[i] << " objetos a " << int(sonar_readings[i]) << " passos no grau " << graus << endl; 
-		   graus+=30;
-		}              
-		cout << endl;
-	#endif
+
+	for(int i=0; i<nro_blobs; i++)
+	{
+		//cout<<"objeto "<<i<<" de cor " << value_to_color(_total_blobs_found[i].color) << " a " << " passos no grau " << _total_yaws[i] << endl; 
+		// build string
+		if (_total_yaws[i] == 0)
+			scanText << "a frente: ";
+		else if (_total_yaws[i] < 0)
+			scanText << "a " << -_total_yaws[i] << " graus a direita: ";
+		else 
+			scanText << "a " << _total_yaws[i] << " graus a esquerda: ";
+
+		scanText << " um objeto de cor " << value_to_color(_total_blobs_found[i].color) << " a " << int(sonar_readings[i]) << " passos";
+	
+		speak(scanText.str());
+
+		// TODO gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
+		//sleep(2);
+		scanText.str("");
+		scanText.clear();
+
+	}
 }
 
 int DonnieClient::Color(int color_code){
+
+
 	float head_yawi = -90; //in degree. +90 due the servo default pos is 90 degre
 	//GOTO -90 to 90 in 30 by 30 steps
-	int blobs_found = 0;
-	int total_blobs_found = 0;
+	//int blobs_found = 0;
+	//int total_blobs_found = 0;
 
-	std::ostringstream scanText;
+	//std::ostringstream scanText;
 	std:string color_str;
 	color_str = value_to_color(color_code);
 	speak("Procurando cor " + color_str);
+
+	
+
+
+
+
+	//GOTO -90 to 90 in 30 by 30 steps
+	float sonar_readings[7];
+	int yaw_cnt=0;
+	int blobs_counter_buffer;	
+	std::ostringstream scanText;
+	//string color_str;
+
+
+
+
+	bool blob_flag = false;
+	int camera_width = bfinderProxy->GetWidth() - 1;  
+	int nro_blobs = 0;
+	int nro_blobs_buffer = 0;
+
+	int yaw_buffer = 0;
+	playerc_blobfinder_blob_t blob_buffer;
+	blob_buffer.color =0;
+
+	playerc_blobfinder_blob_t total_blobs_found[20];
+	playerc_blobfinder_blob_t _total_blobs_found[20];
+	int total_yaws[20];
+	int _total_yaws[20];
+	int total_counter=0;
+	int graus = 0;
+
+	//playerc_blobfinder_blob_t teste;
+
+
+	speak("Espiando");
 	do{
-		// move head
+		// move headd
 		headGoto(head_yawi);
 		robot->ReadIfWaiting();
-		
-		// get the color of the blobs
-        for(int i = 0; i < bfinderProxy->GetCount(); i++)
-        {
-        	cout<< value_to_color(bfinderProxy->GetBlob(i).color)<<endl;
-        	cout<<std::hex <<bfinderProxy->GetBlob(i).color<<endl;
-			if (color_str == value_to_color(bfinderProxy->GetBlob(i).color))
-				blobs_found++;
+		sleep(1);
+
+		// read sonar
+		headSonarProxy->GetRange(0)/100; ///STEP_LENGHT;  // read head sonar 
+		sonar_readings[yaw_cnt] = headSonarProxy->GetRange(0)/STEP_LENGHT;  // read head sonar 
+		//blobs_found[yaw_cnt] = bfinderProxy->GetCount(); // get the number of blobs found
+		//blobs_counter_buffer = blobs_found[yaw_cnt];
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		nro_blobs_buffer = bfinderProxy->GetCount();
+		if(nro_blobs_buffer == 0 ) // caso nao tenha blobs, ainda tem que analisar pra ver se tem algum incompleto.
+		{
+			if (blob_flag ==true)
+			{
+				if(color_str ==value_to_color(blob_buffer.color))
+				{
+					total_blobs_found[total_counter] = blob_buffer;
+					total_yaws[total_counter] = yaw_buffer;
+					total_counter++;
+					nro_blobs++; 
+					blob_flag = false;
+					//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") blob adicionado! no 0!"<<endl;
+				}
+
+			}
 		}
-		
-		// build string
-		if (head_yawi == 0)
-			scanText << "a frente: ";
-		else if (head_yawi < 0)
-			scanText << "a " << -head_yawi << " graus a direita: ";
-		else 
-			scanText << "a " << head_yawi << " graus a esquerda: ";
+		else
+		{
+			//nro_blobs += nro_blobs_buffer;
+			for(int b = 0; b<nro_blobs_buffer;b++)
+			{
+				usleep(100);
+				int buffer_color = bfinderProxy->GetBlob(b).color;
+				//cout<<"numero de blobs "<<nro_blobs_buffer<<" ["<<b<<"] cor da blob:"<< buffer_color<<endl;
+				//cout<<"blob buffered:" << blob_buffer.color<<endl;
+				//cout<<"testando "<<teste.color<<endl;
+				if(color_str ==value_to_color(buffer_color))				
+				{
+				if(bfinderProxy->GetBlob(b).right != (camera_width) && bfinderProxy->GetBlob(b).left==0) /// inacabado na ESQUERDA. 
+				{
+					if (blob_flag ==true) 
+					{
+						if(blob_buffer.color !=buffer_color) // blobs with same colors! Para evitar que pegue a mesma blob 2x. Pode ocorrer outros erros.
+						{
+							//add the buffered blob.
+							total_blobs_found[total_counter] = blob_buffer;
+							total_yaws[total_counter] = yaw_buffer;
+							total_counter++;
+							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<")"<<" blob adicionado! left antigo"<<endl;
+							//nro_blobs++; //don't change the number of blobs. one in, one out.
+							//blob_flag = false; keep the flag true!
+	
+							//then buffers the current blob.
+							//blob_buffer = bfinderProxy->GetBlob(b);
+							yaw_buffer = graus;
+						}
+						
+					}
+					else
+					{
+						//blob_buffer = bfinderProxy->GetBlob(b);
+						yaw_buffer = graus;				//cout<<"blob adicionado! 2x (right e cor diferente)"<<endl;
+						//nro_blobs--;
+						blob_flag = true; 
+					}
+				}	
+				else if(bfinderProxy->GetBlob(b).right == (camera_width) && bfinderProxy->GetBlob(b).left !=0) //inacabado na DIREITA.
+				{
+					if (blob_flag ==true)
+					{
+						if(blob_buffer.color == buffer_color) // blobs with same colors!
+						{
+							total_blobs_found[total_counter] = blob_buffer;
+							total_yaws[total_counter] = (graus+yaw_buffer)/2;
+							total_counter++;
+							blob_flag = false;
+							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color )<<") blob adicionado! right"<<endl;
+							//blob_buffer = bfinderProxy->GetBlob(b);
 
-		// OBS: '(int)*sonar_readings' truncate the distance. perhaps 'round' would be better
-		if (blobs_found == 0){
-			scanText << "0 objetos";
-		}else if (blobs_found == 1){
-			scanText << "1 objeto";
-		}else{
-			scanText << blobs_found << " objetos"; 
-		}			
+						}
+						else  // blobs with different colors!
+						{
+							//add the previous blob
+							total_blobs_found[total_counter] = blob_buffer;
+							total_yaws[total_counter] = yaw_buffer;
+							total_counter++;
 
-		speak(scanText.str());
+
+							total_blobs_found[total_counter] =  bfinderProxy->GetBlob(b);
+							total_yaws[total_counter] = graus;
+							total_counter++;
+							blob_flag = false;
+						//	cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<<" ("<<value_to_color(buffer_color)<<") blob adicionado! 2x (right e cor diferente)"<<endl;
+							//blob_buffer = bfinderProxy->GetBlob(b);
+						}
+					}
+					else
+					{
+						if(blob_buffer.color != buffer_color) // blobs with same colors!Para evitar que pegue a mesma blob 2x. Pode ocorrer outros erros.
+						{
+							total_blobs_found[total_counter] =  bfinderProxy->GetBlob(b);
+							total_yaws[total_counter] = graus;
+							//cout<<"do buffer! "<<blob_buffer.color<<"iaiaia"<<endl;
+							//cout<<buffer_color<<" ("<<value_to_color(buffer_color)<<") blob adicionado! right sozinho"<<endl;
+							total_counter++;
+							//blob_buffer = bfinderProxy->GetBlob(b);
+						}
+
+					}
+				}
+				else if(bfinderProxy->GetBlob(b).right == (camera_width) && bfinderProxy->GetBlob(b).left==0) // inacabado nas DUAS pontas. 
+				{
+					if (blob_flag ==true)
+					{
+						if(blob_buffer.color == bfinderProxy->GetBlob(b).color)
+						{
+							blob_buffer = bfinderProxy->GetBlob(b);
+							//cout<<"ueahieauhea"<<endl;kkk
+							//nro_blobs--;
+						}
+						else
+						{
+							//add the previous blob
+							total_blobs_found[total_counter] = blob_buffer;
+							total_yaws[total_counter] = yaw_buffer;
+							total_counter++;
+							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<< " ("<<value_to_color(buffer_color)<<") blob adicionado! middle de outra cor"<<endl;
+
+
+							//blob_buffer = bfinderProxy->GetBlob(b);
+							yaw_buffer = graus; 
+
+						}
+
+					}
+					else
+					{
+
+						//blob_buffer = bfinderProxy->GetBlob(b);
+						yaw_buffer = graus;
+					//	nro_blobs--;
+						blob_flag = true; 
+						
+					}
+				}
+				else // ok, tudo certo :}
+				{
+					if (blob_flag ==true) 
+					{
+
+						if(blob_buffer.color == buffer_color)
+						{
+							total_blobs_found[total_counter] =  bfinderProxy->GetBlob(b);
+							total_yaws[total_counter] = graus;
+							total_counter++;
+							blob_flag = false;
+							//cout<<buffer_color<<" ("<<value_to_color(buffer_color)<<") adicionado! no meio e left, iguais"<<endl;
+							//blob_buffer =  bfinderProxy->GetBlob(b);
+
+						}
+						else
+						{
+							//add the buffered blob.
+							total_blobs_found[total_counter] = blob_buffer;
+							total_yaws[total_counter] = yaw_buffer;
+							total_counter++;
+							//nro_blobs++; 
+							blob_flag = false;
+
+							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<<" (" <<value_to_color(buffer_color)<<") blob adicionado! 2x (left e sozinho)"<<endl;
+							//blob_buffer = bfinderProxy->GetBlob(b);
+
+							//then buffers the current blob.
+							total_blobs_found[total_counter] =  blob_buffer;
+							total_yaws[total_counter] = graus;
+							total_counter++;
+						}
+						
+					}
+					else
+					{
+						total_blobs_found[total_counter] =  bfinderProxy->GetBlob(b);
+						total_yaws[total_counter] = graus;
+						total_counter++;
+						//cout<<buffer_color<<" "<<value_to_color(buffer_color)<<" blob adicionado!sozinho!!"<<endl;
+						//blob_buffer = bfinderProxy->GetBlob(b);
+					}
+				}
+				}
+
+
+			//cout<<"!!!!!!!!!!!!!!blob buffered:" << bfinderProxy->GetBlob(b).color<<endl;
+			blob_buffer = bfinderProxy->GetBlob(b);
+			//teste = blob_buffer;
+			//cout<<"!!!!!!!!!!!!!!blob buffered:" << blob_buffer.color<<endl;
+			}	
+		}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		graus +=30;
 		// TODO gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
 		sleep(2);
-
-		scanText.str("");
-		scanText.clear();	
 		head_yawi = head_yawi + 30; // more + 30 degree 
-		total_blobs_found += blobs_found;
-		blobs_found=0;
+		yaw_cnt++;
+
+
 	}while (head_yawi < (90+30));
 	
+
+	//gambiarra
+	for(int i=0; i<total_counter; i++)
+	{
+		if(total_blobs_found[i].color != 1) 
+		{
+			_total_blobs_found[nro_blobs] = total_blobs_found[i];
+			_total_yaws[nro_blobs] = total_yaws[i];
+			nro_blobs++;
+		}
+
+	}
+
 	// go back to the initial position
 	headGoto(0);
-	robot->ReadIfWaiting();
+	robot->ReadIfWaiting(); 
 
-	// generate output
-	if (total_blobs_found == 0){
+
+
+
+
+	if (nro_blobs == 0)
+	{
 		scanText << "nenhum objeto encontrado com a cor " << color_str;
-	}else 	if (total_blobs_found == 1){
+	}else 	if (nro_blobs == 1)
+	{
 		scanText << "1 objeto encontrado com a cor " << color_str;
-	}else	{
-		scanText << total_blobs_found << " objetos encontrados com a cor " << color_str;
+	}else	
+	{
+		scanText << nro_blobs << " objetos encontrados com a cor " << color_str;
 	}
+
 	speak(scanText.str());
+	// TODO gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
+	//sleep(2);
+	scanText.str("");
+	scanText.clear();
+
+
 	
-	return total_blobs_found;
+	return nro_blobs;
 }
 
 int DonnieClient::bumped(){

@@ -13,6 +13,7 @@ PARA COMPILAR USAR IDE ARDUINO 1.2 OU SUPERIOR
 #include "bumper.h"
 #include <Servo.h>
 #include "pitches.h"
+#include "TimerThree.h"
 
 Servo neckServo;
 
@@ -25,12 +26,32 @@ robot status:
 	critical baterry
 */
 
-uint32_t counter = 0;
-uint32_t millisLastTime = 0;
-uint32_t millisTimeStamp;
+//uint32_t counter = 0;
 
 //SENSORS DATA GLOBAL VARIABLES 
 uint8_t systemDio_data = 0;
+
+//timestamp vars 
+unsigned long timestamp;
+unsigned long encoderTimestamp; //time stamp
+
+//Protocol times TODO Usar a biblioteca Arduino Scheduler para deixar o codigo mais limpo ao tratar dessas chamadas
+unsigned long updateDioLastPrd, 
+	updateRangerLastPrd, 
+	updateBumperLastPrd, 
+	updateBatteryLastPrd, 
+	updateEncoderLastPrd, 
+	updateMotorsLastPrd, 
+	updateServosLastPrd, 
+	updatePingLastPrd, 
+	sendDioLastPrd, 
+	sendRangerLastPrd, 
+	sendBumperLastPrd, 
+	sendBatteryLastPrd, 
+	sendEncoderLastPrd, 
+	sendSystemMsgLastPrd, 
+	sendPingLastPrd,
+	sendRequestLastPrd;
 
 float BytesToFloat(uint8_t *data, uint8_t first){
 	uint8_t aux[4];
@@ -123,18 +144,26 @@ void processCommand(){
 	clearCommand();
 }
 
-void updateActuators(){
+/*void updateActuators(){
 	//motorsCommandProcess(B10011001);
-	if(counter % UPDATE_MOTORS_FRQ == 0){
+	if(millis() - updateMotorsLastPrd >= UPDATE_MOTORS_FRQ){
+		updateMotorsLastPrd = millis();
+		updateMotorsLastPrd = millis();
 		motorsUpdate();   //update pid
 	}
-	/*if(counter % UPDATE_SERVOS_FRQ == 0){
+	/*if(millis() - updateServosLastPrd >= UPDATE_SERVOS_FRQ){
+		updateServosLastPrd = millis();
 		neckServo.write(pos);
-	}*/
-}
+	}
+}*/
 
+//Debug Timestamp
+//unsigned int bumperTsFlag=0,rangerTsFlag=0;
+//unsigned long bumperTs,rangerTs;
+//#Debug Timestamp
 void updateSensors(){
-	if(counter % UPDATE_DIO_FRQ == 0){
+	if(millis() - updateDioLastPrd >= UPDATE_DIO_FRQ){
+		updateDioLastPrd = millis();
 		systemDio_data = 0; //0000 0000
 		systemDio_data = systemDio_data | digitalRead(PIN_LED_BATTERY); //0000 000X
 		systemDio_data = systemDio_data | (digitalRead(PIN_LED_CONNECTION) << 1); //0000 00X0   desloca a esquerda o valor lido e faz or com o tx_data. Ex: Lido(01) << 1 = 10
@@ -143,32 +172,58 @@ void updateSensors(){
 		systemDio_data = systemDio_data | (digitalRead(PIN_BUZZER) << 4);
 	}
 	
-	if(counter % UPDATE_RANGER_FRQ == 0){
+	if(millis() - updateRangerLastPrd >= UPDATE_RANGER_FRQ){
+		updateRangerLastPrd = millis();
 		ranger_update();
 	}
 
-	if(counter % 200 == 0){
+	if(millis() - updateBatteryLastPrd >= UPDATE_BATTERY_FRQ){
+		updateBatteryLastPrd = millis();
 		battery_update();
 	}
 
 	bumper_update();
-	//motorsUpdate();   //update pid
+
+	//Debug Timestamp
+	/*if((bumper[0]==1 or bumper[1]==1 or bumper[2]==1) && bumperTsFlag==0 & motorRActive==1 && motorLActive==1){ 
+		bumperTs = millis();
+		bumperTsFlag=1;
+	}
+	if(motorRActive==0 && motorLActive==0 && bumperTsFlag ==1){
+		bumperTs = millis() - bumperTs;
+		systemMsg(String("BumperTs:")+String(bumperTs)+"ms\n");
+		bumperTsFlag=0;
+	}*/
+	/*if(range[1] <= 15 && rangerTsFlag==0 & motorRActive==1 && motorLActive==1){ 
+		rangerTs = millis();
+		rangerTsFlag=1;
+	}
+	if(motorRActive==0 && motorLActive==0 && rangerTsFlag ==1){
+		rangerTs = millis() - rangerTs;
+		systemMsg(String("Front Ranger:")+String(range[1])+"cm,"+String("Ts:")+String(rangerTs)+"ms\n");
+		rangerTsFlag=0;
+	}*/
+	//#Debug Timestamp
 }
 
 
 void sendData(){
 	int i;
 
-	if(counter % SEND_DIO_FRQ == 0){
+	if(millis() - sendDioLastPrd >= SEND_DIO_FRQ){
+		sendDioLastPrd = millis();
 		sendSystemDioMsg(systemDio_data,5); //value(ex: 00 1110 0011), bitfield(ex: 10)
 	}
-	if(counter % SEND_RANGER_FRQ == 0){
+	if(millis() - sendRangerLastPrd >= SEND_RANGER_FRQ){
+		sendRangerLastPrd = millis();
 		sendRangerMsg(range,7);
 	}
-	if(counter % SEND_BUMPER_FRQ == 0){
+	if(millis() - sendBumperLastPrd >= SEND_BUMPER_FRQ){
+		sendBumperLastPrd = millis();
 		sendBumperMsg(bumper,6);
 	}
-	if(counter % SEND_BATTERY_FRQ == 0){
+	if(millis() - sendBatteryLastPrd >= SEND_BATTERY_FRQ){
+		sendBatteryLastPrd = millis();
 		sendPowerMsg(battery);
 		int rawValue = analogRead(PIN_BATTERY); //read the analogic input
 		float volts = map(rawValue,ANALOG_EQUIV_EMPTY,ANALOG_EQUIV_FULL,BATTERY_EMPTY*10,BATTERY_FULL*10)/10.0;
@@ -176,7 +231,8 @@ void sendData(){
 		//systemMsg(String(rawValue));
 		//systemMsg(String(volts));
 	}
-	if(counter % SEND_PING_FRQ == 0){
+	if(millis() - sendPingLastPrd >= SEND_PING_FRQ){
+		sendPingLastPrd = millis();
 		if(ping_flag){
 			sendPing();
 			lostConnectionFlag = 1;
@@ -186,120 +242,62 @@ void sendData(){
 			ping_flag = 1;
 		}
 	}
-	if(counter % SEND_ENCODER_FRQ == 0){
+	if(millis() - sendEncoderLastPrd >= SEND_ENCODER_FRQ){
+		//sendEncoderLastPrd = millis();  //debug timestamp
+		//encoderTimestamp = micros() - encoderTimestamp; //debug timestamp
 		sendEncoderMsg(m.counterR,m.counterL,m.getSpeedR(),m.getSpeedL());
+		//systemMsg(String("Ec:")+String(encoderTimestamp)+",us\n"); //debug timestamp
+		//encoderTimestamp = micros(); //debug timestamp
 		//systemMsg(String("Enc_R:")+String(m.counterR));
-		//systemMsg(String("Enc_L:")+String(m.counterL));
+		//systemMsg(String("|Enc_L:")+String(m.counterL)+"\n");
 	}
-	if(counter % SEND_SYSTEMMSG_FRQ == 0){
+	if(millis() - sendSystemMsgLastPrd >= SEND_SYSTEMMSG_FRQ){
+		sendSystemMsgLastPrd = millis();
 		//systemMsg("Mensagem default");
 		//convertToUint8_t(battery,2);
 	}
 
-	//if(counter % SEND_RANGER_FRQ == 0) sendEncoderTicks();
+	//if(millis() - sendRangerLastPrd >= SEND_RANGER_FRQ == 0) sendEncoderTicks(){
+	//sendRangerLastPrd = millis();
+	//}	
 }
 
 void driver_config(){
+	neckServo.attach(PIN_SERVO_NECK);
+	Timer3.initialize(10000); //10ms = 10000
+	Timer3.attachInterrupt(updateActuators);
+
 	waitingConfigFlag = 1;
 	//blink fast when no config received yet
 	do{
-		if(counter % SEND_REQUESTCONFIG_FRQ == 0) sendRequestConfig();
+		if(millis() - sendRequestLastPrd >= SEND_REQUESTCONFIG_FRQ){
+			sendRequestLastPrd = millis();
+			sendRequestConfig();
+		}
 		readCommand();
 		battery_update();
 		updateAlerts();
-		updateCounter(); 
+		//updateCounter(); 
 	}while(!receivedConfigCmd());
+	tone(PIN_BUZZER, 988, 100);
 	waitingConfigFlag = 0;
 	//updateConfigParameters()
 }
 
-
-
-
-/*
-mi E  7
-re D  7
-do C  7
-si B  6             //Dó – ré – mi – fá – sol – Lá – si   
-la A  6              //C –  D –  E –  F –  G –   A –  B (inglês)  
-Sol G 6 <-
-fa F  6
-mi E  6 
-re D  6
-do C  6
-si B  5
-la A  5
-*/
-
-
-int oDeAlegriaP1[]       = {NOTE_E7, NOTE_E7, NOTE_F7, NOTE_G7,           NOTE_G7, NOTE_F7, NOTE_E7, NOTE_D7,           NOTE_C7, NOTE_C7, NOTE_D7, NOTE_E7,          NOTE_E7, NOTE_C7, NOTE_C7         };
-int oDeAlegriaBeatsP1[]  = {4,       4,       4,       4,                 4,       4,       4,       4,                 4,      4,       4,       4,                 3,       6,       2,              };
-int oDeAlegriaP2[]       = {NOTE_E7, NOTE_E7, NOTE_F7, NOTE_G7,           NOTE_G7, NOTE_F7, NOTE_E7, NOTE_D7,           NOTE_C7, NOTE_C7, NOTE_D7, NOTE_E7,          NOTE_D7, NOTE_B6, NOTE_C7         };
-int oDeAlegriaBeatsP2[]  = {4,       4,       4,       4,                 4,       4,       4,       4,                 4,      4,       4,       4,                 3,       6,       2,              };
-int oDeAlegriaP3[]       = {NOTE_D7,          NOTE_E7, NOTE_C7,           NOTE_D7,  NOTE_F7, NOTE_E7, NOTE_C7,          NOTE_D7,  NOTE_F7, NOTE_E7, NOTE_C7,         NOTE_D7, NOTE_G7, NOTE_G7         };
-int oDeAlegriaBeatsP3[]  = {2,                4,       4,                 4,        4,       4,       4,                4,        4,       4,       4,               4,       4,       2,              };
-
-
-int imperialMarch[]       = {NOTE_G4, 0, NOTE_G4, NOTE_G4,           NOTE_G4, NOTE_G4, NOTE_G4, NOTE_G4,           NOTE_E4, NOTE_E4, NOTE_G4, 0, NOTE_G4, NOTE_G4, NOTE_G4, NOTE_G4, NOTE_G4,           NOTE_E4, NOTE_E4, NOTE_G4     };
-int imperialMarchBeats[]  = {2,       4,       2,       4,                 4,       8,       8,       8,                 4,      4,       2,  4,     2,         4,       8,       8,       8,                 4,      4,       2        };
-
-int imperialMarch2[]       = {NOTE_A4,   NOTE_A4, NOTE_A4,           NOTE_F4, NOTE_C4, NOTE_A4, NOTE_F4,           NOTE_C4, NOTE_A4, NOTE_E4,  NOTE_E4, NOTE_E4, NOTE_F4, NOTE_C4, NOTE_GS4,           NOTE_F4, NOTE_C4, NOTE_A4     };
-int imperialMarchBeats2[]  = {4,             4,       4,                 4,       8,      4,       8,                 8,      4,       8,       2,         2,       4,       4,       4,                 4,      4,       4       };
-
-
-
-void melody(int *notes,int  *noteDurations, int length) {
-  // iterate over the notes of the melody:
-  for (int thisNote = 0; thisNote < length; thisNote++) { 
-
-    // to calculate the note duration, take one second
-    // divided by the note type.
-    //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
-    int noteDuration = 1000 / noteDurations[thisNote];
-    tone(PIN_BUZZER, notes[thisNote], noteDuration);
-
-    // to distinguish the notes, set a minimum time between them.
-    // the note's duration + 30% seems to work well:
-    int pauseBetweenNotes = noteDuration * 1.30;
-    delay(pauseBetweenNotes);
-    // stop the tone playing:
-    noTone(PIN_BUZZER);
-  }
-}
-
-
-
-
-
-
 void setup(){
-	//melody(oDeAlegriaP1,oDeAlegriaBeatsP1,15);
-    //melody(oDeAlegriaP2,oDeAlegriaBeatsP2,15);
-    //melody(oDeAlegriaP3,oDeAlegriaBeatsP3,14);
-    //melody(oDeAlegriaP1,oDeAlegriaBeatsP1,15);
-    //melody(oDeAlegriaP2,oDeAlegriaBeatsP2,15);
-    //melody(imperialMarch,imperialMarchBeats,18);
-
-
-
 	protocol_config();
 	status_config();
     driver_config(); //after status_config beacuse led connection
 	ranger_config();
 	bumper_config();
 	motors_config();
-
-	neckServo.attach(PIN_SERVO_NECK);
-
 }
 
-void updateCounter(){
-  millisTimeStamp = millisTimeStamp + (micros() - millisLastTime); 
-  if(millisTimeStamp >= 1000){
-		++counter;  //each counter means 1ms
-		millisTimeStamp = millisTimeStamp - 1000; //discont the microsseconds that overload timeStamp
-		millisLastTime = micros();
-  }
+//!timer3 interruption
+/*!update the moviment of motors.*/
+void updateActuators(){
+	motorsUpdate();   //update pid, must be call in a fix amount of time (10 ms in this case)
+	//counter+=10;  //each counter means 10ms
 }
 
 
@@ -318,10 +316,4 @@ void loop(){
 
 	//send internal data to driver
 	sendData();
-
-	//update the moviment of motors.
-	updateActuators();
-
-	//increment the counter each 1ms (1000us)
-	updateCounter(); 
 }

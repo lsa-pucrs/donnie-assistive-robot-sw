@@ -60,6 +60,26 @@ define donnie_HS ranger
 
 )
 
+define donnie_head_arrow position
+(
+
+	size [0.04 0.04 0.00001]
+
+	block
+	(
+		points 3
+		point[2] [0.03175 0]
+		point[1] [-0.01325 0.03175]
+		point[0] [-0.01325 -0.03175]
+		z [1.47 1.49]
+	)
+	obstacle_return 0
+	color "black"
+)
+
+
+
+
 define donnie_head position
 (
 	drive "diff"
@@ -112,13 +132,14 @@ define donnie_head position
 		z [1.45 1.46]
 	)
 
+
 	obstacle_return 0
 
-	color "green"
-
+	color "red"
+	
+	donnie_head_arrow()
 	donnie_HS()
 	donnie_eyes( )
-	
 )
 
 define donnie position
