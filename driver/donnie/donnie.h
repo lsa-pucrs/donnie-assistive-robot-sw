@@ -148,6 +148,8 @@ class Donnie : public ThreadedDriver{
 		//! Dio interface
 		player_devaddr_t m_dio_addr;  
 		//! Ranger interface
+		player_devaddr_t m_head_ranger_addr;
+		//! Ranger interface
 		player_devaddr_t m_ranger_addr;
 		//! Neck position interface
 		player_devaddr_t m_neck_position_addr;
