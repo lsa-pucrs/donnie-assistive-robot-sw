@@ -116,8 +116,19 @@ Donnie::Donnie(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 			SetError(-1);
 			return;
 	 }
+	 // Create my head ranger interface
+	 if (cf->ReadDeviceAddr(&(this->m_head_ranger_addr), section, "provides", PLAYER_RANGER_CODE, -1, "head")){
+			PLAYER_ERROR("Could not read position2d ID ");
+			SetError(-1);
+			return;
+	 }
+	 if (AddInterface(this->m_head_ranger_addr)){
+			PLAYER_ERROR("Could not add head ranger interface ");
+			SetError(-1);    
+			return;
+	 }
 	 // Create my ranger interface
-	 if (cf->ReadDeviceAddr(&(this->m_ranger_addr), section, "provides", PLAYER_RANGER_CODE, -1, NULL)){
+	 if (cf->ReadDeviceAddr(&(this->m_ranger_addr), section, "provides", PLAYER_RANGER_CODE, -1, "base")){
 			PLAYER_ERROR("Could not read ranger ID ");
 			SetError(-1);
 			return;
@@ -134,7 +145,7 @@ Donnie::Donnie(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 			return;
 	 }
 	 if (AddInterface(this->m_neck_position_addr)){
-			PLAYER_ERROR("Could not add position2d interface ");
+			PLAYER_ERROR("Could not add neck position2d interface ");
 			SetError(-1);    
 			return;
 	 }
@@ -542,6 +553,9 @@ void Donnie::ProcessRangerData(){
 	}
 	printf("\n\n");*/
 
+	player_ranger_data_range_t headrangerdata;
+	memset( &headrangerdata, 0, sizeof(headrangerdata) );
+
 	player_ranger_data_range_t rangerdata;
 	memset( &rangerdata, 0, sizeof(rangerdata) );
 
@@ -552,9 +566,17 @@ void Donnie::ProcessRangerData(){
 		rangerdata.ranges[i] = rx_data[i+2]/100.0;
 	}
 
+	//head ranger
+	headrangerdata.ranges_count = 1; //quantity of sensors in this package
+	headrangerdata.ranges = new double; //alocate memory for the ranger
+	headrangerdata.ranges[0] = rx_data[2]/100.0;
+
 
 	Publish(m_ranger_addr, PLAYER_MSGTYPE_DATA, PLAYER_RANGER_DATA_RANGE,
 		 reinterpret_cast<void *>(&rangerdata), sizeof(rangerdata), NULL); 
+
+	/*Publish(m_head_ranger_addr, PLAYER_MSGTYPE_DATA, PLAYER_RANGER_DATA_RANGE,
+		 reinterpret_cast<void *>(&headrangerdata), sizeof(headrangerdata), NULL); */
 }
 
 void Donnie::ProcessBumperData(){
