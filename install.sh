@@ -11,8 +11,8 @@
 # run this script
 #   $ ./install.sh
 
-# Any subsequent(*) commands which fail will cause the shell script to exit immediately
-set -e
+# Any subsequent(*) commands which fail will cause the shell script to exit immediately. v for verbose
+set -ev
 
 #defensive script
 #http://www.davidpashley.com/articles/writing-robust-shell-scripts/#id2382181
@@ -89,18 +89,18 @@ echo -e "${GREEN}NOTE:${NC} This computer has ${NUM_CORES} cores ...\n"
 # install commom packages
 ##################################################
 # required to install Oracle's java
-sudo apt-add-repository ppa:webupd8team/java
-sudo apt-get update
+#sudo apt-add-repository ppa:webupd8team/java
+#sudo apt-get update
 sudo apt-get install -y build-essential
 
-# update VBoX Additions
-sudo apt-get install -y module-assistant
-sudo apt-get install -y virtualbox-guest-dkms
-sudo m-a prepare
+# update VBoX Additions - required only when using Donnie in a VM
+#sudo apt-get install -y module-assistant
+#sudo apt-get install -y virtualbox-guest-dkms
+#sudo m-a prepare
 
 # nice to have, not mandatory
-sudo apt-get install -y geany
-sudo apt-get install -y google-chrome-stable
+#sudo apt-get install -y geany
+#sudo apt-get install -y google-chrome-stable
 
 #compilation utils
 echo -e "${GREEN}Installing Compilation Utils ... ${NC}\n"
@@ -122,7 +122,8 @@ sudo apt-get install -y libltdl-dev
 sudo apt-get install -y libdb5.1-stl
 sudo apt-get install -y libgnomecanvasmm-2.6-dev
 sudo apt-get install -y python-gnome2
-sudo apt-get install -y libboost-all-dev  # overkill, the actually required libraries are boostthread, boostsignal, boostsystem
+#sudo apt-get install -y libboost-all-dev  # overkill, the actually required libraries are boostthread, boostsignal, boostsystem
+sudo apt-get install -y libboost-signals-dev libboost-system-dev libboost-thread-dev
 # old OpenCV for older Player drivers
 sudo apt-get install -y libopencv-dev libopencv-core-dev libcv-dev libcvaux-dev libhighgui-dev
 # alsa - sound player
@@ -184,8 +185,7 @@ then
 	echo -e "${GREEN}Patching Player ... ${NC}\n"
 	patch -p1 < patch/festival/festival.patch
 	patch -p1 < patch/install/player_3.0.2_14.04.patch
-	patch -p1 < ../donnie-assistive-robot-sw/proxies/instalationSoundProxy.patch
-	echo -e "${GREEN}Patching Player for Donnie ... ${NC}\n"
+	patch -p1 < patch/donnie/instalationSoundProxy.patch
 fi
 mkdir -p build # mkdir -p is safer !
 cd build
@@ -232,10 +232,11 @@ sudo apt-get install -y libsox-dev
 sudo apt-get install -y libcurl4-openssl-dev
 #to compile GoDonnie interpreter
 sudo apt-get install -y libreadline-dev
-sudo apt-get install -y oracle-java8-installer
+#sudo apt-get install -y oracle-java8-installer
+sudo apt-get install -y openjdk-7-jdk
 sudo apt-get install -y libantlr3c-dev
 # std terminal used in several linux distributions
-apt-get install xterm
+sudo apt-get install -y xterm
 #to compile docs
 sudo apt-get install -y doxygen
 # uses 3.058 MB in disk - not recommended for VMs

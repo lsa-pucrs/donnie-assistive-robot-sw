@@ -265,7 +265,7 @@ void sendData(){
 void driver_config(){
 	neckServo.attach(PIN_SERVO_NECK);
 	Timer3.initialize(10000); //10ms = 10000
-	Timer3.attachInterrupt(updateCounter);
+	Timer3.attachInterrupt(updateActuators);
 
 	waitingConfigFlag = 1;
 	//blink fast when no config received yet
@@ -294,8 +294,8 @@ void setup(){
 }
 
 //!timer3 interruption
-void updateCounter(){
-	//update the moviment of motors.
+/*!update the moviment of motors.*/
+void updateActuators(){
 	motorsUpdate();   //update pid, must be call in a fix amount of time (10 ms in this case)
 	//counter+=10;  //each counter means 10ms
 }
@@ -316,7 +316,4 @@ void loop(){
 
 	//send internal data to driver
 	sendData();
-
-	//update the moviment of motors.
-	//updateActuators();
 }

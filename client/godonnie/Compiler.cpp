@@ -33,6 +33,9 @@ using std::endl;
 #define POSITION_X "x"
 #define POSITION_Y "y"
 #define POSITION_YAW "a"
+#define POSITION_X_CAP "X"
+#define POSITION_Y_CAP "Y"
+#define POSITION_YAW_CAP "A"
 
 /// definition of the color tokens in Portuguese
 #define COLOR_BLUE "azul"
@@ -368,29 +371,29 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             float pos;
             char* tokens;
             //tokens = strtok((char*)getText(tree)," ");
-            tokens = strpbrk((char*)getText(tree), "xya"); //verifica qual é o argumento de POS: x, y, a ou NULL
+            tokens = strpbrk((char*)getText(tree), "xyaXYA"); //verifica qual é o argumento de POS: x, y, a ou NULL
 			
-			//if (tokens.size() != 2)
-				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
+		//if (tokens.size() != 2)
+			//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
 
-			// get the ranger id
-			if (tokens != NULL){
-				if (strcmp(tokens,POSITION_X) == 0)
-					arg = 0;
-				else if (strcmp(tokens,POSITION_Y) == 0)
-					arg = 1;
-				else if (strcmp(tokens,POSITION_YAW) == 0)
-					arg = 2;
-			}
+		// get the ranger id
+		if (tokens != NULL){
+			if ((strcmp(tokens,POSITION_X) == 0) || (strcmp(tokens,POSITION_X_CAP) == 0))
+				arg = 0;
+			else if ((strcmp(tokens,POSITION_Y) == 0) || (strcmp(tokens,POSITION_Y_CAP) == 0))
+				arg = 1;
+			else if ((strcmp(tokens,POSITION_YAW) == 0) || (strcmp(tokens,POSITION_YAW_CAP) == 0))
+				arg = 2;
+		}
 		    else
 				arg = 3;	
 			
 			//else  
 				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
-			
-			pos = Donnie->GetPos("body",arg);             
-			#ifndef NDEBUG
-            cout << "POS: " << arg << " " << (int)pos << endl;
+
+	    pos = Donnie->GetPos("body",arg);       
+            #ifndef NDEBUG
+               cout << "POS: " << arg << " " << (int)pos << endl;
             #endif
             return (int)pos;
           }
@@ -830,41 +833,26 @@ string cleanAccents(string code){
 		}
 	}
     
-    //search in the aux string for the commands with accents characters and replace them at code string 
-    while ((index = aux.find("faça", index)) != string::npos){
-        code.replace(index, 5, "faca ");	
-        index++;
-	}
-	index=0;
-    while ((index = aux.find("posição", index)) != string::npos){
-        code.replace(index, 9, "posicao  ");	
-        index++;
-	}
-	index=0;
-    while ((index = aux.find("distância", index)) != string::npos){
-        code.replace(index, 10, "distancia ");	
-        index++;
-	}
-	index=0;
-    while ((index = aux.find("histórico", index)) != string::npos){
-        code.replace(index, 10, "historico ");	
-        index++;
-	}
-	index=0;
-    while ((index = aux.find("senão", index)) != string::npos){
-        code.replace(index, 6, "senao ");	
-        index++;
-	}
-	index=0;
-    while ((index = aux.find("então", index)) != string::npos){
-        code.replace(index, 6, "entao ");	
-        index++;
-	}
-	index=0;
-    while ((index = aux.find("trás", index)) != string::npos){
-        code.replace(index, 5, "tras ");	
-        index++;
-	}
-	
+	int i=0, count_replaces=0;
+	//search in the aux string for the commands with accented characters and replace them for not accented characters in the code string
+    while((index = aux.find_first_of("âãáçóÂÃÁÇÓ", index)) != string::npos){
+		i = index-count_replaces; //this line is important to match the indexes of aux and code strings, because accented characters occupy
+								  //2 bytes insted of 1 byte, so replacing them makes the indexes to not match
+    	if((code.compare(i,2,"â") == 0) || (code.compare(i,2,"ã") == 0) || (code.compare(i,2,"á") == 0))
+    		code.replace(i,2,"a");
+    	else if((code.compare(i,2,"Â") == 0) || (code.compare(i,2,"Ã") == 0) || (code.compare(i,2,"Á") == 0))
+    		code.replace(i,2,"A");
+    	else if(code.compare(i,2,"ç") == 0)
+    		code.replace(i,2,"c");
+    	else if(code.compare(i,2,"Ç") == 0)
+    		code.replace(i,2,"C");
+    	else if(code.compare(i,2,"ó") == 0)
+    		code.replace(i,2,"o");
+    	else if(code.compare(i,2,"Ó") == 0)
+    		code.replace(i,2,"O");
+    	index+=2; //accented characters have 2 bytes
+    	count_replaces++;
+    }
+		
 	return code;
 }
