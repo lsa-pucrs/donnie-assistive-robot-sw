@@ -119,6 +119,8 @@ class Donnie : public ThreadedDriver{
 
 		//!Calculates Odometry by the wheel's encoder 
 		void Odometry();
+		//! Normalize an angle to within +/_ M_PI. (source code: stage/libstage/stage.hh)
+		double normalize(double a);
 		//!Convert float in 4 Bytes
 		void FloatToBytes(float value, uint8_t *data);
 		//!Convert Uint16_t in 2 Bytes

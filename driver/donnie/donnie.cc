@@ -423,16 +423,22 @@ void Donnie::ProcessNeckPos2dVelCmd(player_msghdr_t* hdr,
 	arduino->writeData(tx_data,tx_data_count);
 }
 
-void Donnie::ProcessPos2dPosCmd(player_msghdr_t* hdr,
-																			player_position2d_cmd_pos_t &data){
+//Goto command
+void Donnie::ProcessPos2dPosCmd(player_msghdr_t* hdr, player_position2d_cmd_pos_t &data){
 	std::cout << "Pos2DPosCmd pos.px:" << data.pos.px << " pos.py:" << data.pos.py << " pos.pa:"<< data.pos.pa << std::endl; //bits qnt
 	std::cout << "Pos2DPosCmd vel.px:" << data.vel.px << " vel.py:" << data.vel.py << " vel.pa:"<< data.vel.pa << std::endl; //bits qnt
 	std::cout << "Pos2DVelCmd state:" << data.state << std::endl;
+	std::cout << "Atual pos.px:" << m_pos_data.pos.px << " pos.py:" << m_pos_data.pos.py << " pos.pa:"<< m_pos_data.pos.pa << std::endl; //bits qnt
 	std::cout << std::endl;
 
+	player_position2d_cmd_vel_t newVel;
+	newVel.vel.px=0;
+	newVel.vel.px=0; 
+	newVel.vel.pa=normalize(data.pos.pa-m_pos_data.pos.pa)>0? 0.04: -0.04; //0.04 -> default speed
 
+	ProcessPos2dVelCmd(hdr,newVel);
+	Odometry();
 }
-
 
 double map(double x, double in_min, double in_max, double out_min, double out_max){
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -485,8 +491,8 @@ void Donnie::ProcessPos2dVelCmd(player_msghdr_t* hdr,
 		tx_data[4]=(uint8_t)(-1*left_pwm);
 	}
 
-	//std::cout << "right_pwm: " << std::dec << (int)tx_data[2] << "dir: " << std::hex << tx_data[1] << std::endl;
-	//std::cout << "left_pwm: " << std::dec << (int)tx_data[4] << "dir: " << std::hex << tx_data[3] << std::endl << std::endl;
+	std::cout << "right_pwm: " << std::dec << (int)tx_data[2] << "dir: " << std::hex << tx_data[1] << std::endl;
+	std::cout << "left_pwm: " << std::dec << (int)tx_data[4] << "dir: " << std::hex << tx_data[3] << std::endl << std::endl;
 
 
 	arduino->writeData(tx_data,tx_data_count);
@@ -804,9 +810,13 @@ void Donnie::Odometry(){
 	Dc= (Dr+Dl)/2.0; // robot center translation
 	th = th + (Dr-Dl)/axle_length; // affects the odometry directly
 
-	// force th to be in the range 0 to 6.28 pi
-	if (th > 2.0 * M_PI) th = th - (2.0 * M_PI); //marques
-	if (th < 0.0)      th = th + (2.0 * M_PI); //marques
+	// force th to be in the range 0 to 6.28 rad
+	//if (th > 2.0 * M_PI) th = th - (2.0 * M_PI); //marques
+	//if (th < 0.0)      th = th + (2.0 * M_PI); //marques
+
+	// force th to be in the range -3.14 to 3.14 rad (Player's standart)
+	if (th>0 && th>M_PI) th = th - (2.0 * M_PI); //marques
+	if (th<0 && th<-M_PI)th = th + (2.0 * M_PI); //marques
 
 	x= x + Dc *cos(th);
 	y= y + Dc *sin(th);
@@ -835,6 +845,13 @@ void Donnie::Odometry(){
 		  (void*)&(this->m_pos_data), sizeof(this->m_pos_data), NULL);
 }
 
+/** Normalize an angle to within +/_ M_PI. (source code: stage/libstage/stage.hh) */  
+double Donnie::normalize(double a)
+{
+	while( a < -M_PI ) a += 2.0*M_PI;
+	while( a >  M_PI ) a -= 2.0*M_PI;
+	return a;
+};
 
 void Donnie::FloatToBytes(float value, uint8_t *data){
 	memset (data, 0, sizeof(data));
