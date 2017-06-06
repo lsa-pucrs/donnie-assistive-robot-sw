@@ -464,6 +464,8 @@ int DonnieClient::GotoTTS(float pa){
 	// call recursive Goto and return the actual move
 	//float actual_move = Goto(pa);
 	Goto(pa);
+	//make sure that robot are stopped while speech
+	p2dProxy->SetSpeed(0,0);
 	
 	string direction;
 	if (pa < 0){
