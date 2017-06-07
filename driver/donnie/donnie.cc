@@ -100,8 +100,10 @@ extern "C"{
 Donnie::Donnie(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 	// zero ids, so that we'll know later which interfaces were
 	memset (&m_pos_data, 0, sizeof(player_position2d_data_t));  //descobrir o porque disso //g
+	memset (&m_neck_pos_data, 0, sizeof(player_position2d_data_t));
 	memset (&this->power_addr, 0, sizeof (player_devaddr_t));
 	memset (&this->bumper_addr, 0, sizeof (player_devaddr_t));
+	memset (&this->m_neck_position_addr, 0, sizeof(player_devaddr_t));
 	memset (&this->m_position_addr, 0, sizeof(player_devaddr_t));
 
 
@@ -343,6 +345,14 @@ int Donnie::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, void 
 			if(print_debug_messages==1) PLAYER_WARN("Dio data received");
 			return(0);
 	 }
+	 //Goto neck position 2D
+	 else if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_CMD, PLAYER_POSITION2D_CMD_POS, m_neck_position_addr)){
+			//to use foo.GoTo (player_pose2d_t pos, player_pose2d_t vel)
+			if(print_debug_messages==1) PLAYER_WARN("NECK position2d goto cmd received");
+			assert(hdr->size == sizeof(player_position2d_cmd_pos_t)); //g if this is false then call eception error
+			ProcessNeckPos2dPosCmd(hdr, *reinterpret_cast<player_position2d_cmd_pos_t *>(data));
+			return(0);
+	 }
 	 //neck position 2D
 	 else if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_CMD, PLAYER_POSITION2D_CMD_VEL, m_neck_position_addr)){
 			//to use foo.SetSpeed (double aXSpeed, double aYawSpeed)
@@ -351,17 +361,18 @@ int Donnie::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, void 
 			ProcessNeckPos2dVelCmd(hdr, *reinterpret_cast<player_position2d_cmd_vel_t *>(data));
 			return(0);
 	 }
-	 //base position 2D
+	 //Goto base position 2D
 	 else if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_CMD, PLAYER_POSITION2D_CMD_POS, m_position_addr)){
 			//to use foo.GoTo (player_pose2d_t pos, player_pose2d_t vel)
-			if(print_debug_messages==1) PLAYER_WARN("position2d goto cmd received");
+			if(print_debug_messages==1) PLAYER_WARN("BASE position2d goto cmd received");
 			assert(hdr->size == sizeof(player_position2d_cmd_pos_t)); //g if this is false then call eception error
 			ProcessPos2dPosCmd(hdr, *reinterpret_cast<player_position2d_cmd_pos_t *>(data));
 			return(0);
 	 }
+	 //SetSpeed base
 	 else if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_CMD, PLAYER_POSITION2D_CMD_VEL, m_position_addr)){
 			//to use foo.SetSpeed (double aXSpeed, double aYawSpeed)
-			//PLAYER_WARN("position2d vel cmd received");
+	 		if(print_debug_messages==1) PLAYER_WARN("BASE position2d vel cmd received");
 			assert(hdr->size == sizeof(player_position2d_cmd_vel_t));
 			ProcessPos2dVelCmd(hdr, *reinterpret_cast<player_position2d_cmd_vel_t *>(data));
 			return(0);
@@ -372,9 +383,17 @@ int Donnie::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, void 
 			this->Publish(m_position_addr, resp_queue, PLAYER_MSGTYPE_RESP_ACK, PLAYER_POSITION2D_REQ_MOTOR_POWER);
 			return 0;
 	 }
+	 //neck Geom
+	 else if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_REQ, PLAYER_POSITION2D_REQ_GET_GEOM, m_neck_position_addr)){
+			//to use foo.RequestGeom()
+			if(print_debug_messages==1) PLAYER_WARN("position2d update neck geometry request received");
+			ProcessNeckPos2dGeomReq(hdr);
+			return(0);
+	 }
+	 //base Geom
 	 else if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_REQ, PLAYER_POSITION2D_REQ_GET_GEOM, m_position_addr)){
 			//to use foo.RequestGeom()
-			if(print_debug_messages==1) PLAYER_WARN("position2d update geometry request received");
+			if(print_debug_messages==1) PLAYER_WARN("position2d update base geometry request received");
 			ProcessPos2dGeomReq(hdr);
 			return(0);
 	 }
@@ -407,20 +426,46 @@ void Donnie::ProcessDioCommand(player_msghdr_t* hdr, player_dio_cmd_t &data){
 	 Publish(m_dio_addr, PLAYER_MSGTYPE_DATA, PLAYER_DIO_CMD_VALUES, reinterpret_cast<void*>(&data), sizeof(data), NULL); //the NULL is the Timestamp and meens that the current time will be filled in) 
 }
 
-//NECK
-//foo.SetSpeed(double x, double pa)
-void Donnie::ProcessNeckPos2dVelCmd(player_msghdr_t* hdr, 
-						player_position2d_cmd_vel_t &data){
-	std::cout << "Pos2DVelCmd vel.px:" << data.vel.px << " vel.py:" << data.vel.py << " vel.pa:"<< data.vel.pa << std::endl; //bits qnt
-	std::cout << "Pos2DVelCmd state:" << std::hex << data.state << std::endl;
-	std::cout << std::endl;
 
+//NECK Goto command
+void Donnie::ProcessNeckPos2dPosCmd(player_msghdr_t* hdr, player_position2d_cmd_pos_t &data){
+	//std::cout << "Pos2DPosCmd pos.px:" << data.pos.px << " pos.py:" << data.pos.py << " pos.pa:"<< data.pos.pa << std::endl; //bits qnt
+	//std::cout << "Pos2DPosCmd vel.px:" << data.vel.px << " vel.py:" << data.vel.py << " vel.pa:"<< data.vel.pa << std::endl; //bits qnt
+	//std::cout << "Pos2DVelCmd state:" << data.state << std::endl;
+	//std::cout << "Atual pos.px:" << m_neck_pos_data.pos.px << " pos.py:" << m_neck_pos_data.pos.py << " pos.pa:"<< m_neck_pos_data.pos.pa << std::endl; //bits qnt
+	//std::cout << std::endl;
+
+	uint8_t servoDegree = map(data.pos.pa,M_PI/2,-M_PI/2,0,180);
+
+	printf("servoDegree:%d,data.pos.pa:%.2f\n",servoDegree,data.pos.pa);
 	tx_data_count=3;
 	tx_data[0]=SERVOPACK;
 	tx_data[1]=0x10;
-	tx_data[2]=(uint8_t)data.vel.pa;
+	tx_data[2]=servoDegree;
 
 	arduino->writeData(tx_data,tx_data_count);
+
+
+	this->m_neck_pos_data.pos.pa = data.pos.pa;
+
+	//update position odometry data (code source: server/drivers/mixed/wbr/914/wbr914.cc)
+    this->Publish(this->m_position_addr,
+		  PLAYER_MSGTYPE_DATA,PLAYER_POSITION2D_DATA_STATE,
+		  (void*)&(this->m_neck_pos_data), sizeof(this->m_neck_pos_data), NULL);
+
+}
+
+//NECK
+//foo.SetSpeed(double x, double pa)
+void Donnie::ProcessNeckPos2dVelCmd(player_msghdr_t* hdr,player_position2d_cmd_vel_t &data){
+	//std::cout << "Pos2DVelCmd vel.px:" << data.vel.px << " vel.py:" << data.vel.py << " vel.pa:"<< data.vel.pa << std::endl; //bits qnt
+	//std::cout << "Pos2DVelCmd state:" << std::hex << data.state << std::endl;
+	//std::cout << std::endl;
+
+	player_position2d_cmd_pos_t newPos;
+	newPos.pos.pa = data.vel.pa;
+
+	ProcessNeckPos2dPosCmd(hdr,newPos);
 }
 
 //Goto command
@@ -439,11 +484,6 @@ void Donnie::ProcessPos2dPosCmd(player_msghdr_t* hdr, player_position2d_cmd_pos_
 	ProcessPos2dVelCmd(hdr,newVel);
 	Odometry();
 }
-
-double map(double x, double in_min, double in_max, double out_min, double out_max){
-	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
-
 
 //foo.SetSpeed(double x, double pa)
 void Donnie::ProcessPos2dVelCmd(player_msghdr_t* hdr, 
@@ -504,12 +544,33 @@ void Donnie::ProcessPos2dVelCmd(player_msghdr_t* hdr,
 	//this->m_pos_data.vel.py = speedL;
 	this->m_pos_data.vel.pa = data.vel.pa;
 
-	//update odometry data (code source: server/drivers/mixed/wbr/914/wbr914.cc)
+	//update celocity odometry data (code source: server/drivers/mixed/wbr/914/wbr914.cc)
     this->Publish(this->m_position_addr,
 		  PLAYER_MSGTYPE_DATA,PLAYER_POSITION2D_DATA_STATE,
 		  (void*)&(this->m_pos_data), sizeof(this->m_pos_data), NULL); //sizeof(player_position2d_data_t), NULL);
 
 	Odometry();
+
+}
+
+void Donnie::ProcessNeckPos2dGeomReq(player_msghdr_t* hdr){
+	// this function updates the geometry and its data can be acessed by foo.GetOffset()
+	player_position2d_geom_t geom;
+
+	
+	geom.pose.px = 0; //m_neck_pos_data.pos.px;                                           
+	geom.pose.py = 0; //m_neck_pos_data.pos.py;                                           
+	geom.pose.pz = m_neck_pos_data.pos.pa; 
+	geom.size.sl = 0;                                                   
+	geom.size.sw = 0;                                                
+	geom.size.sh = 0;                                                    
+
+	/*std::cout << "Pos2dGeom pa:" << m_pos_data.pos.pa << std::endl;
+	std::cout << std::endl;*/
+
+	Publish(m_neck_position_addr, 
+				 PLAYER_MSGTYPE_RESP_ACK, PLAYER_POSITION2D_REQ_GET_GEOM, 
+				 &geom, sizeof(geom), NULL);
 
 }
 
@@ -525,8 +586,8 @@ void Donnie::ProcessPos2dGeomReq(player_msghdr_t* hdr){
 	geom.size.sw = robot_width;                                                     // [m]
 	geom.size.sh = robot_height;                                                    // [m]
 
-	/*std::cout << "Pos2dGeom pa:" << m_pos_data.pos.pa << std::endl;
-	std::cout << std::endl;*/
+	std::cout << "Neck Pos2dGeom pa:" << m_pos_data.pos.pa << std::endl;
+	std::cout << std::endl;
 
 	Publish(m_position_addr, 
 				 PLAYER_MSGTYPE_RESP_ACK, PLAYER_POSITION2D_REQ_GET_GEOM, 
@@ -839,10 +900,15 @@ void Donnie::Odometry(){
 	lasttickR=ticksR;
 	lasttickL=ticksL;
 
-	//update odometry data (code source: server/drivers/mixed/wbr/914/wbr914.cc)
+	//update position odometry data (code source: server/drivers/mixed/wbr/914/wbr914.cc)
     this->Publish(this->m_position_addr,
 		  PLAYER_MSGTYPE_DATA,PLAYER_POSITION2D_DATA_STATE,
 		  (void*)&(this->m_pos_data), sizeof(this->m_pos_data), NULL);
+}
+
+//Re-maps a value
+double  Donnie::map(double x, double in_min, double in_max, double out_min, double out_max){
+	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
 /** Normalize an angle to within +/_ M_PI. (source code: stage/libstage/stage.hh) */  
