@@ -437,7 +437,7 @@ void Donnie::ProcessNeckPos2dPosCmd(player_msghdr_t* hdr, player_position2d_cmd_
 
 	uint8_t servoDegree = map(data.pos.pa,M_PI/2,-M_PI/2,0,180);
 
-	printf("servoDegree:%d,data.pos.pa:%.2f\n",servoDegree,data.pos.pa);
+	//printf("servoDegree:%d,data.pos.pa:%.2f\n",servoDegree,data.pos.pa);
 	tx_data_count=3;
 	tx_data[0]=SERVOPACK;
 	tx_data[1]=0x10;
@@ -445,14 +445,18 @@ void Donnie::ProcessNeckPos2dPosCmd(player_msghdr_t* hdr, player_position2d_cmd_
 
 	arduino->writeData(tx_data,tx_data_count);
 
-
 	this->m_neck_pos_data.pos.pa = data.pos.pa;
-
 	//update position odometry data (code source: server/drivers/mixed/wbr/914/wbr914.cc)
-    this->Publish(this->m_position_addr,
+    this->Publish(this->m_neck_position_addr,
 		  PLAYER_MSGTYPE_DATA,PLAYER_POSITION2D_DATA_STATE,
 		  (void*)&(this->m_neck_pos_data), sizeof(this->m_neck_pos_data), NULL);
 
+    //this is valid just while neck are made by a servo
+    this->m_neck_pos_data.vel.pa = data.pos.pa;
+	//update celocity odometry data (code source: server/drivers/mixed/wbr/914/wbr914.cc)
+    this->Publish(this->m_neck_position_addr,
+		  PLAYER_MSGTYPE_DATA,PLAYER_POSITION2D_DATA_STATE,
+		  (void*)&(this->m_neck_pos_data), sizeof(this->m_neck_pos_data), NULL); //sizeof(player_position2d_data_t), NULL);
 }
 
 //NECK
@@ -462,19 +466,25 @@ void Donnie::ProcessNeckPos2dVelCmd(player_msghdr_t* hdr,player_position2d_cmd_v
 	//std::cout << "Pos2DVelCmd state:" << std::hex << data.state << std::endl;
 	//std::cout << std::endl;
 
-	player_position2d_cmd_pos_t newPos;
-	newPos.pos.pa = data.vel.pa;
+	//player_position2d_cmd_pos_t newPos;
+	//newPos.pos.pa = data.vel.pa;
+	//ProcessNeckPos2dPosCmd(hdr,newPos);
 
-	ProcessNeckPos2dPosCmd(hdr,newPos);
+	//this is valid just while neck are made by a servo
+    this->m_neck_pos_data.vel.pa = data.vel.pa;
+	//update celocity odometry data (code source: server/drivers/mixed/wbr/914/wbr914.cc)
+    this->Publish(this->m_neck_position_addr,
+		  PLAYER_MSGTYPE_DATA,PLAYER_POSITION2D_DATA_STATE,
+		  (void*)&(this->m_neck_pos_data), sizeof(this->m_neck_pos_data), NULL); //sizeof(player_position2d_data_t), NULL);
 }
 
 //Goto command
 void Donnie::ProcessPos2dPosCmd(player_msghdr_t* hdr, player_position2d_cmd_pos_t &data){
-	std::cout << "Pos2DPosCmd pos.px:" << data.pos.px << " pos.py:" << data.pos.py << " pos.pa:"<< data.pos.pa << std::endl; //bits qnt
-	std::cout << "Pos2DPosCmd vel.px:" << data.vel.px << " vel.py:" << data.vel.py << " vel.pa:"<< data.vel.pa << std::endl; //bits qnt
-	std::cout << "Pos2DVelCmd state:" << data.state << std::endl;
-	std::cout << "Atual pos.px:" << m_pos_data.pos.px << " pos.py:" << m_pos_data.pos.py << " pos.pa:"<< m_pos_data.pos.pa << std::endl; //bits qnt
-	std::cout << std::endl;
+	//std::cout << "Pos2DPosCmd pos.px:" << data.pos.px << " pos.py:" << data.pos.py << " pos.pa:"<< data.pos.pa << std::endl; //bits qnt
+	//std::cout << "Pos2DPosCmd vel.px:" << data.vel.px << " vel.py:" << data.vel.py << " vel.pa:"<< data.vel.pa << std::endl; //bits qnt
+	//std::cout << "Pos2DVelCmd state:" << data.state << std::endl;
+	//std::cout << "Atual pos.px:" << m_pos_data.pos.px << " pos.py:" << m_pos_data.pos.py << " pos.pa:"<< m_pos_data.pos.pa << std::endl; //bits qnt
+	//std::cout << std::endl;
 
 	player_position2d_cmd_vel_t newVel;
 	newVel.vel.px=0;
