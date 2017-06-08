@@ -464,6 +464,8 @@ int DonnieClient::GotoTTS(float pa){
 	// call recursive Goto and return the actual move
 	//float actual_move = Goto(pa);
 	Goto(pa);
+	//make sure that robot are stopped while speech
+	p2dProxy->SetSpeed(0,0);
 	
 	string direction;
 	if (pa < 0){
@@ -592,21 +594,15 @@ void DonnieClient::Scan(void){
 				total_counter++;
 				//nro_blobs++; 
 				blob_flag = false;
-				//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") blob adicionado! no 0!"<<endl;
 			}
 		}
 		else
 		{
-			//nro_blobs += nro_blobs_buffer;
 			for(int b = 0; b<nro_blobs_buffer;b++)
 			{
 
 				usleep(100);
 				int buffer_color =bfinderProxy->GetBlob(b).color;
-				//cout<<"numero de blobs "<<nro_blobs_buffer<<" ["<<b<<"] cor da blob:"<< buffer_color<<endl;
-				//cout<<"blob buffered:" << blob_buffer.color<<endl;
-				//cout<<"testando "<<teste.color<<endl;
-
 				if(bfinderProxy->GetBlob(b).right != (camera_width) && bfinderProxy->GetBlob(b).left==0) /// inacabado na ESQUERDA. 
 				{
 					if (blob_flag ==true) 
@@ -617,26 +613,13 @@ void DonnieClient::Scan(void){
 							total_blobs_found[total_counter] = blob_buffer;
 							total_yaws[total_counter] = yaw_buffer;
 							total_counter++;
-							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<")"<<" blob adicionado! left antigo"<<endl;
-							//nro_blobs++; //don't change the number of blobs. one in, one out.
-							//blob_flag = false; keep the flag true!
-	
-							//then buffers the current blob.
-							//blob_buffer = bfinderProxy->GetBlob(b);
-
-							//mod aqui
 							yaw_buffer  = head_yawi;
-							//yaw_buffer = graus;
 						}
 						
 					}
 					else
 					{
-						//blob_buffer = bfinderProxy->GetBlob(b);
-						//modificado aqui
-						//yaw_buffer = graus;				//cout<<"blob adicionado! 2x (right e cor diferente)"<<endl;
 						yaw_buffer = head_yawi;
-						//nro_blobs--;
 						blob_flag = true; 
 					}
 				}	
@@ -648,13 +631,9 @@ void DonnieClient::Scan(void){
 						{
 							total_blobs_found[total_counter] = blob_buffer;
 							//mod aqui
-							//total_yaws[total_counter] = (graus+yaw_buffer)/2;
 							total_yaws[total_counter] = (head_yawi+yaw_buffer)/2;
 							total_counter++;
 							blob_flag = false;
-							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color )<<") blob adicionado! right"<<endl;
-							//blob_buffer = bfinderProxy->GetBlob(b);
-
 						}
 						else  // blobs with different colors!
 						{
@@ -669,8 +648,6 @@ void DonnieClient::Scan(void){
 							total_yaws[total_counter] = head_yawi;//graus;
 							total_counter++;
 							blob_flag = false;
-						//	cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<<" ("<<value_to_color(buffer_color)<<") blob adicionado! 2x (right e cor diferente)"<<endl;
-							//blob_buffer = bfinderProxy->GetBlob(b);
 						}
 					}
 					else
@@ -680,10 +657,7 @@ void DonnieClient::Scan(void){
 							total_blobs_found[total_counter] =  bfinderProxy->GetBlob(b);
 							//mod aqui
 							total_yaws[total_counter] = head_yawi;//graus;
-							//cout<<"do buffer! "<<blob_buffer.color<<"iaiaia"<<endl;
-							//cout<<buffer_color<<" ("<<value_to_color(buffer_color)<<") blob adicionado! right sozinho"<<endl;
 							total_counter++;
-							//blob_buffer = bfinderProxy->GetBlob(b);
 						}
 
 					}
@@ -695,8 +669,6 @@ void DonnieClient::Scan(void){
 						if(blob_buffer.color == bfinderProxy->GetBlob(b).color)
 						{
 							blob_buffer = bfinderProxy->GetBlob(b);
-							//cout<<"ueahieauhea"<<endl;kkk
-							//nro_blobs--;
 						}
 						else
 						{
@@ -704,10 +676,6 @@ void DonnieClient::Scan(void){
 							total_blobs_found[total_counter] = blob_buffer;
 							total_yaws[total_counter] = yaw_buffer;
 							total_counter++;
-							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<< " ("<<value_to_color(buffer_color)<<") blob adicionado! middle de outra cor"<<endl;
-
-
-							//blob_buffer = bfinderProxy->GetBlob(b);
 							//mod aqui
 							yaw_buffer = head_yawi;//graus; 
 
@@ -716,13 +684,8 @@ void DonnieClient::Scan(void){
 					}
 					else
 					{
-
-						//blob_buffer = bfinderProxy->GetBlob(b);
-						//mod aqui
 						yaw_buffer = head_yawi;//graus;
-					//	nro_blobs--;
 						blob_flag = true; 
-						
 					}
 				}
 				else // ok, tudo certo :}
@@ -737,9 +700,6 @@ void DonnieClient::Scan(void){
 							total_yaws[total_counter] = head_yawi;//graus;
 							total_counter++;
 							blob_flag = false;
-							//cout<<buffer_color<<" ("<<value_to_color(buffer_color)<<") adicionado! no meio e left, iguais"<<endl;
-							//blob_buffer =  bfinderProxy->GetBlob(b);
-
 						}
 						else
 						{
@@ -747,12 +707,7 @@ void DonnieClient::Scan(void){
 							total_blobs_found[total_counter] = blob_buffer;
 							total_yaws[total_counter] = yaw_buffer;
 							total_counter++;
-							//nro_blobs++; 
 							blob_flag = false;
-
-							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<<" (" <<value_to_color(buffer_color)<<") blob adicionado! 2x (left e sozinho)"<<endl;
-							//blob_buffer = bfinderProxy->GetBlob(b);
-
 							//then buffers the current blob.
 							total_blobs_found[total_counter] =  blob_buffer;
 							//mod aqui
@@ -767,14 +722,9 @@ void DonnieClient::Scan(void){
 						//mod aqui
 						total_yaws[total_counter] = head_yawi;// graus;
 						total_counter++;
-						//cout<<buffer_color<<" "<<value_to_color(buffer_color)<<" blob adicionado!sozinho!!"<<endl;
-						//blob_buffer = bfinderProxy->GetBlob(b);
 					}
 				}
-			//cout<<"!!!!!!!!!!!!!!blob buffered:" << bfinderProxy->GetBlob(b).color<<endl;
 			blob_buffer = bfinderProxy->GetBlob(b);
-			//teste = blob_buffer;
-			//cout<<"!!!!!!!!!!!!!!blob buffered:" << blob_buffer.color<<endl;
 			}	
 		}
 
@@ -796,58 +746,19 @@ void DonnieClient::Scan(void){
 		total_counter++;
 		blob_flag = false;
 	}
-
-
-//str1.compare(str2) != 0
-
-
-
-//for(int i=0; i<total_counter; i++)
-//	{
-//
-//			cout<<value_to_color(total_blobs_found[i].color)<<endl;
-//
-//	}
-
-
-
-
-
-
-
-
-
 	//gambiarra
 	nro_blobs= 0;
 
 	for(int i=0; i<total_counter; i++)
 	{
-		//if((total_blobs_found[i].color != 1)) 
 		string buff = value_to_color(total_blobs_found[i].color);
-		
-		//cout << buff<<endl;
-		//cout<<buff.compare("desconhecido")<<" "<<nro_blobs<<endl;
-
 		if((buff.compare("desconhecido") != 0) && (total_yaws[i] <360))
 		{
 			_total_blobs_found[nro_blobs] = total_blobs_found[i];
 			_total_yaws[nro_blobs] = total_yaws[i];
 			nro_blobs++;
 		}
-		//contador++;
-
 	}
-
-//	#ifndef NDEBUG
-//	cout<<endl<<endl<< "total blobs:"<< nro_blobs<<endl<<endl;
-//	for(int i=0; i<nro_blobs; i++)
-//	{
-//		   cout<<_total_blobs_found[i].color<<endl;
-//		   cout<<"objeto "<<i<<" de cor " << value_to_color(_total_blobs_found[i].color) << " a " << int(sonar_readings[i]) << " passos no grau " << _total_yaws[i] << endl; 
-//	}
-//	#endif
-
-
 	// go back to the initial position
 	headGoto(0);
 	robot->ReadIfWaiting(); 
@@ -855,7 +766,6 @@ void DonnieClient::Scan(void){
 
 	for(int i=0; i<nro_blobs; i++)
 	{
-		//cout<<"objeto "<<i<<" de cor " << value_to_color(_total_blobs_found[i].color) << " a " << " passos no grau " << _total_yaws[i] << endl; 
 		// build string
 		if (_total_yaws[i] == 0)
 			scanText << "a frente: ";
@@ -880,13 +790,10 @@ int DonnieClient::Color(int color_code){
 
 
 	float head_yawi = -90; //in degree. +90 due the servo default pos is 90 degre
-	//GOTO -90 to 90 in 30 by 30 steps
-	//int blobs_found = 0;
-	//int total_blobs_found = 0;
-
-	//std::ostringstream scanText;
 	std:string color_str;
 	color_str = value_to_color(color_code);
+
+
 	speak("Procurando cor " + color_str);
 
 	
@@ -920,8 +827,6 @@ int DonnieClient::Color(int color_code){
 	int total_counter=0;
 	int graus = 0;
 
-	//playerc_blobfinder_blob_t teste;
-
 
 	speak("Espiando");
 	do{
@@ -933,67 +838,41 @@ int DonnieClient::Color(int color_code){
 		// read sonar
 		headSonarProxy->GetRange(0)/100; ///STEP_LENGHT;  // read head sonar 
 		sonar_readings[yaw_cnt] = headSonarProxy->GetRange(0)/STEP_LENGHT;  // read head sonar 
-		//blobs_found[yaw_cnt] = bfinderProxy->GetCount(); // get the number of blobs found
-		//blobs_counter_buffer = blobs_found[yaw_cnt];
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		nro_blobs_buffer = bfinderProxy->GetCount();
 		if(nro_blobs_buffer == 0 ) // caso nao tenha blobs, ainda tem que analisar pra ver se tem algum incompleto.
 		{
 			if (blob_flag ==true)
 			{
-				if(color_str ==value_to_color(blob_buffer.color))
-				{
 					total_blobs_found[total_counter] = blob_buffer;
 					total_yaws[total_counter] = yaw_buffer;
 					total_counter++;
-					nro_blobs++; 
 					blob_flag = false;
-					//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") blob adicionado! no 0!"<<endl;
-				}
-
 			}
 		}
 		else
 		{
-			//nro_blobs += nro_blobs_buffer;
 			for(int b = 0; b<nro_blobs_buffer;b++)
 			{
 				usleep(100);
 				int buffer_color = bfinderProxy->GetBlob(b).color;
-				//cout<<"numero de blobs "<<nro_blobs_buffer<<" ["<<b<<"] cor da blob:"<< buffer_color<<endl;
-				//cout<<"blob buffered:" << blob_buffer.color<<endl;
-				//cout<<"testando "<<teste.color<<endl;
-				if(color_str ==value_to_color(buffer_color))				
-				{
+
 				if(bfinderProxy->GetBlob(b).right != (camera_width) && bfinderProxy->GetBlob(b).left==0) /// inacabado na ESQUERDA. 
 				{
 					if (blob_flag ==true) 
 					{
 						if(blob_buffer.color !=buffer_color) // blobs with same colors! Para evitar que pegue a mesma blob 2x. Pode ocorrer outros erros.
 						{
-							//add the buffered blob.
 							total_blobs_found[total_counter] = blob_buffer;
 							total_yaws[total_counter] = yaw_buffer;
 							total_counter++;
-							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<")"<<" blob adicionado! left antigo"<<endl;
-							//nro_blobs++; //don't change the number of blobs. one in, one out.
-							//blob_flag = false; keep the flag true!
-	
-							//then buffers the current blob.
-							//blob_buffer = bfinderProxy->GetBlob(b);
 							yaw_buffer = graus;
 						}
 						
 					}
 					else
 					{
-						//blob_buffer = bfinderProxy->GetBlob(b);
-						yaw_buffer = graus;				//cout<<"blob adicionado! 2x (right e cor diferente)"<<endl;
-						//nro_blobs--;
+						yaw_buffer = graus;	
 						blob_flag = true; 
 					}
 				}	
@@ -1007,9 +886,6 @@ int DonnieClient::Color(int color_code){
 							total_yaws[total_counter] = (graus+yaw_buffer)/2;
 							total_counter++;
 							blob_flag = false;
-							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color )<<") blob adicionado! right"<<endl;
-							//blob_buffer = bfinderProxy->GetBlob(b);
-
 						}
 						else  // blobs with different colors!
 						{
@@ -1023,8 +899,6 @@ int DonnieClient::Color(int color_code){
 							total_yaws[total_counter] = graus;
 							total_counter++;
 							blob_flag = false;
-						//	cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<<" ("<<value_to_color(buffer_color)<<") blob adicionado! 2x (right e cor diferente)"<<endl;
-							//blob_buffer = bfinderProxy->GetBlob(b);
 						}
 					}
 					else
@@ -1033,12 +907,8 @@ int DonnieClient::Color(int color_code){
 						{
 							total_blobs_found[total_counter] =  bfinderProxy->GetBlob(b);
 							total_yaws[total_counter] = graus;
-							//cout<<"do buffer! "<<blob_buffer.color<<"iaiaia"<<endl;
-							//cout<<buffer_color<<" ("<<value_to_color(buffer_color)<<") blob adicionado! right sozinho"<<endl;
 							total_counter++;
-							//blob_buffer = bfinderProxy->GetBlob(b);
 						}
-
 					}
 				}
 				else if(bfinderProxy->GetBlob(b).right == (camera_width) && bfinderProxy->GetBlob(b).left==0) // inacabado nas DUAS pontas. 
@@ -1048,8 +918,6 @@ int DonnieClient::Color(int color_code){
 						if(blob_buffer.color == bfinderProxy->GetBlob(b).color)
 						{
 							blob_buffer = bfinderProxy->GetBlob(b);
-							//cout<<"ueahieauhea"<<endl;kkk
-							//nro_blobs--;
 						}
 						else
 						{
@@ -1057,10 +925,6 @@ int DonnieClient::Color(int color_code){
 							total_blobs_found[total_counter] = blob_buffer;
 							total_yaws[total_counter] = yaw_buffer;
 							total_counter++;
-							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<< " ("<<value_to_color(buffer_color)<<") blob adicionado! middle de outra cor"<<endl;
-
-
-							//blob_buffer = bfinderProxy->GetBlob(b);
 							yaw_buffer = graus; 
 
 						}
@@ -1068,12 +932,8 @@ int DonnieClient::Color(int color_code){
 					}
 					else
 					{
-
-						//blob_buffer = bfinderProxy->GetBlob(b);
 						yaw_buffer = graus;
-					//	nro_blobs--;
 						blob_flag = true; 
-						
 					}
 				}
 				else // ok, tudo certo :}
@@ -1087,9 +947,6 @@ int DonnieClient::Color(int color_code){
 							total_yaws[total_counter] = graus;
 							total_counter++;
 							blob_flag = false;
-							//cout<<buffer_color<<" ("<<value_to_color(buffer_color)<<") adicionado! no meio e left, iguais"<<endl;
-							//blob_buffer =  bfinderProxy->GetBlob(b);
-
 						}
 						else
 						{
@@ -1097,13 +954,8 @@ int DonnieClient::Color(int color_code){
 							total_blobs_found[total_counter] = blob_buffer;
 							total_yaws[total_counter] = yaw_buffer;
 							total_counter++;
-							//nro_blobs++; 
+
 							blob_flag = false;
-
-							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<<" (" <<value_to_color(buffer_color)<<") blob adicionado! 2x (left e sozinho)"<<endl;
-							//blob_buffer = bfinderProxy->GetBlob(b);
-
-							//then buffers the current blob.
 							total_blobs_found[total_counter] =  blob_buffer;
 							total_yaws[total_counter] = graus;
 							total_counter++;
@@ -1115,23 +967,12 @@ int DonnieClient::Color(int color_code){
 						total_blobs_found[total_counter] =  bfinderProxy->GetBlob(b);
 						total_yaws[total_counter] = graus;
 						total_counter++;
-						//cout<<buffer_color<<" "<<value_to_color(buffer_color)<<" blob adicionado!sozinho!!"<<endl;
-						//blob_buffer = bfinderProxy->GetBlob(b);
 					}
 				}
-				}
-
-
-			//cout<<"!!!!!!!!!!!!!!blob buffered:" << bfinderProxy->GetBlob(b).color<<endl;
 			blob_buffer = bfinderProxy->GetBlob(b);
-			//teste = blob_buffer;
-			//cout<<"!!!!!!!!!!!!!!blob buffered:" << blob_buffer.color<<endl;
 			}	
 		}
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		graus +=30;
 		// TODO gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
 		sleep(2);
@@ -1141,11 +982,12 @@ int DonnieClient::Color(int color_code){
 
 	}while (head_yawi < (90+30));
 	
-
+				//				
+	nro_blobs =0;
 	//gambiarra
 	for(int i=0; i<total_counter; i++)
 	{
-		if(total_blobs_found[i].color != 1) 
+		if(color_str ==value_to_color(total_blobs_found[i].color))
 		{
 			_total_blobs_found[nro_blobs] = total_blobs_found[i];
 			_total_yaws[nro_blobs] = total_yaws[i];

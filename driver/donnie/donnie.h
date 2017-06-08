@@ -108,17 +108,25 @@ class Donnie : public ThreadedDriver{
 			\return none
 		*/
 		void ProcessDioCommand(player_msghdr_t* hdr, player_dio_cmd_t &data);   
-		//!Deals with commands from Client
+		//!Deals with Goto commands from Client
+		void ProcessNeckPos2dPosCmd(player_msghdr_t* hdr, player_position2d_cmd_pos_t &data);
+		//!Deals with SetSpeedcommands from Client
 		void ProcessNeckPos2dVelCmd(player_msghdr_t* hdr, player_position2d_cmd_vel_t &data);
-		//!Deals with commands from Client
+		//!Deals with Goto commands from Client
+		void ProcessPos2dPosCmd(player_msghdr_t* hdr, player_position2d_cmd_pos_t &data);
+		//!Deals with SetSpeed commands from Client
 		void ProcessPos2dVelCmd(player_msghdr_t* hdr, player_position2d_cmd_vel_t &data);
 		//!Deals with commands from Client
-		void ProcessPos2dPosCmd(player_msghdr_t* hdr, player_position2d_cmd_pos_t &data);
+		void ProcessNeckPos2dGeomReq(player_msghdr_t* hdr);
 		//!Deals with commands from Client
 		void ProcessPos2dGeomReq(player_msghdr_t* hdr);
 
 		//!Calculates Odometry by the wheel's encoder 
 		void Odometry();
+		//! Remaps a value from one range to another
+		double  map(double x, double in_min, double in_max, double out_min, double out_max);
+		//! Normalize an angle to within +/_ M_PI. (source code: stage/libstage/stage.hh)
+		double normalize(double a);
 		//!Convert float in 4 Bytes
 		void FloatToBytes(float value, uint8_t *data);
 		//!Convert Uint16_t in 2 Bytes
@@ -148,6 +156,8 @@ class Donnie : public ThreadedDriver{
 		//! Dio interface
 		player_devaddr_t m_dio_addr;  
 		//! Ranger interface
+		player_devaddr_t m_head_ranger_addr;
+		//! Ranger interface
 		player_devaddr_t m_ranger_addr;
 		//! Neck position interface
 		player_devaddr_t m_neck_position_addr;
@@ -161,7 +171,9 @@ class Donnie : public ThreadedDriver{
 		//!player_devaddr_t m_beep_addr;
 		//! Beep interface
 
-		//!Odometry data
+		//!Odometry Neck data
+		player_position2d_data_t m_neck_pos_data;
+		//!Odometry Base data
 		player_position2d_data_t m_pos_data;
 
 
