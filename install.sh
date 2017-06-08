@@ -50,6 +50,9 @@ case "${OS}" in
 			14.04)
 				echo -e "${GREEN}NOTE:${NC} ${OS} - ${VER} (${OSNAME} is the recommended OS version.\n"
 				;;
+			16.04)
+				echo -e "${GREEN}NOTE:${NC} ${OS} - ${VER} (${OSNAME} is the recommended OS version.\n"
+				;;
 			*)
 				# Handle other OS versions here
 				echo -e "${ORANGE}WARNING:${NC} ${OS} - ${VER} (${OSNAME} is not a recommended OS version. You might get errors and some programming experience is required to compile Donnie. \n"
@@ -119,7 +122,14 @@ sudo apt-get install -y freeglut3-dev
 sudo apt-get install -y libpng12-dev 
 sudo apt-get install -y libltdl-dev 
 #libltdl7 
-sudo apt-get install -y libdb5.1-stl
+case "${VER}" in 
+	14.04)
+		sudo apt-get install -y libdb5.1-stl
+		;;
+	16.04)
+		sudo apt-get install -y libdb5.3-stl
+		;;
+esac
 sudo apt-get install -y libgnomecanvasmm-2.6-dev
 sudo apt-get install -y python-gnome2
 #sudo apt-get install -y libboost-all-dev  # overkill, the actually required libraries are boostthread, boostsignal, boostsystem
@@ -169,7 +179,14 @@ export LD_LIBRARY_PATH=${DONNIE_PATH}/lib/player:${LD_LIBRARY_PATH}
 # required to compile donnie
 # run 'sudo find / -name "*.pc" -type f' to find all the pc files for pkg-config
 # run 'sudo find / -name "*.cmake" -type f' to find all the cmake files for cmake
-export CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-2.8/Modules/:/usr/share/cmake-2.8/Modules/Platform/:/usr/share/cmake-2.8/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib64/cmake/Stage/:/usr/lib/fltk/
+case "${VER}" in 
+	14.04)
+		export CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-2.8/Modules/:/usr/share/cmake-2.8/Modules/Platform/:/usr/share/cmake-2.8/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib64/cmake/Stage/:/usr/lib/fltk/
+		;;
+	16.04)
+		export CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-3.5/Modules/:/usr/share/cmake-3.5/Modules/Platform/:/usr/share/cmake-3.5/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib/cmake/Stage/:/usr/lib/fltk/
+		;;
+esac
 export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig/:/usr/lib/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig/:/usr/share/pkgconfig/:${PKG_CONFIG_PATH}
 
 ##################################################
@@ -219,6 +236,15 @@ echo -e "${GREEN}Stage installed !!!! ${NC}\n"
 ##################################################
 # Donnie's depedencies
 echo -e "${GREEN}Installing Donnie Dependencies ... ${NC}\n"
+case "${VER}" in 
+	14.04)
+		#sudo apt-get install -y oracle-java8-installer
+		sudo apt-get install -y openjdk-7-jdk
+		;;
+	16.04)
+		sudo apt-get install -y openjdk-8-jdk
+		;;
+esac
 #to compile soxplayer driver
 #sudo apt-get install -y sox
 # TODO: check if any of these packages are actually required for donnie
@@ -232,8 +258,6 @@ sudo apt-get install -y libsox-dev
 sudo apt-get install -y libcurl4-openssl-dev
 #to compile GoDonnie interpreter
 sudo apt-get install -y libreadline-dev
-#sudo apt-get install -y oracle-java8-installer
-sudo apt-get install -y openjdk-7-jdk
 sudo apt-get install -y libantlr3c-dev
 # std terminal used in several linux distributions
 sudo apt-get install -y xterm
