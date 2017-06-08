@@ -629,7 +629,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             {
               sayStr << "Número de argumentos invalido.";
               Donnie->speak(sayStr.str());
-              cout << sayStr << endl;
+              cout << sayStr.str() << endl;
 
             }
 
