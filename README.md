@@ -21,7 +21,7 @@ most of the programming environments for kids are high visual, based on grab and
 Donnie project proposes an inclusive robotic programming environment where all students 
 (with or without visual disabilities) can use. 
 
-Donnie comes with two usage options: simulated robot and physical robot. It is recommend to start with the simulated since it does not require building the robot. Moreover, the physical robot is functional, but still under test.
+Donnie comes with two usage options: simulated robot and physical robot. It is recommended to start with the simulated since it does not require building the robot. Moreover, currently the physical robot is functional, but it is still under test.
 
 Contents
 --------
