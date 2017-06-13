@@ -413,8 +413,8 @@ int Donnie::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, void 
 void Donnie::ProcessDioCommand(player_msghdr_t* hdr, player_dio_cmd_t &data){
 	 if(print_debug_messages==1) PLAYER_WARN("Message ProcessDioCommand");
 
-	 std::cout << "Dio count:" << data.count << std::endl; //bits qnt
-	 std::cout << "Dio digout:" << std::hex << data.digout << std::endl; //decimal value
+	 //std::cout << "Dio count:" << data.count << std::endl; //bits qnt
+	 //std::cout << "Dio digout:" << std::hex << data.digout << std::endl; //decimal value
 
 	 tx_data_count=2;
 	 tx_data[0]=DIOPACK;
@@ -541,8 +541,8 @@ void Donnie::ProcessPos2dVelCmd(player_msghdr_t* hdr,
 		tx_data[4]=(uint8_t)(-1*left_pwm);
 	}
 
-	std::cout << "right_pwm: " << std::dec << (int)tx_data[2] << "dir: " << std::hex << tx_data[1] << std::endl;
-	std::cout << "left_pwm: " << std::dec << (int)tx_data[4] << "dir: " << std::hex << tx_data[3] << std::endl << std::endl;
+	//std::cout << "right_pwm: " << std::dec << (int)tx_data[2] << "dir: " << std::hex << tx_data[1] << std::endl;
+	//std::cout << "left_pwm: " << std::dec << (int)tx_data[4] << "dir: " << std::hex << tx_data[3] << std::endl << std::endl;
 
 
 	arduino->writeData(tx_data,tx_data_count);
@@ -596,8 +596,8 @@ void Donnie::ProcessPos2dGeomReq(player_msghdr_t* hdr){
 	geom.size.sw = robot_width;                                                     // [m]
 	geom.size.sh = robot_height;                                                    // [m]
 
-	std::cout << "Neck Pos2dGeom pa:" << m_pos_data.pos.pa << std::endl;
-	std::cout << std::endl;
+	//std::cout << "Neck Pos2dGeom pa:" << m_pos_data.pos.pa << std::endl;
+	//std::cout << std::endl;
 
 	Publish(m_position_addr, 
 				 PLAYER_MSGTYPE_RESP_ACK, PLAYER_POSITION2D_REQ_GET_GEOM, 
