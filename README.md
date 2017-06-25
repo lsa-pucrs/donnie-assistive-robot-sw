@@ -58,7 +58,7 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
 ## Run Donnie Software from a Virtual Machine
 
- Download this [VM](link) all Donnie software pre-installed and ready to run.
+ Download this [VM](http://www.osboxes.org/linux-mint/), select the Linux Mint 17.3 'Rosa', and selected the [Mate](https://drive.google.com/file/d/0B_HAFnYs6Ur-NGFCZWNFV2dBN2M/view?usp=sharing) version. Finally, follow the instructions to install Donnie package.
 
 ## Install Donnie Software on a Desktop Computer Using the Packages
 
@@ -99,8 +99,8 @@ The build system is based on CMake, so it is required to have some experience wi
 Every part of Donnie Software Stack is also based on CMake. These are the software parts that can be customized:
 
 - raspicam driver
-- Player
-- Stage
+- [Player](https://github.com/playerproject/player)
+- [Stage](https://github.com/rtv/Stage)
 - Donnie Software
 
 each of these packages have their one sets of parameters. 
@@ -113,6 +113,12 @@ Developers interested in customization might want to read the following files:
 - [install/setup-rpi.sh](install/setup-rpi.sh)
 - and all the CMakeLists.txt files
 
+### Learning Player and Stage
+
+Donnie is based on Player/Stage robotic middlware and simulator. It is higly 
+recommended for Donnie developers to understand Player/Stage to add more features,
+create new elaborated scenarios, etc. The official documents are [Player](https://playerproject.github.io/), [Player wiki](https://github.com/playerproject/player/wiki) and [Stage](http://rtv.github.io/Stage/).
+However, the best documentation is the [Player/Stage tutorial](http://player-stage-manual.readthedocs.io). 
 
 ### Parameter for Donnie Software
 
