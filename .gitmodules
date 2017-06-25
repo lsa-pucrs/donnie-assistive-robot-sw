@@ -1,0 +1,3 @@
+[submodule "docs/wiki/player-stage"]
+	path = docs/wiki/player-stage
+	url = https://github.com/lsa-pucrs/Player-Stage-Manual
