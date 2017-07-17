@@ -148,6 +148,8 @@ sudo apt-get install -y libgsl0-dev libxmu-dev
 sudo apt-get install -y python-dev swig
 # PostGIS for a Player driver
 sudo apt-get install -y libpq-dev libpqxx-dev
+# Required by NXT driver
+sudo apt-get install -y libusb-1.0-0-dev
 
 ##################################################
 # Downloading source code 
@@ -255,7 +257,7 @@ esac
 sudo apt-get install -y libsox-dev 
 #to compile gtts driver
 #sudo apt-get install -y curl
-sudo apt-get install -y libcurl4-openssl-dev
+#sudo apt-get install -y libcurl4-openssl-dev
 #to compile GoDonnie interpreter
 sudo apt-get install -y libreadline-dev
 sudo apt-get install -y libantlr3c-dev

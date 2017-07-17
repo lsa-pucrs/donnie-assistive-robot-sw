@@ -1,6 +1,6 @@
-rm -f client-test # no error if not existing
-mkdir -p build # no error if existing
+rm -f soxplayer-test
+mkdir -p build
 cd build/
 cmake ../
 make
-mv client-test ../
+mv soxplayer-test ../

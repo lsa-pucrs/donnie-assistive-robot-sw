@@ -1,87 +1,48 @@
-/*
-* Desc: A robot Soxplayer. Player for many Audio files formats.
-* Author: Guilherme Marques - 
-* Date:  August 2016
-* Laboratório de Sistemas Autônomos 
-*  - https://lsa.pucrs.br/
-*  - https://github.com/lsa-pucrs
-* Faculdade de Informática - PUCRS  
-*  - www.inf.pucrs.br
-*/
-
-
-/*
-cfg example:
-driver
-(
-	name "soxplayer"
-	plugin "libsoxplayer"
-	provides ["sound:0"]
-)
-*/
-
-// TODO: separar a definicao da classe em um .h para gerar documentacao automatica com doxygen
-
+#include "soxplayer.h"
 #include <libplayercore/playercore.h>
-
-#include <iostream>
-#include <sys/time.h>
-#include <cmath>
-#include <fcntl.h>
-#include <getopt.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h> //sleep
-
 #include "sox.h" //to play audio files
-//#include <assert.h>
 
-#include <fstream> //to check file exists
 
-#define DRIVERNAME "soxplayer"
 
-// Message levels
-#define MESSAGE_ERROR	0
-#define MESSAGE_INFO	1
-#define MESSAGE_DEBUG	2
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+// A factory creation function, declared outside of the class so that it     //
+// can be invoked without any object context (alternatively, you can         //
+// declare it static in the class).  In this function, we create and return  //
+// (as a generic Driver*) a pointer to a new instance of this driver.        //
+Driver* Soxplayer_Init(ConfigFile* cf, int section){                         //
+	// Create and return a new instance of this driver                       //
+	return ((Driver*) (new Soxplayer(cf, section)));                         //
+}                                                                            //
+// A driver registration function, again declared outside of the class so    //
+// that it can be invoked without object context.  In this function, we add  //
+// the driver into the given driver table, indicating which interface the    //
+// driver can support and how to create a driver instance.                   //
+void Soxplayer_Register(DriverTable* table){                                 //
+	table->AddDriver("soxplayer", Soxplayer_Init);                           //
+}                                                                            //
+// Extra stuff for building a shared object.                                 //
+/* need the extern to avoid C++ name-mangling  */                            //
+extern "C"{                                                                  //
+	int player_driver_init(DriverTable* table){                              //
+	  PLAYER_MSG0(MESSAGE_INFO, "[soxplayer] driver initiallized");          //
+	  Soxplayer_Register(table);                                             //
+	  PLAYER_MSG0(MESSAGE_INFO, "[soxplayer] waiting for client startup...");//
+	  return(0);                                                             //
+	}                                                                        //
+}                                                                            //
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-// The class for the driver
-// devices are used to communication between drivers
-// interfaces used to communication between client and the driver
-class Soxplayer : public ThreadedDriver{
-	public:
-		Soxplayer(ConfigFile* cf, int section);
-		~Soxplayer();
-		virtual int ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, void * data);
-
-	private:
-		player_devaddr_t sound_addr;  //speech interface
-
-		//sox effects
-		std::string speed_str;
-		std::string pitch_str;
-		std::string tempo_str;
-
-		virtual int MainSetup();
-		virtual void MainQuit();
-		virtual void Main();
-
-		virtual int  Play(char *fileAdr);
-};
-
-// Deal with assosiations comming by .cfg file
 Soxplayer::Soxplayer(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 
 	//create a sound interface
-	if (cf->ReadDeviceAddr(&(this->sound_addr), section, "provides", PLAYER_SOUND_CODE, -1, NULL)){
+	if (cf->ReadDeviceAddr(&(this->sound_addr), section, "provides", PLAYER_PLAYSOUND_CODE, -1, NULL)){
 		PLAYER_ERROR("[soxplayer] Could not read SOUND");
 		SetError(-1);
 		return;
 	}
-	//TODO. amory. pq speech interface ? revisar esta msg. dar find por speech
+
 	if (AddInterface(this->sound_addr)){
 		PLAYER_ERROR("[soxplayer] Could not add sox sound interface");
 		SetError(-1);
@@ -89,7 +50,6 @@ Soxplayer::Soxplayer(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 	}
 
 	//init sox
-	//assert(sox_init() == SOX_SUCCESS);
 	if(sox_init() != SOX_SUCCESS){
 		PLAYER_ERROR("[soxplayer] Could not initialize sox");
 		SetError(-1);
@@ -99,27 +59,22 @@ Soxplayer::Soxplayer(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 	pitch_str = cf->ReadString (section, "pitch", "");
 	tempo_str = cf->ReadString (section, "tempo", "");
 }
+
 Soxplayer::~Soxplayer(){
 	sox_quit();
 	PLAYER_MSG0(MESSAGE_INFO, "[soxplayer] Closed");
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Set up the device (ONLY WHEN A CLIENT CONECTS TO THE DRIVER).  Return 0 if things go well, and -1 otherwise.
 int Soxplayer::MainSetup(){   
 	PLAYER_MSG0(MESSAGE_INFO, "[soxplayer] client has been connected");
 
 	return(0);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//Shutdown the device (occurs in each client shutdown)
 void Soxplayer::MainQuit(){
 	PLAYER_MSG0(MESSAGE_INFO, "[soxplayer] client has been disconnected...");
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Main function for device thread
 void Soxplayer::Main(){
 	for(;;){
 		pthread_testcancel();
@@ -129,14 +84,12 @@ void Soxplayer::Main(){
 	return;
 }
 
-
-//deal with messages comming from the clients
 int Soxplayer::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, void * data){
 	#ifndef NDEBUG
 	  PLAYER_MSG0(MESSAGE_INFO,"[soxplayer] Msg received");
 	#endif
-	if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_CMD, PLAYER_SOUND_CMD_VALUES, sound_addr)){
-		Play((reinterpret_cast<player_sound_cmd_t*>(data))->filename);
+	if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_CMD, PLAYER_PLAYSOUND_CMD_VALUES, sound_addr)){
+		Play((reinterpret_cast<player_playsound_cmd_t*>(data))->string);
 		return(0);
 	}
 
@@ -194,9 +147,11 @@ int Soxplayer::Play(char *fileAddr){
 	sox_add_effect(chain, e, &interm_signal, &in->signal);
 	free(e);
 
+#ifndef NDEBUG
 	std::cout << "SPEED:" << speed_str << std::endl;
 	std::cout << "PITCH:" << pitch_str << std::endl;
 	std::cout << "TEMPO:" << tempo_str << std::endl;
+#endif
 
 	//Create SPEED Effect
 	if(!speed_str.empty()){
@@ -266,33 +221,3 @@ int Soxplayer::Play(char *fileAddr){
 	return 0;
 }
 
-
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-// A factory creation function, declared outside of the class so that it     //
-// can be invoked without any object context (alternatively, you can         //
-// declare it static in the class).  In this function, we create and return  //
-// (as a generic Driver*) a pointer to a new instance of this driver.        //
-Driver* Soxplayer_Init(ConfigFile* cf, int section){                            //
-	// Create and return a new instance of this driver                       //
-	return ((Driver*) (new Soxplayer(cf, section)));
-}                                                                            //
-// A driver registration function, again declared outside of the class so    //
-// that it can be invoked without object context.  In this function, we add  //
-// the driver into the given driver table, indicating which interface the    //
-// driver can support and how to create a driver instance.                   //
-void Soxplayer_Register(DriverTable* table){                                    //                                  //
-	table->AddDriver(DRIVERNAME, Soxplayer_Init);
-}                                                                            //
-// Extra stuff for building a shared object.                                 //
-/* need the extern to avoid C++ name-mangling  */                            //
-extern "C"{                                                                  //
-	int player_driver_init(DriverTable* table){                              //
-		PLAYER_MSG0(MESSAGE_INFO, "[soxplayer] driver initiallized");
-		Soxplayer_Register(table);
-		PLAYER_MSG0(MESSAGE_INFO, "[soxplayer] waiting for client startup...");
-		return(0);                                                           //
-	}                                                                        //
-}                                                                            //
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////

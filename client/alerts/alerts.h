@@ -26,7 +26,7 @@ class DonnieClient{
   RangerProxy *ranger;
   //RangerProxy *SHProxy;
   //SpeechProxy *speech;
-  SoundProxy *sound;
+  PlaySoundProxy *sound;
   pos_t pos;
   double translation;
   double translationError;

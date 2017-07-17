@@ -1,3 +1,6 @@
-cd ../../../build/
+rm -f libGenericBlobfinder.so
+mkdir -p build
+cd build/
+cmake ../
 make
-sudo make install
+mv libGenericBlobfinder.so ../

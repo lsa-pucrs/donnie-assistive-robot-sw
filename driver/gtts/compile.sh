@@ -1,8 +1,6 @@
-if [[ ! -e build ]]; then
-    mkdir build
-	echo "build directory created for compilation!" 
-fi
+rm -f libgtts.so
+mkdir -p build
 cd build/
 cmake ../
 make
-sudo make install
+mv libgtts.so ../

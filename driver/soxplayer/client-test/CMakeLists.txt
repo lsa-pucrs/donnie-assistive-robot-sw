@@ -16,7 +16,7 @@ SET (CMAKE_MODULE_PATH "/usr/local/share/cmake/Modules")
 
 INCLUDE (UsePlayerC++)
 
-PLAYER_ADD_PLAYERCPP_CLIENT (soxplayer-test SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/client-test.cc)
+PLAYER_ADD_PLAYERCPP_CLIENT (soxplayer-test SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/soxplayer-test.cc)
 
 INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/soxplayer-test
 		DESTINATION ${DONNIE_PATH}/test/soxplayer

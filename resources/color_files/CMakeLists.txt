@@ -1,4 +1,4 @@
-MESSAGE( STATUS "color resource files" )
+MESSAGE( STATUS "Color resource files" )
 FILE( GLOB txts "*.txt" )
 
 INSTALL(FILES ${txts} 

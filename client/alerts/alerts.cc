@@ -39,7 +39,7 @@ DonnieClient::DonnieClient()
 		p2dhead = new Position2dProxy(robot,1);
 		bumper = new BumperProxy(robot,0);
 		ranger = new RangerProxy(robot,0);
-		sound = new SoundProxy(robot, 0);
+		sound = new PlaySoundProxy(robot, 0);
 		//speech = new SpeechProxy(robot,0);
 	}catch (PlayerError e){
 		#ifndef NDEBUG

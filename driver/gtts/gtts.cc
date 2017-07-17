@@ -15,7 +15,7 @@ driver
 (
 	name "gtts"
 	plugin "libgtts"
-	requires ["sound:0"]
+	requires ["playsound:0"]
 	provides ["speech:0"]
 )
 
@@ -23,7 +23,7 @@ driver
 (
 	name "soxplayer"
 	plugin "libsoxplayer"
-	provides ["sound:0"]
+	provides ["playsound:0"]
 )
 
 */
@@ -66,8 +66,8 @@ class Gtts : public ThreadedDriver{
 
 	private:
 		player_devaddr_t speech_addr;  //speech interface
-		player_devaddr_t sound_addr;  //sound interface
-		Device *sound_dev; //sound device
+		player_devaddr_t sound_addr;  //playsound interface
+		Device *sound_dev; //playsound device
 
 		virtual int MainSetup();
 		virtual void MainQuit();
@@ -82,8 +82,8 @@ Gtts::Gtts(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 	this->sound_dev = NULL;
 
 	//requires assosiations with devies
-	if (cf->ReadDeviceAddr (&(this->sound_addr),section,"requires",PLAYER_SOUND_CODE, -1, NULL)){
-		PLAYER_ERROR("[Gtts] Could not read sound interface");
+	if (cf->ReadDeviceAddr (&(this->sound_addr),section,"requires",PLAYER_PLAYSOUND_CODE, -1, NULL)){
+		PLAYER_ERROR("[Gtts] Could not read playsound interface");
 		SetError (-1);
 		return;
 	}
@@ -106,7 +106,6 @@ int Gtts::MainSetup(){
 	PLAYER_MSG0(MESSAGE_INFO, "[Gtts] client has been connected");
 
 	//assossiate the device with an interface
-	//Gtts this driver with Sound driver like a client does
 	this->sound_dev = deviceTable->GetDevice(this->sound_addr);
 	if (!(this->sound_dev)) return -1;
 	if (this->sound_dev->Subscribe(this->InQueue)){
@@ -216,17 +215,17 @@ void Gtts::ProcessSpeechCmd(player_msghdr_t* hdr, player_speech_cmd_t &data){
 }
 
 void Gtts::Play(char *fileAddr){
-	player_sound_cmd_t sfile;
+	player_playsound_cmd_t sfile;
 	memset(&sfile,0,sizeof(sfile));
 
-	strcpy(sfile.filename, fileAddr);
+	strcpy(sfile.string, fileAddr);
 	#ifndef NDEBUG
-	  PLAYER_MSG1(MESSAGE_INFO,"[Gtts] Sending filename [%s] to be played by sox",sfile.filename);
+	  PLAYER_MSG1(MESSAGE_INFO,"[Gtts] Sending filename [%s] to be played by sox",sfile.string);
 	#endif	
 
 	//send sox command
 	this->sound_dev->PutMsg(this->InQueue, 
-				  PLAYER_MSGTYPE_CMD, PLAYER_SOUND_CMD_VALUES, 
+				  PLAYER_MSGTYPE_CMD, PLAYER_PLAYSOUND_CMD_VALUES, 
 				  reinterpret_cast<void*>(&sfile), sizeof(sfile), NULL);
 
 }

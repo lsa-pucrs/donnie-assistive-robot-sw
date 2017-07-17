@@ -29,7 +29,7 @@ int main(int argc, char *argv[]){
     }
 	
 	PlayerClient   robot(host.c_str(),port);
-	SoundProxy     sound(&robot, 0);
+	PlaySoundProxy     sound(&robot, 0);
 
 	if(argc>1)
 		sound.play(argv[1]);
