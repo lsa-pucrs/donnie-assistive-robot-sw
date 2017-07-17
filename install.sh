@@ -238,7 +238,6 @@ echo -e "${GREEN}Stage installed !!!! ${NC}\n"
 echo -e "${GREEN}Installing Donnie Dependencies ... ${NC}\n"
 case "${VER}" in 
 	14.04)
-		#sudo apt-get install -y oracle-java8-installer
 		sudo apt-get install -y openjdk-7-jdk
 		;;
 	16.04)
@@ -246,31 +245,24 @@ case "${VER}" in
 		;;
 esac
 #to compile soxplayer driver
-#sudo apt-get install -y sox
-# TODO: check if any of these packages are actually required for donnie
-#  188  sudo apt-get install libsoxr0
-#  190  sudo apt-get install sox
-#  222  sudo apt-get install xfce4-mixer gstreamer0.10-alsa
-#  225  sudo apt-get install pulseaudio pavucontrol
 sudo apt-get install -y libsox-dev 
-#to compile gtts driver
-#sudo apt-get install -y curl
-sudo apt-get install -y libcurl4-openssl-dev
 #to compile GoDonnie interpreter
 sudo apt-get install -y libreadline-dev
 sudo apt-get install -y libantlr3c-dev
+
+## UNCOMMENT HERE TO COMPILE THE DOCUMENTATION
 # std terminal used in several linux distributions
-sudo apt-get install -y xterm
+#sudo apt-get install -y xterm
 #to compile docs
-sudo apt-get install -y doxygen
+#sudo apt-get install -y doxygen
 # uses 3.058 MB in disk - not recommended for VMs
 #sudo apt-get install -y texlive-full
 # uses 494MB in disk
-sudo apt-get install -y texlive texlive-lang-english texlive-lang-portuguese
+#sudo apt-get install -y texlive texlive-lang-english texlive-lang-portuguese
 # uses 558MB in disk
-sudo apt-get install -y texlive-latex-extra
+#sudo apt-get install -y texlive-latex-extra
 # saves some 700MB in disk by removing docs
-sudo apt-get --purge remove -y tex.\*-doc$
+#sudo apt-get --purge remove -y tex.\*-doc$
 
 cd "${DONNIE_SOURCE_PATH}"
 mkdir -p build
