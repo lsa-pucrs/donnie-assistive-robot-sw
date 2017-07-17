@@ -131,7 +131,7 @@ case "${VER}" in
 		;;
 esac
 sudo apt-get install -y libgnomecanvasmm-2.6-dev
-sudo apt-get install -y python-gnome2
+#sudo apt-get install -y python-gnome2
 #sudo apt-get install -y libboost-all-dev  # overkill, the actually required libraries are boostthread, boostsignal, boostsystem
 sudo apt-get install -y libboost-signals-dev libboost-system-dev libboost-thread-dev
 # old OpenCV for older Player drivers
@@ -145,7 +145,7 @@ sudo apt-get install -y libgsl0-dev libxmu-dev
 # for python bindings for Player clients - 
 # It is not recommended to use python due to limitations in the bindings. 
 # Things that work on a C/C++ client might not work on a Python client.
-sudo apt-get install -y python-dev swig
+#sudo apt-get install -y python-dev swig
 # PostGIS for a Player driver
 sudo apt-get install -y libpq-dev libpqxx-dev
 
