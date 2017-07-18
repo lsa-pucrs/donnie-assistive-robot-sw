@@ -58,6 +58,13 @@ Soxplayer::Soxplayer(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 	speed_str = cf->ReadString (section, "speed", "");
 	pitch_str = cf->ReadString (section, "pitch", "");
 	tempo_str = cf->ReadString (section, "tempo", "");
+	
+#ifndef NDEBUG
+	  PLAYER_MSG1(MESSAGE_INFO, "[soxplayer] SPEED:  [%s]",speed_str);
+	  PLAYER_MSG1(MESSAGE_INFO, "[soxplayer] PITCH:  [%s]",pitch_str);
+	  PLAYER_MSG1(MESSAGE_INFO, "[soxplayer] TEMPO:  [%s]",tempo_str);
+#endif
+	
 }
 
 Soxplayer::~Soxplayer(){
@@ -98,11 +105,16 @@ int Soxplayer::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, vo
 
 
 int Soxplayer::Play(char *fileAddr){
+
+	#ifndef NDEBUG
+	  PLAYER_MSG1(MESSAGE_INFO, "[soxplayer] Playing [%s]",fileAddr);
+	#endif
+
 	//check if file exists
 	std::ifstream infile(fileAddr, std::ifstream::ate | std::ifstream::binary);
 	if (!infile)
 	{
-		PLAYER_ERROR1("[soxplayer] File[%s] do not exists!",fileAddr);
+		PLAYER_ERROR1("[soxplayer] File[%s] does not exist!",fileAddr);
 		return -1;
 	}
 	// check if file is empty
@@ -113,10 +125,6 @@ int Soxplayer::Play(char *fileAddr){
 	}
 	infile.close();
  
-	#ifndef NDEBUG
-	  PLAYER_MSG1(MESSAGE_INFO, "[soxplayer] Playing[%s]",fileAddr);
-	#endif
-
 	static sox_format_t * in, * out; /* input and output files */
 	sox_effects_chain_t * chain;
 	sox_effect_t * e;
@@ -146,12 +154,6 @@ int Soxplayer::Play(char *fileAddr){
 	//assert(sox_add_effect(chain, e, &interm_signal, &in->signal) == SOX_SUCCESS);
 	sox_add_effect(chain, e, &interm_signal, &in->signal);
 	free(e);
-
-#ifndef NDEBUG
-	std::cout << "SPEED:" << speed_str << std::endl;
-	std::cout << "PITCH:" << pitch_str << std::endl;
-	std::cout << "TEMPO:" << tempo_str << std::endl;
-#endif
 
 	//Create SPEED Effect
 	if(!speed_str.empty()){
