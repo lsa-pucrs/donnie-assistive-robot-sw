@@ -207,9 +207,6 @@ void Gtts::ProcessSpeechCmd(player_msghdr_t* hdr, player_speech_cmd_t &data){
 			return;
 		}
 		// publish the filename
-		#ifndef NDEBUG
-		  PLAYER_MSG1(MESSAGE_INFO,"[Gtts] file name [%s]",tmpName);
-		#endif	
 	    Play(tmpName);
 	}
 	else{
@@ -221,7 +218,7 @@ void Gtts::Play(char *fileAddr){
 	player_playsound_cmd_t sfile;
 	memset(&sfile,0,sizeof(sfile));
 
-	sfile.string = fileAddr;
+	strcpy(sfile.string,fileAddr);
 	sfile.string_count = strlen(fileAddr) + 1;   
 	#ifndef NDEBUG
 	  PLAYER_MSG1(MESSAGE_INFO,"[Gtts] Sending filename [%s] to be played by sox",sfile.string);

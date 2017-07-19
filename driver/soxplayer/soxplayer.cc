@@ -60,9 +60,9 @@ Soxplayer::Soxplayer(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 	tempo_str = cf->ReadString (section, "tempo", "");
 	
 #ifndef NDEBUG
-	  PLAYER_MSG1(MESSAGE_INFO, "[soxplayer] SPEED:  [%s]",speed_str);
-	  PLAYER_MSG1(MESSAGE_INFO, "[soxplayer] PITCH:  [%s]",pitch_str);
-	  PLAYER_MSG1(MESSAGE_INFO, "[soxplayer] TEMPO:  [%s]",tempo_str);
+	  PLAYER_MSG1(MESSAGE_INFO, "[soxplayer] speed effect:  [%s]",speed_str.c_str());
+	  PLAYER_MSG1(MESSAGE_INFO, "[soxplayer] pitch effect:  [%s]",pitch_str.c_str());
+	  PLAYER_MSG1(MESSAGE_INFO, "[soxplayer] tempo effect:  [%s]",tempo_str.c_str());
 #endif
 	
 }
