@@ -148,8 +148,10 @@ sudo apt-get install -y libgsl0-dev libxmu-dev
 sudo apt-get install -y python-dev swig
 # PostGIS for a Player driver
 sudo apt-get install -y libpq-dev libpqxx-dev
-# Required by NXT driver
+# Required by Player's NXT driver
 sudo apt-get install -y libusb-1.0-0-dev
+# Required by Player's EKF driver
+sudo apt-get install -y libeigen3-dev
 
 ##################################################
 # Downloading source code 
