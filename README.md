@@ -204,6 +204,22 @@ Please use the github [Issue](https://github.com/lsa-pucrs/donnie-assistive-robo
 
 If you are using Donnie on your research projects, please cite our papers:
 
-* To Appear
 
+
+	@inproceedings{oliveira2017teaching,
+	  title={Teaching Robot Programming Activities for Visually Impaired Students: A Systematic Review},
+	  author={Oliveira, Juliana Damasio and de Borba Campos, M{\'a}rcia and de Morais Amory, Alexandre and Manssour, Isabel Harb},
+	  booktitle={International Conference on Universal Access in Human-Computer Interaction},
+	  pages={155--167},
+	  year={2017},
+	  organization={Springer}
+	}
+
+
+	@inproceedings{guilherme2017donnie,
+	  title={Donnie Robot: Towards an Accessible And Educational Robot for Visually Impaired People},
+	  author={Guilherme H. M. Marques, Daniel C. Einloft, Augusto C. P. Bergamin, Joice A. Marek, Renan G. Maidana Marcia B. Campos, Isabel H. Manssour, Alexandre M. Amory},
+	  booktitle={Latin American Robotics Symposium (LARS)},
+	  year={2017}
+	}
 
