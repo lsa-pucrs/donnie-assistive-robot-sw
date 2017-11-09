@@ -194,6 +194,11 @@ This is a list of itens the core team wish to have some help:
 * Integrate more assistive tools for blind users such as ORCA, NVDA, among others;
 * Feature requests and testing. Please use the [Issue](https://github.com/lsa-pucrs/donnie-assistive-robot-sw/issues) system to request new features and to report bugs;
 
+# Demonstration
+------------
+This [video](https://www.youtube.com/watch?v=BRXAqvGPGmU) demonstrates the functionality of Donnie Robot and Donnie simulation. In this task the robot is asked to move forward until hitting a wall, then it must turn to the right. 
+ 
+
 # Support
 ------------
 
