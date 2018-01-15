@@ -1,4 +1,6 @@
 CMAKE_MINIMUM_REQUIRED (VERSION 2.8 FATAL_ERROR)
+cmake_policy(SET CMP0017 OLD)
+
 SET (CLIENTNAME "GoDonnie")
 PROJECT (${CLIENTNAME})
 
@@ -27,7 +29,7 @@ endif()
 
 
 # Include this CMake module to get most of the settings needed to build
-SET (CMAKE_MODULE_PATH "/usr/local/share/cmake/Modules")
+#SET (CMAKE_MODULE_PATH "/usr/local/share/cmake/Modules")
 
 #########
 # check depedencies - java -lreadline -lantlr3c
