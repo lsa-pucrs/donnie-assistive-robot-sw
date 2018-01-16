@@ -54,15 +54,21 @@ DonnieClient::DonnieClient()
 	}
 	
 	try{		
-		//head = new PlayerClient("localhost",6666);
+		cout << "1" << endl;
 		p2dProxy = new Position2dProxy(robot,0);
+		cout << "2" << endl;
 		p2d_headProxy = new Position2dProxy(robot,1);
-		//actuator = new ActArrayProxy(robot,0);
+		cout << "3" << endl;
 		bpProxy = new BumperProxy(robot,0);
+		cout << "4" << endl;
 		bfinderProxy = new BlobfinderProxy(robot,0);
+		cout << "5" << endl;
 		sonarProxy = new RangerProxy(robot,0);
-		headSonarProxy = new RangerProxy(robot,1);
+		cout << "6" << endl;
+		//headSonarProxy = new RangerProxy(robot,1);
+		cout << "7" << endl;
 		speechProxy = new SpeechProxy(robot,0);
+		cout << "8" << endl;
 	}catch (PlayerError e){
 		#ifndef NDEBUG
 			cerr << e << endl;
@@ -367,7 +373,7 @@ int DonnieClient::moveForward(int arg)
 	if (obstacle)
 		sayStr << "Encontrei obstáculo.";
 	speak(sayStr.str());
-	cout << sayStr.str() << endl;
+	//cout << sayStr.str() << endl;
 
 	/*#ifndef NDEBUG
 	cout << "obstaculo: " << obstacle << endl;
@@ -449,7 +455,7 @@ int DonnieClient::moveBackward(int arg)
 	if (obstacle)
 		sayStr << "Encontrei obstáculo.";
 	speak(sayStr.str());
-	cout << sayStr.str() << endl;
+	//cout << sayStr.str() << endl;
 
 	/*#ifndef NDEBUG
 	cout << "obstaculo: " << obstacle << endl;

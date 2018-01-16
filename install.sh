@@ -108,6 +108,7 @@ sudo apt-get install -y build-essential
 #compilation utils
 echo -e "${GREEN}Installing Compilation Utils ... ${NC}\n"
 sudo apt-get install -y autoconf
+sudo apt-get install -y gdb
 sudo apt-get install -y cmake
 sudo apt-get install -y cmake-curses-gui
 sudo apt-get install -y git
