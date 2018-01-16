@@ -18,7 +18,8 @@ endif()
 # set Player cmake modules
 #########
 # normal cmake dir is /usr/share/cmake-2.8/Modules/
-SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "/usr/local/share/cmake/Modules")
+#SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "/usr/local/share/cmake/Modules")
+
 INCLUDE (UsePlayerPlugin)
 
 PLAYER_ADD_PLUGIN_DRIVER (${DRIVERNAME} SOURCES ${DRIVERNAME}.cc) 
