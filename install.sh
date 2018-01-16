@@ -158,9 +158,6 @@ git clone https://github.com/lsa-pucrs/Player.git
 echo -e "${GREEN}Downloading Stage source code from GitHub... ${NC}\n"
 git clone https://github.com/lsa-pucrs/Stage.git
 
-echo -e "${GREEN}Downloading Raspicam source code from GitHub... ${NC}\n"
-git clone https://github.com/lsa-pucrs/raspicam.git
-
 echo -e "${GREEN}Downloading Donnie source code from GitHub... ${NC}\n"
 git clone -b devel https://github.com/lsa-pucrs/donnie-assistive-robot-sw.git
 
@@ -268,13 +265,14 @@ cd "${DONNIE_SOURCE_PATH}"
 mkdir -p build
 cd build
 echo -e "${GREEN}Configuring Donnie ... ${NC}\n"
-cmake -DCMAKE_BUILD_TYPE=Release \
-	-DBUILD_EXAMPLES=ON \
-	-DBUILD_DOCS=ON  \
-	-DBUILD_DOXYGEN=ON \
-	-DBUILD_DOXYGEN_PDF=ON \
-	-DBUILD_MANUAL=ON \
-    ..
+#cmake -DCMAKE_BUILD_TYPE=Release \
+#	-DBUILD_EXAMPLES=ON \
+#	-DBUILD_DOCS=ON  \
+#	-DBUILD_DOXYGEN=ON \
+#	-DBUILD_DOXYGEN_PDF=ON \
+#	-DBUILD_MANUAL=ON \
+#    ..
+cmake -DCMAKE_BUILD_TYPE=Release     ..
 echo -e "${GREEN}Compiling Donnie ... ${NC}\n"
 make -j ${NUM_CORES} 
 sudo make install

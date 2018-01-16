@@ -5,7 +5,7 @@ PROJECT (${CLIENTNAME})
 message(STATUS "Configuring '${CLIENTNAME}'")
 
 # Include this CMake module to get most of the settings needed to build
-SET (CMAKE_MODULE_PATH "/usr/local/share/cmake/Modules")
+#SET (CMAKE_MODULE_PATH "/usr/local/share/cmake/Modules")
 
 INCLUDE (UsePlayerC++)
 

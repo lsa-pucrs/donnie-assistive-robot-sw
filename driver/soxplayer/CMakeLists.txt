@@ -37,7 +37,7 @@ message(STATUS "SoX Include -- ${LSOX_INCLUDE_DIR}")
 # set Player cmake modules
 #########
 # add the cmake path for player
-SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "/usr/local/share/cmake/Modules")
+#SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "/usr/local/share/cmake/Modules")
 INCLUDE (UsePlayerPlugin)
 
 PLAYER_ADD_PLUGIN_DRIVER (${DRIVERNAME} SOURCES ${DRIVERNAME}.cc) 
