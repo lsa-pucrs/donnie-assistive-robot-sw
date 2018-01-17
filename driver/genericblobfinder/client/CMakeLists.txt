@@ -12,7 +12,7 @@ else()
 endif()
 
 # add the cmake path for player
-SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/local/share/cmake/Modules)
+#SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/local/share/cmake/Modules)
 
 #########
 # check depedencies - opencv 2
