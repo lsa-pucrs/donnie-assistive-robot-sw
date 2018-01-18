@@ -87,7 +87,8 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
  
 	mkdir ~/donnie; cd ~/donnie
 	wget https://github.com/lsa-pucrs/donnie-assistive-robot-sw/raw/devel/install.sh
-	chmod +x ./install.sh 
+	chmod +x ./install.sh
+	export DONNIE_PATH=/opt/donnie 
 	./install.sh
 
 ### Configuring Donnie
@@ -164,6 +165,7 @@ To build your own Donnie robot, please refer to the following repositories (gith
 	mkdir ~/donnie; cd ~/donnie
 	wget https://github.com/lsa-pucrs/donnie-assistive-robot-sw/raw/devel/install-rpi.sh
 	chmod +x ./install-rpi.sh 
+	export DONNIE_PATH=/opt/donnie
 	./install-rpi.sh
 
  Experienced programmers can configure the same paramerters presented before for the Raspberry Pi.
