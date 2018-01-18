@@ -44,7 +44,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'donnie_doc'
+project = 'Donnie Manual'
 copyright = '2018, Alexandre Amory'
 
 # The version info for the project you're documenting, acts as replacement for
