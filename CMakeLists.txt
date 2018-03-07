@@ -140,6 +140,13 @@ MESSAGE (STATUS "----- Identification Done -----")
 
 ######################################
 # Compile/Install Donnie
+
+# Set boost environment
+FIND_PACKAGE (Boost REQUIRED COMPONENTS locale)
+if (Boost_FOUND)
+	INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
+endif ()
+
 MESSAGE (STATUS)
 MESSAGE (STATUS "----- Processing client makefiles -----")
 add_subdirectory(client)
