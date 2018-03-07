@@ -7,4 +7,8 @@ To select the language, set the environmental variable _DONNIE_LANG_ to either "
 ## Disclaimer
 
 - **Do not remove this folder from the repository's root directory**. The translator environment in the different modules expect the files to be located here.
-- This is a work in progress. Feel free to open issues regarding errors in localization (e.g. mistranslations, missing terms).
+- **This is a work in progress**. Feel free to open issues regarding errors in localization (e.g. mistranslations, missing terms).
+
+## Contributors
+
+- Renan Maidana
