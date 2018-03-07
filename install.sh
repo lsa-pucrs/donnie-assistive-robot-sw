@@ -248,7 +248,7 @@ sudo apt-get install -y libsox-dev
 sudo apt-get install -y libreadline-dev
 sudo apt-get install -y libantlr3c-dev
 #for language translation
-sudo apt-get install -y libboost-all-dev
+sudo apt-get install -y libboost-locale-dev
 
 ## UNCOMMENT HERE TO COMPILE THE DOCUMENTATION
 # std terminal used in several linux distributions
