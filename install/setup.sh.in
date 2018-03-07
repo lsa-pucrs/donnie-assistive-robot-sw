@@ -138,10 +138,10 @@ function donnie_desktop_update_pt {
 function donnie_player(){
 	donnie_check_var
 	if [ "$DONNIE_LANG" = "en_US" ]; then
-		donnie_player_en()
+		donnie_player_en
 	fi
 	if [ "$DONNIE_LANG" = "pt_BR" ]; then
-		donnie_player_pt()
+		donnie_player_pt
 	fi
 }
 
