@@ -110,7 +110,7 @@ TARGET_LINK_LIBRARIES (${CLIENTNAME} ${LREADLINE_LIB} ${LANTLR3_LIB})
 INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR} ${LANTLR3_INCLUDE_DIR} ${LREADLINE_INCLUDE_DIR} )
 FIND_PACKAGE (Boost REQUIRED COMPONENTS locale)
 if (Boost_FOUND)
-  TARGET_LINK_LIBRARIES (${CLIENTNAME} LINK_PUBLIC Boost::locale)
+  TARGET_LINK_LIBRARIES (${CLIENTNAME} Boost::locale)
 endif ()
 
 # godonnie depends on GoDonnieParser. This makes sure that the parser is built before the GoDonnie interpreter
