@@ -49,7 +49,7 @@ INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR})
 
 FIND_PACKAGE (Boost REQUIRED COMPONENTS locale)
 if (Boost_FOUND)
-	TARGET_LINK_LIBRARIES (${CLIENTNAME} LINK_PUBLIC Boost::locale)
+	TARGET_LINK_LIBRARIES (${CLIENTNAME} Boost::locale)
 endif ()
 
 # Install library and example files
