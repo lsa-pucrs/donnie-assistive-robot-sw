@@ -14,15 +14,25 @@ DonnieClient::DonnieClient()
 {
     string host = GetEnv("DONNIE_IP");
     string donnie_path = GetEnv("DONNIE_PATH");
+
+    // Set up language environment
+    generator gen;
+    gen.add_messages_path(string(GetEnv("DONNIE_SOURCE_PATH")) + "/loc");
+    gen.add_messages_domain("alerts");
+    locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
+    locale::global(loc);
+    cout.imbue(loc);
+    cerr.imbue(loc);
+
     int port = atoi(GetEnv("DONNIE_PORT").c_str());
     if(host.size()==0) host = "localhost";
     if(port==0) port = 6665;
     if (donnie_path=="") {
-		cerr << "variable DONNIE_PATH not defined. Please execute 'export DONNIE_PATH=<path-to-donnie>'" << endl;
+		cerr << translate("variable DONNIE_PATH not defined. Please execute 'export DONNIE_PATH=<path-to-donnie>'") << endl;
 		exit(1);
 	}
 
-	// TODO: read a configuration file so user can change these sounds
+    // TODO: read a configuration file so user can change these sounds
 	SSTEP   = donnie_path+"/resources/sounds/HIT.wav"; //Sound STEP
 	SSBACK  = donnie_path+"/resources/sounds/192805sound13.wav"; //Sound Step BACK
 	STRIGHT = donnie_path+"/resources/sounds/126413specialcoin.wav"; //Sound Turn RIGHT
@@ -45,8 +55,8 @@ DonnieClient::DonnieClient()
 		#ifndef NDEBUG
 			cerr << e << endl;
 		#endif
-		cerr << "Não foi possível conectar no robô " << endl;
-		cerr << "Possivelmente o arquivo cfg está incorreto." << endl;
+		cerr << translate("Não foi possível conectar no robô ") << endl;
+		cerr << translate("Possivelmente o arquivo cfg está incorreto.") << endl;
 		exit(1);
 	}
 
@@ -96,7 +106,7 @@ void DonnieClient::checkSteps(){
 			/*if(dir>0)sound->play((char *)SSTEP.c_str());
 			if(dir<0)sound->play((char *)SSBACK.c_str());*/
             #ifndef NDEBUG
-            cout << "translation>=STEP_LENGHT_ERROR:" << translation << endl;
+            cout << translate("translation>=STEP_LENGHT_ERROR:") << translation << endl;
             #endif
         }
         translation=0;
