@@ -104,11 +104,7 @@ function donnie_login {
 #}
 
 function donnie_desktop_update {
-	if [ -z "$DONNIE_LANG" ]; then
-		echo -e "${RED}ERROR:${NC} Need to set DONNIE_LANG environment variable\n"
-		echo -e "Example: export DONNIE_LANG=pt_BR\n"
-		exit 1
-	fi
+	donnie_check_var
 	if [ "$DONNIE_LANG" = "en_US" ]; then
 		donnie_desktop_update_en
 	fi
@@ -118,7 +114,6 @@ function donnie_desktop_update {
 }
 
 function donnie_desktop_update_en {
-	donnie_check_var_en
 	echo "Updating donnie in directory ${DONNIE_SOURCE_PATH}"
     cd "${DONNIE_SOURCE_PATH}/build"
 	git pull origin devel
@@ -130,7 +125,6 @@ function donnie_desktop_update_en {
 }
 
 function donnie_desktop_update_pt {
-	donnie_check_var_pt
 	echo "Atualizando o Donnie no diretório ${DONNIE_SOURCE_PATH}"
     cd "${DONNIE_SOURCE_PATH}/build"
 	git pull origin devel
