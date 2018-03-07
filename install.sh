@@ -153,14 +153,14 @@ sudo apt-get install -y libpq-dev libpqxx-dev
 ##################################################
 # Downloading source code 
 ##################################################
-echo -e "${GREEN}Downloading Player source code from GitHub... ${NC}\n"
-git clone https://github.com/lsa-pucrs/Player.git
+#echo -e "${GREEN}Downloading Player source code from GitHub... ${NC}\n"
+#git clone https://github.com/lsa-pucrs/Player.git
 
-echo -e "${GREEN}Downloading Stage source code from GitHub... ${NC}\n"
-git clone https://github.com/lsa-pucrs/Stage.git
+#echo -e "${GREEN}Downloading Stage source code from GitHub... ${NC}\n"
+#git clone https://github.com/lsa-pucrs/Stage.git
 
-echo -e "${GREEN}Downloading Donnie source code from GitHub... ${NC}\n"
-git clone -b devel https://github.com/lsa-pucrs/donnie-assistive-robot-sw.git
+#echo -e "${GREEN}Downloading Donnie source code from GitHub... ${NC}\n"
+#git clone -b devel https://github.com/lsa-pucrs/donnie-assistive-robot-sw.git
 
 ##################################################
 # set environment variables
@@ -190,43 +190,43 @@ export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig/:/usr/lib/pkgconfig:/usr/lib/x
 ##################################################
 # Compile and install Player/Stage 
 ##################################################
-cd Player
-patch -p1 -N --dry-run --silent < patch/festival/festival.patch 2>/dev/null
+#cd Player
+#patch -p1 -N --dry-run --silent < patch/festival/festival.patch 2>/dev/null
 #If the patch has not been applied then the $? which is the exit status 
 #for last command would have a success status code = 0
-if [ $? -eq 0 ];
-then
+#if [ $? -eq 0 ];
+#then
     #apply the patch
-	echo -e "${GREEN}Patching Player ... ${NC}\n"
-	patch -p1 < patch/festival/festival.patch
-	patch -p1 < patch/install/player_3.0.2_14.04.patch
-	patch -p1 < patch/donnie/instalationSoundProxy.patch
-fi
-mkdir -p build # mkdir -p is safer !
-cd build
+#	echo -e "${GREEN}Patching Player ... ${NC}\n"
+#	patch -p1 < patch/festival/festival.patch
+#	patch -p1 < patch/install/player_3.0.2_14.04.patch
+#	patch -p1 < patch/donnie/instalationSoundProxy.patch
+#fi
+#mkdir -p build # mkdir -p is safer !
+#cd build
 # Mandatory
 # DEBUG_LEVEL=NONE <==== important !!!
 # Recommended: Build the Python bindings for the C client library
 # BUILD_PYTHONCPP_BINDINGS:BOOL=ON
 # BUILD_PYTHONC_BINDINGS:BOOL=ON
-echo -e "${GREEN}Configuring Player ... ${NC}\n"
-cmake -DCMAKE_BUILD_TYPE=Release -DDEBUG_LEVEL=NONE -BUILD_PYTHONC_BINDINGS:BOOL=OFF ..
-echo -e "${GREEN}Compiling Player ... ${NC}\n"
-make -j ${NUM_CORES} 
-sudo make install
-echo -e "${GREEN}Player installed !!!! ${NC}\n"
+#echo -e "${GREEN}Configuring Player ... ${NC}\n"
+#cmake -DCMAKE_BUILD_TYPE=Release -DDEBUG_LEVEL=NONE -BUILD_PYTHONC_BINDINGS:BOOL=OFF ..
+#echo -e "${GREEN}Compiling Player ... ${NC}\n"
+#make -j ${NUM_CORES} 
+#sudo make install
+#echo -e "${GREEN}Player installed !!!! ${NC}\n"
 
-cd ../../Stage
-mkdir -p build
-cd build
+#cd ../../Stage
+#mkdir -p build
+#cd build
 # Mandatory
 # CMAKE_BUILD_TYPE=release <==== important !!!
-echo -e "${GREEN}Configuring Stage  ... ${NC}\n"
-cmake -DCMAKE_BUILD_TYPE=Release ..
-echo -e "${GREEN}Compiling Stage ... ${NC}\n"
-make -j ${NUM_CORES}
-sudo make install
-echo -e "${GREEN}Stage installed !!!! ${NC}\n"
+#echo -e "${GREEN}Configuring Stage  ... ${NC}\n"
+#cmake -DCMAKE_BUILD_TYPE=Release ..
+#echo -e "${GREEN}Compiling Stage ... ${NC}\n"
+#make -j ${NUM_CORES}
+#sudo make install
+#echo -e "${GREEN}Stage installed !!!! ${NC}\n"
 
 ##################################################
 # install Donnie depedencies
@@ -247,6 +247,8 @@ sudo apt-get install -y libsox-dev
 #to compile GoDonnie interpreter
 sudo apt-get install -y libreadline-dev
 sudo apt-get install -y libantlr3c-dev
+#for language translation
+sudo apt-get install -y libboost-all-dev
 
 ## UNCOMMENT HERE TO COMPILE THE DOCUMENTATION
 # std terminal used in several linux distributions
