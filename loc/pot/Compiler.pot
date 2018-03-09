@@ -1,0 +1,142 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid   ""
+msgstr  "Project-Id-Version: PACKAGE VERSION\n"
+        "Report-Msgid-Bugs-To: \n"
+        "POT-Creation-Date: 2018-03-09 04:28-0300\n"
+        "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+        "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+        "Language-Team: LANGUAGE <LL@li.org>\n"
+        "Language: \n"
+        "MIME-Version: 1.0\n"
+        "Content-Type: text/plain; charset=UTF-8\n"
+        "Content-Transfer-Encoding: 8bit\n"
+
+#: ../../client/godonnie/Compiler.cpp:500
+msgid   " segundos."
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:276
+#: ../../client/godonnie/Compiler.cpp:298
+msgid   ", bateu"
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:278
+#: ../../client/godonnie/Compiler.cpp:300
+msgid   ", não bateu"
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:464
+msgid   "COMMENT: "
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:734
+msgid   "EXIT"
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:182
+msgid   "Erro ao salvar comando no log"
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:697
+msgid   "Nenhum comando executado, posição ["
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:647
+msgid   "Número de argumentos invalido."
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:451
+msgid   "O som foi desligado com sucesso"
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:447
+msgid   "O som foi ligado com sucesso"
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:107
+msgid   "Out of memory trying to allocate ANTLR input stream\n"
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:136
+msgid   "Out of memory trying to allocate parser\n"
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:128
+msgid   "Out of memory trying to allocate token stream\n"
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:312
+msgid   "PD: "
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:329
+msgid   "PE: "
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:267
+msgid   "PF: "
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:289
+msgid   "PT: "
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:148
+msgid   "Parse error"
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:486
+msgid   "SPEAK: "
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:753
+msgid   "Sintaxe não conhecida\n"
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:431
+msgid   "Sintaxe não conhecida para comando '"
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:153
+msgid   "Tree : "
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:120
+msgid   "Unable to create the lexer due to malloc() failure\n"
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:497
+msgid   "WAIT: "
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:274
+#: ../../client/godonnie/Compiler.cpp:296
+msgid   "andou "
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:321
+#: ../../client/godonnie/Compiler.cpp:338
+msgid   "bateu"
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:500
+msgid   "esperando "
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:819
+msgid   "null comp"
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:321
+#: ../../client/godonnie/Compiler.cpp:338
+msgid   "não bateu"
+msgstr  ""
+
+#: ../../client/godonnie/Compiler.cpp:539
+msgid   "while"
+msgstr  ""

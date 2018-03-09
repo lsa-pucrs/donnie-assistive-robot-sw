@@ -41,6 +41,12 @@ using std::string;
 using std::cout;
 using std::endl;
 
+// Localization libraries 
+#include <boost/locale.hpp>
+using namespace boost::locale;
+using boost::locale::translate;
+using boost::locale::format;
+
 typedef struct {
   char *name;     /* User printable name of the function. */
   char *doc;      /* Documentation for this function.  */
