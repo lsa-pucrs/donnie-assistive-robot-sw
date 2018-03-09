@@ -16,13 +16,20 @@
 
 #include "Compiler.h"
 
+// Localization libraries 
+#include <boost/locale.hpp>
+using namespace boost::locale;
+using boost::locale::translate;
+using boost::locale::format;
+
 //extern HIST_ENTRY **history_list ();
 
 using namespace std;
 
 #define LANG "pt-br"
 
-COMMAND commands[] = {
+// Comandos em pt_BR
+COMMAND comandos[] = {
   { (char*)"pf ", (char*)"Movimenta para frente" },
   { (char*)"pt ", (char*)"Movimenta para trás" },
   { (char*)"gd ", (char*)"Gira para direita" },
@@ -45,6 +52,30 @@ COMMAND commands[] = {
   { (char *)NULL, (char *)NULL }
 };
 
+// Comandos em en_US
+COMMAND commands[] = {
+  { (char*)"fw ", (char*)"Forward movement" },
+  { (char*)"bw ", (char*)"Backward movement" },
+  { (char*)"tr ", (char*)"Turn right" },
+  { (char*)"tl ", (char*)"Turn left" },
+  { (char*)"distance", (char*)"Distance sensor" },
+  { (char*)"peek", (char*)"Peek for objects" },
+  { (char*)"color", (char*)"Searches for a color" },
+  { (char*)"position ", (char*)"Robot position" },
+  { (char*)"status", (char*)"Current status" },
+  { (char*)"create ", (char*)"Create variable" },
+  { (char*)"for ", (char*)"For loop" },
+  { (char*)"repeat ", (char*)"Repeat loop" },
+  { (char*)"while ", (char*)"While laço" },
+  { (char*)"if ", (char*)"Conditional" },
+  { (char*)"procedure ", (char*)"Create procedure" },
+  { (char*)"speak ", (char*)"Speak" },
+  { (char*)"exit", (char*)"Close the interpreter" },
+  { (char*)"sound", (char*)"Turns sound on and off" },
+  { (char*)"history", (char*)"Movement command history" },
+  { (char *)NULL, (char *)NULL }
+};
+
 string code = "";
 bool done = 0;
 ExprTreeEvaluator Client;
@@ -57,6 +88,14 @@ int evalCode(int count, int key);
 
 int main(int argc, char* argv[])
 {
+  // Set up language environment
+  generator gen;
+  gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+  gen.add_messages_domain("GoDonnie");
+  locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
+  locale::global(loc);
+  cout.imbue(loc);
+  cerr.imbue(loc);
 
 	bool termMode = 0, scriptMode=0;
 	string filename ;
@@ -66,7 +105,7 @@ int main(int argc, char* argv[])
 	
     if ( argc <= 1 ) {  // there is NO input...
         //Client.speak("No argument provided!");
-        Client.speak("Comando sem argumentos!");
+        Client.speak(string(translate("Comando sem argumentos!")));
         usage(argv[0]);
         return 1;
     }
@@ -77,7 +116,7 @@ int main(int argc, char* argv[])
         termMode = 1;
 		if ( argc !=2 ) {  // check extra useless argumets in terminal mode
 			//cerr << "Terminal mode requires only one argument" << endl;
-			Client.speak("Modo terminal requer somente um argumento.");
+			Client.speak(string(translate("Modo terminal requer somente um argumento.")));
 			usage(argv[0]);
 			return 1;
 		} 
@@ -87,14 +126,14 @@ int main(int argc, char* argv[])
         scriptMode=1;
 		if ( argc !=3 ) {  // check extra useless argumets in script mode
 			//cerr << "Script mode requires only two arguments" << endl;
-			Client.speak("Modo script requer somente dois argumentos.");
+			Client.speak(string(translate("Modo script requer somente dois argumentos.")));
 			usage(argv[0]);
 			return 1;
 		}
         // test if file exists
         if( access( optarg, F_OK ) == -1 ) {
 			//cerr << "File " << filename << " not found!" << endl;
-			Client.speak("Arquivo " + string(filename) + " não encontrado.");
+			Client.speak(string(translate("Arquivo ")) + string(filename) + string(translate(" não encontrado.")));
 			return 1;
 		}
         break;
@@ -104,7 +143,7 @@ int main(int argc, char* argv[])
 			Client.muteTTS(true);
 			break;
 		 }else{
-			 Client.speak("Parâmetro m deve vir primeiro.");
+			 Client.speak(string(translate("Parâmetro m deve vir primeiro.")));
 			 return 1;
 		 }
 		 break;
@@ -114,18 +153,22 @@ int main(int argc, char* argv[])
       case '?': // error
         if (optopt == 'f'){
           //fprintf (stderr, "Option -%c requires a filename with GoDonnie code.\n", optopt);
-          Client.speak("Parâmetro -f requer um nome de arquivo com código GoDonnie.");
+          Client.speak(string(translate("Parâmetro -f requer um nome de arquivo com código GoDonnie.")));
         }else if (isprint (optopt)){
           //fprintf (stderr, "Unknown option `-%c'.\n", optopt);
           char buffer[50];
-          sprintf (buffer, "Parâmetro `-%c' desconhecido.", optopt);
+          string aux1 = translate("Parâmetro");
+          string aux2 = translate("desconhecido");
+          sprintf (buffer, "%s `-%c' %s.", aux1.c_str(), optopt, aux2.c_str());
           Client.speak(string(buffer));
         }else{
           //fprintf (stderr,
           //         "Unknown option character `\\x%x'.\n",
           //         optopt);
           char buffer[50];
-          sprintf (buffer, "Parâmetro `\\x%x' desconhecido.", optopt);
+          string aux1 = translate("Parâmetro");
+          string aux2 = translate("desconhecido");
+          sprintf (buffer, "%s `\\x%x' %s.", aux1.c_str(), optopt, aux2.c_str());
           Client.speak(string(buffer));
 	    }
 	    usage(argv[0]);
@@ -139,13 +182,13 @@ int main(int argc, char* argv[])
 
   if(!termMode && !scriptMode){
 	 //cerr << "No mode selected" << endl;
-	 Client.speak("Nenhum modo selecionado.");
+	 Client.speak(string(translate("Nenhum modo selecionado.")));
 	 usage(argv[0]);
 	 return 1;
   }
   if(termMode && scriptMode){
 	 //cerr << "Cannot have both modes selected at the same time" << endl;
-	 Client.speak("Não pode ter dois modos selecionados ao mesmo tempo.");
+	 Client.speak(string(translate("Não pode ter dois modos selecionados ao mesmo tempo.")));
 	 usage(argv[0]);
 	 return 1;
   }
@@ -187,7 +230,7 @@ int main(int argc, char* argv[])
 
     if (log == NULL)
     {
-      Client.speak("Não foi possivel criar o arquivo de log");
+      Client.speak(string(translate("Não foi possivel criar o arquivo de log")));
     }
     else
       Client.logFile(log);
@@ -230,7 +273,7 @@ int main(int argc, char* argv[])
 		buffer << t.rdbuf();
 		Client.parseGD((char *)buffer.str().c_str(),false);
 	}else{
-		Client.speak("Erro ao abrir arquivo " + string(filename));
+		Client.speak(string(translate("Erro ao abrir arquivo ")) + string(filename));
 	}
 	t.close();
   }
@@ -239,7 +282,7 @@ int main(int argc, char* argv[])
 
 void usage(char *exec){
 	sleep(0.5);
-	Client.speak("Uso: " + string(exec) + " argumentos. \nArgumentos: \n\t-t: Executa em modo terminal; \n\t-f nome do arquivo: Executa em modo script; \n\t-m: Quando habilitado, imprime mensagens na tela; \n\t-h: Ajuda");
+	Client.speak(string(translate("Uso: ")) + string(exec) + string(translate(" argumentos. \nArgumentos: \n\t-t: Executa em modo terminal; \n\t-f nome do arquivo: Executa em modo script; \n\t-m: Quando habilitado, imprime mensagens na tela; \n\t-h: Ajuda")));
 
 /*	POR ALGUM MOTIVO O TTS NAO FUNCIONA C STRING NESTE FORMATO	 
 	Client.speak(
@@ -275,7 +318,7 @@ int evalCode(int count, int key)
   else
     rl_on_new_line ();
   code.clear();
-  Client.speak("\nNão há código para ser executado.");
+  Client.speak(translate("\nNão há código para ser executado."));
   return 0;
   
 }
@@ -320,15 +363,29 @@ char * command_generator(const char *text, int state)
     }
 
   /* Return the next name which partially matches from the command list. */
-  while (name = commands[list_index].name)
-    {
-      list_index++;
+  string lang = getenv("DONNIE_LANG");
+  if (lang == "pt_BR"){
+    while (name = comandos[list_index].name)
+      {
+        list_index++;
 
-      if (strncmp (name, text, len) == 0)
-        return (strdup(name));
-    }
+        if (strncmp (name, text, len) == 0)
+          return (strdup(name));
+      }
 
-  /* If no names matched, then return NULL. */
-  return ((char *)NULL);
+    /* If no names matched, then return NULL. */
+    return ((char *)NULL);
+  } else if (lang == "en_US"){
+    while (name = commands[list_index].name)
+      {
+        list_index++;
+
+        if (strncmp (name, text, len) == 0)
+          return (strdup(name));
+      }
+
+    /* If no names matched, then return NULL. */
+    return ((char *)NULL);
+  }
 }
 
