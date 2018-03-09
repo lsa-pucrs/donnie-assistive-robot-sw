@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <iostream>
 #include <exception>
 #include "Exception.h"
@@ -10,7 +11,12 @@ parametroException::parametroException(string error)
 }
 parametroException::parametroException()
 {
-	this->m_msg = "Parametro inválido\n";
+	generator gen;
+	gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_domain("Exception");
+	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+	this->m_msg = translate("Parametro inválido\n");
 }
 const char* parametroException::what() const throw()
 {
@@ -24,7 +30,12 @@ sintaxeException::sintaxeException(string error)
 }
 sintaxeException::sintaxeException()
 {
-	this->m_msg = "Erro de Sintaxe\n";
+	generator gen;
+	gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_domain("Exception");
+	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+	this->m_msg = translate("Erro de Sintaxe\n");
 }
 const char* sintaxeException::what() const throw()
 {
@@ -38,7 +49,12 @@ variavelException::variavelException(string error)
 }
 variavelException::variavelException()
 {
-	this->m_msg = "Erro Variável Inexistente\n";
+	generator gen;
+	gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_domain("Exception");
+	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+	this->m_msg = translate("Erro Variável Inexistente\n");
 }
 const char* variavelException::what() const throw()
 {
@@ -51,7 +67,12 @@ invalidValueException::invalidValueException(string error)
 }
 invalidValueException::invalidValueException()
 {
-	this->m_msg = "Valor Invalido para o Parametro\n";
+	generator gen;
+	gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_domain("Exception");
+	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+	this->m_msg = translate("Valor Invalido para o Parametro\n");
 }
 const char* invalidValueException::what() const throw()
 {
