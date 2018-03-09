@@ -153,13 +153,13 @@ sudo apt-get install -y libpq-dev libpqxx-dev
 ##################################################
 # Downloading source code 
 ##################################################
-#echo -e "${GREEN}Downloading Player source code from GitHub... ${NC}\n"
+echo -e "${GREEN}Downloading Player source code from GitHub... ${NC}\n"
 git clone https://github.com/lsa-pucrs/Player.git
 
-#echo -e "${GREEN}Downloading Stage source code from GitHub... ${NC}\n"
+echo -e "${GREEN}Downloading Stage source code from GitHub... ${NC}\n"
 git clone https://github.com/lsa-pucrs/Stage.git
 
-#echo -e "${GREEN}Downloading Donnie source code from GitHub... ${NC}\n"
+echo -e "${GREEN}Downloading Donnie source code from GitHub... ${NC}\n"
 git clone -b devel https://github.com/lsa-pucrs/donnie-assistive-robot-sw.git
 
 ##################################################
@@ -249,6 +249,10 @@ sudo apt-get install -y libreadline-dev
 sudo apt-get install -y libantlr3c-dev
 #for language translation
 sudo apt-get install -y libboost-locale-dev
+#generate supported languages
+echo -e "${GREEN}Generating supported languages (en_US and pt_BR)... ${NC}\n"
+sudo locale-gen en_US
+sudo locale-gen pt_BR
 
 ## UNCOMMENT HERE TO COMPILE THE DOCUMENTATION
 # std terminal used in several linux distributions
