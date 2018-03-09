@@ -27,6 +27,12 @@ using namespace std;
 //namespace for use with the player library
 using namespace PlayerCc;
 
+// Localization libraries 
+#include <boost/locale.hpp>
+using namespace boost::locale;
+using boost::locale::translate;
+using boost::locale::format;
+
 struct PathNodes
 {
   double posx, posy;

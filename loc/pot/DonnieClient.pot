@@ -1,0 +1,45 @@
+# Translation template for DonnieClient code.
+# Copyright (C) 2018 Laboratório de Sistemas Autônomos
+# This file is distributed under the same license as the donnie-assistive-robot-sw package.
+# Renan Maidana <renanmaidana@gmail.com>, 2018.
+#
+#, fuzzy
+msgid   ""
+msgstr  "Project-Id-Version: DonnieClient 1.0\n"
+        "Report-Msgid-Bugs-To: renanmaidana@gmail.com\n"
+        "POT-Creation-Date: 2018-03-09 01:09-0300\n"
+        "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+        "Last-Translator: Renan Maidana <renanmaidana@gmail.com>\n"
+        "Language-Team: LANGUAGE <LL@li.org>\n"
+        "Language: \n"
+        "MIME-Version: 1.0\n"
+        "Content-Type: text/plain; charset=UTF-8\n"
+        "Content-Transfer-Encoding: 8bit\n"
+
+#: client/godonnie/DonnieClient.cpp:180 client/godonnie/DonnieClient.cpp:223
+msgid   " não encontrado"
+msgstr  ""
+
+#: client/godonnie/DonnieClient.cpp:59
+msgid   " porta "
+msgstr  ""
+
+#: client/godonnie/DonnieClient.cpp:180 client/godonnie/DonnieClient.cpp:223
+msgid   "Erro: arquivo de cores "
+msgstr  ""
+
+#: client/godonnie/DonnieClient.cpp:59
+msgid   "Não foi possivel conectar no robô com IP "
+msgstr  ""
+
+#: client/godonnie/DonnieClient.cpp:86
+msgid   "Não foi possível conectar no robô "
+msgstr  ""
+
+#: client/godonnie/DonnieClient.cpp:61
+msgid   "Possivelmente o Player não foi executado ou as variaveis DONNIE_IP e DONNIE_PORT estão erradas"
+msgstr  ""
+
+#: client/godonnie/DonnieClient.cpp:87
+msgid   "Possivelmente o arquivo cfg está incorreto."
+msgstr  ""
