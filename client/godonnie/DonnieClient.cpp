@@ -13,7 +13,6 @@ const double  SIDE_RANGER = 0.05;
 const double  FRONT_RANGER = 0.06;
 const double  BACK_RANGER = 0.05;
 
-
 #ifndef LANG 
 #define LANG "pt-br"
 #endif
@@ -42,14 +41,25 @@ DonnieClient::DonnieClient()
 	if(port==0) port = 6665;
 	muted = false;
 
+	// Set up language environment
+	generator gen;
+	gen.add_messages_path(string(GetEnv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_domain("DonnieClient");
+	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+	cout.imbue(loc);
+	cerr.imbue(loc);
+
 	try{
 		robot = new PlayerClient(host,port);
 	} catch (PlayerError e){
 		#ifndef NDEBUG
 			cerr << e << endl;
 		#endif
-		cerr << "Não foi possivel conectar no robô com IP " << host << " porta " << port << endl;
-		cerr << "Possivelmente o Player não foi executado ou as variaveis DONNIE_IP e DONNIE_PORT estão erradas" << endl;
+		cerr << translate("Não foi possivel conectar no robô com IP ") << host << translate(" porta ") 
+			 << port << endl;
+		cerr << translate("Possivelmente o Player não foi executado ou as variaveis DONNIE_IP e DONNIE_PORT estão erradas") 
+			 << endl;
 		exit(1);
 	}
 	
@@ -73,8 +83,8 @@ DonnieClient::DonnieClient()
 		#ifndef NDEBUG
 			cerr << e << endl;
 		#endif
-		cerr << "Não foi possível conectar no robô " << endl;
-		cerr << "Possivelmente o arquivo cfg está incorreto." << endl;
+		cerr << translate("Não foi possível conectar no robô ") << endl;
+		cerr << translate("Possivelmente o arquivo cfg está incorreto.") << endl;
 		exit(1);
 	}
 	
@@ -167,7 +177,7 @@ string DonnieClient::value_to_color(int color_value)
 		file.close();
 	}
 	else{
-		cout << "Erro: arquivo de cores " << donnie_path << " não encontrado" << endl;
+		cout << translate("Erro: arquivo de cores ") << donnie_path << translate(" não encontrado") << endl;
 		exit(1);
 	}
 	
@@ -210,7 +220,7 @@ int DonnieClient::color_to_value(string input_color)
 		file.close();
 	}
 	else{
-		cout << "Erro: arquivo de cores " << donnie_path << " não encontrado" << endl;
+		cout << translate("Erro: arquivo de cores ") << donnie_path << translate(" não encontrado") << endl;
 		exit(1);
 	}
 
