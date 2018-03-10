@@ -14,6 +14,8 @@ options
 // Header 
 @parser::header{
 #include <antlr3baserecognizer.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifndef def_displayRecognitionErrorNew
 #define def_displayRecognitionErrorNew
@@ -45,6 +47,7 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 	
 	static void displayRecognitionErrorNew(pANTLR3_BASE_RECOGNIZER recognizer, pANTLR3_UINT8 * tokenNames)
 	{
+		char* lang = getenv("DONNIE_LANG");
 		char messageAux[100];
 		if(flagMsgError == 1){
 			memset(messageError, 0, strlen(messageError));
@@ -89,8 +92,11 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 
 		// Next comes the line number
 		//
-		
-		sprintf(messageAux, "Erro na linha \%d ", recognizer->state->exception->line);
+		if (strcmp(lang,"pt_BR") == 0){
+			sprintf(messageAux, "Erro na linha \%d ", recognizer->state->exception->line);
+		} else if (strcmp(lang,"en_US") == 0){
+			sprintf(messageAux, "Error in line \%d ", recognizer->state->exception->line);
+		}
 		strcat(messageError, messageAux);
 		//ANTLR3_FPRINTF(stderr, "Erro na linha \%d ", recognizer->state->exception->line);
 		//ANTLR3_FPRINTF(stderr, " : error \%d : \%s", recognizer->state->exception->type, (pANTLR3_UINT8)(recognizer->state->exception->message));
@@ -113,7 +119,11 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 
 			//ANTLR3_FPRINTF(stderr, ", at offset \%d", recognizer->state->exception->charPositionInLine);
 			//ANTLR3_FPRINTF(stderr, "e na coluna \%d. ", (recognizer->state->exception->charPositionInLine+1));
-			sprintf(messageAux, "e na coluna \%d. ", recognizer->state->exception->charPositionInLine+1);
+			if (strcmp(lang,"pt_BR") == 0){
+				sprintf(messageAux, "e na coluna \%d. ", recognizer->state->exception->charPositionInLine+1);
+			} else if (strcmp(lang,"en_US") == 0){
+				sprintf(messageAux, ", in column \%d. ", recognizer->state->exception->charPositionInLine+1);
+			}
 			strcat(messageError, messageAux);
 			if  (theToken != NULL)
 			{
@@ -121,7 +131,11 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 				{
 					//ANTLR3_FPRINTF(stderr, ", at <EOF>");
 					//ANTLR3_FPRINTF(stderr, " no fim do arquivo.");
-					sprintf(messageAux, "no fim do arquivo.");
+					if (strcmp(lang,"pt_BR") == 0){
+						sprintf(messageAux, "no fim do arquivo.");
+					} else if (strcmp(lang,"en_US") == 0){
+						sprintf(messageAux, "at end of file.");
+					}
 					strcat(messageError, messageAux);
 				}
 				else
@@ -129,13 +143,21 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 					// Guard against null text in a token
 					//
 					//ANTLR3_FPRINTF(stderr, "\n    near \%s\n    ", ttext == NULL ? (pANTLR3_UINT8)"<no text for the token>" : ttext->chars);
-					pANTLR3_UINT8 temp = (pANTLR3_UINT8)"Sem token identificado";
-					
+					if (strcmp(lang,"pt_BR") == 0){
+						pANTLR3_UINT8 temp = (pANTLR3_UINT8)"Sem token identificado";
+					} else if (strcmp(lang,"en_US") == 0){
+						pANTLR3_UINT8 temp = (pANTLR3_UINT8)"No identified token";
+					}
+
 					pANTLR3_STRING ttext2 = theToken->getText(theToken);
 					
 					//ANTLR3_FPRINTF(stderr, "\n\n \%s \n\n", ttext->chars);
 					//ANTLR3_FPRINTF(stderr, "Verificar comando \%s", ttext == NULL ? (pANTLR3_UINT8)"<palavra não identificada>" : ttext2->chars);
-					sprintf(messageAux, "Verificar comando \%s", ttext == NULL ? (pANTLR3_UINT8)"<palavra não identificada>" : ttext2->chars);
+					if (strcmp(lang,"pt_BR") == 0){
+						sprintf(messageAux, "Verificar comando \%s", ttext == NULL ? (pANTLR3_UINT8)"<palavra não identificada>" : ttext2->chars);
+					} else if (strcmp(lang,"en_US") == 0){
+						sprintf(messageAux, "Verify command \%s", ttext == NULL ? (pANTLR3_UINT8)"<word not identified>" : ttext2->chars);
+					}
 					strcat(messageError, messageAux);
 				}
 			}
@@ -158,11 +180,19 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 					theToken	= (pANTLR3_COMMON_TOKEN)    theBaseTree->getToken(theBaseTree);
 				}
 				//ANTLR3_FPRINTF(stderr, ", na coluna \%d", (theBaseTree->getCharPositionInLine(theBaseTree)+1));
-				sprintf(messageAux, ", na coluna \%d", (theBaseTree->getCharPositionInLine(theBaseTree)+1));
+				if (strcmp(lang,"pt_BR") == 0){
+					sprintf(messageAux, ", na coluna \%d", (theBaseTree->getCharPositionInLine(theBaseTree)+1));
+				} else if (strcmp(lang,"en_US") == 0){
+					sprintf(messageAux, ", in column \%d", (theBaseTree->getCharPositionInLine(theBaseTree)+1));
+				}
 				strcat(messageError, messageAux);
 				
 				//ANTLR3_FPRINTF(stderr, ", na palavra \%s", ttext->chars);
-				sprintf(messageAux, ", na palavra \%s", ttext->chars);
+				if (strcmp(lang,"pt_BR") == 0){
+					sprintf(messageAux, ", na palavra \%s", ttext->chars);
+				} else if (strcmp(lang,"en_US") == 0){
+					sprintf(messageAux, ", in word \%s", ttext->chars);
+				}
 				strcat(messageError, messageAux);
 			}
 			break;
@@ -200,7 +230,11 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 			{
 				//ANTLR3_FPRINTF(stderr, " : Extraneous input...");
 				//ANTLR3_FPRINTF(stderr, " : Entrada desconhecida...");
-				sprintf(messageAux, " : Entrada desconhecida...");
+				if (strcmp(lang,"pt_BR") == 0){
+					sprintf(messageAux, " : Entrada desconhecida...");
+				} else if (strcmp(lang,"en_US") == 0){
+					sprintf(messageAux, " : Entry unknown...");
+				}
 				strcat(messageError, messageAux);
 				
 			}
@@ -210,14 +244,22 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 				{
 					//ANTLR3_FPRINTF(stderr, " : Extraneous input - expected <EOF>\n");
 					//ANTLR3_FPRINTF(stderr, " : Entrada desconhecida - Esperava o fim do arquivo\n");
-					sprintf(messageAux, " : Entrada desconhecida - Esperava o fim do arquivo\n");
+					if (strcmp(lang,"pt_BR") == 0){
+						sprintf(messageAux, " : Entrada desconhecida - Esperava o fim do arquivo\n");
+					} else if (strcmp(lang,"en_US") == 0){
+						sprintf(messageAux, " : Entry unknown - End of file expected\n");
+					}
 					strcat(messageError, messageAux);
 				}
 				else
 				{
 					//ANTLR3_FPRINTF(stderr, " : Extraneous input - expected \%s ...\n", tokenNames[ex->expecting]);
 					//ANTLR3_FPRINTF(stderr, " : Entrada desconhecida - esperando \%s ...\n", tokenNames[ex->expecting]);
-					sprintf(messageAux, " : Entrada desconhecida - esperando \%s ...\n", tokenNames[ex->expecting]);
+					if (strcmp(lang,"pt_BR") == 0){
+						sprintf(messageAux, " : Entrada desconhecida - esperando \%s ...\n", tokenNames[ex->expecting]);
+					} else if (strcmp(lang,"en_US") == 0){
+						sprintf(messageAux, " : Entry unknown - \%s expected ...\n", tokenNames[ex->expecting]);
+					}
 					strcat(messageError, messageAux);
 				}
 			}
@@ -234,7 +276,11 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 			{
 				//ANTLR3_FPRINTF(stderr, " : Missing token (\%d)...\n", ex->expecting);
 				//ANTLR3_FPRINTF(stderr, " : token faltando (\%d)...\n", ex->expecting);
-				sprintf(messageAux, " : token faltando (\%d)...\n", ex->expecting);
+				if (strcmp(lang,"pt_BR") == 0){
+					sprintf(messageAux, " : token faltando (\%d)...\n", ex->expecting);
+				} else if (strcmp(lang,"en_US") == 0){
+					sprintf(messageAux, " : missing token (\%d)...\n", ex->expecting);
+				}
 				strcat(messageError, messageAux);
 			}
 			else
@@ -243,7 +289,11 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 				{
 					//ANTLR3_FPRINTF(stderr, " : Missing <EOF>\n");
 					//ANTLR3_FPRINTF(stderr, " : Faltando fim do aquivo\n");
-					sprintf(messageAux, " : Faltando fim do aquivo\n");
+					if (strcmp(lang,"pt_BR") == 0){
+						sprintf(messageAux, " : Faltando fim do arquivo\n");
+					} else if (strcmp(lang,"en_US") == 0){
+						sprintf(messageAux, " : End of file missing\n");
+					}
 					strcat(messageError, messageAux);
 				}
 				else
@@ -266,8 +316,12 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 			// to complete a parse for instance.
 			//
 			//ANTLR3_FPRINTF(stderr, " : syntax error...\n");  
-			//ANTLR3_FPRINTF(stderr, " : Erro de sintaxe...\n");   
-			sprintf(messageAux, " : Erro de sintaxe...\n");   
+			//ANTLR3_FPRINTF(stderr, " : Erro de sintaxe...\n"); 
+			if (strcmp(lang,"pt_BR") == 0){
+				sprintf(messageAux, " : Erro de sintaxe...\n");   
+			} else if (strcmp(lang,"en_US") == 0){
+				sprintf(messageAux, " : Syntax error...\n");   
+			}  
 			strcat(messageError, messageAux);
 			break;
 
@@ -286,7 +340,11 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 			{
 				//ANTLR3_FPRINTF(stderr, " : syntax error...\n");
 				//ANTLR3_FPRINTF(stderr, " : Erro de sintaxe...\n");
-				sprintf(messageAux, " : Erro de sintaxe...\n");   
+				if (strcmp(lang,"pt_BR") == 0){
+					sprintf(messageAux, " : Erro de sintaxe...\n");   
+				} else if (strcmp(lang,"en_US") == 0){
+					sprintf(messageAux, " : Syntax error...\n");   
+				}  
 				strcat(messageError, messageAux);
 			}
 			else
@@ -295,14 +353,22 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 				{
 					//ANTLR3_FPRINTF(stderr, " : expected <EOF>\n");
 					//ANTLR3_FPRINTF(stderr, " : esperando fim do arquivo\n");
-					sprintf(messageAux, " : esperando fim do arquivo\n");
+					if (strcmp(lang,"pt_BR") == 0){
+						sprintf(messageAux, " : esperando fim do arquivo\n");
+					} else if (strcmp(lang,"en_US") == 0){
+						sprintf(messageAux, " : end of file expected\n");
+					}  
 					strcat(messageError, messageAux);
 				}
 				else
 				{
 					//ANTLR3_FPRINTF(stderr, " : expected \%s ...\n", tokenNames[ex->expecting]);
 					//ANTLR3_FPRINTF(stderr, " : esperando \%s ...\n", tokenNames[ex->expecting]);
-					sprintf(messageAux, " : esperando \%s ...\n", tokenNames[ex->expecting]);
+					if (strcmp(lang,"pt_BR") == 0){
+						sprintf(messageAux, " : esperando \%s ...\n", tokenNames[ex->expecting]);
+					} else if (strcmp(lang,"en_US") == 0){
+						sprintf(messageAux, " : \%s expected ...\n", tokenNames[ex->expecting]);
+					}  
 					strcat(messageError, messageAux);
 				}
 			}
@@ -381,7 +447,11 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 			//
 			//ANTLR3_FPRINTF(stderr, " : missing elements...\n");
 			//ANTLR3_FPRINTF(stderr, " :  faltando elementos...\n");
-			sprintf(messageAux, " :  faltando elementos...\n");
+			if (strcmp(lang,"pt_BR") == 0){
+				sprintf(messageAux, " :  faltando elementos...\n");
+			} else if (strcmp(lang,"en_US") == 0){
+				sprintf(messageAux, " :  missing elements...\n");
+			} 
 			strcat(messageError, messageAux);
 			break;
 
@@ -394,7 +464,11 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 			//
 			//ANTLR3_FPRINTF(stderr, " : syntax not recognized...\n");
 			//ANTLR3_FPRINTF(stderr, " : sintaxe não reconhecida...\n");
-			sprintf(messageAux, " : sintaxe não reconhecida...\n");
+			if (strcmp(lang,"pt_BR") == 0){
+				sprintf(messageAux, " : sintaxe não reconhecida...\n");
+			} else if (strcmp(lang,"en_US") == 0){
+				sprintf(messageAux, " : syntax not recognized...\n");
+			} 
 			strcat(messageError, messageAux);
 			break;
 		}
