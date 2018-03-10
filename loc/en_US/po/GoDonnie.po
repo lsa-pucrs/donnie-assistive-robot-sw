@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../client/godonnie/GoDonnie.cpp:321
 msgid "\nNão há código para ser executado."
-msgstr "\nThere is no code to run."
+msgstr "\nThere is no code to be executed."
 
 #: ../client/godonnie/GoDonnie.cpp:285
 msgid " argumentos. \nArgumentos: \n\t-t: Executa em modo terminal; \n\t-f nome do arquivo: Executa em modo script; \n\t-m: Quando habilitado, imprime mensagens na tela; \n\t-h: Ajuda"

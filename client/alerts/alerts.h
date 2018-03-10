@@ -7,7 +7,7 @@
 #include "utils.h"
 #include <libplayerc++/playerc++.h>
 
-// Localization libraries (RENAN)
+// Localization libraries 
 #include <boost/locale.hpp>
 
 using namespace std;
