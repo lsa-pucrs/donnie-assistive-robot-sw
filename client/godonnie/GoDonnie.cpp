@@ -363,29 +363,29 @@ char * command_generator(const char *text, int state)
     }
 
   /* Return the next name which partially matches from the command list. */
-  string lang = getenv("DONNIE_LANG");
-  if (lang == "pt_BR"){
+  char *lang = getenv("DONNIE_LANG");
+  if (strcmp(lang,"pt_BR") == 0)
+  {
     while (name = comandos[list_index].name)
-      {
-        list_index++;
+    {
+      list_index++;
 
-        if (strncmp (name, text, len) == 0)
-          return (strdup(name));
-      }
-
-    /* If no names matched, then return NULL. */
-    return ((char *)NULL);
-  } else if (lang == "en_US"){
-    while (name = commands[list_index].name)
-      {
-        list_index++;
-
-        if (strncmp (name, text, len) == 0)
-          return (strdup(name));
-      }
-
-    /* If no names matched, then return NULL. */
-    return ((char *)NULL);
+      if (strncmp (name, text, len) == 0)
+        return (strdup(name));
+    }
   }
+  else if (strcmp(lang,"en_US") == 0)
+  {
+    while (name = commands[list_index].name)
+    {
+      list_index++;
+
+      if (strncmp (name, text, len) == 0)
+        return (strdup(name));
+    }
+  }
+
+  /* If no names matched, then return NULL. */
+  return ((char *)NULL);
 }
 
