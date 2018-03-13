@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../client/godonnie/GoDonnie.cpp:321
+#: ../client/godonnie/GoDonnie.cpp:328
 msgid "\nNão há código para ser executado."
 msgstr "\nNão há código para ser executado."
 
