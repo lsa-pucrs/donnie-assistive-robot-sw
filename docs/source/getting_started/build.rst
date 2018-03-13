@@ -5,61 +5,46 @@
 
 .. _getting-started:
 
-==============================
-Bill of Materials for the Boats
-==============================
+==================================
+How to Build Your Own Donnie Robot
+==================================
+
+To build your own Donnie robot, please refer to the following repositories (github login and read access required):
+
+- `Donnie electronics <https://github.com/lsa-pucrs/donnie-assistive-robot-hw>`_
+- `Donnie 3D printing <https://github.com/lsa-pucrs/donnie-assistive-robot-3d>`_
 
 
-Mandatory Resources
------------------------------
+Install Donnie's Software on an Embedded Computer (Raspberry Pi)
+----------------------------------------------------------------------
 
-all missions require at least these parts.
+Once the eletronics and 3D printing are done, the operating system and Donnie's software must be installed in the robot's Raspberry Pi.
 
-.. PLACE HERE THE LABELS FOR ALL IMAGES
+Loading the Donnie Image into the Pi's SD Card
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. |logo1| image:: logo1.png    
-   :scale: 100%
-   :align: middle
-.. |logo2| image:: logo2.png
-   :scale: 50%
-   :align: top
+The easiest way to setup the embedded computer is to use the pre-built image (comming soon!).
+Please follow these steps to burn the SD card:
 
-+---------+---------+
-| |logo1| | |logo2| |
-+---------+---------+
+.. code-block:: none
 
-+------------------------+------------------+------------+------------------+
-| Item name              | photo            | cost(US$)  | link to provider |
-+========================+==================+============+==================+
-| body row 1, column 1   | |logo1|          | column 2   | column 3         |
-+------------------------+------------------+------------+------------------+
-| body row 2             | |logo1|          | ...        | ...              |
-+------------------------+------------------+------------+------------------+
+   wget xxxxxxxx.img
+   continue ...
 
 
+Compile, Configure the OS, and Install the Donnie Image into the SD Card
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Optional Resources
------------------------------
+This option is for programmers experient with Raspberry Pi.
 
-depending on the mission's goals, these other resources are also available.
+Raspbian 8.0 (`Jessie <https://www.raspberrypi.org/downloads/raspbian/>`_) is the recommended OS distribution for the robot. 
+Log onto Donnie's embedded computer, open a terminal, and run the following to download and execute the software installation script:
 
-.. PLACE HERE THE LABELS FOR ALL IMAGES
+.. code-block:: none
 
-.. |logo1| image:: logo1.png    
-   :scale: 100%
-   :align: middle
-.. |logo2| image:: logo2.png
-   :scale: 50%
-   :align: top
+   mkdir ~/donnie; cd ~/donnie
+   wget https://github.com/lsa-pucrs/donnie-assistive-robot-sw/raw/devel/install-rpi.sh
+   chmod +x ./install-rpi.sh 
+   ./install-rpi.sh
 
-+---------+---------+
-| |logo1| | |logo2| |
-+---------+---------+
-
-+------------------------+------------------+------------+------------------+
-| Item name              | photo            | cost(US$)  | link to provider |
-+========================+==================+============+==================+
-| body row 1, column 1   | |logo1|          | column 2   | column 3         |
-+------------------------+------------------+------------+------------------+
-| body row 2             | |logo1|          | ...        | ...              |
-+------------------------+------------------+------------+------------------+
+Experienced programmers can configure the same paramerters presented `here <install.rst>`_, for the Raspberry Pi.

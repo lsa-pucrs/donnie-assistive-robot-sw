@@ -16,15 +16,20 @@ About Donnie
     :alt: sempre use alt para descreve a imagem p um deficiente visual
 
 
-Donnie is an assistive robot, meant primarily for teaching programming to visually impaired students.
-It was developed in the Laboratório de Sistemas Autônomos (LSA_) of the Pontific Catholic University of Rio Grande do Sul (PUCRS), Brazil.
+Donnie is an assistive technology project, whose objective is to use robotics to facilitate programming teaching to visually impaired students.
+It is divided in two main parts:
+
+- The construction and fine-tuning of the titular mobile robot, Donnie;
+- The project's software stack, including an intuitive parser/interpreter and a robot simulation environment;
+
+The project is in its second version, developed in the Laboratório de Sistemas Autônomos (LSA_) of the Pontific Catholic University of Rio Grande do Sul (PUCRS), Brazil.
 
 .. _LSA: http://lsa-pucrs.github.io
 
 .. talk about LSA, link to the webpage
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
    
    source/getting_started/index
 
@@ -38,8 +43,8 @@ Software Description
    source/player/index
    source/stage/index   
    
-Hardware Descrition
------------------
+Hardware Description
+------------------------
 
 .. toctree::
    :maxdepth: 3
@@ -49,7 +54,7 @@ Hardware Descrition
    source/arduino/index
 
 Additional Resources
------------------
+---------------------
 
 .. toctree::
    :maxdepth: 3
