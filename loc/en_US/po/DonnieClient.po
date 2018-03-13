@@ -100,7 +100,7 @@ msgstr "Error: color file "
 #: ../client/godonnie/DonnieClient.cpp:637
 #: ../client/godonnie/DonnieClient.cpp:906
 msgid "Espiando"
-msgstr "Peeking"
+msgstr "Scanning"
 
 #: ../client/godonnie/DonnieClient.cpp:313
 msgid "Estou no x "

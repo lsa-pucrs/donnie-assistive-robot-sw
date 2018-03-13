@@ -315,13 +315,20 @@ int evalCode(int count, int key)
     rl_on_new_line ();
     return 1;
   }
-  else
+  else{
     rl_on_new_line ();
-  code.clear();
-  string str_speak = translate("\nNão há código para ser executado.");
-  Client.speak(str_speak);
-  return 0;
-  
+    code.clear();
+
+    generator gen;
+    gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+    gen.add_messages_domain("GoDonnie");
+    locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
+    locale::global(loc);
+    
+    string str_speak = translate("\nNão há código para ser executado.");
+    Client.speak(str_speak);
+    return 0;
+  }
 }
 
 

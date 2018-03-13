@@ -83,7 +83,7 @@ string Historic::getLast()
 	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);
 	cout.imbue(loc);
-	cerr.imbue(loc);
+	history.imbue(loc);
 
 	if (commandsList.size() > 0){
 		last = commandsList.back();
