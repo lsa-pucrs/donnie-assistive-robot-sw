@@ -7,7 +7,7 @@
 msgid   ""
 msgstr  "Project-Id-Version: PACKAGE VERSION\n"
         "Report-Msgid-Bugs-To: \n"
-        "POT-Creation-Date: 2018-03-09 04:28-0300\n"
+        "POT-Creation-Date: 2018-03-13 03:50-0300\n"
         "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
         "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
         "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,25 +16,25 @@ msgstr  "Project-Id-Version: PACKAGE VERSION\n"
         "Content-Type: text/plain; charset=UTF-8\n"
         "Content-Transfer-Encoding: 8bit\n"
 
-#: ../../client/godonnie/Compiler.cpp:500
+#: ../../client/godonnie/Compiler.cpp:508
 msgid   " segundos."
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:276
-#: ../../client/godonnie/Compiler.cpp:298
+#: ../../client/godonnie/Compiler.cpp:281
+#: ../../client/godonnie/Compiler.cpp:306
 msgid   ", bateu"
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:278
-#: ../../client/godonnie/Compiler.cpp:300
+#: ../../client/godonnie/Compiler.cpp:283
+#: ../../client/godonnie/Compiler.cpp:308
 msgid   ", não bateu"
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:464
+#: ../../client/godonnie/Compiler.cpp:472
 msgid   "COMMENT: "
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:734
+#: ../../client/godonnie/Compiler.cpp:744
 msgid   "EXIT"
 msgstr  ""
 
@@ -42,19 +42,19 @@ msgstr  ""
 msgid   "Erro ao salvar comando no log"
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:697
+#: ../../client/godonnie/Compiler.cpp:707
 msgid   "Nenhum comando executado, posição ["
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:647
+#: ../../client/godonnie/Compiler.cpp:655
 msgid   "Número de argumentos invalido."
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:451
+#: ../../client/godonnie/Compiler.cpp:459
 msgid   "O som foi desligado com sucesso"
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:447
+#: ../../client/godonnie/Compiler.cpp:455
 msgid   "O som foi ligado com sucesso"
 msgstr  ""
 
@@ -70,19 +70,19 @@ msgstr  ""
 msgid   "Out of memory trying to allocate token stream\n"
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:312
+#: ../../client/godonnie/Compiler.cpp:320
 msgid   "PD: "
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:329
+#: ../../client/godonnie/Compiler.cpp:337
 msgid   "PE: "
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:267
+#: ../../client/godonnie/Compiler.cpp:269
 msgid   "PF: "
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:289
+#: ../../client/godonnie/Compiler.cpp:294
 msgid   "PT: "
 msgstr  ""
 
@@ -90,15 +90,15 @@ msgstr  ""
 msgid   "Parse error"
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:486
+#: ../../client/godonnie/Compiler.cpp:494
 msgid   "SPEAK: "
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:753
+#: ../../client/godonnie/Compiler.cpp:763
 msgid   "Sintaxe não conhecida\n"
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:431
+#: ../../client/godonnie/Compiler.cpp:439
 msgid   "Sintaxe não conhecida para comando '"
 msgstr  ""
 
@@ -110,33 +110,31 @@ msgstr  ""
 msgid   "Unable to create the lexer due to malloc() failure\n"
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:497
+#: ../../client/godonnie/Compiler.cpp:505
 msgid   "WAIT: "
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:274
-#: ../../client/godonnie/Compiler.cpp:296
+#: ../../client/godonnie/Compiler.cpp:279
+#: ../../client/godonnie/Compiler.cpp:304
 msgid   "andou "
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:321
-#: ../../client/godonnie/Compiler.cpp:338
+#: ../../client/godonnie/Compiler.cpp:216
 msgid   "bateu"
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:500
+#: ../../client/godonnie/Compiler.cpp:508
 msgid   "esperando "
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:819
+#: ../../client/godonnie/Compiler.cpp:829
 msgid   "null comp"
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:321
-#: ../../client/godonnie/Compiler.cpp:338
+#: ../../client/godonnie/Compiler.cpp:217
 msgid   "não bateu"
 msgstr  ""
 
-#: ../../client/godonnie/Compiler.cpp:539
+#: ../../client/godonnie/Compiler.cpp:547
 msgid   "while"
 msgstr  ""

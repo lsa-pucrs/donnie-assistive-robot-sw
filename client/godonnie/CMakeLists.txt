@@ -72,6 +72,12 @@ message(STATUS "ANTLR3 Include -- ${LANTLR3_INCLUDE_DIR}")
 #########
 # run antlr
 #########
+# Check for DONNIE_LANG variable
+IF (NOT DEFINED ENV{DONNIE_LANG})
+	# If not defined, set to system language
+	SET (ENV{DONNIE_LANG} ENV{LANGUAGE})
+ENDIF()
+
 ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/GoDonnie.tokens
   COMMAND java -jar ${CMAKE_CURRENT_SOURCE_DIR}/Antlr/antlr-3.2.jar -o ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/GoDonnie.g
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/GoDonnie.g

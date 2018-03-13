@@ -59,18 +59,18 @@ COMMAND commands[] = {
   { (char*)"tr ", (char*)"Turn right" },
   { (char*)"tl ", (char*)"Turn left" },
   { (char*)"distance", (char*)"Distance sensor" },
-  { (char*)"peek", (char*)"Peek for objects" },
+  { (char*)"scan", (char*)"Scan for objects" },
   { (char*)"color", (char*)"Searches for a color" },
   { (char*)"position ", (char*)"Robot position" },
-  { (char*)"status", (char*)"Current status" },
-  { (char*)"create ", (char*)"Create variable" },
+  { (char*)"state", (char*)"Current state of the robot" },
+  { (char*)"var ", (char*)"Create variable" },
   { (char*)"for ", (char*)"For loop" },
   { (char*)"repeat ", (char*)"Repeat loop" },
   { (char*)"while ", (char*)"While laço" },
   { (char*)"if ", (char*)"Conditional" },
   { (char*)"procedure ", (char*)"Create procedure" },
   { (char*)"speak ", (char*)"Speak" },
-  { (char*)"exit", (char*)"Close the interpreter" },
+  { (char*)"quit", (char*)"Close the interpreter" },
   { (char*)"sound", (char*)"Turns sound on and off" },
   { (char*)"history", (char*)"Movement command history" },
   { (char *)NULL, (char *)NULL }
@@ -318,7 +318,8 @@ int evalCode(int count, int key)
   else
     rl_on_new_line ();
   code.clear();
-  Client.speak(translate("\nNão há código para ser executado."));
+  string str_speak = translate("\nNão há código para ser executado.");
+  Client.speak(str_speak);
   return 0;
   
 }
@@ -363,6 +364,7 @@ char * command_generator(const char *text, int state)
     }
 
   /* Return the next name which partially matches from the command list. */
+  /* In pt_BR */  
   char *lang = getenv("DONNIE_LANG");
   if (strcmp(lang,"pt_BR") == 0)
   {
@@ -374,6 +376,7 @@ char * command_generator(const char *text, int state)
         return (strdup(name));
     }
   }
+  /* In en_US */
   else if (strcmp(lang,"en_US") == 0)
   {
     while (name = commands[list_index].name)
