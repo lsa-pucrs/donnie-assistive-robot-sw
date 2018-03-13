@@ -94,7 +94,6 @@ int ExprTreeEvaluator::parseGD(char* textIn, bool enable_log)
   locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
   locale::global(loc);
   cout.imbue(loc);
-  cerr.imbue(loc);
 
   // remove accented characters
   string code = cleanAccents(string(textIn));
@@ -213,9 +212,11 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
     locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
     locale::global(loc);
     cout.imbue(loc);
-    cerr.imbue(loc);
 
-	  std::ostringstream sayStr;
+    string crash_str = translate("bateu");
+    string ncrash_str = translate("não bateu");
+
+	std::ostringstream sayStr;
     pANTLR3_COMMON_TOKEN tok = tree->getToken(tree);
     if(tok) {
         switch(tok->type) {
@@ -272,6 +273,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             int steps_taken = Donnie->moveForward(distance);
             // if less steps were taken, then report a bump
             std::ostringstream distanceStr;
+            
+            distanceStr.imbue(loc);
+
             distanceStr << translate("andou ") << steps_taken;
             if ((steps_taken < distance) || Donnie->bumped()){
               distanceStr << translate(", bateu");
@@ -294,6 +298,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             int steps_taken = Donnie->moveBackward(distance);
             // if less steps were taken, then report a bump
             std::ostringstream distanceStr;
+
+            distanceStr.imbue(loc);
+            
             distanceStr << translate("andou ") << steps_taken;
             if ((steps_taken < distance) || Donnie->bumped()){
               distanceStr << translate(", bateu");
@@ -319,7 +326,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			// TODO: o comando pode ser interrompido por uma colizao.
 			// assim, está errado assumir que a distancia pedida será a distancia percorrida
             string command = string(getText(tree)) + " " + to_string(int(distance));
-            History->addCommand(command,(Donnie->bumped() ? translate("bateu") : translate("não bateu")));            
+            History->addCommand(command,(Donnie->bumped() ? crash_str : ncrash_str));            
             break;
           }
 
@@ -336,7 +343,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			// TODO: o comando pode ser interrompido por uma colizao.
 			// assim, está errado assumir que a distancia pedida será a distancia percorrida
             string command = string(getText(tree)) + " " + to_string(int(distance));
-            History->addCommand(command,(Donnie->bumped() ? translate("bateu") : translate("não bateu")));            
+            History->addCommand(command,(Donnie->bumped() ? crash_str : ncrash_str));            
             break;
 
           }
@@ -691,6 +698,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case STATE:
           {
 			  std::ostringstream output;
+
+			  output.imbue(loc);
 			  
 			  if (History->size()>0){
 				output << History->getLast();
