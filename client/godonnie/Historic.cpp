@@ -55,7 +55,7 @@ string Historic::show()
 	int cmdNum=0;
 	
 	generator gen;
-	gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("Historic");
 	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);
@@ -78,7 +78,7 @@ string Historic::getLast()
 	Command last;
 	
 	generator gen;
-	gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("Historic");
 	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);

@@ -17,7 +17,7 @@ DonnieClient::DonnieClient()
 
     // Set up language environment
     generator gen;
-    gen.add_messages_path(string(GetEnv("DONNIE_SOURCE_PATH")) + "/loc");
+    gen.add_messages_path(donnie_path + "/resources/loc");
     gen.add_messages_domain("alerts");
     locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
     locale::global(loc);
