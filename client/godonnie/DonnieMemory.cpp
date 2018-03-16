@@ -44,7 +44,7 @@ int DonnieMemory::addVar(string name, int value)
 	string var = toLowerCase(name);
 
 	generator gen;
-	gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("DonnieMemory");
 	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);
@@ -80,7 +80,7 @@ int DonnieMemory::assignVar(string name, int value)
 	string var = toLowerCase(name);
 
 	generator gen;
-	gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("DonnieMemory");
 	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);
@@ -108,7 +108,7 @@ int DonnieMemory::getVar(string name)
 	string var = toLowerCase(name);
 
 	generator gen;
-	gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("DonnieMemory");
 	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);
@@ -145,7 +145,7 @@ int DonnieMemory::addForVar(string name, int value)
 	string var = toLowerCase(name);
 
 	generator gen;
-	gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("DonnieMemory");
 	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);
@@ -182,7 +182,7 @@ void DonnieMemory::addProc(string name, procDec procedure)
 	string var = toLowerCase(name);
 
 	generator gen;
-	gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("DonnieMemory");
 	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);
@@ -205,7 +205,7 @@ procDec DonnieMemory::getProc(string name)
 	string var = toLowerCase(name);
 
 	generator gen;
-	gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("DonnieMemory");
 	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);

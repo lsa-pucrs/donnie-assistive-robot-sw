@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
 {
   // Set up language environment
   generator gen;
-  gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+  gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
   gen.add_messages_domain("GoDonnie");
   locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
   locale::global(loc);
@@ -320,7 +320,7 @@ int evalCode(int count, int key)
     code.clear();
 
     generator gen;
-    gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+    gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
     gen.add_messages_domain("GoDonnie");
     locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
     locale::global(loc);

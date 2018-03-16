@@ -89,7 +89,7 @@ int ExprTreeEvaluator::parseGD(char* textIn, bool enable_log)
 {
   // Set up language environment
   generator gen;
-  gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+  gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
   gen.add_messages_domain("Compiler");
   locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
   locale::global(loc);
@@ -207,7 +207,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 {
     // Set up language environment
     generator gen;
-    gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+    gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
     gen.add_messages_domain("Compiler");
     locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
     locale::global(loc);

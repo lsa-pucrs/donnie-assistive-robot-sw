@@ -43,7 +43,7 @@ DonnieClient::DonnieClient()
 
 	// Set up language environment
 	generator gen;
-	gen.add_messages_path(string(GetEnv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("DonnieClient");
 	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);
@@ -193,7 +193,7 @@ int DonnieClient::color_to_value(string input_color)
 
 	// Set up language environment
 	generator gen;
-	gen.add_messages_path(string(GetEnv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("DonnieClient");
 	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);
@@ -295,7 +295,7 @@ float DonnieClient::GetPos(Position2dProxy *p2d, int arg)
 
 	// Set up language environment
 	generator gen;
-	gen.add_messages_path(string(GetEnv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("DonnieClient");
 	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);
@@ -345,7 +345,7 @@ int DonnieClient::moveForward(int arg)
 
 	// Set up language environment
 	generator gen;
-	gen.add_messages_path(string(GetEnv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("DonnieClient");
 	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);
@@ -436,7 +436,7 @@ int DonnieClient::moveBackward(int arg)
 
 	// Set up language environment
 	generator gen;
-	gen.add_messages_path(string(GetEnv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("DonnieClient");
 	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);
@@ -520,7 +520,7 @@ int DonnieClient::GotoTTS(float pa){
 	
 	// Set up language environment
 	generator gen;
-	gen.add_messages_path(string(GetEnv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("DonnieClient");
 	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);
@@ -548,7 +548,7 @@ int DonnieClient::Goto(float pa){
 	//faz com que o goto funcione girando para o lado correto
 
 	generator gen;
-	gen.add_messages_path(string(GetEnv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("DonnieClient");
 	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);
@@ -610,7 +610,7 @@ void DonnieClient::Scan(void){
 
 	// Set up language environment
 	generator gen;
-	gen.add_messages_path(string(GetEnv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("DonnieClient");
 	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);
@@ -864,7 +864,7 @@ int DonnieClient::Color(int color_code){
 	color_str = value_to_color(color_code);
 
 	generator gen;
-	gen.add_messages_path(string(GetEnv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("DonnieClient");
 	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);

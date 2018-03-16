@@ -12,7 +12,7 @@ parametroException::parametroException(string error)
 parametroException::parametroException()
 {
 	generator gen;
-	gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("Exception");
 	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);
@@ -31,7 +31,7 @@ sintaxeException::sintaxeException(string error)
 sintaxeException::sintaxeException()
 {
 	generator gen;
-	gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("Exception");
 	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);
@@ -50,7 +50,7 @@ variavelException::variavelException(string error)
 variavelException::variavelException()
 {
 	generator gen;
-	gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("Exception");
 	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);
@@ -68,7 +68,7 @@ invalidValueException::invalidValueException(string error)
 invalidValueException::invalidValueException()
 {
 	generator gen;
-	gen.add_messages_path(string(getenv("DONNIE_SOURCE_PATH")) + "/loc");
+	gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("Exception");
 	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);
