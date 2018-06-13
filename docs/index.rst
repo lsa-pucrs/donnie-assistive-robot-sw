@@ -17,7 +17,7 @@ About Donnie
 
 .. WARNING::
 
-  This document is for developers only. If you want to use and test Donnie, please refer to the `Donnie Assistive Robot: User Manual<https://donnie-user-manual.readthedocs.io/en/latest/index.html/>`_
+  This document is for developers only. If you want to use and test Donnie, please refer to the `Donnie Assistive Robot: User Manual <https://donnie-user-manual.readthedocs.io/en/latest/index.html/>`_
 
 Donnie is an assistive technology project, whose objective is to use robotics to facilitate programming teaching to visually impaired students.
 It is divided in two main parts:
