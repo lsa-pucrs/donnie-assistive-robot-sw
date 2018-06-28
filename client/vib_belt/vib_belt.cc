@@ -15,6 +15,10 @@
 
 void signal_handler_IO (int status);
 
+
+// TO DO. change the serial port by parameter
+// see port = cf->ReadString (section, "port", "/dev/ttyACM0");
+// in driver/donnie/donnie.cc 
 char devicename[80] = "/dev/ttyACM0", ch;
 int status;
 //
@@ -24,7 +28,7 @@ using namespace PlayerCc;
 using namespace std;
 
 //default arguments
-
+// TO DO. change them by parameter
 string host = "localhost"; 
 int port = 6665;
 
