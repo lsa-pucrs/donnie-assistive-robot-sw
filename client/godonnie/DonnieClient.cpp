@@ -13,7 +13,6 @@ const double  SIDE_RANGER = 0.05;
 const double  FRONT_RANGER = 0.06;
 const double  BACK_RANGER = 0.05;
 
-
 #ifndef LANG 
 #define LANG "pt-br"
 #endif
@@ -42,39 +41,42 @@ DonnieClient::DonnieClient()
 	if(port==0) port = 6665;
 	muted = false;
 
+	// Set up language environment
+	generator gen;
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieClient");
+	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+	cout.imbue(loc);
+	cerr.imbue(loc);
+
 	try{
 		robot = new PlayerClient(host,port);
 	} catch (PlayerError e){
 		#ifndef NDEBUG
 			cerr << e << endl;
 		#endif
-		cerr << "Não foi possivel conectar no robô com IP " << host << " porta " << port << endl;
-		cerr << "Possivelmente o Player não foi executado ou as variaveis DONNIE_IP e DONNIE_PORT estão erradas" << endl;
+		cerr << translate("Não foi possivel conectar no robô com IP ") << host << translate(" porta ") 
+			 << port << endl;
+		cerr << translate("Possivelmente o Player não foi executado ou as variaveis DONNIE_IP e DONNIE_PORT estão erradas") 
+			 << endl;
 		exit(1);
 	}
 	
 	try{		
-		cout << "1" << endl;
 		p2dProxy = new Position2dProxy(robot,0);
-		cout << "2" << endl;
 		p2d_headProxy = new Position2dProxy(robot,1);
-		cout << "3" << endl;
 		bpProxy = new BumperProxy(robot,0);
-		cout << "4" << endl;
 		bfinderProxy = new BlobfinderProxy(robot,0);
-		cout << "5" << endl;
 		sonarProxy = new RangerProxy(robot,0);
-		cout << "6" << endl;
 		//headSonarProxy = new RangerProxy(robot,1);
-		cout << "7" << endl;
 		speechProxy = new SpeechProxy(robot,0);
-		cout << "8" << endl;
 	}catch (PlayerError e){
 		#ifndef NDEBUG
 			cerr << e << endl;
 		#endif
-		cerr << "Não foi possível conectar no robô " << endl;
-		cerr << "Possivelmente o arquivo cfg está incorreto." << endl;
+		cerr << translate("Não foi possível conectar no robô ") << endl;
+		cerr << translate("Possivelmente o arquivo cfg está incorreto.") << endl;
 		exit(1);
 	}
 	
@@ -129,9 +131,9 @@ string DonnieClient::value_to_color(int color_value)
 	string donnie_path = GetEnv("DONNIE_PATH");
 
 	// read the color file according to the language
-	if(LANG == "pt-br")
+	if(strcmp(getenv("DONNIE_LANG"),"pt_BR") == 0)
 		donnie_path = donnie_path + "/resources/color_files/rgb-pt-br.txt";
-	else if (LANG == "eng")
+	else if (strcmp(getenv("DONNIE_LANG"),"en_US") == 0)
 		donnie_path = donnie_path + "/resources/color_files/rgb-en.txt";
 	else
 		donnie_path = donnie_path + "/resources/color_files/rgb-pt-br.txt";
@@ -167,7 +169,7 @@ string DonnieClient::value_to_color(int color_value)
 		file.close();
 	}
 	else{
-		cout << "Erro: arquivo de cores " << donnie_path << " não encontrado" << endl;
+		cout << translate("Erro: arquivo de cores ") << donnie_path << translate(" não encontrado") << endl;
 		exit(1);
 	}
 	
@@ -180,6 +182,15 @@ int DonnieClient::color_to_value(string input_color)
 	string color;
 	ostringstream oss;
 	unsigned int file_value;
+
+	// Set up language environment
+	generator gen;
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieClient");
+	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+	cout.imbue(loc);
+	cerr.imbue(loc);
 
 	string donnie_path = GetEnv("DONNIE_PATH");
 
@@ -210,7 +221,7 @@ int DonnieClient::color_to_value(string input_color)
 		file.close();
 	}
 	else{
-		cout << "Erro: arquivo de cores " << donnie_path << " não encontrado" << endl;
+		cout << translate("Erro: arquivo de cores ") << donnie_path << translate(" não encontrado") << endl;
 		exit(1);
 	}
 
@@ -274,6 +285,14 @@ float DonnieClient::GetPos(Position2dProxy *p2d, int arg)
 	robot->ReadIfWaiting();
 	std::ostringstream sayStr;
 
+	// Set up language environment
+	generator gen;
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieClient");
+	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+	sayStr.imbue(loc);
+
 	switch(arg)
 	{
 		case 0:
@@ -283,7 +302,7 @@ float DonnieClient::GetPos(Position2dProxy *p2d, int arg)
 		case 2:
 			return radTOdeg(p2d->GetYaw());
 		case 3:
-			sayStr << "Estou no x " << (int)(p2d->GetXPos()/STEP_LENGHT) << ", no y " << (int)(p2d->GetYPos()/STEP_LENGHT) << " e virado para " << (int)(radTOdeg(p2d->GetYaw())) << " graus.";
+			sayStr << string(translate("Estou no x ")) << (int)(p2d->GetXPos()/STEP_LENGHT) << string(translate(", no y ")) << (int)(p2d->GetYPos()/STEP_LENGHT) << string(translate(" e virado para ")) << (int)(radTOdeg(p2d->GetYaw())) << string(translate(" graus."));
 			speak(sayStr.str());
 			return 0;
 		default:
@@ -315,6 +334,13 @@ int DonnieClient::moveForward(int arg)
 	bool collision = false;
 
 	double targetHypot = STEP_LENGHT*Npassos;
+
+	// Set up language environment
+	generator gen;
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieClient");
+	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
 
 	//validate step number
 	if(Npassos != 0){
@@ -367,11 +393,13 @@ int DonnieClient::moveForward(int arg)
 
 	// say command
 	std::ostringstream sayStr;
-		sayStr << "Andei " << ((collision||obstacle)?"somente ":"")  << int(passos) << " passos para frente.";
+	sayStr.imbue(loc);
+	string aux1 = string(translate("somente "));
+	sayStr << string(translate("Andei ")) << ((collision||obstacle)?aux1:"")  << int(passos) << string(translate(" passos para frente."));
 	if (collision)
-		sayStr << "Houve colisão;"; //colisao frontal
+		sayStr << string(translate("Houve colisão;")); //colisao frontal
 	if (obstacle)
-		sayStr << "Encontrei obstáculo.";
+		sayStr << string(translate("Encontrei obstáculo."));
 	speak(sayStr.str());
 	//cout << sayStr.str() << endl;
 
@@ -397,6 +425,13 @@ int DonnieClient::moveBackward(int arg)
 	bool collision = false;
 
 	double targetHypot = STEP_LENGHT*Npassos;
+
+	// Set up language environment
+	generator gen;
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieClient");
+	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
 
 	//validate step number
 	if(Npassos != 0){
@@ -449,11 +484,13 @@ int DonnieClient::moveBackward(int arg)
 
 	// say command
 	std::ostringstream sayStr;
-		sayStr << "Andei " << ((collision||obstacle)?"somente ":"")  << int(passos) << " passos para trás.";
+	sayStr.imbue(loc);
+	string aux1 = string(translate("somente "));
+	sayStr << string(translate("Andei ")) << ((collision||obstacle)?aux1:"")  << int(passos) << string(translate(" passos para trás."));
 	if (collision)
-		sayStr << "Houve colisão;"; //colisao frontal
+		sayStr << string(translate("Houve colisão;")); //colisao frontal
 	if (obstacle)
-		sayStr << "Encontrei obstáculo.";
+		sayStr << string(translate("Encontrei obstáculo."));
 	speak(sayStr.str());
 	//cout << sayStr.str() << endl;
 
@@ -473,19 +510,27 @@ int DonnieClient::GotoTTS(float pa){
 	//make sure that robot are stopped while speech
 	p2dProxy->SetSpeed(0,0);
 	
+	// Set up language environment
+	generator gen;
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieClient");
+	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+	
 	string direction;
 	if (pa < 0){
-		direction = "direita";
+		direction = string(translate("direita"));
 		pa = -pa;
 	}else
-		direction = "esquerda";
+		direction = string(translate("esquerda"));
 	// say command
 	// TODO: o comando pode ser interrompido por uma colizao.
 	// assim, está errado assumir que a distancia pedida será a distancia percorrida
 	std::ostringstream sayStr;
-	sayStr << "Girei " << int(pa) << " graus para " << direction << ".";
+	sayStr.imbue(loc);
+	sayStr << string(translate("Girei ")) << int(pa) << string(translate(" graus para ")) << direction << ".";
 	if (bumped())
-		sayStr << " Houve colisão.";
+		sayStr << string(translate(" Houve colisão."));
 	speak(sayStr.str());
 
 	return 0;	
@@ -493,15 +538,22 @@ int DonnieClient::GotoTTS(float pa){
 
 int DonnieClient::Goto(float pa){
 	//faz com que o goto funcione girando para o lado correto
-	DEBUG_MSG("ROTACAO:" << pa);
+
+	generator gen;
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieClient");
+	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+
+	DEBUG_MSG(string(translate("ROTACAO:")) << pa);
 	if(pa>0 && pa>170){
-		DEBUG_MSG("PARCIAL");
+		DEBUG_MSG(string(translate("PARCIAL")));
 		if(Goto(170)) return 1; //se qualquer batida ou erro acontecer retorna imediatamente
 		if(Goto(pa-170)) return 1; //se qualquer batida ou erro acontecer retorna imediatamente
 		return 0;
 	}
 	if(pa<0 && pa<-170){	
-		DEBUG_MSG("PARCIAL");
+		DEBUG_MSG(string(translate("PARCIAL")));
 		if(Goto(-170)) return 1; //se qualquer batida ou erro acontecer retorna imediatamente
 		if(Goto(pa+170)) return 1; //se qualquer batida ou erro acontecer retorna imediatamente
 		return 0;
@@ -548,8 +600,12 @@ void DonnieClient::Scan(void){
 	std::ostringstream scanText;
 	string color_str;
 
-
-
+	// Set up language environment
+	generator gen;
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieClient");
+	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
 
 	bool blob_flag = false;
 	int camera_width = bfinderProxy->GetWidth() - 1;  
@@ -570,7 +626,7 @@ void DonnieClient::Scan(void){
 	//playerc_blobfinder_blob_t teste;
 
 
-	speak("Espiando");
+	speak(string(translate("Espiando")));
 	do{
 		// move headd
 		headGoto(head_yawi);
@@ -758,7 +814,7 @@ void DonnieClient::Scan(void){
 	for(int i=0; i<total_counter; i++)
 	{
 		string buff = value_to_color(total_blobs_found[i].color);
-		if((buff.compare("desconhecido") != 0) && (total_yaws[i] <360))
+		if((buff.compare(string(translate("desconhecido"))) != 0) && (total_yaws[i] <360))
 		{
 			_total_blobs_found[nro_blobs] = total_blobs_found[i];
 			_total_yaws[nro_blobs] = total_yaws[i];
@@ -769,18 +825,18 @@ void DonnieClient::Scan(void){
 	headGoto(0);
 	robot->ReadIfWaiting(); 
 
-
+	scanText.imbue(loc);
 	for(int i=0; i<nro_blobs; i++)
 	{
 		// build string
 		if (_total_yaws[i] == 0)
-			scanText << "a frente: ";
+			scanText << string(translate("a frente: "));
 		else if (_total_yaws[i] < 0)
-			scanText << "a " << -_total_yaws[i] << " graus a direita: ";
+			scanText << string(translate("a ")) << -_total_yaws[i] << string(translate(" graus a direita: "));
 		else 
-			scanText << "a " << _total_yaws[i] << " graus a esquerda: ";
+			scanText << string(translate("a ")) << _total_yaws[i] << string(translate(" graus a esquerda: "));
 
-		scanText << " um objeto de cor " << value_to_color(_total_blobs_found[i].color) << " a " << int(sonar_readings[i]) << " passos";
+		scanText << string(translate(" um objeto de cor ")) << value_to_color(_total_blobs_found[i].color) << string(translate(" a ")) << int(sonar_readings[i]) << string(translate(" passos"));
 	
 		speak(scanText.str());
 
@@ -799,8 +855,13 @@ int DonnieClient::Color(int color_code){
 	std:string color_str;
 	color_str = value_to_color(color_code);
 
+	generator gen;
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieClient");
+	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
 
-	speak("Procurando cor " + color_str);
+	speak(string(translate("Procurando cor ")) + color_str);
 
 	
 
@@ -834,7 +895,7 @@ int DonnieClient::Color(int color_code){
 	int graus = 0;
 
 
-	speak("Espiando");
+	speak(string(translate("Espiando")));
 	do{
 		// move headd
 		headGoto(head_yawi);
@@ -1009,16 +1070,16 @@ int DonnieClient::Color(int color_code){
 
 
 
-
+	scanText.imbue(loc);
 	if (nro_blobs == 0)
 	{
-		scanText << "nenhum objeto encontrado com a cor " << color_str;
+		scanText << string(translate("nenhum objeto encontrado com a cor ")) << color_str;
 	}else 	if (nro_blobs == 1)
 	{
-		scanText << "1 objeto encontrado com a cor " << color_str;
+		scanText << string(translate("1 objeto encontrado com a cor ")) << color_str;
 	}else	
 	{
-		scanText << nro_blobs << " objetos encontrados com a cor " << color_str;
+		scanText << nro_blobs << string(translate(" objetos encontrados com a cor ")) << color_str;
 	}
 
 	speak(scanText.str());
