@@ -43,8 +43,8 @@ using std::endl;
 #define COLOR_GREEN "verde"
 
 /// definition of the on/off tokens in Portuguese
-#define SOUND_ON "ligado"
-#define SOUND_OFF "desligado"
+#define TOKEN_ON "ligado"
+#define TOKEN_OFF "desligado"
 
 /// definition of variable return tokens
 #define IDLE 4
@@ -451,11 +451,11 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
 
 			// sound on or off
-			if (tokens[1] == SOUND_ON){
+			if (tokens[1] == TOKEN_ON){
 				Donnie->speak(translate("O som foi ligado com sucesso"));
 				Donnie->muteTTS(false);
 			}
-			else if (tokens[1] == SOUND_OFF){
+			else if (tokens[1] == TOKEN_OFF){
 				Donnie->speak(translate("O som foi desligado com sucesso"));
 				Donnie->muteTTS(true);
 			}
@@ -465,7 +465,28 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             return 0;
             break;
           }
-                    
+            
+          case BELT:
+          {
+            vector<string> tokens;
+            split((char*)getText(tree),' ',tokens);
+			//if (tokens.size() != 2)
+				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
+
+			// sound on or off
+			if (tokens[1] == TOKEN_ON){
+				Donnie->speak("O cinto foi ligado com sucesso");
+			}
+			else if (tokens[1] == TOKEN_OFF){
+				Donnie->speak("O cinto foi desligado com sucesso");
+			}
+			//else 
+				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");        
+
+            return 0;
+            break;
+          }
+                              
           case COMENT:
           {
 			#ifndef NDEBUG
