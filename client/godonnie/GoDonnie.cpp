@@ -126,8 +126,10 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-   while ((c = getopt (argc, argv, "mlthf:")) != -1){
+  // the arguments are case insensitive
+   while ((c = getopt (argc, argv, "mMlLtThHfF:")) != -1){
     switch (c){
+      case 'T': 
       case 't': // terminal mode
         termMode = 1;
         /*
@@ -138,6 +140,7 @@ int main(int argc, char* argv[])
 		} 
 		*/
         break;
+      case 'F':
       case 'f': // script file  mode
         filename = optarg;
         scriptMode=1;
@@ -154,6 +157,7 @@ int main(int argc, char* argv[])
 			return 1;
 		}
         break;
+      case 'M':
       case 'm':  // mute
 		 //if mute ('m') is on, do it first, before any other command
 		 if (argcnt == 0){
@@ -164,6 +168,7 @@ int main(int argc, char* argv[])
 			 return 1;
 		 }
 		 break;
+      case 'L':
       case 'l':  // log
 		 //log is disabled by default
 		 Compiler.setLog(true);
@@ -177,6 +182,7 @@ int main(int argc, char* argv[])
 		 }
 		 */
 		 break;
+      case 'H':
       case 'h':  // help 
 		usage(argv[0]);
         return 0;
@@ -226,8 +232,14 @@ int main(int argc, char* argv[])
   static char *temp = (char *)NULL; 
   string preCode;
 
-   // create log file if it was enabled in command line
-   setupLog();
+  // bind the ESC key to the evalCode function
+  //rl_attempted_completion_function = fileman_completion;
+  rl_bind_key (27, evalCode); /* "27" ascii code for ESC */
+  //rl_unbind_key('\t');
+  //rl_bind_key('a',rl_complete);
+
+  // create log file if it was enabled in command line
+  setupLog();
 
   // terminal mode
   if(termMode)
@@ -408,16 +420,10 @@ void setupLog()
 
 	// if log is enabled, then create the log file
 	if (Compiler.getLog()){
-		//rl_attempted_completion_function = fileman_completion;
-		rl_bind_key (27, evalCode); /* "27" ascii code for ESC */
-		//rl_unbind_key('\t');
-		//rl_bind_key('a',rl_complete);
-
 		// find the appropriate file number to the log file. it follows sequential order
 		int fileno=0;
 		bool success = true;
 		char fileName[40] = "";
-
 		struct stat info;
 
 		if( stat( "Log", &info ) != 0 )
