@@ -38,13 +38,13 @@ using std::endl;
 #define POSITION_YAW_CAP "A"
 
 /// definition of the color tokens in Portuguese
-#define COLOR_BLUE "azul"
-#define COLOR_RED "vermelho"
-#define COLOR_GREEN "verde"
+//#define COLOR_BLUE "azul"
+//#define COLOR_RED "vermelho"
+//#define COLOR_GREEN "verde"
 
 /// definition of the on/off tokens in Portuguese
-#define TOKEN_ON "ligado"
-#define TOKEN_OFF "desligado"
+//#define TOKEN_ON "ligado"
+//#define TOKEN_OFF "desligado"
 
 /// definition of variable return tokens
 #define IDLE 4
@@ -69,6 +69,7 @@ ExprTreeEvaluator::ExprTreeEvaluator()
   	for_itFlag = IDLE;
     done = 0;
     log = NULL;
+    enable_log = false;
 }
 
 ExprTreeEvaluator::~ExprTreeEvaluator()
@@ -85,7 +86,20 @@ void ExprTreeEvaluator::logFile(FILE *file)
   log = file;
 }
 
-int ExprTreeEvaluator::parseGD(char* textIn, bool enable_log)
+
+void ExprTreeEvaluator::setLog(bool log)
+{
+  enable_log = log;
+}
+
+
+bool ExprTreeEvaluator::getLog()
+{
+  return enable_log;
+}
+
+
+int ExprTreeEvaluator::parseGD(char* textIn)
 {
   // Set up language environment
   generator gen;
@@ -175,10 +189,10 @@ int ExprTreeEvaluator::parseGD(char* textIn, bool enable_log)
     else{
 		// if text is parsed without error and logging is enabled, then save log
 		// log is enabled only in terminal mode and not in the script mode
-		if (enable_log){
+		if (getLog()){
 		  if(log != NULL)
 		  {
-			if(fprintf(log, "%s", textIn) == EOF)
+			if(fprintf(log, "%s\n", textIn) == EOF)
 			  cout << translate("Erro ao salvar comando no log") << endl;
 			else
 			  fflush(log);
@@ -451,16 +465,19 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
 
 			// sound on or off
-			if (tokens[1] == TOKEN_ON){
+			if (tokens[1] == string(translate("ligado"))){
 				Donnie->speak(translate("O som foi ligado com sucesso"));
 				Donnie->muteTTS(false);
 			}
-			else if (tokens[1] == TOKEN_OFF){
+			else if (tokens[1] == string(translate("desligado"))){
 				Donnie->speak(translate("O som foi desligado com sucesso"));
 				Donnie->muteTTS(true);
 			}
-			//else 
+			// error treatmet is performed at the parser level. it is not necessary to test for error here
+			//else {
 				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");        
+				//Donnie->speak(translate("Sintaxe não conhecida para comando 'som'"));
+			//}
 
             return 0;
             break;
@@ -474,14 +491,17 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
 
 			// sound on or off
-			if (tokens[1] == TOKEN_ON){
-				Donnie->speak("O cinto foi ligado com sucesso");
+			if (tokens[1] == string(translate("ligado"))){
+				Donnie->speak(translate("O cinto foi ligado com sucesso"));
 			}
-			else if (tokens[1] == TOKEN_OFF){
-				Donnie->speak("O cinto foi desligado com sucesso");
+			else if (tokens[1] == string(translate("desligado"))){
+				Donnie->speak(translate("O cinto foi desligado com sucesso"));
 			}
-			//else 
+			// error treatmet is performed at the parser level. it is not necessary to test for error here
+			//else{ 
 				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");        
+				//Donnie->speak(translate("Sintaxe não conhecida para comando 'cinto'"));
+			//}
 
             return 0;
             break;
