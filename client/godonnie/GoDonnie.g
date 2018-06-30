@@ -473,6 +473,7 @@ cmd	:	arg
 		|commente
 		|procedec
 		|proceinv
+		|belte
 		;
 		
 		
@@ -543,6 +544,9 @@ procedec	:	PROCDEC^ ID (':'! (ID) (','! (ID))*)? procblock;
 
 
 proceinv	:	ID PROCINV^ (expression (','! expression)*)? ']'!;
+
+
+belte       : BELT ;
 
 	
 atom	:	POS
@@ -632,6 +636,9 @@ COLOR	:	(('C'|'c')('O'|'o')('R'|'r')) (' ')+ ((('A'|'a')('Z'|'z')('U'|'u')('L'|'
 		;
 
 SOUND	:	(('S'|'s')('O'|'o')('M'|'m')) (' ')+ ((('L'|'l')('I'|'i')('G'|'g')('A'|'a')('D'|'d')('O'|'o')) | (('D'|'d')('E'|'e')('S'|'s')('L'|'l')('I'|'i')('G'|'g')('A'|'a')('D'|'d')('O'|'o')))
+		;
+
+BELT	:	(('C'|'c')('I'|'i')('N'|'n')('T'|'t')('O'|'o')) (' ')+ ((('L'|'l')('I'|'i')('G'|'g')('A'|'a')('D'|'d')('O'|'o')) | (('D'|'d')('E'|'e')('S'|'s')('L'|'l')('I'|'i')('G'|'g')('A'|'a')('D'|'d')('O'|'o')))
 		;
 		
 		
