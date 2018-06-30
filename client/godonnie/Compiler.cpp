@@ -426,10 +426,14 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
 
 			// sound on or off
-			if (tokens[1] == SOUND_ON)
+			if (tokens[1] == SOUND_ON){
+				Donnie->speak("O som foi ligado com sucesso");
 				Donnie->muteTTS(false);
-			else if (tokens[1] == SOUND_OFF)
+			}
+			else if (tokens[1] == SOUND_OFF){
+				Donnie->speak("O som foi desligado com sucesso");
 				Donnie->muteTTS(true);
+			}
 			//else 
 				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");        
 
@@ -625,7 +629,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             {
               sayStr << "Número de argumentos invalido.";
               Donnie->speak(sayStr.str());
-              cout << sayStr << endl;
+              cout << sayStr.str() << endl;
 
             }
 
