@@ -21,7 +21,7 @@ most of the programming environments for kids are high visual, based on grab and
 Donnie project proposes an inclusive robotic programming environment where all students 
 (with or without visual disabilities) can use. 
 
-Donnie comes with two usage options: simulated robot and physical robot. It is recommend to start with the simulated since it does not require building the robot. Moreover, the physical robot is functional, but still under test.
+Donnie comes with two usage options: simulated robot and physical robot. It is recommended to start with the simulated since it does not require building the robot. Moreover, currently the physical robot is functional, but it is still under test.
 
 Contents
 --------
@@ -58,23 +58,23 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
 ## Run Donnie Software from a Virtual Machine
 
- Download this [VM](link) all Donnie software pre-installed and ready to run.
+ Download this [VM](http://www.osboxes.org/linux-mint/), select the Linux Mint 17.3 'Rosa', and selected the [Mate](https://drive.google.com/file/d/0B_HAFnYs6Ur-NGFCZWNFV2dBN2M/view?usp=sharing) version. Finally, follow the instructions to install Donnie package.
 
 ## Install Donnie Software on a Desktop Computer Using the Packages
 
  [**Ubuntu 14.04**](http://releases.ubuntu.com/14.04/) (Trusty Tahr) is the recommended OS distribution. 
  For older computers or VMs, [Lubuntu 14.04](http://cdimage.ubuntu.com/lubuntu/releases/14.04/release/) or [Ubuntu Mate 14.04](https://ubuntu-mate.org/trusty/) are recommended.
  
- Download the [package](releases/latest) and execute the following steps in the terminal:
+ Download the [package](https://github.com/lsa-pucrs/donnie-assistive-robot-sw/releases) and execute the following steps in the terminal:
  
  * It is recommended to update your packages before the instalation:
 > sudo apt-get install update
 * To install, you can double-click it or execute:
-> sudo dpkg -i donnie_1.0.0_amd64.deb
+> sudo dpkg -i donnie-player-stage_0.1_amd64.deb
 * In case of missing dependencies, try: 
-> sudo apt-get install -f
+> sudo apt-get -f install
 * To unistall:
-> sudo dpkg -r donnie
+> sudo dpkg -r donnie-player-stage
 
 ## Compile and Install Donnie Software on a Desktop Computer 
 
@@ -87,7 +87,8 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
  
 	mkdir ~/donnie; cd ~/donnie
 	wget https://github.com/lsa-pucrs/donnie-assistive-robot-sw/raw/devel/install.sh
-	chmod +x ./install.sh 
+	chmod +x ./install.sh
+	export DONNIE_PATH=/opt/donnie 
 	./install.sh
 
 ### Configuring Donnie
@@ -99,8 +100,8 @@ The build system is based on CMake, so it is required to have some experience wi
 Every part of Donnie Software Stack is also based on CMake. These are the software parts that can be customized:
 
 - raspicam driver
-- Player
-- Stage
+- [Player](https://github.com/playerproject/player)
+- [Stage](https://github.com/rtv/Stage)
 - Donnie Software
 
 each of these packages have their one sets of parameters. 
@@ -113,6 +114,12 @@ Developers interested in customization might want to read the following files:
 - [install/setup-rpi.sh](install/setup-rpi.sh)
 - and all the CMakeLists.txt files
 
+### Learning Player and Stage
+
+Donnie is based on Player/Stage robotic middlware and simulator. It is higly 
+recommended for Donnie developers to understand Player/Stage to add more features,
+create new elaborated scenarios, etc. The official documents are [Player](https://playerproject.github.io/), [Player wiki](https://github.com/playerproject/player/wiki) and [Stage](http://rtv.github.io/Stage/).
+However, the best documentation is the [Player/Stage tutorial](http://player-stage-manual.readthedocs.io). 
 
 ### Parameter for Donnie Software
 
@@ -158,6 +165,7 @@ To build your own Donnie robot, please refer to the following repositories (gith
 	mkdir ~/donnie; cd ~/donnie
 	wget https://github.com/lsa-pucrs/donnie-assistive-robot-sw/raw/devel/install-rpi.sh
 	chmod +x ./install-rpi.sh 
+	export DONNIE_PATH=/opt/donnie
 	./install-rpi.sh
 
  Experienced programmers can configure the same paramerters presented before for the Raspberry Pi.

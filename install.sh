@@ -12,7 +12,7 @@
 #   $ ./install.sh
 
 # Any subsequent(*) commands which fail will cause the shell script to exit immediately. v for verbose
-set -ev
+set -e
 
 #defensive script
 #http://www.davidpashley.com/articles/writing-robust-shell-scripts/#id2382181
@@ -48,6 +48,9 @@ case "${OS}" in
 		echo -e "${GREEN}NOTE:${NC} Ubuntu 14.04 (trusty) is the recommended version for ${OS}\n"
 		case "${VER}" in 
 			14.04)
+				echo -e "${GREEN}NOTE:${NC} ${OS} - ${VER} (${OSNAME} is the recommended OS version.\n"
+				;;
+			16.04)
 				echo -e "${GREEN}NOTE:${NC} ${OS} - ${VER} (${OSNAME} is the recommended OS version.\n"
 				;;
 			*)
@@ -105,6 +108,7 @@ sudo apt-get install -y build-essential
 #compilation utils
 echo -e "${GREEN}Installing Compilation Utils ... ${NC}\n"
 sudo apt-get install -y autoconf
+sudo apt-get install -y gdb
 sudo apt-get install -y cmake
 sudo apt-get install -y cmake-curses-gui
 sudo apt-get install -y git
@@ -119,9 +123,16 @@ sudo apt-get install -y freeglut3-dev
 sudo apt-get install -y libpng12-dev 
 sudo apt-get install -y libltdl-dev 
 #libltdl7 
-sudo apt-get install -y libdb5.1-stl
+case "${VER}" in 
+	14.04)
+		sudo apt-get install -y libdb5.1-stl
+		;;
+	16.04)
+		sudo apt-get install -y libdb5.3-stl
+		;;
+esac
 sudo apt-get install -y libgnomecanvasmm-2.6-dev
-sudo apt-get install -y python-gnome2
+#sudo apt-get install -y python-gnome2
 #sudo apt-get install -y libboost-all-dev  # overkill, the actually required libraries are boostthread, boostsignal, boostsystem
 sudo apt-get install -y libboost-signals-dev libboost-system-dev libboost-thread-dev
 # old OpenCV for older Player drivers
@@ -135,7 +146,7 @@ sudo apt-get install -y libgsl0-dev libxmu-dev
 # for python bindings for Player clients - 
 # It is not recommended to use python due to limitations in the bindings. 
 # Things that work on a C/C++ client might not work on a Python client.
-sudo apt-get install -y python-dev swig
+#sudo apt-get install -y python-dev swig
 # PostGIS for a Player driver
 sudo apt-get install -y libpq-dev libpqxx-dev
 
@@ -147,9 +158,6 @@ git clone https://github.com/lsa-pucrs/Player.git
 
 echo -e "${GREEN}Downloading Stage source code from GitHub... ${NC}\n"
 git clone https://github.com/lsa-pucrs/Stage.git
-
-echo -e "${GREEN}Downloading Raspicam source code from GitHub... ${NC}\n"
-git clone https://github.com/lsa-pucrs/raspicam.git
 
 echo -e "${GREEN}Downloading Donnie source code from GitHub... ${NC}\n"
 git clone -b devel https://github.com/lsa-pucrs/donnie-assistive-robot-sw.git
@@ -169,7 +177,14 @@ export LD_LIBRARY_PATH=${DONNIE_PATH}/lib/player:${LD_LIBRARY_PATH}
 # required to compile donnie
 # run 'sudo find / -name "*.pc" -type f' to find all the pc files for pkg-config
 # run 'sudo find / -name "*.cmake" -type f' to find all the cmake files for cmake
-export CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-2.8/Modules/:/usr/share/cmake-2.8/Modules/Platform/:/usr/share/cmake-2.8/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib64/cmake/Stage/:/usr/lib/fltk/
+case "${VER}" in 
+	14.04)
+		export CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-2.8/Modules/:/usr/share/cmake-2.8/Modules/Platform/:/usr/share/cmake-2.8/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib64/cmake/Stage/:/usr/lib/fltk/
+		;;
+	16.04)
+		export CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-3.5/Modules/:/usr/share/cmake-3.5/Modules/Platform/:/usr/share/cmake-3.5/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib/cmake/Stage/:/usr/lib/fltk/
+		;;
+esac
 export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig/:/usr/lib/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig/:/usr/share/pkgconfig/:${PKG_CONFIG_PATH}
 
 ##################################################
@@ -219,46 +234,46 @@ echo -e "${GREEN}Stage installed !!!! ${NC}\n"
 ##################################################
 # Donnie's depedencies
 echo -e "${GREEN}Installing Donnie Dependencies ... ${NC}\n"
+case "${VER}" in 
+	14.04)
+		sudo apt-get install -y openjdk-7-jdk
+		;;
+	16.04)
+		sudo apt-get install -y openjdk-8-jdk
+		;;
+esac
 #to compile soxplayer driver
-#sudo apt-get install -y sox
-# TODO: check if any of these packages are actually required for donnie
-#  188  sudo apt-get install libsoxr0
-#  190  sudo apt-get install sox
-#  222  sudo apt-get install xfce4-mixer gstreamer0.10-alsa
-#  225  sudo apt-get install pulseaudio pavucontrol
 sudo apt-get install -y libsox-dev 
-#to compile gtts driver
-#sudo apt-get install -y curl
-sudo apt-get install -y libcurl4-openssl-dev
 #to compile GoDonnie interpreter
 sudo apt-get install -y libreadline-dev
-#sudo apt-get install -y oracle-java8-installer
-sudo apt-get install -y openjdk-7-jdk
 sudo apt-get install -y libantlr3c-dev
+
+## UNCOMMENT HERE TO COMPILE THE DOCUMENTATION
 # std terminal used in several linux distributions
-sudo apt-get install -y xterm
+#sudo apt-get install -y xterm
 #to compile docs
-sudo apt-get install -y doxygen
+#sudo apt-get install -y doxygen
 # uses 3.058 MB in disk - not recommended for VMs
 #sudo apt-get install -y texlive-full
 # uses 494MB in disk
-sudo apt-get install -y texlive texlive-lang-english texlive-lang-portuguese
+#sudo apt-get install -y texlive texlive-lang-english texlive-lang-portuguese
 # uses 558MB in disk
-sudo apt-get install -y texlive-latex-extra
+#sudo apt-get install -y texlive-latex-extra
 # saves some 700MB in disk by removing docs
-sudo apt-get --purge remove -y tex.\*-doc$
+#sudo apt-get --purge remove -y tex.\*-doc$
 
 cd "${DONNIE_SOURCE_PATH}"
 mkdir -p build
 cd build
 echo -e "${GREEN}Configuring Donnie ... ${NC}\n"
-cmake -DCMAKE_BUILD_TYPE=Release \
-	-DBUILD_EXAMPLES=ON \
-	-DBUILD_DOCS=ON  \
-	-DBUILD_DOXYGEN=ON \
-	-DBUILD_DOXYGEN_PDF=ON \
-	-DBUILD_MANUAL=ON \
-    ..
+#cmake -DCMAKE_BUILD_TYPE=Release \
+#	-DBUILD_EXAMPLES=ON \
+#	-DBUILD_DOCS=ON  \
+#	-DBUILD_DOXYGEN=ON \
+#	-DBUILD_DOXYGEN_PDF=ON \
+#	-DBUILD_MANUAL=ON \
+#    ..
+cmake -DCMAKE_BUILD_TYPE=Release     ..
 echo -e "${GREEN}Compiling Donnie ... ${NC}\n"
 make -j ${NUM_CORES} 
 sudo make install

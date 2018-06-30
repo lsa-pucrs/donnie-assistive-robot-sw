@@ -48,7 +48,6 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 		char messageAux[100];
 		if(flagMsgError == 1){
 			memset(messageError, 0, strlen(messageError));
-			printf("(clear message error)\n");
 			flagMsgError = 0;
 		}
 				

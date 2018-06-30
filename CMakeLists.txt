@@ -6,6 +6,8 @@ project(Donnie)
 #ENDIF (POLICY CMP0048)
 #set(PROJECT_VERSION "0.1")
 
+cmake_policy(SET CMP0017 OLD)
+
 #####################################
 # check DONNIE_PATH
 if(DEFINED ENV{DONNIE_PATH})
@@ -27,15 +29,23 @@ message(STATUS "DONNIE_SOURCE_PATH = ${DONNIE_SOURCE_PATH}")
 #####################################
 # important varaiable used to find packages 
 if(DEFINED ENV{PKG_CONFIG_PATH})
-	SET (PKG_CONFIG_PATH $ENV{PKG_CONFIG_PATH})
-	MESSAGE(STATUS "PKG_CONFIG_PATH = $ENV{PKG_CONFIG_PATH}")
+	#SET (PKG_CONFIG_PATH $ENV{PKG_CONFIG_PATH})
+	# get the CMake module paths from the environmental variable CMAKE_MODULE_PATH 
+	set(AUX_PKG_CONFIG_PATH "$ENV{PKG_CONFIG_PATH}")
+	# PKG_CONFIG_PATH must be a list, with ; as delimitation character
+	string(REPLACE ":" ";" PKG_CONFIG_PATH ${AUX_PKG_CONFIG_PATH})	
+	MESSAGE(STATUS "PKG_CONFIG_PATH = ${PKG_CONFIG_PATH}")
 else()
    message(FATAL_ERROR "PKG_CONFIG_PATH is NOT defined. Set where to find the pkg-config files.")
 endif()
 
 if(DEFINED ENV{CMAKE_MODULE_PATH})
-	SET (CMAKE_MODULE_PATH $ENV{CMAKE_MODULE_PATH})
-	MESSAGE(STATUS "CMAKE_MODULE_PATH = $ENV{CMAKE_MODULE_PATH}")
+	#SET (CMAKE_MODULE_PATH $ENV{CMAKE_MODULE_PATH})
+	# get the CMake module paths from the environmental variable CMAKE_MODULE_PATH 
+	set(AUX_CMAKE_MODULE_PATH "$ENV{CMAKE_MODULE_PATH}")
+	# CMAKE_MODULE_PATH must be a list, with ; as delimitation character
+	string(REPLACE ":" ";" CMAKE_MODULE_PATH ${AUX_CMAKE_MODULE_PATH})
+	MESSAGE(STATUS "CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
 else()
    message(FATAL_ERROR "CMAKE_MODULE_PATH is NOT defined. Set where to find the cmake files.")
 endif()

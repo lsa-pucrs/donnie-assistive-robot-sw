@@ -17,7 +17,7 @@ else()
 endif()
 
 # add the cmake path for player
-SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/local/lib/cmake/ /usr/local/share/cmake/Modules)
+#SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/local/lib/cmake/ /usr/local/share/cmake/Modules)
 #MESSAGE(STATUS "CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
 
 #########
