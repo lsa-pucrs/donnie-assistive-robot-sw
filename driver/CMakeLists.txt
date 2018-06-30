@@ -15,6 +15,7 @@ ELSE()
 	add_subdirectory(gtts)
 	add_subdirectory(raspicamdriver)
 	add_subdirectory(soxplayer)
+	#add_subdirectory(visual_odometry) // include this one only when its cmake is updated
 ENDIF()
 
 

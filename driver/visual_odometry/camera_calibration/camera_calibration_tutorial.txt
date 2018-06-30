@@ -1,0 +1,42 @@
+------------------------------------------------------------------------------
+All you need to know to calibrate a camera with the sample provided by OpenCv.
+------------------------------------------------------------------------------
+
+**********************
+** in_VID5.xml file **
+**********************
+This is where the configuration of camera calibration is done. The fields you need to change according to the calibration pattern are:
+	-> BoardSize_Width and BoardSize_Height: number of squares or circles in the row and column. Usually in the chessboard pattern is 9x6 and in the asymmetric circles is 11x4;
+	-> Square_Size;
+	-> Calibration_Pattern;
+	-> Input: here you choose which type of input to use;
+		*Note: a realtime calibration works with USB cameras. The ID camera is usually 0 or 1.
+		*Note 2: Raspicam doesn't work with the realtime calibration. To calibrate it use a image list.
+	-> Write_outputFileName: choose the output file name.
+
+------------------------------------------------------------------------------
+
+******************************
+** out_camera_data.yml file **
+******************************
+This is the output file. The matrices we need are: Camera_Matrix and Distortion_Coefficients.
+
+------------------------------------------------------------------------------
+
+*******************
+** VID5.xml file **
+*******************
+If you use the list of images, then here you'll give the path to each image in the list of images. 
+	*Note: You must use the path to this file as a input in the in_VID5.xml file.
+
+------------------------------------------------------------------------------
+
+*****************************
+** Running the calibration **
+*****************************
+After compiling, use the following command line to execute the calibration:
+	./camera_calibration in_VID5.xml
+
+If you are using the realtime mode, then after running the command line above, you must use the 'g' key of your keyboard to start the calibration.
+
+------------------------------------------------------------------------------
