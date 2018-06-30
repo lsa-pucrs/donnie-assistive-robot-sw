@@ -12,7 +12,7 @@
 #   $ ./install.sh
 
 # Any subsequent(*) commands which fail will cause the shell script to exit immediately. v for verbose
-#set -ev
+set -e
 
 #defensive script
 #http://www.davidpashley.com/articles/writing-robust-shell-scripts/#id2382181
