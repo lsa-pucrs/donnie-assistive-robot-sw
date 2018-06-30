@@ -14,15 +14,7 @@ DonnieClient::DonnieClient()
 {
     string host = GetEnv("DONNIE_IP");
     string donnie_path = GetEnv("DONNIE_PATH");
-
-    // Set up language environment
-    generator gen;
-    gen.add_messages_path(donnie_path + "/resources/loc");
-    gen.add_messages_domain("alerts");
-    locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
-    locale::global(loc);
-    cout.imbue(loc);
-    cerr.imbue(loc);
+    string donnie_lang = GetEnv("DONNIE_LANG");
 
     int port = atoi(GetEnv("DONNIE_PORT").c_str());
     if(host.size()==0) host = "localhost";
@@ -31,6 +23,18 @@ DonnieClient::DonnieClient()
 		cerr << translate("variable DONNIE_PATH not defined. Please execute 'export DONNIE_PATH=<path-to-donnie>'") << endl;
 		exit(1);
 	}
+    if (donnie_lang=="") {
+		cerr << translate("variable DONNIE_LANG not defined. Please execute 'export DONNIE_LANG=$LANGUAGE'") << endl;
+		exit(1);
+	}
+    // Set up language environment
+    generator gen;
+    gen.add_messages_path(donnie_path + "/resources/loc");
+    gen.add_messages_domain("alerts");
+    locale loc = gen(donnie_lang + ".UTF-8");
+    locale::global(loc);
+    cout.imbue(loc);
+    cerr.imbue(loc);
 
     // TODO: read a configuration file so user can change these sounds
 	SSTEP   = donnie_path+"/resources/sounds/HIT.wav"; //Sound STEP
