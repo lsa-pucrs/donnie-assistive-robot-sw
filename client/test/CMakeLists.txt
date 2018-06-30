@@ -26,7 +26,7 @@ INSTALL(FILES donnie.cfg donnie_sim.cfg Makefile DESTINATION ${DONNIE_PATH}/test
 IF ( BUILD_EXAMPLES )
 
 	# Include this CMake module to get most of the settings needed to build
-	SET (CMAKE_MODULE_PATH "/usr/local/share/cmake/Modules")
+	#SET (CMAKE_MODULE_PATH "/usr/local/share/cmake/Modules")
 	INCLUDE (UsePlayerC++)
 
 	# add EACH executable and sources here
