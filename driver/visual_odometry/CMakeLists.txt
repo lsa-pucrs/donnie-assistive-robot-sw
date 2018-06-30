@@ -1,6 +1,7 @@
 SET(THE_TARGET "visualodometry")
 SET(LIBDEST "/opt/player-stage/src/player-3.0.2/build/examples/plugins/")
 
+# TO DO: this cmake seems incomple. there must be a depedency for raspicam driver. check the  cmakelists of the other drivers to keep the standard
 CMAKE_MINIMUM_REQUIRED (VERSION 2.4 FATAL_ERROR)
 PROJECT (${THE_TARGET})
 
