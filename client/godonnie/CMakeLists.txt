@@ -64,14 +64,28 @@ find_library( LANTLR3_LIB
 	DOC "Liantlr3 lib" REQUIRED)
 
 IF( NOT LANTLR3_LIB )
-  MESSAGE( FATAL_ERROR "Liantlr3 not found. Please install 'sudo apt-get install libantlr3c-dev'. aborting" )
+  MESSAGE( FATAL_ERROR "Libantlr3 not found. Please install 'sudo apt-get install libantlr3c-dev'. aborting" )
 ENDIF()
 message(STATUS "ANTLR3 Library -- ${LANTLR3_LIB}")
 message(STATUS "ANTLR3 Include -- ${LANTLR3_INCLUDE_DIR}")
 
 #########
+# check depedencies - boost locale
+#########
+FIND_PACKAGE (Boost REQUIRED COMPONENTS locale)
+IF( NOT Boost_FOUND )
+  MESSAGE( FATAL_ERROR "Libboost-locale not found. Please install 'sudo apt-get install libboost-locale-dev'. aborting" )
+ENDIF()
+
+#########
 # run antlr
 #########
+# Check for DONNIE_LANG variable
+IF (NOT DEFINED ENV{DONNIE_LANG})
+	# If not defined, set to system language
+	SET (ENV{DONNIE_LANG} ENV{LANGUAGE})
+ENDIF()
+
 ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/GoDonnie.tokens
   COMMAND java -jar ${CMAKE_CURRENT_SOURCE_DIR}/Antlr/antlr-3.2.jar -o ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/GoDonnie.g
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/GoDonnie.g
@@ -106,8 +120,8 @@ PLAYER_ADD_PLAYERCPP_CLIENT (${CLIENTNAME}
 	INCLUDEDIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../../utils/)
 
 # add the includes and libs to build it
-TARGET_LINK_LIBRARIES (${CLIENTNAME} ${LREADLINE_LIB} ${LANTLR3_LIB}) 
-INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR} ${LANTLR3_INCLUDE_DIR} ${LREADLINE_INCLUDE_DIR} )
+TARGET_LINK_LIBRARIES (${CLIENTNAME} ${LREADLINE_LIB} ${LANTLR3_LIB} ${Boost_LIBRARIES}) 
+INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR} ${LANTLR3_INCLUDE_DIR} ${LREADLINE_INCLUDE_DIR} ${Boost_INCLUDE_DIR})
 
 # godonnie depends on GoDonnieParser. This makes sure that the parser is built before the GoDonnie interpreter
 add_dependencies(GoDonnie GoDonnieParser)

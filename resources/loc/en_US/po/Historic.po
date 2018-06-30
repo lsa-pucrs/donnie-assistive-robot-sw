@@ -1,0 +1,38 @@
+# English translations for PACKAGE package.
+# Copyright (C) 2018 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Automatically generated, 2018.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-03-09 05:10-0300\n"
+"PO-Revision-Date: 2018-03-09 05:10-0300\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../../client/godonnie/Historic.cpp:65
+msgid " comandos"
+msgstr " commands"
+
+#: ../../client/godonnie/Historic.cpp:67 ../../client/godonnie/Historic.cpp:91
+msgid " foi "
+msgstr " was "
+
+#: ../../client/godonnie/Historic.cpp:68 ../../client/godonnie/Historic.cpp:92
+msgid ", posição ["
+msgstr ", position ["
+
+#: ../../client/godonnie/Historic.cpp:67 ../../client/godonnie/Historic.cpp:91
+msgid "Comando "
+msgstr "Command "
+
+#: ../../client/godonnie/Historic.cpp:65
+msgid "Histórico possui "
+msgstr "History has "

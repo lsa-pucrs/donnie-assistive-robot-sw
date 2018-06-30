@@ -1,6 +1,8 @@
 #include <antlr3baserecognizer.h>
 #include <antlr3lexer.h>
 #include <antlr3defs.h>
+#include <stdio.h>
+#include <string.h>
 
 #ifndef def_displayRecognitionErrorNewLexer
 #define def_displayRecognitionErrorNewLexer
@@ -26,10 +28,18 @@
 		//ftext = ex->streamName->to8(ex->streamName);
 		//ANTLR3_FPRINTF(stderr, "\%s(", ftext->chars);
     }
+    
+    if (strcmp("pt_BR",getenv("DONNIE_LANG")) == 0){
+	    ANTLR3_FPRINTF(stderr, "Erro na linha %d ", recognizer->state->exception->line);
+	    ANTLR3_FPRINTF(stderr, "e na coluna %d. ", (recognizer->state->exception->charPositionInLine));
+	    ANTLR3_FPRINTF(stderr, " Palavra invalida \n");
+	}
 
-    ANTLR3_FPRINTF(stderr, "Erro na linha %d ", recognizer->state->exception->line);
-    ANTLR3_FPRINTF(stderr, "e na coluna %d. ", (recognizer->state->exception->charPositionInLine));
-    ANTLR3_FPRINTF(stderr, " Palavra invalida \n");
+	if (strcmp("en_US",getenv("DONNIE_LANG")) == 0){
+	    ANTLR3_FPRINTF(stderr, "Error in line %d ", recognizer->state->exception->line);
+	    ANTLR3_FPRINTF(stderr, ", column %d. ", (recognizer->state->exception->charPositionInLine));
+	    ANTLR3_FPRINTF(stderr, " Invalid word \n");
+	}
 		
     //ANTLR3_FPRINTF(stderr, "Verificar comando %s \n", ttext == NULL ? (pANTLR3_UINT8)"<palavra não identificada>" : ttext2->chars);
     if(ex->c ==  (char)ANTLR3_TOKEN_EOF)

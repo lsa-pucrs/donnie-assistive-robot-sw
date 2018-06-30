@@ -29,7 +29,7 @@ if [ -z "$DONNIE_PATH" ]; then
     exit 1
 fi  
 echo -e "DONNIE_PATH=${DONNIE_PATH}\n"
-export DONNIE_SOURCE_PATH=${PWD}/donnie-assistive-robot-sw
+export DONNIE_SOURCE_PATH=${PWD}
 echo -e "DONNIE_SOURCE_PATH=${DONNIE_SOURCE_PATH}\n"
 
 
@@ -247,6 +247,12 @@ sudo apt-get install -y libsox-dev
 #to compile GoDonnie interpreter
 sudo apt-get install -y libreadline-dev
 sudo apt-get install -y libantlr3c-dev
+#for language translation
+sudo apt-get install -y libboost-locale-dev
+#generate supported languages
+echo -e "${GREEN}Generating supported languages (en_US and pt_BR)... ${NC}\n"
+sudo locale-gen en_US
+sudo locale-gen pt_BR
 
 ## UNCOMMENT HERE TO COMPILE THE DOCUMENTATION
 # std terminal used in several linux distributions
