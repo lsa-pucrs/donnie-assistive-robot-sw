@@ -31,7 +31,6 @@ $ msgfmt --output-file=./<en_US or pt_BR>/LC_MESSAGES/Compiler.mo ./<en_US or pt
 
 ## Disclaimer
 
-- **Do not remove this folder from the repository's root directory**. The translator environment in the different modules expect the files to be located here.
 - **This is a work in progress**. Feel free to open issues regarding errors in localization (e.g. mistranslations, missing terms).
 
 ## Contributors
