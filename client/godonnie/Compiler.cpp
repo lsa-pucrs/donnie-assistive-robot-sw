@@ -465,11 +465,11 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
 
 			// sound on or off
-			if (tokens[1] == string(translate("ligado"))){
+			if ((tokens[1] == "ligado") || (tokens[1] == "on")){
 				Donnie->speak(translate("O som foi ligado com sucesso"));
 				Donnie->muteTTS(false);
 			}
-			else if (tokens[1] == string(translate("desligado"))){
+			else if ((tokens[1] == "desligado") || (tokens[1] == "off")){
 				Donnie->speak(translate("O som foi desligado com sucesso"));
 				Donnie->muteTTS(true);
 			}
