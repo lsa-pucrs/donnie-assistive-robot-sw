@@ -4,137 +4,146 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
-msgid   ""
-msgstr  "Project-Id-Version: PACKAGE VERSION\n"
-        "Report-Msgid-Bugs-To: \n"
-        "POT-Creation-Date: 2018-03-13 03:50-0300\n"
-        "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-        "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-        "Language-Team: LANGUAGE <LL@li.org>\n"
-        "Language: \n"
-        "MIME-Version: 1.0\n"
-        "Content-Type: text/plain; charset=UTF-8\n"
-        "Content-Transfer-Encoding: 8bit\n"
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-06-30 23:37-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 
-#: ../../client/godonnie/Compiler.cpp:508
-msgid   " segundos."
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:549
+msgid " segundos."
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:281
-#: ../../client/godonnie/Compiler.cpp:306
-msgid   ", bateu"
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:295
+#: ../../../client/godonnie/Compiler.cpp:320
+msgid ", bateu"
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:283
-#: ../../client/godonnie/Compiler.cpp:308
-msgid   ", não bateu"
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:297
+#: ../../../client/godonnie/Compiler.cpp:322
+msgid ", não bateu"
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:472
-msgid   "COMMENT: "
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:513
+msgid "COMMENT: "
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:744
-msgid   "EXIT"
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:785
+msgid "EXIT"
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:182
-msgid   "Erro ao salvar comando no log"
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:196
+msgid "Erro ao salvar comando no log"
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:707
-msgid   "Nenhum comando executado, posição ["
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:748
+msgid "Nenhum comando executado, posição ["
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:655
-msgid   "Número de argumentos invalido."
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:696
+msgid "Número de argumentos invalido."
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:459
-msgid   "O som foi desligado com sucesso"
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:498
+msgid "O cinto foi desligado com sucesso"
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:455
-msgid   "O som foi ligado com sucesso"
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:495
+msgid "O cinto foi ligado com sucesso"
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:107
-msgid   "Out of memory trying to allocate ANTLR input stream\n"
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:473
+msgid "O som foi desligado com sucesso"
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:136
-msgid   "Out of memory trying to allocate parser\n"
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:469
+msgid "O som foi ligado com sucesso"
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:128
-msgid   "Out of memory trying to allocate token stream\n"
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:121
+msgid "Out of memory trying to allocate ANTLR input stream\n"
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:320
-msgid   "PD: "
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:150
+msgid "Out of memory trying to allocate parser\n"
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:337
-msgid   "PE: "
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:142
+msgid "Out of memory trying to allocate token stream\n"
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:269
-msgid   "PF: "
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:334
+msgid "PD: "
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:294
-msgid   "PT: "
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:351
+msgid "PE: "
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:148
-msgid   "Parse error"
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:283
+msgid "PF: "
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:494
-msgid   "SPEAK: "
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:308
+msgid "PT: "
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:763
-msgid   "Sintaxe não conhecida\n"
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:162
+msgid "Parse error"
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:439
-msgid   "Sintaxe não conhecida para comando '"
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:535
+msgid "SPEAK: "
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:153
-msgid   "Tree : "
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:804
+msgid "Sintaxe não conhecida\n"
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:120
-msgid   "Unable to create the lexer due to malloc() failure\n"
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:453
+msgid "Sintaxe não conhecida para comando '"
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:505
-msgid   "WAIT: "
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:167
+msgid "Tree : "
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:279
-#: ../../client/godonnie/Compiler.cpp:304
-msgid   "andou "
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:134
+msgid "Unable to create the lexer due to malloc() failure\n"
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:216
-msgid   "bateu"
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:546
+msgid "WAIT: "
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:508
-msgid   "esperando "
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:293
+#: ../../../client/godonnie/Compiler.cpp:318
+msgid "andou "
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:829
-msgid   "null comp"
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:230
+msgid "bateu"
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:217
-msgid   "não bateu"
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:549
+msgid "esperando "
+msgstr ""
 
-#: ../../client/godonnie/Compiler.cpp:547
-msgid   "while"
-msgstr  ""
+#: ../../../client/godonnie/Compiler.cpp:870
+msgid "null comp"
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:231
+msgid "não bateu"
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:588
+msgid "while"
+msgstr ""
