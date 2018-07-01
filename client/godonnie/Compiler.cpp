@@ -491,10 +491,10 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
 
 			// sound on or off
-			if (tokens[1] == string(translate("ligado"))){
+			if ((tokens[1] == "ligado") || (tokens[1] == "on")){
 				Donnie->speak(translate("O cinto foi ligado com sucesso"));
 			}
-			else if (tokens[1] == string(translate("desligado"))){
+			else if ((tokens[1] == "desligado") || (tokens[1] == "off")){
 				Donnie->speak(translate("O cinto foi desligado com sucesso"));
 			}
 			// error treatmet is performed at the parser level. it is not necessary to test for error here
