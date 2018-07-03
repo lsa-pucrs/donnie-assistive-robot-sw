@@ -1,7 +1,7 @@
 #include <libplayerc++/playerc++.h>
 #include <iostream>
 
-//////////////////
+////////////////// 
 #include <termios.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -41,8 +41,11 @@ int fd, res, i;
 struct termios newtio;
 struct sigaction saio;
 char buf[255];
+	
+////The belt software still works with a 5x7 matrix
 char P[] = {'Z','P','P','P','P','P','P','P','P','P','P','P','P','P','P','P','P','P','P','P','P','P','P','P','P','P','P','P','P','P','P','P','P','P','P','P'};
-//
+//The arduino protocol for controlling the motors is 'z' to indicate the start of the information
+//Send 'A' for maximum vibration, 'B' for moderate, 'C' for low and 'P' to stop
 //open the device in non-blocking way (read will return immediately)
 fd = open(devicename, O_RDWR | O_NOCTTY | O_NONBLOCK);
 if (fd < 0)
@@ -79,18 +82,19 @@ tcsetattr(fd,TCSANOW,&newtio);
 
 /////////////////////////
 	
-	
+	/// The software belt is implemented for 5x7, but the current hardware uses only two lines, then the first,
+	/// third and fifth lines are set to 'P'
 	for(;;){
 		write(fd,"Z",1);
-		for(int i = 0; i <7; i++)
+		for(int i = 0; i <7; i++) //First Line, NOT implemented in hardware
 			write(fd,"A",1);
-		for(int i = 0; i <7; i++)
+		for(int i = 0; i <7; i++) //Second Line, implemented
 			if( P[i+8]== 'A') write(fd,"A",1); else if (P[i+8] == 'B') write(fd,"B",1); else write(fd,"P",1);
-		for(int i = 0; i <7; i++)
+		for(int i = 0; i <7; i++)//Third Line, NOT implemented in hardware
 			write(fd,"A",1);
-		for(int i = 0; i <7; i++)
+		for(int i = 0; i <7; i++)//Fourth Line, implemented
 			if( P[i+8]== 'A') write(fd,"A",1); else if (P[i+8] == 'B') write(fd,"B",1); else write(fd,"P",1);
-		for(int i = 0; i <7; i++)
+		for(int i = 0; i <7; i++)//Fifth Line, NOT implemented in hardware
 			write(fd,"A",1);
 	
 		cout << "Rangers:";
@@ -98,6 +102,7 @@ tcsetattr(fd,TCSANOW,&newtio);
 			if((int(myranger[i]/10))==0) cout << "  " << myranger[i] << " ";  //unidade
 			else if((int(myranger[i]/100))==0) cout << " " << myranger[i] << " ";  //dezena
 			else cout << myranger[i] << " ";  //centena	
+		//	if(SensorValue < Distance of Max. Vibration value)...elseif(SensorValue < Distance of moderate Vibration)...
 			if(myranger[i] < 1.) P[i+8] = 'A'; else if(myranger[i] < 1.5)	P[i+8] = 'B'; else P[i+8] = 'P';
 			if(myranger[i] < 1.) P[i+22] = 'A'; else if(myranger[i] < 1.5)	P[i+22] = 'B'; else P[i+22] = 'P';
 		}
