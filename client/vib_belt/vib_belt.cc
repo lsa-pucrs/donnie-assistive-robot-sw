@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <sys/signal.h>
 #include <sys/types.h>
-#define BAUDRATE B9600
+#define BAUDRATE B9600 //BAUDRATE should be the same of arduino
 
 //
 
@@ -86,16 +86,16 @@ tcsetattr(fd,TCSANOW,&newtio);
 	/// third and fifth lines are set to 'P'
 	for(;;){
 		write(fd,"Z",1);
-		for(int i = 0; i <7; i++) //First Line, NOT implemented in hardware
-			write(fd,"A",1);
+		for(int i = 0; i <7; i++) //First Line, NOT implemented in hardware/Recommend set to "P"
+			write(fd,"P",1);
 		for(int i = 0; i <7; i++) //Second Line, implemented
-			if( P[i+8]== 'A') write(fd,"A",1); else if (P[i+8] == 'B') write(fd,"B",1); else write(fd,"P",1);
-		for(int i = 0; i <7; i++)//Third Line, NOT implemented in hardware
-			write(fd,"A",1);
+			if( P[i+8]== 'A') write(fd,"A",1); else if (P[i+8] == 'B') write(fd,"B",1); else if (P[i+8] == 'C') write(fd,"C",1); else write(fd,"P",1);
+		for(int i = 0; i <7; i++)//Third Line, NOT implemented in hardware/Recommend set to "P"
+			write(fd,"P",1);
 		for(int i = 0; i <7; i++)//Fourth Line, implemented
-			if( P[i+8]== 'A') write(fd,"A",1); else if (P[i+8] == 'B') write(fd,"B",1); else write(fd,"P",1);
-		for(int i = 0; i <7; i++)//Fifth Line, NOT implemented in hardware
-			write(fd,"A",1);
+			if( P[i+22]== 'A') write(fd,"A",1); else if (P[i+22] == 'B') write(fd,"B",1); else if (P[i+22] == 'C') write(fd,"C",1); else write(fd,"P",1);
+		for(int i = 0; i <7; i++)//Fifth Line, NOT implemented in hardware/Recommend set to "P"
+			write(fd,"P",1);
 	
 		cout << "Rangers:";
 		for(int i=0;i<myranger.GetRangeCount();i++){  //print all lasers receiveds
@@ -103,8 +103,8 @@ tcsetattr(fd,TCSANOW,&newtio);
 			else if((int(myranger[i]/100))==0) cout << " " << myranger[i] << " ";  //dezena
 			else cout << myranger[i] << " ";  //centena	
 		//	if(SensorValue < Distance of Max. Vibration value)...elseif(SensorValue < Distance of moderate Vibration)...
-			if(myranger[i] < 1.) P[i+8] = 'A'; else if(myranger[i] < 1.5)	P[i+8] = 'B'; else P[i+8] = 'P';
-			if(myranger[i] < 1.) P[i+22] = 'A'; else if(myranger[i] < 1.5)	P[i+22] = 'B'; else P[i+22] = 'P';
+			if(myranger[i] < 1.) P[i+8 ] = 'A'; else if(myranger[i] < 1.5)	P[i+8 ] = 'B'; else if(myranger[i] < 2.5)  P[i+8 ] = 'C'; else P[i+8 ] = 'P';
+			if(myranger[i] < 1.) P[i+22] = 'A'; else if(myranger[i] < 1.5)	P[i+22] = 'B'; else if(myranger[i] < 2.5)  P[i+22] = 'C'; else P[i+22] = 'P';
 		}
 			
 		cout << "Qnt:" << myranger.GetRangeCount() << endl;
