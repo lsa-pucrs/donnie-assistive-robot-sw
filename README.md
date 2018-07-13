@@ -62,8 +62,8 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
 ## Install Donnie Software on a Desktop Computer Using the Packages
 
- [**Ubuntu 14.04**](http://releases.ubuntu.com/14.04/) (Trusty Tahr) is the recommended OS distribution.
- For older computers or VMs, [Lubuntu 14.04](http://cdimage.ubuntu.com/lubuntu/releases/14.04/release/) or [Ubuntu Mate 14.04](https://ubuntu-mate.org/trusty/) are recommended.
+ [**Ubuntu 16.04**](http://releases.ubuntu.com/16.04/) (Xenial Xerus) is the recommended OS distribution.
+ For older computers or VMs, [Lubuntu 16.04](http://cdimage.ubuntu.com/lubuntu/releases/16.04/release/) or [Ubuntu Mate 16.04](https://ubuntu-mate.org/trusty/) are recommended.
 
  Download the [package](releases/latest) and execute the following steps in the terminal:
 
@@ -80,8 +80,8 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
   This option is recommended only for experienced Linux programmers. If it is not your case, please install Donnie using the pre-compiled packages.
 
- [**Ubuntu 14.04**](http://releases.ubuntu.com/14.04/) (Trusty Tahr) is the recommended OS distribution.
- For older computers or VMs, [Lubuntu 14.04](http://cdimage.ubuntu.com/lubuntu/releases/14.04/release/) or [Ubuntu Mate 14.04](https://ubuntu-mate.org/trusty/) are recommended.
+ [**Ubuntu 16.04**](http://releases.ubuntu.com/16.04/) (Xenial Xerus) is the recommended OS distribution.
+ For older computers or VMs, [Lubuntu 16.04](http://cdimage.ubuntu.com/lubuntu/releases/16.04/release/) or [Ubuntu Mate 16.04](https://ubuntu-mate.org/trusty/) are recommended.
 
  Open a terminal, download this script, and execute it
 
