@@ -14,12 +14,12 @@
 
 # Donnie Software Stack
 
-Robotics has been used to teach young students the basics of programming. However, 
+Robotics has been used to teach young students the basics of programming. However,
 most of the programming environments for kids are high visual, based on grab and drag blocks.
-**Blind students or students with some visual disability cannot use these teaching resources**. 
+**Blind students or students with some visual disability cannot use these teaching resources**.
 
-Donnie project proposes an inclusive robotic programming environment where all students 
-(with or without visual disabilities) can use. 
+Donnie project proposes an inclusive robotic programming environment where all students
+(with or without visual disabilities) can use.
 
 Donnie comes with two usage options: simulated robot and physical robot. It is recommend to start with the simulated since it does not require building the robot. Moreover, the physical robot is functional, but still under test.
 
@@ -37,7 +37,7 @@ Contents
 # Features
 ---------------
 
-* Robot programming environment for young students with or without visual impairment; 
+* Robot programming environment for young students with or without visual impairment;
 * Assistive programming language called GoDonnie. GoDonnie is TTS and screen reader friendly;
 * Integration with a Arduino-based robot with Player robotic middleware;
 * Extension of Stage simulator to generate sound clues while the robot is moving;
@@ -50,10 +50,10 @@ Contents
 <!---
 TODO colocar um link do Donnie no youtube
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=YOUTUBE_VIDEO_ID_HERE
-" target="_blank"><img src="http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg" 
+" target="_blank"><img src="http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg"
 alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 -->
-  
+
   The simulation is recommended if you want to known about Donnie but you dont have the required resources to build your own Donnie robot.
 
 ## Run Donnie Software from a Virtual Machine
@@ -62,32 +62,32 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
 ## Install Donnie Software on a Desktop Computer Using the Packages
 
- [**Ubuntu 14.04**](http://releases.ubuntu.com/14.04/) (Trusty Tahr) is the recommended OS distribution. 
+ [**Ubuntu 14.04**](http://releases.ubuntu.com/14.04/) (Trusty Tahr) is the recommended OS distribution.
  For older computers or VMs, [Lubuntu 14.04](http://cdimage.ubuntu.com/lubuntu/releases/14.04/release/) or [Ubuntu Mate 14.04](https://ubuntu-mate.org/trusty/) are recommended.
- 
+
  Download the [package](releases/latest) and execute the following steps in the terminal:
- 
+
  * It is recommended to update your packages before the instalation:
-> sudo apt-get install update
+> sudo apt-get update
 * To install, you can double-click it or execute:
 > sudo dpkg -i donnie_1.0.0_amd64.deb
-* In case of missing dependencies, try: 
+* In case of missing dependencies, try:
 > sudo apt-get install -f
 * To unistall:
 > sudo dpkg -r donnie
 
-## Compile and Install Donnie Software on a Desktop Computer 
+## Compile and Install Donnie Software on a Desktop Computer
 
   This option is recommended only for experienced Linux programmers. If it is not your case, please install Donnie using the pre-compiled packages.
 
- [**Ubuntu 14.04**](http://releases.ubuntu.com/14.04/) (Trusty Tahr) is the recommended OS distribution. 
+ [**Ubuntu 14.04**](http://releases.ubuntu.com/14.04/) (Trusty Tahr) is the recommended OS distribution.
  For older computers or VMs, [Lubuntu 14.04](http://cdimage.ubuntu.com/lubuntu/releases/14.04/release/) or [Ubuntu Mate 14.04](https://ubuntu-mate.org/trusty/) are recommended.
 
  Open a terminal, download this script, and execute it
- 
+
 	mkdir ~/donnie; cd ~/donnie
 	wget https://github.com/lsa-pucrs/donnie-assistive-robot-sw/raw/devel/install.sh
-	chmod +x ./install.sh 
+	chmod +x ./install.sh
 	./install.sh
 
 ### Configuring Donnie
@@ -103,7 +103,7 @@ Every part of Donnie Software Stack is also based on CMake. These are the softwa
 - Stage
 - Donnie Software
 
-each of these packages have their one sets of parameters. 
+each of these packages have their one sets of parameters.
 
 Developers interested in customization might want to read the following files:
 
@@ -143,21 +143,21 @@ To build your own Donnie robot, please refer to the following repositories (gith
 ### Install the Donnie Image into the SD Card
 
   The easiest way to setup Donnie's embedded computer is to use the pre-built image. Please follow these steps to burn the SD card:
-  
+
   	wget xxxxxxxxx.img
 	continue ...
-	
+
 
 ### Compile, Configure the OS, and Install the Donnie Image into the SD Card
 
-  This option is for programmers with experience with Raspberry Pi. 
+  This option is for programmers with experience with Raspberry Pi.
 
  [**Raspbian 8.0**](https://www.raspberrypi.org/downloads/raspbian/) (Jessie) is the recommended OS distribution for Donnie robot.
  Logon the Donnie's embedded computer, open a terminal, download this script, and execute it
 
 	mkdir ~/donnie; cd ~/donnie
 	wget https://github.com/lsa-pucrs/donnie-assistive-robot-sw/raw/devel/install-rpi.sh
-	chmod +x ./install-rpi.sh 
+	chmod +x ./install-rpi.sh
 	./install-rpi.sh
 
  Experienced programmers can configure the same paramerters presented before for the Raspberry Pi.
@@ -196,8 +196,8 @@ This is a list of itens the core team wish to have some help:
 
 # Demonstration
 ------------
-This [video](https://www.youtube.com/watch?v=BRXAqvGPGmU) demonstrates the functionality of Donnie Robot and Donnie simulation. In this task the robot is asked to move forward until hitting a wall, then it must turn to the right. 
- 
+This [video](https://www.youtube.com/watch?v=BRXAqvGPGmU) demonstrates the functionality of Donnie Robot and Donnie simulation. In this task the robot is asked to move forward until hitting a wall, then it must turn to the right.
+
 
 # Support
 ------------
@@ -227,4 +227,3 @@ If you are using Donnie on your research projects, please cite our papers:
 	  booktitle={Latin American Robotics Symposium (LARS)},
 	  year={2017}
 	}
-
