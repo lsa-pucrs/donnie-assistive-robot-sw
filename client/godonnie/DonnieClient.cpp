@@ -69,7 +69,7 @@ DonnieClient::DonnieClient()
 		bpProxy = new BumperProxy(robot,0);
 		bfinderProxy = new BlobfinderProxy(robot,0);
 		sonarProxy = new RangerProxy(robot,0);
-		//headSonarProxy = new RangerProxy(robot,1);
+		headSonarProxy = new RangerProxy(robot,1);
 		speechProxy = new SpeechProxy(robot,0);
 	}catch (PlayerError e){
 		#ifndef NDEBUG
@@ -591,6 +591,7 @@ int DonnieClient::headGoto(float pa){
 }
 
 void DonnieClient::Scan(void){
+	
 	float head_yawi = -90; //in degree. +90 due the servo default pos is 90 degre
 	//GOTO -90 to 90 in 30 by 30 steps
 	float sonar_readings[7];
@@ -599,23 +600,23 @@ void DonnieClient::Scan(void){
 	int blobs_counter_buffer;	
 	std::ostringstream scanText;
 	string color_str;
-
+    
 	// Set up language environment
 	generator gen;
 	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("DonnieClient");
 	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
 	locale::global(loc);
-
+    
 	bool blob_flag = false;
 	int camera_width = bfinderProxy->GetWidth() - 1;  
 	int nro_blobs = 0;
 	int nro_blobs_buffer = 0;
-
+    
 	int yaw_buffer = 0;
 	playerc_blobfinder_blob_t blob_buffer;
 	blob_buffer.color =0;
-
+    
 	playerc_blobfinder_blob_t total_blobs_found[20];
 	playerc_blobfinder_blob_t _total_blobs_found[20];
 	int total_yaws[20];
@@ -632,9 +633,9 @@ void DonnieClient::Scan(void){
 		headGoto(head_yawi);
 		robot->ReadIfWaiting();
 		sleep(1);
-
 		// read sonar
-		headSonarProxy->GetRange(0)/100; ///STEP_LENGHT;  // read head sonar 
+		headSonarProxy->GetRange(0)/100; ///STEP_LENGHT;  // read head sonar  
+		
 		sonar_readings[yaw_cnt] = headSonarProxy->GetRange(0)/STEP_LENGHT;  // read head sonar 
 		blobs_found[yaw_cnt] = bfinderProxy->GetCount(); // get the number of blobs found
 		blobs_counter_buffer = blobs_found[yaw_cnt];
