@@ -279,6 +279,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 		
           case FW:
           { // forward
+			  //printf("TESTE");
 			#ifndef NDEBUG
             cout << translate("PF: ") << run(getChild(tree,0)) << endl;
             #endif
@@ -364,6 +365,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case SCAN:
           {
+			  
 			// get 7 sonar and blob readings by moving the head from 0o to 180o
 			// every 30 degrees
 			Donnie->Scan();
@@ -439,6 +441,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case COLOR:
           {
+			
             int arg;
 			// get 7 sonar and blob readings by moving the head from 0o to 180o
 			// every 30 degrees. report only the blobs with requested color (r,g, or b)
@@ -459,6 +462,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           
           case SOUND:
           {
+			
             vector<string> tokens;
             split((char*)getText(tree),' ',tokens);
 			//if (tokens.size() != 2)
