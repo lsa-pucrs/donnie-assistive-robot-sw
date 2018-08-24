@@ -19,6 +19,12 @@
 
 using namespace std;
 
+// Localization libraries 
+#include <boost/locale.hpp>
+using namespace boost::locale;
+using boost::locale::translate;
+using boost::locale::format;
+
 //TODO (amory). mudar nome das classes para ingles
 class parametroException: public exception
 {

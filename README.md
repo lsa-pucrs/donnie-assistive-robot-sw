@@ -87,7 +87,8 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
  
 	mkdir ~/donnie; cd ~/donnie
 	wget https://github.com/lsa-pucrs/donnie-assistive-robot-sw/raw/devel/install.sh
-	chmod +x ./install.sh 
+	chmod +x ./install.sh
+	export DONNIE_PATH=/opt/donnie 
 	./install.sh
 
 ### Configuring Donnie
@@ -164,6 +165,7 @@ To build your own Donnie robot, please refer to the following repositories (gith
 	mkdir ~/donnie; cd ~/donnie
 	wget https://github.com/lsa-pucrs/donnie-assistive-robot-sw/raw/devel/install-rpi.sh
 	chmod +x ./install-rpi.sh 
+	export DONNIE_PATH=/opt/donnie
 	./install-rpi.sh
 
  Experienced programmers can configure the same paramerters presented before for the Raspberry Pi.
@@ -200,6 +202,11 @@ This is a list of itens the core team wish to have some help:
 * Integrate more assistive tools for blind users such as ORCA, NVDA, among others;
 * Feature requests and testing. Please use the [Issue](https://github.com/lsa-pucrs/donnie-assistive-robot-sw/issues) system to request new features and to report bugs;
 
+# Demonstration
+------------
+This [video](https://www.youtube.com/watch?v=BRXAqvGPGmU) demonstrates the functionality of Donnie Robot and Donnie simulation. In this task the robot is asked to move forward until hitting a wall, then it must turn to the right. 
+ 
+
 # Support
 ------------
 
@@ -210,6 +217,22 @@ Please use the github [Issue](https://github.com/lsa-pucrs/donnie-assistive-robo
 
 If you are using Donnie on your research projects, please cite our papers:
 
-* To Appear
 
+
+	@inproceedings{oliveira2017teaching,
+	  title={Teaching Robot Programming Activities for Visually Impaired Students: A Systematic Review},
+	  author={Oliveira, Juliana Damasio and de Borba Campos, M{\'a}rcia and de Morais Amory, Alexandre and Manssour, Isabel Harb},
+	  booktitle={International Conference on Universal Access in Human-Computer Interaction},
+	  pages={155--167},
+	  year={2017},
+	  organization={Springer}
+	}
+
+
+	@inproceedings{guilherme2017donnie,
+	  title={Donnie Robot: Towards an Accessible And Educational Robot for Visually Impaired People},
+	  author={Guilherme H. M. Marques, Daniel C. Einloft, Augusto C. P. Bergamin, Joice A. Marek, Renan G. Maidana Marcia B. Campos, Isabel H. Manssour, Alexandre M. Amory},
+	  booktitle={Latin American Robotics Symposium (LARS)},
+	  year={2017}
+	}
 

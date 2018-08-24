@@ -1,0 +1,81 @@
+# GoDonnie translation template.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid   ""
+msgstr  "Project-Id-Version: PACKAGE VERSION\n"
+        "Report-Msgid-Bugs-To: \n"
+        "POT-Creation-Date: 2018-03-09 03:40-0300\n"
+        "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+        "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+        "Language-Team: LANGUAGE <LL@li.org>\n"
+        "Language: \n"
+        "MIME-Version: 1.0\n"
+        "Content-Type: text/plain; charset=UTF-8\n"
+        "Content-Transfer-Encoding: 8bit\n"
+
+#: ../client/godonnie/GoDonnie.cpp:321
+msgid   "\nNão há código para ser executado."
+msgstr  ""
+
+#: ../client/godonnie/GoDonnie.cpp:285
+msgid   " argumentos. \nArgumentos: \n\t-t: Executa em modo terminal; \n\t-f nome do arquivo: Executa em modo script; \n\t-m: Quando habilitado, imprime mensagens na tela; \n\t-h: Ajuda"
+msgstr  ""
+
+#: ../client/godonnie/GoDonnie.cpp:136
+msgid   " não encontrado."
+msgstr  ""
+
+#: ../client/godonnie/GoDonnie.cpp:136
+msgid   "Arquivo "
+msgstr  ""
+
+#: ../client/godonnie/GoDonnie.cpp:108
+msgid   "Comando sem argumentos!"
+msgstr  ""
+
+#: ../client/godonnie/GoDonnie.cpp:276
+msgid   "Erro ao abrir arquivo "
+msgstr  ""
+
+#: ../client/godonnie/GoDonnie.cpp:129
+msgid   "Modo script requer somente dois argumentos."
+msgstr  ""
+
+#: ../client/godonnie/GoDonnie.cpp:119
+msgid   "Modo terminal requer somente um argumento."
+msgstr  ""
+
+#: ../client/godonnie/GoDonnie.cpp:185
+msgid   "Nenhum modo selecionado."
+msgstr  ""
+
+#: ../client/godonnie/GoDonnie.cpp:233
+msgid   "Não foi possivel criar o arquivo de log"
+msgstr  ""
+
+#: ../client/godonnie/GoDonnie.cpp:191
+msgid   "Não pode ter dois modos selecionados ao mesmo tempo."
+msgstr  ""
+
+#: ../client/godonnie/GoDonnie.cpp:160 ../client/godonnie/GoDonnie.cpp:169
+msgid   "Parâmetro"
+msgstr  ""
+
+#: ../client/godonnie/GoDonnie.cpp:156
+msgid   "Parâmetro -f requer um nome de arquivo com código GoDonnie."
+msgstr  ""
+
+#: ../client/godonnie/GoDonnie.cpp:146
+msgid   "Parâmetro m deve vir primeiro."
+msgstr  ""
+
+#: ../client/godonnie/GoDonnie.cpp:285
+msgid   "Uso: "
+msgstr  ""
+
+#: ../client/godonnie/GoDonnie.cpp:161 ../client/godonnie/GoDonnie.cpp:170
+msgid   "desconhecido"
+msgstr  ""

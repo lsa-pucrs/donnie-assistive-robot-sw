@@ -1,6 +1,7 @@
 #include "DonnieMemory.h"
 #include "utils.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -41,10 +42,19 @@ int DonnieMemory::addVar(string name, int value)
 {
 	std::ostringstream sayStr;
 	string var = toLowerCase(name);
+
+	generator gen;
+	gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieMemory");
+	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+	cout.imbue(loc);
+	sayStr.imbue(loc);
+
 	//cout << "variavel " << var << endl;
 	if(Memory.top().memory.find(var) != Memory.top().memory.end())
 	{
-		sayStr << "Variável \"" << name << "\" já existe.";
+		sayStr << translate("Variável \"") << name << translate("\" já existe.");
 		Donnie->speak(sayStr.str());
 		cout << sayStr.str() << endl;
 		return EXIST;
@@ -68,6 +78,15 @@ int DonnieMemory::assignVar(string name, int value)
 {
 	std::ostringstream sayStr;
 	string var = toLowerCase(name);
+
+	generator gen;
+	gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieMemory");
+	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+	cout.imbue(loc);
+	sayStr.imbue(loc);
+
 	//cout << "variavel " << var << endl;
 	if(Memory.top().memory.find(var) != Memory.top().memory.end())
     {
@@ -76,7 +95,7 @@ int DonnieMemory::assignVar(string name, int value)
     }
     else
     {
-    	sayStr << "Variável \"" << name << "\" não existe.";
+    	sayStr << translate("Variável \"") << name << translate("\" não existe.");
     	Donnie->speak(sayStr.str());
 		cout << sayStr.str() << endl;
     }
@@ -87,6 +106,15 @@ int DonnieMemory::getVar(string name)
 {
 	std::ostringstream sayStr;
 	string var = toLowerCase(name);
+
+	generator gen;
+	gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieMemory");
+	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+	cout.imbue(loc);
+	sayStr.imbue(loc);
+
 	//cout << "variavel " << var << endl;
 	if(Memory.top().memory.find(var) != Memory.top().memory.end())
 	{
@@ -94,7 +122,7 @@ int DonnieMemory::getVar(string name)
 	}
 	else
 	{
-		sayStr << "Variável \"" << name << "\" não existe.";
+		sayStr << translate("Variável \"") << name << translate("\" não existe.");
 		Donnie->speak(sayStr.str());
 		cout << sayStr.str() << endl;
 	}
@@ -115,10 +143,19 @@ int DonnieMemory::addForVar(string name, int value)
 {
 	std::ostringstream sayStr;
 	string var = toLowerCase(name);
+
+	generator gen;
+	gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieMemory");
+	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+	cout.imbue(loc);
+	sayStr.imbue(loc);
+
 	//cout << "variavel " << var << endl;
 	if(Memory.top().memory.find(var) != Memory.top().memory.end())
 	{
-		sayStr << "Variável PARA \"" << name << "\" já existe.";
+		sayStr << translate("Variável PARA \"") << name << translate("\" já existe.");
 		Donnie->speak(sayStr.str());
 		cout << sayStr.str() << endl;
 	}
@@ -143,9 +180,18 @@ void DonnieMemory::addProc(string name, procDec procedure)
 {
 	std::ostringstream sayStr;
 	string var = toLowerCase(name);
+
+	generator gen;
+	gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieMemory");
+	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+	cout.imbue(loc);
+	sayStr.imbue(loc);
+
 	if(proc.find(var) != proc.end())
 	{
-		sayStr << "Procedimento \"" << name << "\" já foi declarado.";
+		sayStr << translate("Procedimento \"") << name << translate("\" já foi declarado.");
 		Donnie->speak(sayStr.str());
 		cout << sayStr.str() << endl;
 	}
@@ -157,13 +203,22 @@ procDec DonnieMemory::getProc(string name)
 {
 	std::ostringstream sayStr;
 	string var = toLowerCase(name);
+
+	generator gen;
+	gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieMemory");
+	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+	cout.imbue(loc);
+	sayStr.imbue(loc);
+
 	if(proc.find(var) != proc.end())
 	{
 		return proc[var];
 	}
 	else
 	{
-		sayStr << "Procedimento \"" << name << "\" não existe.";
+		sayStr << translate("Procedimento \"") << name << translate("\" não existe.");
 		Donnie->speak(sayStr.str());
 		cout << sayStr.str() << endl;
 	}

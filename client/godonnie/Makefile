@@ -9,7 +9,7 @@ all:clean grammar GoDonnie
 clean: 
 	rm -f GoDonnieLexer* GoDonnieParser* GoDonnie GoDonnie.tokens
 
-grammar: GoDonnie.g
+grammar: GoDonnie_en_US.g
 	java -jar Antlr/antlr-3.2.jar GoDonnie.g
 
 

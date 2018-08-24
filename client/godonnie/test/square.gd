@@ -1,15 +1,15 @@
 criar a = 4
 
 aprender quadradO: a,b,c
-faça
+faÃ§a
 	para criar d = 0; d < c; d = d + 1 
-	faça
+	faÃ§a
 		pf a
 		ge b
 	fim para
 fim aprender
 
-se a > 3 então falar "oi" fim se
+se a > 3 entÃ£o falar "oi" fim se
 
 quadrAdO[1,90,2]
 

@@ -7,8 +7,14 @@
 #include "utils.h"
 #include <libplayerc++/playerc++.h>
 
+// Localization libraries 
+#include <boost/locale.hpp>
+
 using namespace std;
 using namespace PlayerCc;
+using namespace boost::locale;
+using boost::locale::translate;
+using boost::locale::format;
 
 typedef struct PathNodes{
   double x, y, a;

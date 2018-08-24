@@ -46,7 +46,9 @@ driver
 #include <netinet/in.h> //TODO perguntar para henry oq isso faz
 //#include <assert.h>
 #include <fstream>      // std::ofstream
+#include <ctype.h> // for toupper/tolower
 
+using namespace std;
 
 #define DRIVERNAME "gtts"
 
@@ -163,16 +165,22 @@ void Gtts::ProcessSpeechCmd(player_msghdr_t* hdr, player_speech_cmd_t &data){
 		}
 	}
 
+	// Determine language from DONNIE_LANG environment variable
+	string lang = getenv("DONNIE_LANG");
+	if (lang == "en_US") lang = "EN_us";
+	if (lang == "pt_BR") lang = "PT_br";
+	string langurl = "&tl=" + lang;
+
 	char url[1000];
 	//FULL BASE URL strcpy(url,"http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&tl=PT-br&q=");
 	strcpy(url,"http://translate.google.com/translate_tts?");
-	strcat(url,"ie=UTF-8");  // TODO. Assuming UTF8. It is required to read the current system encoding
+	strcat(url,"ie=UTF-8");  // TODO. Assuming UTF8. It is required to reda the current system encoding
 	//strcat(url,"ie=ISO-8859-1");
 	strcat(url,"&total=1");
 	strcat(url,"&idx=0");
 	strcat(url,"&textlen=32");
 	strcat(url,"&client=tw-ob");
-	strcat(url,"&tl=PT-br");  // TODO. Assuming pt-br, this must change for internationalization
+	strcat(url,langurl.c_str());  // TODO. Assuming pt-br, this must change for internationalization
 	strcat(url,"&q=");
 	strcat(url, palavra);
 	#ifndef NDEBUG
