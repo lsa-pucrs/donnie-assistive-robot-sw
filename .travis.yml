@@ -20,7 +20,7 @@ before_install:
 # install Player/Stage depedencies
 - sudo apt-get install -y libfltk1.1-dev freeglut3-dev libpng12-dev libltdl-dev libdb5.1-stl libgnomecanvasmm-2.6-dev python-gnome2
 #sudo apt-get install -y libboost-all-dev  # overkill, the actually required libraries are boostthread, boostsignal, boostsystem
-- sudo apt-get install -y libboost-signals-dev libboost-system-dev libboost-thread-dev
+- sudo apt-get install -y libboost-signals-dev libboost-system-dev libboost-thread-dev libboost-locale-dev
 # old OpenCV for older Player drivers
 - sudo apt-get install -y libopencv-dev libopencv-core-dev libcv-dev libcvaux-dev libhighgui-dev
 - sudo apt-get install -y libasound2-dev libgsl0-dev libxmu-dev libpq-dev libpqxx-dev

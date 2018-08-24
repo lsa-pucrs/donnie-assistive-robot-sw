@@ -1,0 +1,14 @@
+MESSAGE( STATUS "Localization resource files" )
+
+
+INSTALL(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/en_US
+        DESTINATION ${DONNIE_PATH}/resources/loc
+)
+
+INSTALL(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/pt_BR
+        DESTINATION ${DONNIE_PATH}/resources/loc
+)
+
+INSTALL(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/pot
+        DESTINATION ${DONNIE_PATH}/resources/loc
+)

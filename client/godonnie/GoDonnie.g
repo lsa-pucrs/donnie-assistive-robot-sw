@@ -14,6 +14,8 @@ options
 // Header 
 @parser::header{
 #include <antlr3baserecognizer.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifndef def_displayRecognitionErrorNew
 #define def_displayRecognitionErrorNew
@@ -45,6 +47,7 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 	
 	static void displayRecognitionErrorNew(pANTLR3_BASE_RECOGNIZER recognizer, pANTLR3_UINT8 * tokenNames)
 	{
+		char* lang = getenv("DONNIE_LANG");
 		char messageAux[100];
 		if(flagMsgError == 1){
 			memset(messageError, 0, strlen(messageError));
@@ -89,8 +92,11 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 
 		// Next comes the line number
 		//
-		
-		sprintf(messageAux, "Erro na linha \%d ", recognizer->state->exception->line);
+		if (strcmp(lang,"pt_BR") == 0){
+			sprintf(messageAux, "Erro na linha \%d ", recognizer->state->exception->line);
+		} else if (strcmp(lang,"en_US") == 0){
+			sprintf(messageAux, "Error in line \%d ", recognizer->state->exception->line);
+		}
 		strcat(messageError, messageAux);
 		//ANTLR3_FPRINTF(stderr, "Erro na linha \%d ", recognizer->state->exception->line);
 		//ANTLR3_FPRINTF(stderr, " : error \%d : \%s", recognizer->state->exception->type, (pANTLR3_UINT8)(recognizer->state->exception->message));
@@ -113,7 +119,11 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 
 			//ANTLR3_FPRINTF(stderr, ", at offset \%d", recognizer->state->exception->charPositionInLine);
 			//ANTLR3_FPRINTF(stderr, "e na coluna \%d. ", (recognizer->state->exception->charPositionInLine+1));
-			sprintf(messageAux, "e na coluna \%d. ", recognizer->state->exception->charPositionInLine+1);
+			if (strcmp(lang,"pt_BR") == 0){
+				sprintf(messageAux, "e na coluna \%d. ", recognizer->state->exception->charPositionInLine+1);
+			} else if (strcmp(lang,"en_US") == 0){
+				sprintf(messageAux, ", in column \%d. ", recognizer->state->exception->charPositionInLine+1);
+			}
 			strcat(messageError, messageAux);
 			if  (theToken != NULL)
 			{
@@ -121,7 +131,11 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 				{
 					//ANTLR3_FPRINTF(stderr, ", at <EOF>");
 					//ANTLR3_FPRINTF(stderr, " no fim do arquivo.");
-					sprintf(messageAux, "no fim do arquivo.");
+					if (strcmp(lang,"pt_BR") == 0){
+						sprintf(messageAux, "no fim do arquivo.");
+					} else if (strcmp(lang,"en_US") == 0){
+						sprintf(messageAux, "at end of file.");
+					}
 					strcat(messageError, messageAux);
 				}
 				else
@@ -129,13 +143,21 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 					// Guard against null text in a token
 					//
 					//ANTLR3_FPRINTF(stderr, "\n    near \%s\n    ", ttext == NULL ? (pANTLR3_UINT8)"<no text for the token>" : ttext->chars);
-					pANTLR3_UINT8 temp = (pANTLR3_UINT8)"Sem token identificado";
-					
+					if (strcmp(lang,"pt_BR") == 0){
+						pANTLR3_UINT8 temp = (pANTLR3_UINT8)"Sem token identificado";
+					} else if (strcmp(lang,"en_US") == 0){
+						pANTLR3_UINT8 temp = (pANTLR3_UINT8)"No identified token";
+					}
+
 					pANTLR3_STRING ttext2 = theToken->getText(theToken);
 					
 					//ANTLR3_FPRINTF(stderr, "\n\n \%s \n\n", ttext->chars);
 					//ANTLR3_FPRINTF(stderr, "Verificar comando \%s", ttext == NULL ? (pANTLR3_UINT8)"<palavra não identificada>" : ttext2->chars);
-					sprintf(messageAux, "Verificar comando \%s", ttext == NULL ? (pANTLR3_UINT8)"<palavra não identificada>" : ttext2->chars);
+					if (strcmp(lang,"pt_BR") == 0){
+						sprintf(messageAux, "Verificar comando \%s", ttext == NULL ? (pANTLR3_UINT8)"<palavra não identificada>" : ttext2->chars);
+					} else if (strcmp(lang,"en_US") == 0){
+						sprintf(messageAux, "Verify command \%s", ttext == NULL ? (pANTLR3_UINT8)"<word not identified>" : ttext2->chars);
+					}
 					strcat(messageError, messageAux);
 				}
 			}
@@ -158,11 +180,19 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 					theToken	= (pANTLR3_COMMON_TOKEN)    theBaseTree->getToken(theBaseTree);
 				}
 				//ANTLR3_FPRINTF(stderr, ", na coluna \%d", (theBaseTree->getCharPositionInLine(theBaseTree)+1));
-				sprintf(messageAux, ", na coluna \%d", (theBaseTree->getCharPositionInLine(theBaseTree)+1));
+				if (strcmp(lang,"pt_BR") == 0){
+					sprintf(messageAux, ", na coluna \%d", (theBaseTree->getCharPositionInLine(theBaseTree)+1));
+				} else if (strcmp(lang,"en_US") == 0){
+					sprintf(messageAux, ", in column \%d", (theBaseTree->getCharPositionInLine(theBaseTree)+1));
+				}
 				strcat(messageError, messageAux);
 				
 				//ANTLR3_FPRINTF(stderr, ", na palavra \%s", ttext->chars);
-				sprintf(messageAux, ", na palavra \%s", ttext->chars);
+				if (strcmp(lang,"pt_BR") == 0){
+					sprintf(messageAux, ", na palavra \%s", ttext->chars);
+				} else if (strcmp(lang,"en_US") == 0){
+					sprintf(messageAux, ", in word \%s", ttext->chars);
+				}
 				strcat(messageError, messageAux);
 			}
 			break;
@@ -200,7 +230,11 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 			{
 				//ANTLR3_FPRINTF(stderr, " : Extraneous input...");
 				//ANTLR3_FPRINTF(stderr, " : Entrada desconhecida...");
-				sprintf(messageAux, " : Entrada desconhecida...");
+				if (strcmp(lang,"pt_BR") == 0){
+					sprintf(messageAux, " : Entrada desconhecida...");
+				} else if (strcmp(lang,"en_US") == 0){
+					sprintf(messageAux, " : Entry unknown...");
+				}
 				strcat(messageError, messageAux);
 				
 			}
@@ -210,14 +244,22 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 				{
 					//ANTLR3_FPRINTF(stderr, " : Extraneous input - expected <EOF>\n");
 					//ANTLR3_FPRINTF(stderr, " : Entrada desconhecida - Esperava o fim do arquivo\n");
-					sprintf(messageAux, " : Entrada desconhecida - Esperava o fim do arquivo\n");
+					if (strcmp(lang,"pt_BR") == 0){
+						sprintf(messageAux, " : Entrada desconhecida - Esperava o fim do arquivo\n");
+					} else if (strcmp(lang,"en_US") == 0){
+						sprintf(messageAux, " : Entry unknown - End of file expected\n");
+					}
 					strcat(messageError, messageAux);
 				}
 				else
 				{
 					//ANTLR3_FPRINTF(stderr, " : Extraneous input - expected \%s ...\n", tokenNames[ex->expecting]);
 					//ANTLR3_FPRINTF(stderr, " : Entrada desconhecida - esperando \%s ...\n", tokenNames[ex->expecting]);
-					sprintf(messageAux, " : Entrada desconhecida - esperando \%s ...\n", tokenNames[ex->expecting]);
+					if (strcmp(lang,"pt_BR") == 0){
+						sprintf(messageAux, " : Entrada desconhecida - esperando \%s ...\n", tokenNames[ex->expecting]);
+					} else if (strcmp(lang,"en_US") == 0){
+						sprintf(messageAux, " : Entry unknown - \%s expected ...\n", tokenNames[ex->expecting]);
+					}
 					strcat(messageError, messageAux);
 				}
 			}
@@ -234,7 +276,11 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 			{
 				//ANTLR3_FPRINTF(stderr, " : Missing token (\%d)...\n", ex->expecting);
 				//ANTLR3_FPRINTF(stderr, " : token faltando (\%d)...\n", ex->expecting);
-				sprintf(messageAux, " : token faltando (\%d)...\n", ex->expecting);
+				if (strcmp(lang,"pt_BR") == 0){
+					sprintf(messageAux, " : token faltando (\%d)...\n", ex->expecting);
+				} else if (strcmp(lang,"en_US") == 0){
+					sprintf(messageAux, " : missing token (\%d)...\n", ex->expecting);
+				}
 				strcat(messageError, messageAux);
 			}
 			else
@@ -243,7 +289,11 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 				{
 					//ANTLR3_FPRINTF(stderr, " : Missing <EOF>\n");
 					//ANTLR3_FPRINTF(stderr, " : Faltando fim do aquivo\n");
-					sprintf(messageAux, " : Faltando fim do aquivo\n");
+					if (strcmp(lang,"pt_BR") == 0){
+						sprintf(messageAux, " : Faltando fim do arquivo\n");
+					} else if (strcmp(lang,"en_US") == 0){
+						sprintf(messageAux, " : End of file missing\n");
+					}
 					strcat(messageError, messageAux);
 				}
 				else
@@ -266,8 +316,12 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 			// to complete a parse for instance.
 			//
 			//ANTLR3_FPRINTF(stderr, " : syntax error...\n");  
-			//ANTLR3_FPRINTF(stderr, " : Erro de sintaxe...\n");   
-			sprintf(messageAux, " : Erro de sintaxe...\n");   
+			//ANTLR3_FPRINTF(stderr, " : Erro de sintaxe...\n"); 
+			if (strcmp(lang,"pt_BR") == 0){
+				sprintf(messageAux, " : Erro de sintaxe...\n");   
+			} else if (strcmp(lang,"en_US") == 0){
+				sprintf(messageAux, " : Syntax error...\n");   
+			}  
 			strcat(messageError, messageAux);
 			break;
 
@@ -286,7 +340,11 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 			{
 				//ANTLR3_FPRINTF(stderr, " : syntax error...\n");
 				//ANTLR3_FPRINTF(stderr, " : Erro de sintaxe...\n");
-				sprintf(messageAux, " : Erro de sintaxe...\n");   
+				if (strcmp(lang,"pt_BR") == 0){
+					sprintf(messageAux, " : Erro de sintaxe...\n");   
+				} else if (strcmp(lang,"en_US") == 0){
+					sprintf(messageAux, " : Syntax error...\n");   
+				}  
 				strcat(messageError, messageAux);
 			}
 			else
@@ -295,14 +353,22 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 				{
 					//ANTLR3_FPRINTF(stderr, " : expected <EOF>\n");
 					//ANTLR3_FPRINTF(stderr, " : esperando fim do arquivo\n");
-					sprintf(messageAux, " : esperando fim do arquivo\n");
+					if (strcmp(lang,"pt_BR") == 0){
+						sprintf(messageAux, " : esperando fim do arquivo\n");
+					} else if (strcmp(lang,"en_US") == 0){
+						sprintf(messageAux, " : end of file expected\n");
+					}  
 					strcat(messageError, messageAux);
 				}
 				else
 				{
 					//ANTLR3_FPRINTF(stderr, " : expected \%s ...\n", tokenNames[ex->expecting]);
 					//ANTLR3_FPRINTF(stderr, " : esperando \%s ...\n", tokenNames[ex->expecting]);
-					sprintf(messageAux, " : esperando \%s ...\n", tokenNames[ex->expecting]);
+					if (strcmp(lang,"pt_BR") == 0){
+						sprintf(messageAux, " : esperando \%s ...\n", tokenNames[ex->expecting]);
+					} else if (strcmp(lang,"en_US") == 0){
+						sprintf(messageAux, " : \%s expected ...\n", tokenNames[ex->expecting]);
+					}  
 					strcat(messageError, messageAux);
 				}
 			}
@@ -381,7 +447,11 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 			//
 			//ANTLR3_FPRINTF(stderr, " : missing elements...\n");
 			//ANTLR3_FPRINTF(stderr, " :  faltando elementos...\n");
-			sprintf(messageAux, " :  faltando elementos...\n");
+			if (strcmp(lang,"pt_BR") == 0){
+				sprintf(messageAux, " :  faltando elementos...\n");
+			} else if (strcmp(lang,"en_US") == 0){
+				sprintf(messageAux, " :  missing elements...\n");
+			} 
 			strcat(messageError, messageAux);
 			break;
 
@@ -394,7 +464,11 @@ char flagMsgError = 0; //flag to clean the 'messageError' string after it is pri
 			//
 			//ANTLR3_FPRINTF(stderr, " : syntax not recognized...\n");
 			//ANTLR3_FPRINTF(stderr, " : sintaxe não reconhecida...\n");
-			sprintf(messageAux, " : sintaxe não reconhecida...\n");
+			if (strcmp(lang,"pt_BR") == 0){
+				sprintf(messageAux, " : sintaxe não reconhecida...\n");
+			} else if (strcmp(lang,"en_US") == 0){
+				sprintf(messageAux, " : syntax not recognized...\n");
+			} 
 			strcat(messageError, messageAux);
 			break;
 		}
@@ -565,109 +639,147 @@ PROCINV	:	'[';
 
 
 PROCDEC	:	(('A'|'a')('P'|'p')('R'|'r')('E'|'e')('N'|'n')('D'|'d')('E'|'e')('R'|'r'))
+			|(('P'|'p')('R'|'r')('O'|'o')('C'|'c')('E'|'e')('D'|'d')('U'|'u')('R'|'r')('E'|'e'))
 		;
 		
 		
 ENDPROC	:	(('F'|'f')('I'|'i')('M'|'m')(' ')+('A'|'a')('P'|'p')('R'|'r')('E'|'e')('N'|'n')('D'|'d')('E'|'e')('R'|'r'))
+			|(('E'|'e')('N'|'n')('D'|'d')(' ')+('P'|'p')('R'|'r')('O'|'o')('C'|'c')('E'|'e')('D'|'d')('U'|'u')('R'|'r')('E'|'e'))
 		;
 
 
 FORE	:	(('P'|'p')('A'|'a')('R'|'r')('A'|'a')(' ')?)
+			|(('F'|'f')('O'|'o')('R'|'r')(' ')?)
 		;
 		
 DOIT	:	(('F'|'f')('A'|'a')('Ç'|'ç'|'C'|'c')('A'|'a'))
+			|(('D'|'d')('O'|'o'))
 		;
 
 ENDFOR	:	(('F'|'f')('I'|'i')('M'|'m')(' ')+('P'|'p')('A'|'a')('R'|'r')('A'|'a'))
+			|(('E'|'e')('N'|'n')('D'|'d')(' ')+('F'|'f')('O'|'o')('R'|'r'))
 		;
 		
 WHILEE	:	(('E'|'e')('N'|'n')('Q'|'q')('U'|'u')('A'|'a')('N'|'n')('T'|'t')('O'|'o'))
+			|(('W'|'w')('H'|'h')('I'|'i')('L'|'l')('E'|'e'))
 		;
 		
 ENDWHILE	:	(('F'|'f')('I'|'i')('M'|'m')(' ')+('E'|'e')('N'|'n')('Q'|'q')('U'|'u')('A'|'a')('N'|'n')('T'|'t')('O'|'o'))
+			|(('E'|'e')('N'|'n')('D'|'d')(' ')+('W'|'w')('H'|'h')('I'|'i')('L'|'l')('E'|'e'))
 		;
 		
 
 SPEAKE	:	(('F'|'f')('A'|'a')('L'|'l')('A'|'a')('R'|'r'))
+			|(('S'|'s')('P'|'p')('E'|'e')('A'|'a')('K'|'k'))
 		;
 		
 		
 HIST	:	(('H'|'h')('I'|'i')('S'|'s')('T'|'t')('Ó'|'ó'|'O'|'o')('R'|'r')('I'|'i')('C'|'c')('O'|'o'))
+			|(('H'|'h')('I'|'i')('S'|'s')('T'|'t')('O'|'o')('R'|'r')('Y'|'y'))
 		;
 
 STATE	:	(('E'|'e')('S'|'s')('T'|'t')('A'|'a')('D'|'d')('O'|'o'))
+			|(('S'|'s')('T'|'t')('A'|'a')('T'|'t')('E'|'e'))
 		;
 
 		
 QUIT	:	(('S'|'s')('A'|'a')('I'|'i')('R'|'r'))
+			|(('Q'|'q')('U'|'u')('I'|'i')('T'|'t'))
+			|(('E'|'e')('X'|'x')('I'|'i')('T'|'t'))
 		;
 
 /*forward*/ 
 FW	:	(('P'|'p')('F'|'f'))
 		|(('P'|'p')('A'|'a')('R'|'r')('A'|'a') (' ')+ ('F'|'f')('R'|'r')('E'|'e')('N'|'n')('T'|'t')('E'|'e'))
+		|(('F'|'f')('W'|'w'))
+		|(('F'|'f')('O'|'o')('R'|'r')('W'|'w')('A'|'a')('R'|'r')('D'|'d'))
 		;
 
 /*backward*/
 BW	:	(('P'|'p')('T'|'t'))
 		|(('P'|'p')('A'|'a')('R'|'r')('A'|'a') (' ')+ ('T'|'t')('R'|'r')('A'|'a'|'Á'|'á')('S'|'s'))
+		|(('B'|'b')('W'|'w'))
+		|(('B'|'b')('A'|'a')('C'|'c')('W'|'w')('A'|'a')('R'|'r')('D'|'d'))
 		;
 
 /*right turn*/
 RTURN	:	(('G'|'g')('D'|'d'))
-		|(('G'|'g')('I'|'i')('R'|'r')('A'|'a')('R'|'r') (' ')+ ('D'|'d')('I'|'i')('R'|'r')('E'|'e')('I'|'i')('T'|'t')('A'|'a'))
+			|(('G'|'g')('I'|'i')('R'|'r')('A'|'a')('R'|'r') (' ')+ ('D'|'d')('I'|'i')('R'|'r')('E'|'e')('I'|'i')('T'|'t')('A'|'a'))
+			|(('T'|'t')('R'|'r'))
+			|(('R'|'r')('I'|'i')('G'|'g')('H'|'h')('T'|'t') (' ')+ ('T'|'t')('U'|'u')('R'|'r')('N'|'n'))
 		;
 
 /*left turn*/	
 LTURN	:	(('G'|'g')('E'|'e'))
-		|(('G'|'g')('I'|'i')('R'|'r')('A'|'a')('R'|'r') (' ')+ ('E'|'e')('S'|'s')('Q'|'q')('U'|'u')('E'|'e')('R'|'r')('D'|'d')('A'|'a'))
+			|(('G'|'g')('I'|'i')('R'|'r')('A'|'a')('R'|'r') (' ')+ ('E'|'e')('S'|'s')('Q'|'q')('U'|'u')('E'|'e')('R'|'r')('D'|'d')('A'|'a'))
+			|(('T'|'t')('L'|'l'))
+			|(('L'|'l')('E'|'e')('F'|'f')('T'|'t') (' ')+ ('T'|'t')('U'|'u')('R'|'r')('N'|'n'))
 		;
 		
-SCAN	:	(('E'|'e')('S'|'s')('P'|'p')('I'|'i')('A'|'a')('R'|'r'));
+SCAN	:	(('E'|'e')('S'|'s')('P'|'p')('I'|'i')('A'|'a')('R'|'r'))
+			|(('S'|'s')('C'|'c')('A'|'a')('N'|'n'))
+		;
 
 RANGER	
 :	(('D'|'d')('I'|'i')('S'|'s')('T'|'t')('â'|'Â'|'A'|'a')('N'|'n')('C'|'c')('I'|'i')('A'|'a'))
 		(' ')+ (('F'|'f')|('FE'|'fe'|'Fe'|'fE')|('FD'|'fd'|'Fd'|'fD')|('T'|'t')|('TE'|'te'|'Te'|'tE')|('TD'|'td'|'Td'|'tD'))
+		|(('D'|'d')('I'|'i')('S'|'s')('T'|'t')('A'|'a')('N'|'n')('C'|'c')('E'|'e'))
+		(' ')+ (('F'|'f')|('FL'|'fl'|'Fl'|'fL')|('FR'|'fr'|'Fr'|'fR')|('B'|'b')|('BL'|'bl'|'Bl'|'bL')|('BR'|'br'|'Br'|'bR'))
 		;
 		
-POS	:	(('P'|'p')('O'|'o')('S'|'s')(('I'|'i')('Ç'|'ç'|'C'|'c')('Ã'|'ã'|'A'|'a')('O'|'o'))?) ((' ')+ (('X'|'x') | ('Y'|'y') | ('A'|'a')))?
+POS	:	(('P'|'p')('O'|'o')('S'|'s')
+		|('P'|'p')('O'|'o')('S'|'s')('I'|'i')('T'|'t')('I'|'i')('O'|'o')('N'|'n')
+		|('P'|'p')('O'|'o')('S'|'s')('I'|'i')('Ç'|'ç'|'C'|'c')('Ã'|'ã'|'A'|'a')('O'|'o')?) ((' ')+ (('X'|'x') | ('Y'|'y') | ('A'|'a')))?
+		//|((('P'|'p')('O'|'o')('S'|'s')('I'|'i')('T'|'t')('I'|'i')('O'|'o')('N'|'n'))?) ((' ')+ (('X'|'x') | ('Y'|'y') | ('A'|'a')))?
+		//|((('P'|'p')('O'|'o')('S'|'s')('I'|'i')('Ç'|'ç'|'C'|'c')('Ã'|'ã'|'A'|'a')('O'|'o'))?) ((' ')+ (('X'|'x') | ('Y'|'y') | ('A'|'a')))?
 		;
 
 COLOR	:	(('C'|'c')('O'|'o')('R'|'r')) (' ')+ ((('A'|'a')('Z'|'z')('U'|'u')('L'|'l')) | (('V'|'v')('E'|'e')('R'|'r')('D'|'d')('E'|'e')) | (('V'|'v')('E'|'e')('R'|'r')('M'|'m')('E'|'e')('L'|'l')('H'|'h')('O'|'o')))
+			|(('C'|'c')('O'|'o')('L'|'l')('O'|'o')('R'|'r')) (' ')+ ((('B'|'b')('L'|'l')('U'|'u')('E'|'e')) | (('G'|'g')('R'|'r')('E'|'e')('N'|'n')) | (('R'|'r')('E'|'e')('D'|'d')))
 		;
 
 SOUND	:	(('S'|'s')('O'|'o')('M'|'m')) (' ')+ ((('L'|'l')('I'|'i')('G'|'g')('A'|'a')('D'|'d')('O'|'o')) | (('D'|'d')('E'|'e')('S'|'s')('L'|'l')('I'|'i')('G'|'g')('A'|'a')('D'|'d')('O'|'o')))
+			|(('S'|'s')('O'|'o')('U'|'u')('N'|'n')('D'|'d')) (' ')+ ((('O'|'o')('N'|'n')) | (('O'|'o')('F'|'f')('F'|'f')))
 		;
 
 BELT	:	(('C'|'c')('I'|'i')('N'|'n')('T'|'t')('O'|'o')) (' ')+ ((('L'|'l')('I'|'i')('G'|'g')('A'|'a')('D'|'d')('O'|'o')) | (('D'|'d')('E'|'e')('S'|'s')('L'|'l')('I'|'i')('G'|'g')('A'|'a')('D'|'d')('O'|'o')))
 		;
 		
-		
 THEN	:	(('E'|'e')('N'|'n')('T'|'t')('Ã'|'ã'|'A'|'a')('O'|'o'))
+			|(('T'|'t')('H'|'h')('E'|'e')('N'|'n'))
 		;
 		
-IFE	:	(('S'|'s')('E'|'e'))	
+IFE	:	(('S'|'s')('E'|'e'))
+		|(('I'|'i')('F'|'f'))
 		;
 		
 ENDIF	:	(('F'|'f')('I'|'i')('M'|'m')(' ')+('S'|'s')('E'|'e'))
+			|(('E'|'e')('N'|'n')('D'|'d')(' ')+('I'|'i')('F'|'f'))
 		;
 		
 ELSEE	:	(('S'|'s')('E'|'e')('N'|'n')('Ã'|'ã'|'A'|'a')('O'|'o'))
+			|(('E'|'e')('L'|'l')('S'|'s')('E'|'e'))
 		;
 		
 REPEAT	:	(('R'|'r')('E'|'e')('P'|'p')('I'|'i')('T'|'t')('A'|'a'))
+			|(('R'|'r')('E'|'e')('P'|'p')('E'|'e')('A'|'a')('T'|'t'))
 		;
 
 
 REPTB	:	(('V'|'v')('E'|'e')('Z'|'z')('E'|'e')('S'|'s'))
+			|(('T'|'t')('I'|'i')('M'|'m')('E'|'e')('S'|'s'))
 		;
 		
 ENDREPT	:	(('F'|'f')('I'|'i')('M'|'m')(' ')+('R'|'r')('E'|'e')('P'|'p')('I'|'i')('T'|'t')('A'|'a'))
+			|(('E'|'e')('N'|'n')('D'|'d')(' ')+('R'|'r')('E'|'e')('P'|'p')('E'|'e')('A'|'a')('T'|'t'))
 		;
 
 WAIT	:	(('E'|'e')('S'|'s')('P'|'p')('E'|'e')('R'|'r')('A'|'a')('R'|'r'))
+			|(('W'|'w')('A'|'a')('I'|'i')('T'|'t'))
 		;
 
 MAKE	:	(('C'|'c')('R'|'r')('I'|'i')('A'|'a')('R'|'r'))
+			|(('V'|'v')('A'|'a')('R'|'r'))
 		;
 	
 /*

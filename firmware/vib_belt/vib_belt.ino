@@ -14,7 +14,7 @@ struct SGridCell {
   BYTE bOutputLevel;
 };
 
-/*SGridCell m_a2stGrid[GRID_LINES][GRID_COLUMNS] = { 
+/*SGridCell m_a2stGrid[GRID_LINES][GRID_COLUMNS] = { //using 5x7 hardware
 
   { { 15, 0 }, { 25, 0 }, { 48, 0 }, {  9, 0 }, { 36, 0 }, { 46, 0 }, { 19, 0 } },
   { { 14, 0 }, {  5, 0 }, { 50, 0 }, {  8, 0 }, { 35, 0 }, { 13, 0 }, { 18, 0 } },
@@ -22,14 +22,18 @@ struct SGridCell {
   { { 52, 0 }, {  7, 0 }, { 22, 0 }, { 33, 0 }, { 38, 0 }, { 11, 0 }, {  2, 0 } },
   { { 17, 0 }, { 24, 0 }, { 23, 0 }, { 34, 0 }, { 53, 0 }, { 10, 0 }, {  3, 0 } },
 };*/
-SGridCell m_a2stGrid[GRID_LINES][GRID_COLUMNS] = { 
+SGridCell m_a2stGrid[GRID_LINES][GRID_COLUMNS] = { //usuing 2x7 hardware
 
-  { { 2, 0 }, { 3 , 0 }, { 4 , 0 }, {  5 , 0 }, { 6 , 0 }, { 7 , 0 }, { 8 , 0 } },
+  { { 2, 0 }, { 3 , 0 }, { 4 , 0 }, {  5 , 0 }, { 6 , 0 }, { 7 , 0 }, { 8 , 0 } },//not implemented
   { { 24,0 }, { 26, 0 }, { 28, 0 }, {  30, 0 }, { 32, 0 }, { 34, 0 }, { 36, 0 } },
-  { { 9, 0 }, { 10, 0 }, { 11, 0 }, {  12, 0 }, { 13, 0 }, { 14, 0 }, { 15, 0 } },
+  { { 9, 0 }, { 10, 0 }, { 11, 0 }, {  12, 0 }, { 13, 0 }, { 14, 0 }, { 15, 0 } },//not implemented
   { { 40,0 }, { 42, 0 }, { 44, 0 }, {  46, 0 }, { 48, 0 }, { 50, 0 }, { 52, 0 } },
-  { { 16,0 }, { 17, 0 }, { 18, 0 }, {  19, 0 }, { 20, 0 }, { 21, 0 }, { 22, 0 } },
+  { { 16,0 }, { 17, 0 }, { 18, 0 }, {  19, 0 }, { 20, 0 }, { 21, 0 }, { 22, 0 } },//not implemented
 };
+//Protocol: send 'Z' in the beginin of array and set to 'P' the not implemented lines.
+//Exemple: data[36] = {'Z',V11,V12,V13,V14,V15,V16,V17,V21,V22,V23...V54,V56,V57}
+//Value 'A' is Max. Vibration, 'B' Moderate and 'C' Low. 'P' stop the motor.
+//You can use 'D', 'E', end 'F', but it's hard to identify the vibration
 
 void setup() {
 

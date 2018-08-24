@@ -54,10 +54,17 @@ string Historic::show()
 	list<Command>::iterator iterator;
 	int cmdNum=0;
 	
-	history << "Histórico possui " << commandsList.size() << " comandos" << endl;
+	generator gen;
+	gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("Historic");
+	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+	history.imbue(loc);
+
+	history << translate("Histórico possui ") << commandsList.size() << translate(" comandos") << endl;
 	for (iterator = this->commandsList.begin(); iterator != this->commandsList.end(); ++iterator) {
-		history << "Comando " << cmdNum << " foi " << (*iterator).name << ", " <<  (*iterator).feedback << 
-		", posição [" <<  (*iterator).posx  << ", " << (*iterator).posy  << 
+		history << translate("Comando ") << cmdNum << translate(" foi ") << (*iterator).name << ", " <<  (*iterator).feedback << 
+		translate(", posição [") <<  (*iterator).posx  << ", " << (*iterator).posy  << 
 		", " << (*iterator).degree << "]" << endl ;
 		cmdNum++;
 	}
@@ -70,10 +77,18 @@ string Historic::getLast()
 	stringstream history;
 	Command last;
 	
+	generator gen;
+	gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("Historic");
+	locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+	cout.imbue(loc);
+	history.imbue(loc);
+
 	if (commandsList.size() > 0){
 		last = commandsList.back();
-		history << "Comando " << commandsList.size()-1 << " foi " << last.name << ", " <<  last.feedback << 
-		", posição [" <<  last.posx  << ", " << last.posy  << 
+		history << translate("Comando ") << commandsList.size()-1 << translate(" foi ") << last.name << ", " <<  last.feedback << 
+		translate(", posição [") <<  last.posx  << ", " << last.posy  << 
 		", " << last.degree << "]"; // dont add newline here !
 	}
 

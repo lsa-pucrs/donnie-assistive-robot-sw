@@ -16,13 +16,20 @@
 
 #include "Compiler.h"
 
+// Localization libraries 
+#include <boost/locale.hpp>
+using namespace boost::locale;
+using boost::locale::translate;
+using boost::locale::format;
+
 //extern HIST_ENTRY **history_list ();
 
 using namespace std;
 
 #define LANG "pt-br"
 
-COMMAND commands[] = {
+// Comandos em pt_BR
+COMMAND comandos[] = {
   { (char*)"pf ", (char*)"Movimenta para frente" },
   { (char*)"pt ", (char*)"Movimenta para trás" },
   { (char*)"gd ", (char*)"Gira para direita" },
@@ -42,21 +49,69 @@ COMMAND commands[] = {
   { (char*)"sair", (char*)"Fechar interpretador" },
   { (char*)"som", (char*)"Liga ou desliga o som" },
   { (char*)"histórico", (char*)"Histórico de comandos de movimento" },
+  { (char*)"cinto", (char*)"Liga ou desliga o cinto" },
+  { (char *)NULL, (char *)NULL }
+};
+
+// Comandos em en_US
+COMMAND commands[] = {
+  { (char*)"fw ", (char*)"Forward movement" },
+  { (char*)"bw ", (char*)"Backward movement" },
+  { (char*)"tr ", (char*)"Turn right" },
+  { (char*)"tl ", (char*)"Turn left" },
+  { (char*)"distance", (char*)"Distance sensor" },
+  { (char*)"scan", (char*)"Scan for objects" },
+  { (char*)"color", (char*)"Searches for a color" },
+  { (char*)"position ", (char*)"Robot position" },
+  { (char*)"state", (char*)"Current state of the robot" },
+  { (char*)"var ", (char*)"Create variable" },
+  { (char*)"for ", (char*)"For loop" },
+  { (char*)"repeat ", (char*)"Repeat loop" },
+  { (char*)"while ", (char*)"While laço" },
+  { (char*)"if ", (char*)"Conditional" },
+  { (char*)"procedure ", (char*)"Create procedure" },
+  { (char*)"speak ", (char*)"Speak" },
+  { (char*)"quit", (char*)"Close the interpreter" },
+  { (char*)"sound", (char*)"Turns the sound on and off" },
+  { (char*)"history", (char*)"Movement command history" },
+  { (char*)"belt", (char*)"Turns the belt on and off" },
   { (char *)NULL, (char *)NULL }
 };
 
 string code = "";
 bool done = 0;
-ExprTreeEvaluator Client;
+ExprTreeEvaluator Compiler;
+FILE *logFile=NULL; // file handle for the log file
 
 void initialize_readline ();
 char ** fileman_completion (const char *text, int start, int end);
 char * command_generator (const char *text, int state);
 void usage(char *exec);
 int evalCode(int count, int key);
+void setupLog();
 
 int main(int argc, char* argv[])
 {
+  string donnie_path = GetEnv("DONNIE_PATH");
+  string donnie_lang = GetEnv("DONNIE_LANG");
+  
+  if (donnie_path=="") {
+	cerr << translate("variable DONNIE_PATH not defined. Please execute 'export DONNIE_PATH=<path-to-donnie>'") << endl;
+	exit(1);
+  }
+  if (donnie_lang=="") {
+	cerr << translate("variable DONNIE_LANG not defined. Please execute 'export DONNIE_LANG=$LANGUAGE'") << endl;
+	exit(1);
+  }  
+    	
+  // Set up language environment
+  generator gen;
+  gen.add_messages_path(donnie_path + "/resources/loc");
+  gen.add_messages_domain("GoDonnie");
+  locale loc = gen(donnie_lang + ".UTF-8");
+  locale::global(loc);
+  cout.imbue(loc);
+  cerr.imbue(loc);
 
 	bool termMode = 0, scriptMode=0;
 	string filename ;
@@ -65,68 +120,91 @@ int main(int argc, char* argv[])
 	extern int optind; 
 	
     if ( argc <= 1 ) {  // there is NO input...
-        //Client.speak("No argument provided!");
-        Client.speak("Comando sem argumentos!");
+        //Compiler.speak("No argument provided!");
+        Compiler.speak(string(translate("Comando sem argumentos!")));
         usage(argv[0]);
         return 1;
     }
 
-   while ((c = getopt (argc, argv, "mthf:")) != -1){
+  // the arguments are case insensitive
+   while ((c = getopt (argc, argv, "mMlLtThHfF:")) != -1){
     switch (c){
+      case 'T': 
       case 't': // terminal mode
         termMode = 1;
+        /*
 		if ( argc !=2 ) {  // check extra useless argumets in terminal mode
-			//cerr << "Terminal mode requires only one argument" << endl;
-			Client.speak("Modo terminal requer somente um argumento.");
+			Compiler.speak(string(translate("Modo terminal requer somente um argumento.")));
 			usage(argv[0]);
 			return 1;
 		} 
+		*/
         break;
+      case 'F':
       case 'f': // script file  mode
         filename = optarg;
         scriptMode=1;
+        /*
 		if ( argc !=3 ) {  // check extra useless argumets in script mode
-			//cerr << "Script mode requires only two arguments" << endl;
-			Client.speak("Modo script requer somente dois argumentos.");
+			Compiler.speak(string(translate("Modo script requer somente dois argumentos.")));
 			usage(argv[0]);
 			return 1;
 		}
+		*/
         // test if file exists
         if( access( optarg, F_OK ) == -1 ) {
-			//cerr << "File " << filename << " not found!" << endl;
-			Client.speak("Arquivo " + string(filename) + " não encontrado.");
+			Compiler.speak(string(translate("Arquivo ")) + string(filename) + string(translate(" não encontrado.")));
 			return 1;
 		}
         break;
+      case 'M':
       case 'm':  // mute
 		 //if mute ('m') is on, do it first, before any other command
 		 if (argcnt == 0){
-			Client.muteTTS(true);
+			Compiler.muteTTS(true);
 			break;
 		 }else{
-			 Client.speak("Parâmetro m deve vir primeiro.");
+			 Compiler.speak(string(translate("Parâmetro m deve vir primeiro.")));
 			 return 1;
 		 }
 		 break;
+      case 'L':
+      case 'l':  // log
+		 //log is disabled by default
+		 Compiler.setLog(true);
+		 /*
+		 if (argcnt == 0){
+			Compiler.setLog(true);
+			break;
+		 }else{
+			 Compiler.speak(string(translate("Parâmetro l deve vir primeiro.")));
+			 return 1;
+		 }
+		 */
+		 break;
+      case 'H':
       case 'h':  // help 
 		usage(argv[0]);
         return 0;
       case '?': // error
         if (optopt == 'f'){
-          //fprintf (stderr, "Option -%c requires a filename with GoDonnie code.\n", optopt);
-          Client.speak("Parâmetro -f requer um nome de arquivo com código GoDonnie.");
+          Compiler.speak(string(translate("Parâmetro -f requer um nome de arquivo com código GoDonnie.")));
         }else if (isprint (optopt)){
           //fprintf (stderr, "Unknown option `-%c'.\n", optopt);
           char buffer[50];
-          sprintf (buffer, "Parâmetro `-%c' desconhecido.", optopt);
-          Client.speak(string(buffer));
+          string aux1 = translate("Parâmetro");
+          string aux2 = translate("desconhecido");
+          sprintf (buffer, "%s `-%c' %s.", aux1.c_str(), optopt, aux2.c_str());
+          Compiler.speak(string(buffer));
         }else{
           //fprintf (stderr,
           //         "Unknown option character `\\x%x'.\n",
           //         optopt);
           char buffer[50];
-          sprintf (buffer, "Parâmetro `\\x%x' desconhecido.", optopt);
-          Client.speak(string(buffer));
+          string aux1 = translate("Parâmetro");
+          string aux2 = translate("desconhecido");
+          sprintf (buffer, "%s `\\x%x' %s.", aux1.c_str(), optopt, aux2.c_str());
+          Compiler.speak(string(buffer));
 	    }
 	    usage(argv[0]);
         return 1;
@@ -139,13 +217,13 @@ int main(int argc, char* argv[])
 
   if(!termMode && !scriptMode){
 	 //cerr << "No mode selected" << endl;
-	 Client.speak("Nenhum modo selecionado.");
+	 Compiler.speak(string(translate("Nenhum modo selecionado.")));
 	 usage(argv[0]);
 	 return 1;
   }
   if(termMode && scriptMode){
 	 //cerr << "Cannot have both modes selected at the same time" << endl;
-	 Client.speak("Não pode ter dois modos selecionados ao mesmo tempo.");
+	 Compiler.speak(string(translate("Não pode ter dois modos selecionados ao mesmo tempo.")));
 	 usage(argv[0]);
 	 return 1;
   }
@@ -154,43 +232,18 @@ int main(int argc, char* argv[])
   static char *temp = (char *)NULL; 
   string preCode;
 
+  // bind the ESC key to the evalCode function
+  //rl_attempted_completion_function = fileman_completion;
+  rl_bind_key (27, evalCode); /* "27" ascii code for ESC */
+  //rl_unbind_key('\t');
+  //rl_bind_key('a',rl_complete);
+
+  // create log file if it was enabled in command line
+  setupLog();
+
   // terminal mode
   if(termMode)
   {
-    FILE* log;
-    //rl_attempted_completion_function = fileman_completion;
-    rl_bind_key (27, evalCode); /* "27" ascii code for ESC */
-    //rl_unbind_key('\t');
-    //rl_bind_key('a',rl_complete);
-
-    // find the appropriate file number to the log file. it follows sequential order
-    int fileno=0;
-    bool success = true;
-    char fileName[40] = "";
-
-    struct stat info;
-
-    if( stat( "Log", &info ) != 0 )
-        mkdir("Log", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); //Log directory does not exist. Creating log directory.
-    
-    ifstream ifs;
-    while(success &&fileno < 999) {
-	   sprintf(fileName, "Log/log_%03d.txt", fileno);
-	   ifs.open(fileName, std::ifstream::in);// attempt read file to check if it exists
-	   success = ifs.good();
-	   ifs.close();
-	   fileno++;//increase by one to get a new file name
-    } 
-
-    sprintf(fileName, "Log/log_%03d.txt", fileno-1);
-    log = fopen(fileName, "w");
-
-    if (log == NULL)
-    {
-      Client.speak("Não foi possivel criar o arquivo de log");
-    }
-    else
-      Client.logFile(log);
 
     while(!done)
     {
@@ -217,9 +270,6 @@ int main(int argc, char* argv[])
           rl_on_new_line ();
       
     };
-    // save remaining buffered data on disk and close the log file
-    fflush(log);
-    fclose(log);
   }else if(scriptMode){    // script mode
 	// read the entire file
 	std::ifstream t(filename.c_str());
@@ -228,21 +278,29 @@ int main(int argc, char* argv[])
 	if(t.is_open()) {
 		// read the entire file
 		buffer << t.rdbuf();
-		Client.parseGD((char *)buffer.str().c_str(),false);
+		Compiler.parseGD((char *)buffer.str().c_str());
 	}else{
-		Client.speak("Erro ao abrir arquivo " + string(filename));
+		Compiler.speak(string(translate("Erro ao abrir arquivo ")) + string(filename));
 	}
 	t.close();
   }
+
+
+  if (Compiler.getLog()){
+	// save remaining buffered data on disk and close the log file
+	fflush(logFile);
+	fclose(logFile);
+  }
+
 
 }
 
 void usage(char *exec){
 	sleep(0.5);
-	Client.speak("Uso: " + string(exec) + " argumentos. \nArgumentos: \n\t-t: Executa em modo terminal; \n\t-f nome do arquivo: Executa em modo script; \n\t-m: Quando habilitado, imprime mensagens na tela; \n\t-h: Ajuda");
+	Compiler.speak(string(translate("Uso: ")) + string(exec) + string(translate(" argumentos. \nArgumentos: \n\t-t: Executa em modo terminal; \n\t-f nome do arquivo: Executa em modo script; \n\t-m: Quando habilitado, imprime mensagens na tela;  \n\t-l: Quando habilitado, salva log dos comandos; \n\t-h: Ajuda")));
 
 /*	POR ALGUM MOTIVO O TTS NAO FUNCIONA C STRING NESTE FORMATO	 
-	Client.speak(
+	Compiler.speak(
 		string(
 		 "Uso " + string(exec) + " <arg> \
 Argumentos:\
@@ -266,18 +324,26 @@ int evalCode(int count, int key)
   if (!code.empty())
   {
     cout << code << endl;
-    done = Client.parseGD((char *)code.c_str(),true);
+    done = Compiler.parseGD((char *)code.c_str());
     code.clear();
     code = "";
     rl_on_new_line ();
     return 1;
   }
-  else
+  else{
     rl_on_new_line ();
-  code.clear();
-  Client.speak("\nNão há código para ser executado.");
-  return 0;
-  
+    code.clear();
+
+    generator gen;
+    gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
+    gen.add_messages_domain("GoDonnie");
+    locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
+    locale::global(loc);
+    
+    string str_speak = translate("\nNão há código para ser executado.");
+    Compiler.speak(str_speak);
+    return 0;
+  }
 }
 
 
@@ -320,15 +386,68 @@ char * command_generator(const char *text, int state)
     }
 
   /* Return the next name which partially matches from the command list. */
-  while (name = commands[list_index].name)
+  /* In pt_BR */  
+  char *lang = getenv("DONNIE_LANG");
+  if (strcmp(lang,"pt_BR") == 0)
+  {
+    while (name = comandos[list_index].name)
     {
       list_index++;
 
       if (strncmp (name, text, len) == 0)
         return (strdup(name));
     }
+  }
+  /* In en_US */
+  else if (strcmp(lang,"en_US") == 0)
+  {
+    while (name = commands[list_index].name)
+    {
+      list_index++;
+
+      if (strncmp (name, text, len) == 0)
+        return (strdup(name));
+    }
+  }
 
   /* If no names matched, then return NULL. */
   return ((char *)NULL);
+}
+
+/// When the log is enabled, it creates the log file
+void setupLog()
+{
+
+	// if log is enabled, then create the log file
+	if (Compiler.getLog()){
+		// find the appropriate file number to the log file. it follows sequential order
+		int fileno=0;
+		bool success = true;
+		char fileName[40] = "";
+		struct stat info;
+
+		if( stat( "Log", &info ) != 0 )
+			mkdir("Log", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); //Log directory does not exist. Creating log directory.
+		
+		ifstream ifs;
+		while(success &&fileno < 999) {
+		   sprintf(fileName, "Log/log_%03d.txt", fileno);
+		   ifs.open(fileName, std::ifstream::in);// attempt read file to check if it exists
+		   success = ifs.good();
+		   ifs.close();
+		   fileno++;//increase by one to get a new file name
+		} 
+
+		sprintf(fileName, "Log/log_%03d.txt", fileno-1);
+		logFile = fopen(fileName, "w");
+
+		if (logFile == NULL)
+		{
+			Compiler.speak(string(translate("Não foi possivel criar o arquivo de log")));
+		}
+		else
+			Compiler.logFile(logFile);
+	}
+      	
 }
 

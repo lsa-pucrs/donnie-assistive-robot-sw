@@ -37,9 +37,9 @@ unknow_command:
     if (!belt->connect()) {
         perror("Failed to connect.");
         return -1;
- 
+
 	}
-        
+
     cout << "done connected" << endl;
     //cout << "Rangers: " << belt->myranger->GetRangeCount() << endl;
     //cout << "Ranger[0]: " << belt->myranger->GetRange(0)  << endl;
