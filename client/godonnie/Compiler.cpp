@@ -62,12 +62,6 @@ extern "C" char messageError[2000]; //global variable for error messages generat
 									//It cames from GoDonnieParser.c to be printed here
 extern "C" char flagMsgError; //flag to clean the 'messageError' string after it is printed by compiler
 
-/*string reservedWords[] = {"sair", "criar", "falar", "som", "pf", "pt", "gd",
- 														"fe", "espiar", "estado", "distancia", "pos", "cor",
-														"se", "entao", "senao", "fim", "para", "faça",
-														"repita", "vezes", "enquanto", "aprender", "esperar",
-												  	"+", "-", "*", "/", "<>", "==", "<", ">", "<=", ">=", "="};
-*/
 ExprTreeEvaluator::ExprTreeEvaluator()
 {
 
@@ -673,7 +667,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case MAKE:
           {
 
-						char* var = (char*)getText(getChild(tree,0));
+	    char* var = (char*)getText(getChild(tree,0));
 
             int val;
             if (tree->getChildCount(tree) < 2)
@@ -769,7 +763,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 				   "," << Donnie->GetPos("body",2) << "]"; //POSITION_YAW in degrees
 				   // dont add newline here !
 			  }
-				cout << output.str() << endl;
+				
+				//cout << output.str() << endl;
 				Donnie->speak(output.str());
 				break;
 		  }
