@@ -7,6 +7,11 @@ paused 0
 
 resolution 0.02
 
+# set the multiple of real time that Stage should try to achieve. Default is 1. 
+# set to 0 to go as fast as possible.
+# this command is necessary, otherwise donnie might crash during startup
+speedup 0
+
 # configure the GUI window
 window
 (
