@@ -14,16 +14,25 @@
 
 driver
 (
-	name "blobfinderraspicam"
-	plugin "/opt/player-stage/src/player-3.0.2/build/examples/plugins/blobfinderraspicam/libblobfinderraspicam.so"
-	#deifnes the minimum size (in pixels) for a blob to be detected. Default value is 1000
-	min_blob_size 500
-  	#reduce noise values can be 1 or 0. Default value is 0.
-  	reduce_noise 1
-  	#debug values can be 0,1,2,3,4 and 5. Default value is 0.
-  	debug 1
-	provides ["blobfinder:0"]
+	name "Raspicam_driver"
+	plugin "libRaspicam_driver"
+    fps 1
+	height 480
+	width  640
+	provides ["6665:camera:0"]
+
 )
+driver
+(
+	name "GenericBlobfinder"
+	plugin "libGenericBlobfinder"
+	min_blob_size 500
+	debug 0
+	reduce_noise 1
+	requires ["6665:camera:0"]
+	provides ["6666:blobfinder:0"]
+)
+
 
 */
 
