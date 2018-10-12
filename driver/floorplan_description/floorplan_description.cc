@@ -18,7 +18,7 @@
 
 @par Provides
 
-- @ref interface_ranger
+- @ref interface_log
 
 @par Requires
 
@@ -50,7 +50,7 @@ driver
 (
 	name "floorplan_description"
 	plugin "libfloorplan_description"
-	requires ["ranger:0"]   # selected to reuse a message player_ranger_power_config of type uint8_t
+	requires ["log:0"]   # selected to reuse a message player_log_power_config of type uint8_t
 	provides ["speech:0"]  # textual output with description
 	
 	description "my little room"
@@ -90,6 +90,9 @@ driver
 #define MESSAGE_INFO	1
 #define MESSAGE_DEBUG	2
 
+// max description size
+#define MAX_MSG_SIZE 1000
+
 ////////////////////////////////////////////////////////////////////////////////
 // The class for the driver
 // devices are used to communication between drivers
@@ -102,8 +105,8 @@ class FloorplanDescription : public ThreadedDriver{
 
 	private:
 		player_devaddr_t speech_addr;  //speech interface
-		// ranger has been selected to reuse a message player_ranger_power_config of type uint8_t
-		player_devaddr_t ranger_addr;   //ranger interface
+		// log has been selected to reuse a message player_log_set_write_state_t of type uint8_t
+		player_devaddr_t log_addr;   //log interface
 		
 
 		player_speech_cmd_t speech_data;
@@ -111,7 +114,7 @@ class FloorplanDescription : public ThreadedDriver{
         // Handle for the device that have the address given above
         Device * speech_dev;		
 		
-		//player_ranger_power_config_t ranger_data;
+		//player_log_set_write_state_t log_data;
 		//textual description
 		std::string description_str;
 		// file with the description. 
@@ -130,20 +133,20 @@ class FloorplanDescription : public ThreadedDriver{
 // Deal with .cfg file
 FloorplanDescription::FloorplanDescription(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 
-    memset(&(this->ranger_addr), 0, sizeof(player_devaddr_t));
+    memset(&(this->log_addr), 0, sizeof(player_devaddr_t));
     memset(&(this->speech_addr), 0, sizeof(player_devaddr_t));
     memset(&speech_data,0,sizeof(speech_data));
-    speech_data.string = new char[1000];
+    speech_data.string = new char[MAX_MSG_SIZE];
 
 	//create the interface to request the room number
-	if (cf->ReadDeviceAddr(&(this->ranger_addr), section, "provides", PLAYER_RANGER_CODE, -1, NULL)){
-		PLAYER_ERROR("[floorplan_description] Could not read ranger");
+	if (cf->ReadDeviceAddr(&(this->log_addr), section, "provides", PLAYER_LOG_CODE, -1, NULL)){
+		PLAYER_ERROR("[floorplan_description] Could not read log");
 		SetError(-1);
 		return;
 	}
 	// all new 'provides' interface must be registered
-	if (AddInterface(this->ranger_addr)){
-		PLAYER_ERROR("[floorplan_description] Could not add ranger interface");
+	if (AddInterface(this->log_addr)){
+		PLAYER_ERROR("[floorplan_description] Could not add log interface");
 		SetError(-1);
 		return;
 	}
@@ -157,9 +160,20 @@ FloorplanDescription::FloorplanDescription(ConfigFile* cf, int section) : Thread
 
 	debug = cf->ReadInt(section, "debug",0 );
 	description_str = cf->ReadString (section, "description", "");
-	//desc_filename_str = cf->ReadString (section, "description_filename", "");
-	//TODO: these two should be mutually exclusive. use one or the other method.
+	desc_filename_str = cf->ReadString (section, "description_filename", "");
+	//these two should be mutually exclusive. use one or the other method.
 	// open the file here an read the description
+	if((description_str == "" && desc_filename_str =="")){
+		PLAYER_ERROR("[floorplan_description] Enter with description or description_filename field");
+		SetError(-1);
+		return;
+	}
+	if((description_str != "" && desc_filename_str !="")){
+		PLAYER_ERROR("[floorplan_description] Can only use description or description_filename fields. not both at the same time");
+		SetError(-1);
+		return;
+	}
+	// TODO try to open the file. error if it is not opened
 }
 FloorplanDescription::~FloorplanDescription(){
 	
@@ -169,6 +183,8 @@ FloorplanDescription::~FloorplanDescription(){
 ////////////////////////////////////////////////////////////////////////////////
 // Set up the device (ONLY WHEN A CLIENT CONECTS TO THE DRIVER).  Return 0 if things go well, and -1 otherwise.
 int FloorplanDescription::MainSetup(){  
+	
+	//TODO read the desc_filename_str
 	
     // Retrieve the handle to the speech device.
     this->speech_dev = deviceTable->GetDevice(this->speech_addr);
@@ -211,16 +227,16 @@ void FloorplanDescription::Main(){
 //deal with messages comming from the clients
 int FloorplanDescription::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, void * data){
 	if (this->debug == 1){
-	  PLAYER_MSG0(MESSAGE_INFO,"[floorplan_description] Msg received");
-	  PLAYER_MSG2(MESSAGE_INFO,"[floorplan_description] Msg type %d - %d", hdr->type, hdr->subtype);
+	  PLAYER_MSG2(MESSAGE_INFO,"[floorplan_description] Msg received. type %d - %d", hdr->type, hdr->subtype);
     }
 	
-	if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_REQ, PLAYER_RANGER_REQ_POWER, ranger_addr)){
-		PLAYER_MSG1(MESSAGE_INFO,"[floorplan_description] Req msg %d", (reinterpret_cast<player_ranger_power_config_t*>(data))->state);
-		Play((reinterpret_cast<player_ranger_power_config_t*>(data))->state);
+	if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_REQ, PLAYER_LOG_REQ_SET_WRITE_STATE, log_addr)){
+		PLAYER_MSG1(MESSAGE_INFO,"[floorplan_description] Req msg %d", (reinterpret_cast<player_log_set_write_state_t*>(data))->state);
+		Play((reinterpret_cast<player_log_set_write_state_t*>(data))->state);
 		return(0);
 	}else {
-		PLAYER_MSG1(MESSAGE_INFO,"[floorplan_description] Ignored msg %d", (reinterpret_cast<player_ranger_power_config_t*>(data))->state);
+		if (this->debug == 1)
+			PLAYER_MSG1(MESSAGE_INFO,"[floorplan_description] Ignored msg %d", (reinterpret_cast<player_log_set_write_state_t*>(data))->state);
 		return(0);
 	}
 	
@@ -232,10 +248,16 @@ int FloorplanDescription::ProcessMessage(QueuePointer & resp_queue, player_msghd
 
 int FloorplanDescription::Play(uint8_t room_description){
 
-	PLAYER_MSG1(MESSAGE_INFO,"[floorplan_description] Data2 %d", room_description);
 	speech_data.string_count = description_str.size();
+	if (speech_data.string_count >= MAX_MSG_SIZE)
+	{
+		PLAYER_ERROR("Message too long");
+		this->SetError(-1);
+		return -1;
+	}
+	//TODO place here the logic to select the description text based on the room_description number. 0 means read it all.
 	strcpy(speech_data.string, this->description_str.c_str());
-	PLAYER_MSG1(MESSAGE_INFO,"[floorplan_description] Data3 %d", room_description);
+
 	if (this->debug == 1)
 	  PLAYER_MSG3(MESSAGE_INFO,"[floorplan_description] Sending sending message of room %d described as \"%s\" of %d bytes",room_description, speech_data.string, speech_data.string_count);
 
@@ -243,10 +265,7 @@ int FloorplanDescription::Play(uint8_t room_description){
 	this->speech_dev->PutMsg(this->InQueue, 
 				  PLAYER_MSGTYPE_CMD, PLAYER_SPEECH_CMD_SAY, 
 				  reinterpret_cast<void*>(&speech_data), sizeof(speech_data), NULL);
-    //this->Publish(this->speech_addr,
-    //              PLAYER_MSGTYPE_CMD, PLAYER_SPEECH_CMD_SAY,
-    //              (void *)(&speech_data), sizeof(speech_data), NULL);
-	//PLAYER_ERROR1("[floorplan_description] File[%s] do implemented yet!",fileAddr);
+
 	return -1;
 }
 
