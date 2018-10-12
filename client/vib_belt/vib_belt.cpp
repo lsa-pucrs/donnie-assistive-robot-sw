@@ -11,8 +11,7 @@ vib_belt::vib_belt(const char* device, const char* hostname, int port) {
     this->P[0] = 'Z';
     for (int i = 1; i < 36; i++)
         this->P[i] = 'P';
-    /////////////////////
-    cout << "done setting P array\n";
+    //cout << "done setting P array\n";
 
     // set device name
     if (device != NULL)
@@ -20,30 +19,30 @@ vib_belt::vib_belt(const char* device, const char* hostname, int port) {
     else
         strcpy(this->devicename, "/dev/ttyACM0");
 
-	cout << "done setting devicename\n";
+	//cout << "done setting devicename\n";
 
     // set port and hostname
     if (port != 0) {
-		cout << "setting port to " << port << endl;
+		cout << "[vib_belt] setting port to " << port << endl;
         this->port = port;
     }
     else {
-		cout << "setting port to 6665" << endl;
+		cout << "[vib_belt] setting port to 6665" << endl;
         this->port = 6665;
 	}
 
     if (hostname != NULL) {
-		cout << "setting hostname to " << hostname << endl;
+		cout << "[vib_belt] setting hostname to " << hostname << endl;
         this->host = string(hostname);
 	}
     else {
-		cout << "setting hostname to \"localhost\"" << endl;
+		cout << "[vib_belt] setting hostname to \"localhost\"" << endl;
         this->host = string("localhost");
 	}
 
-	cout << "done setting port & host" << endl;
+	//cout << "done setting port & host" << endl;
 
-	cout << this->host << endl << this->port << endl;
+	cout << "[vib_belt] " << this->host << " "  << this->port << " "  << this->devicename << endl;
 
 	try{
 		this->robot = new PlayerClient(this->host, this->port);
@@ -57,17 +56,20 @@ vib_belt::vib_belt(const char* device, const char* hostname, int port) {
 		this->exit();
 	}
 
+	// TODO change the default value to 0 when serial is ok
+	status= 1;
 	robot->StartThread();
-    // set robot and rangers
-    //this->robot(this->host, this->port);
-    //this->myranger(&this->robot, 0);
 }
 
 bool vib_belt :: connect() {
+	cout << "[vib_belt] connecting" << endl;	
     this->fd = open(devicename, O_RDWR | O_NOCTTY | O_NONBLOCK);
 
-    if (this->fd < 0)
+    if (this->fd < 0){
+		cout << "[vib_belt] error to open the serial port" << endl;
         return false;
+	}
+        
 
     int res, i;
     //struct terminos newtio;
@@ -98,58 +100,57 @@ bool vib_belt :: connect() {
     tcflush(this->fd, TCIFLUSH);
     tcsetattr(this->fd,TCSANOW,&newtio);
 
+	status = 1;
     return true;
 }
 
-char* vib_belt::getP() {
-	return this->P;
-}
 
 bool vib_belt :: loop() {
-    // all writing operations are checked to see if they are working properly, in the case in which they aren't, the function will return false.
-    cout << "writing ... " << endl;
-    write(this->fd, (void*)this->getP(), 36);
-	cout << "reading1 ... " << endl;
-	//robot->Read(); //update proxies
 	
-    cout << "Rangers: " << this->myranger->GetRangeCount() << endl;
-    cout << "reading2 ... " << endl;
-    cout << "Rangers: " << this->myranger->GetRangeCount() << endl;
-    cout << "reading3 ... " << endl;
+	if (status==0){
+		cout << "[vib_belt] serial port not connected." << endl;
+		return false;
+	}
+		
+    // all writing operations are checked to see if they are working properly, in the case in which they aren't, the function will return false.
+    //cout << "writing serial port ... " << endl;
+    if (write(this->fd, (void*)this->P, 36) == 0){
+		cout << "[vib_belt] error sending" << endl;
+		// TODO uncomment this when serial port is actually sending data
+		//return false;
+	}
+
 
     for(int i = 0; i < this->myranger->GetRangeCount(); i++) {  //print all lasers receiveds
-		cout << "entrei no for do loop" << endl;
-        if((int(this->myranger->GetRange(i) / 10)) == 0)
-            //cout << "  " << this->myranger[i] << " ";  //unidade
-            cout << "  " << this->myranger->GetRange(i) << " ";  //unidade
-        else if ((int(this->myranger->GetRange(i) / 100)) == 0)
-            cout << " " << this->myranger->GetRange(i) << " ";   //dezena
-        else
-            cout << this->myranger->GetRange(i) << " ";          //centena
-
-    //	if(SensorValue < Distance of Max. Vibration value)...elseif(SensorValue < Distance of moderate Vibration)...
-        if (this->myranger->GetRange(i) < 1.)
+    
+        // top line of vib motors . A is for critical distance (intense vib) and B is for mild vib. P stops vibrations
+        if (this->myranger->GetRange(i) < INTENSE_VIBRATION_DISTANCE)
             this->P[i+8] = 'A';
-        else if(this->myranger->GetRange(i) < 1.5)
+        else if(this->myranger->GetRange(i) < MILD_VIBRATION_DISTANCE)
             this->P[i+8] = 'B';
         else
             this->P[i+8] = 'P';
 
-        if (this->myranger->GetRange(i) < 1.)
+		// bottom line of vib motors
+        if (this->myranger->GetRange(i) < INTENSE_VIBRATION_DISTANCE)
             this->P[i+22] = 'A';
-        else if (this->myranger->GetRange(i) < 1.5)
+        else if (this->myranger->GetRange(i) < MILD_VIBRATION_DISTANCE)
             this->P[i+22] = 'B';
         else
             this->P[i+22] = 'P';
     }
 
-    //cout << "Qnt:" << this->myranger->GetRangeCount() << endl;
-    
-	//cout << "outra coisa" << endl;
-	cout << "entrei o loop" << endl;
+	// TODO comment this line when it works 
+	print_serial();
     return true;
 }
 
 void vib_belt :: exit() {
     close(this->fd);
 }
+
+void vib_belt :: print_serial() {
+	cout << "[vib_belt] printing the serial port content: " << this->P << endl;
+}
+
+

@@ -30,29 +30,26 @@ unknow_command:
         // default vib_belt constructor
         belt = new vib_belt();
 
-	if (belt == NULL)
-		cout << "Mega bug !!! " << endl;
-
-    // connect to the serial and check for errors in the connection
-    if (!belt->connect()) {
+	if (belt == NULL){
         perror("Failed to connect.");
         return -1;
 
 	}
+    // connect to the serial and check for errors in the connection
+    //TODO uncomment this when serial interface is ready
+    /*
+    if (!belt->connect()) {
+        perror("Failed to connect to the serial port.");
+        return -1;
+
+	}
+	*/
 
     cout << "done connected" << endl;
-    //cout << "Rangers: " << belt->myranger->GetRangeCount() << endl;
-    //cout << "Ranger[0]: " << belt->myranger->GetRange(0)  << endl;
-    //cout << "done reading 1" << endl;
-    //belt->robot->Read();
-    //cout << "Rangers: " << belt->myranger->GetRangeCount() << endl;
-    //cout << "Ranger[0]: " << belt->myranger->GetRange(0)  << endl;
-    //cout << "done reading 2" << endl;
-	//cout << "?" << endl;
-    // main loop for the belt
+
     while (1){
 		usleep(100); //little delay
-		cout << "Rangers - main: " << belt->myranger->GetRangeCount() << endl;
+		//cout << "Rangers - main: " << belt->myranger->GetRangeCount() << endl;
 		belt->loop();
 	}
     // close the serial communication

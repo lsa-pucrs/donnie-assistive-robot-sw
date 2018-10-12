@@ -4,8 +4,15 @@ PROJECT (${CLIENTNAME})
 
 message(STATUS "Configuring '${CLIENTNAME}'")
 
-# Include this CMake module to get most of the settings needed to build
-SET (CMAKE_MODULE_PATH "/usr/local/share/cmake/Modules")
+#########
+# check DONNIE_PATH
+#########
+if(DEFINED ENV{DONNIE_PATH})
+   SET(DONNIE_PATH "$ENV{DONNIE_PATH}")
+   #message(STATUS "DONNIE_PATH = ${DONNIE_PATH}")
+else()
+   message(FATAL_ERROR "DONNIE_PATH is NOT defined")
+endif()
 
 INCLUDE (UsePlayerC++)
 
