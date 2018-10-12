@@ -558,7 +558,7 @@ cmd	:	arg
 arg	:	(FW^| BW^| RTURN^| LTURN^| WAIT^) expression;
 
 
-narg	:	(SCAN | POS | RANGER | QUIT | COLOR | SOUND | HIST | STATE);
+narg	:	(SCAN | POS | RANGER | VIBRATE | QUIT | COLOR | SOUND | HIST | STATE);
 
 
 signEXP	:	(PLUS^ | MINUS^)? atom;
@@ -610,7 +610,7 @@ make	:	MAKE^ ID (EQ! expression)?;
 Here are defined the reserved Words. So only words defined here are acceptable as commands
 */
 make  : MAKE^ ~(QUIT| PROCDEC| PROCINV| FORE| DOIT| ENDFOR| WHILEE| ENDWHILE| SPEAKE|
-               HIST| STATE| FW| BW| RTURN| LTURN| SCAN| RANGER| POS| COLOR| SOUND| BELT|
+               HIST| STATE| FW| BW| RTURN| LTURN| SCAN| RANGER| VIBRATE | POS| COLOR| SOUND| BELT|
 							 THEN| IFE| ENDIF| ELSEE| REPTB| REPEAT| ENDREPT| WAIT| MAKE| ID| STRINGE|
 							 COMENT| MINUS| MULT| DIV| PLUS| EQ| COMP| SEMICOLON| INT| EOL| WS) (EQ! expression)?;
 
@@ -733,6 +733,13 @@ RANGER
 :	(('D'|'d')('I'|'i')('S'|'s')('T'|'t')('â'|'Â'|'A'|'a')('N'|'n')('C'|'c')('I'|'i')('A'|'a'))
 		(' ')+ (('F'|'f')|('FE'|'fe'|'Fe'|'fE')|('FD'|'fd'|'Fd'|'fD')|('T'|'t')|('TE'|'te'|'Te'|'tE')|('TD'|'td'|'Td'|'tD'))
 		|(('D'|'d')('I'|'i')('S'|'s')('T'|'t')('A'|'a')('N'|'n')('C'|'c')('E'|'e'))
+		(' ')+ (('F'|'f')|('FL'|'fl'|'Fl'|'fL')|('FR'|'fr'|'Fr'|'fR')|('B'|'b')|('BL'|'bl'|'Bl'|'bL')|('BR'|'br'|'Br'|'bR'))
+		;
+
+VIBRATE
+:	(('V'|'v')('I'|'i')('B'|'b')('R'|'r')('A'|'a')('R'|'r'))
+		(' ')+ (('F'|'f')|('FE'|'fe'|'Fe'|'fE')|('FD'|'fd'|'Fd'|'fD')|('T'|'t')|('TE'|'te'|'Te'|'tE')|('TD'|'td'|'Td'|'tD'))
+		|(('V'|'v')('I'|'i')('B'|'b')('R'|'r')('A'|'a')('T'|'t')('E'|'e'))
 		(' ')+ (('F'|'f')|('FL'|'fl'|'Fl'|'fL')|('FR'|'fr'|'Fr'|'fR')|('B'|'b')|('BL'|'bl'|'Bl'|'bL')|('BR'|'br'|'Br'|'bR'))
 		;
 

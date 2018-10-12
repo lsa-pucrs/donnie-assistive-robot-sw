@@ -90,6 +90,13 @@ class Vibbelt : public ThreadedDriver{
 // Deal with assosiations comming by .cfg file
 Vibbelt::Vibbelt(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 
+    // initialize P array
+    this->P[0] = 'Z';
+    for (int i = 1; i < 36; i++)
+        this->P[i] = 'P';
+  	// null terminated string
+	P[36] = 0;
+	      
 	//create a speech interface
 	if (cf->ReadDeviceAddr(&(this->speech_addr), section, "provides", PLAYER_SPEECH_CODE, -1, NULL)){
 		PLAYER_ERROR("[vib_belt] Could not read speech");
@@ -120,8 +127,7 @@ Vibbelt::Vibbelt(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 		SetError(-1);
 		return;	
 	}
-	// null terminated string
-	P[36] = 0;
+
 
 }
 Vibbelt::~Vibbelt(){
