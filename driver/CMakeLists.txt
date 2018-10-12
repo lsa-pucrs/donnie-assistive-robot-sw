@@ -7,6 +7,7 @@ IF(NOT ROBOT_COMPUTER)
 	add_subdirectory(gtts)
 	add_subdirectory(soxplayer)
 	add_subdirectory(genericblobfinder)
+	add_subdirectory(vib_belt)
 ELSE()
 	# if it is compiling for robot`s computer (RPi)
 	# all the drivers are compiled
@@ -15,6 +16,7 @@ ELSE()
 	add_subdirectory(gtts)
 	add_subdirectory(raspicamdriver)
 	add_subdirectory(soxplayer)
+	add_subdirectory(vib_belt)
 	#add_subdirectory(visual_odometry) // include this one only when its cmake is updated
 ENDIF()
 
