@@ -50,10 +50,13 @@ private:
   RangerProxy *sonarProxy;
   RangerProxy *headSonarProxy;
   SpeechProxy *speechProxy;
+  DioProxy *dioProxy;
   
   //! if on, it will use TTS to speak, otherwise it will quietly print in the console
   bool muted;
-
+  //! if on, it is possible to control the vibration belt.
+  bool belt_status;
+  
   int FrontBumper();
   int BackBumper();
   float GetPos(Position2dProxy *p2d,int arg);
@@ -107,7 +110,9 @@ public:
 
 	//! turn TTS on/off
   	void muteTTS(bool m);
-  	
+
+	//! belt on/off
+  	void belt(bool m);  	
 
 	float GetRange(int arg);
 	
@@ -145,6 +150,12 @@ public:
 	  /param text is the spoken/printed text
 	*/
 	void speak(string text);
+
+	//! turn the vib motors on
+	/*!
+	  /param vib id, vib value ('P', 'A', or 'B')
+	*/
+	void vibrate(int idx, char val);
 
 	//! Returns the value of a known color (format: 0x00RRGGBB)
 	/*!
