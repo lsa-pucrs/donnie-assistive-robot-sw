@@ -441,6 +441,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");
 
 			// generate a vibration pulse of 1 second
+			//TODO test this pulse strategy . 1 second seem to be too long.
             Donnie->vibrate(arg,'A');
             sleep(1);
             Donnie->vibrate(arg,'P');
