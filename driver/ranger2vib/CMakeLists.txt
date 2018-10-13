@@ -1,0 +1,37 @@
+CMAKE_MINIMUM_REQUIRED (VERSION 2.8 FATAL_ERROR)
+SET (DRIVERNAME "ranger2vib")
+#PROJECT (${DRIVERNAME})
+
+message(STATUS "Configuring '${DRIVERNAME}'")
+
+#########
+# check DONNIE_PATH
+#########
+if(DEFINED ENV{DONNIE_PATH})
+   SET(DONNIE_PATH "$ENV{DONNIE_PATH}")
+   #message(STATUS "DONNIE_PATH = ${DONNIE_PATH}")
+else()
+   message(FATAL_ERROR "DONNIE_PATH is NOT defined")
+endif()
+
+#########
+# set Player cmake modules
+#########
+# add the cmake path for player
+#SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "/usr/local/share/cmake/Modules")
+INCLUDE (UsePlayerPlugin)
+
+PLAYER_ADD_PLUGIN_DRIVER (${DRIVERNAME} SOURCES ${DRIVERNAME}.cc) 
+TARGET_LINK_LIBRARIES (${DRIVERNAME} ) 
+INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR} )
+
+# Install library and example files
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib${DRIVERNAME}.so DESTINATION ${DONNIE_PATH}/lib/player/) 
+INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/client-test/client-test.cc DESTINATION ${DONNIE_PATH}/test/${DRIVERNAME})
+INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/client-test/CMakeLists.txt DESTINATION ${DONNIE_PATH}/test/${DRIVERNAME})
+INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/server.cfg DESTINATION ${DONNIE_PATH}/test/${DRIVERNAME})
+
+# compile the driver example
+IF ( BUILD_EXAMPLES )
+  ADD_SUBDIRECTORY(client-test)
+ENDIF ()
