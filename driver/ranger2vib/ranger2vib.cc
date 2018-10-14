@@ -66,7 +66,7 @@ class Ranger2vib : public ThreadedDriver{
 	private:
 		player_devaddr_t speech_addr;  //speech interface
 		player_devaddr_t ranger_addr;  //dio interface
-		player_devaddr_t opaque_addr;  //dio interface
+		//player_devaddr_t opaque_addr;  //dio interface
 		
 		Device * speech_dev;
 		Device * ranger_dev;
@@ -89,7 +89,7 @@ class Ranger2vib : public ThreadedDriver{
 Ranger2vib::Ranger2vib(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
     memset(&(this->ranger_addr), 0, sizeof(player_devaddr_t));
     memset(&(this->speech_addr), 0, sizeof(player_devaddr_t));
-    memset(&(this->opaque_addr), 0, sizeof(player_devaddr_t));
+    //memset(&(this->opaque_addr), 0, sizeof(player_devaddr_t));
     memset(&speech_data,0,sizeof(speech_data));
     speech_data.string = new char[40];
 
@@ -99,7 +99,7 @@ Ranger2vib::Ranger2vib(ConfigFile* cf, int section) : ThreadedDriver(cf, section
         this->P[i] = 'P';
   	// null terminated string
 	P[36] = 0;
-	      
+/*
 	//create a speech interface
 	if (cf->ReadDeviceAddr(&(this->opaque_addr), section, "provides", PLAYER_OPAQUE_CODE, -1, NULL)){
 		PLAYER_ERROR("[ranger2vib] Could not read opaque");
@@ -111,13 +111,18 @@ Ranger2vib::Ranger2vib(ConfigFile* cf, int section) : ThreadedDriver(cf, section
 		SetError(-1);
 		return;
 	}
-	
+*/	
 	//create a speech interface
-	if (cf->ReadDeviceAddr(&(this->speech_addr), section, "requires", PLAYER_SPEECH_CODE, -1, NULL)){
+	if (cf->ReadDeviceAddr(&(this->speech_addr), section, "provides", PLAYER_SPEECH_CODE, -1, NULL)){
 		PLAYER_ERROR("[ranger2vib] Could not read speech");
 		SetError(-1);
 		return;
 	}
+	if (AddInterface(this->speech_addr)){
+		PLAYER_ERROR("[ranger2vib] Could not add speech interface");
+		SetError(-1);
+		return;
+	}	
 
 	if (cf->ReadDeviceAddr(&(this->ranger_addr), section, "requires", PLAYER_RANGER_CODE, -1, NULL)){
 		PLAYER_ERROR("[ranger2vib] Could not read ranger");
@@ -149,7 +154,7 @@ int Ranger2vib::MainSetup(){
       PLAYER_ERROR("[ranger2vib] unable to subscribe to speech device");
       return -1;
     }	
-    
+
     // Retrieve the handle to the ranger device.
     this->ranger_dev = deviceTable->GetDevice(this->ranger_addr);
     if (!(this->ranger_dev))
@@ -197,7 +202,7 @@ int Ranger2vib::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, v
     }
     
     //dio msgs have more priority if both interfaces are used
-	if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_CMD, PLAYER_DIO_CMD_VALUES, ranger_addr)){
+	if (Message::MatchMessage(hdr, PLAYER_MSGTYPE_CMD, PLAYER_RANGER_DATA_RANGE, ranger_addr)){
 		if (this->debug == 1){
 		  PLAYER_MSG0(MESSAGE_INFO,"[ranger2vib] Msg received via the dio interface.");
 		}
@@ -245,9 +250,15 @@ int Ranger2vib::Send(player_ranger_data_range_t *range){
 		cout << "[ranger2vib] printing the serial port content: " << speech_data.string << " " << strlen(speech_data.string) << endl  << endl;
 	}	
 	//send the textual description
+	this->Publish(this->speech_addr,
+                  PLAYER_MSGTYPE_DATA, PLAYER_SPEECH_CMD_SAY,
+                  (void *)(&(this->speech_data)), sizeof(speech_data), NULL);
+/*
+	Publish (speech_addr, ret_queue, PLAYER_MSGTYPE_CMD, PLAYER_SPEECH_CMD_SAY, NULL, 0, NULL);
 	this->speech_dev->PutMsg(this->InQueue, 
 				  PLAYER_MSGTYPE_CMD, PLAYER_SPEECH_CMD_SAY, 
 				  reinterpret_cast<void*>(&speech_data), sizeof(speech_data), NULL);    
+*/
     /*
     if (write(this->fd, (void*)this->P, 36) == 0){
 		cout << "[ranger2vib] error sending" << endl;
