@@ -1,5 +1,5 @@
-#ifndef VIB_BELT_H
-#define VIB_BELT_H
+#ifndef RANGER2VIB_H
+#define RANGER2VIB_H
 
 #include <libplayerc++/playerc++.h>
 #include <iostream>
@@ -14,7 +14,7 @@ using namespace PlayerCc;
 #define MILD_VIBRATION_DISTANCE 1.5    // distances between INTENSE_VIBRATION_DISTANCE and MILD_VIBRATION_DISTANCE will cause mild vibration
 // distances above MILD_VIBRATION_DISTANCE will cause no vibration
 
-class vib_belt {
+class ranger2vib {
 private:
     // host ip
     string host;
@@ -29,7 +29,7 @@ private:
     // of the information, 'A' for maximum vibration, 'B' for moderate and 'C' for low
 public:
 
-    vib_belt(const char* = NULL, int = 0);
+    ranger2vib(const char* = NULL, int = 0);
     
     //read the rangers and update the vib motors
     bool loop();

@@ -1,12 +1,12 @@
 
 #include <libplayerc++/playerc++.h>
-#include "vib_belt.h"
+#include "ranger2vib.h"
 /////////////////////
 
 using namespace PlayerCc;
 using namespace std;
 
-vib_belt::vib_belt(const char* hostname, int port) {
+ranger2vib::ranger2vib(const char* hostname, int port) {
     // initialize P array
     this->P[0] = 'Z';
     for (int i = 1; i < 36; i++)
@@ -50,7 +50,7 @@ vib_belt::vib_belt(const char* hostname, int port) {
 }
 
 
-bool vib_belt :: loop() {
+bool ranger2vib::loop() {
 	
     for(int i = 0; i < this->ranger->GetRangeCount(); i++) {  //print all lasers receiveds
     
