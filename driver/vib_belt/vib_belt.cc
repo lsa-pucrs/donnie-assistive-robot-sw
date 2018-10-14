@@ -65,8 +65,10 @@ class Vibbelt : public ThreadedDriver{
 
 	private:
 		player_devaddr_t speech_addr;  //speech interface
-		player_devaddr_t dio_addr;  //dio interface
-
+		player_devaddr_t dio_addr;     //dio interface
+		
+		player_speech_cmd_t speech_data;
+		
 		// set 1 to enable debug mode
 		uint8_t debug;
 		// serial port name
@@ -89,14 +91,19 @@ class Vibbelt : public ThreadedDriver{
 
 // Deal with assosiations comming by .cfg file
 Vibbelt::Vibbelt(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
-
+    memset(&(this->dio_addr), 0, sizeof(player_devaddr_t));
+    memset(&(this->speech_addr), 0, sizeof(player_devaddr_t));
+    //memset(&(this->opaque_addr), 0, sizeof(player_devaddr_t));
+    memset(&speech_data,0,sizeof(speech_data));
+    speech_data.string = new char[40];
+    
     // initialize P array
     this->P[0] = 'Z';
     for (int i = 1; i < 36; i++)
         this->P[i] = 'P';
   	// null terminated string
 	P[36] = 0;
-	      
+
 	//create a speech interface
 	if (cf->ReadDeviceAddr(&(this->speech_addr), section, "provides", PLAYER_SPEECH_CODE, -1, NULL)){
 		PLAYER_ERROR("[vib_belt] Could not read speech");
@@ -108,7 +115,7 @@ Vibbelt::Vibbelt(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 		SetError(-1);
 		return;
 	}
-
+		
 	if (cf->ReadDeviceAddr(&(this->dio_addr), section, "provides", PLAYER_DIO_CODE, -1, NULL)){
 		PLAYER_ERROR("[vib_belt] Could not read dio");
 		SetError(-1);
@@ -119,6 +126,7 @@ Vibbelt::Vibbelt(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 		SetError(-1);
 		return;
 	}
+		
 	status = 0;
 	debug = cf->ReadInt(section, "debug",0 );
 	devicename = cf->ReadString (section, "serial_port", "");
@@ -139,6 +147,7 @@ Vibbelt::~Vibbelt(){
 int Vibbelt::MainSetup(){
 	
 	cout << "[vib_belt] connecting ..." << endl;	
+
 	// TODO remove the 3 lines below when testing with the belt
 	status = 1;	
 	PLAYER_MSG0(MESSAGE_INFO, "[vib_belt] client has been connected");
@@ -151,7 +160,7 @@ int Vibbelt::MainSetup(){
         return -1;
 	}
         
-
+	//serial setup
     int res, i;
     //struct terminos newtio;
     struct termios newtio;
@@ -190,8 +199,11 @@ int Vibbelt::MainSetup(){
 ////////////////////////////////////////////////////////////////////////////////
 //Shutdown the device (occurs in each client shutdown)
 void Vibbelt::MainQuit(){
-	PLAYER_MSG0(MESSAGE_INFO, "[vib_belt] client has been disconnected...");
 	close(this->fd);
+	delete speech_data.string;
+    //this->speech_dev->Unsubscribe(this->InQueue);
+    //this->dio_dev->Unsubscribe(this->InQueue);		
+	PLAYER_MSG0(MESSAGE_INFO, "[vib_belt] client has been disconnected...");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -200,7 +212,8 @@ void Vibbelt::Main(){
 	for(;;){
 		pthread_testcancel();
 		this->ProcessMessages();
-		usleep(1000);
+		//TODO chage here to increase the interval between serial messages, reducing the update frequency.
+		usleep(500);
 	}
 	return;
 }
