@@ -1,0 +1,39 @@
+
+include "map.inc"
+include "donnie.inc"
+
+paused 0
+
+resolution 0.02
+
+# set the multiple of real time that Stage should try to achieve. Default is 1. 
+# set to 0 to go as fast as possible.
+# this command is necessary, otherwise donnie might crash during startup
+speedup 0
+
+# configure the GUI window
+window
+(
+  size [ 949 999 ] 		# window dimensions, in pixels    
+  scale 100 			# zoom of world cam          
+  center [ 0.50  1 ]  	# centralization of world cam   
+  rotate [ 0  0 ]  		# rotation of world cam
+  			
+  show_data 1           # 1=on 0=off
+  show_follow 0			# if 1 the cam follows the robot when it moves
+  #interval 50
+)
+
+# load an environment bitmap
+floorplan
+( 
+  name "simple_maze"
+  size [10.0 10.0 0.240]
+  pose [0.830 0.830 0.000 0.000]
+
+  bitmap "maps/complex_maze.png"
+  obstacle_return 0
+)
+
+
+donnie(name "donnie01" color "red"  pose [4.5 -2.5 0.000 0.000])
