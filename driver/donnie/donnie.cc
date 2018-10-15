@@ -654,6 +654,9 @@ void Donnie::ProcessRangerData(){
 
 	/*Publish(m_head_ranger_addr, PLAYER_MSGTYPE_DATA, PLAYER_RANGER_DATA_RANGE,
 		 reinterpret_cast<void *>(&headrangerdata), sizeof(headrangerdata), NULL); */
+		 
+	delete rangerdata.ranges;
+	delete headrangerdata.ranges;
 }
 
 void Donnie::ProcessBumperData(){
@@ -801,12 +804,13 @@ void Donnie::ProcessRequestPing(){
 
 
 
-
+/*
 	int32_t change_left = 0;
 	int32_t change_right = 0;
 	int32_t transchange = 0;
 	int32_t rotchange = 0;
 	double encoderPackLag;
+*/
 	
 void Donnie::ProcessEncoderData(){
 	//encoderPackLag = tmr.elapsedus() - encoderPackLag ;
