@@ -149,16 +149,22 @@ int Vibbelt::MainSetup(){
 	cout << "[vib_belt] connecting ..." << endl;	
 
 	// TODO remove the 3 lines below when testing with the belt
-	status = 1;	
-	PLAYER_MSG0(MESSAGE_INFO, "[vib_belt] client has been connected");
-	return(0);	
+	//status = 1;	
+	//PLAYER_MSG0(MESSAGE_INFO, "[vib_belt] client has been connected");
+	//return(0);	
 	
-    this->fd = open(devicename.c_str(), O_RDWR | O_NOCTTY | O_NONBLOCK);
+    //this->fd = open(devicename.c_str(), O_RDWR | O_NOCTTY | O_NONBLOCK);
+    this->fd = open(devicename.c_str(), O_RDWR); 
 
     if (this->fd < 0){
 		cout << "[vib_belt] error to open the serial port" << endl;
         return -1;
 	}
+
+	status = 1;	
+	PLAYER_MSG0(MESSAGE_INFO, "[vib_belt] client has been connected");
+
+	return(0);
         
 	//serial setup
     int res, i;
@@ -272,13 +278,13 @@ int Vibbelt::Send(){
 	}	
     // all writing operations are checked to see if they are working properly, in the case in which they aren't, the function will return false.
     // TODO uncomment this when testing serial
-    /*
     if (write(this->fd, (void*)this->P, 36) == 0){
 		cout << "[vib_belt] error sending" << endl;
 		// TODO uncomment this when serial port is actually sending data
-		//return -1;
+		return -1;
 	}
-	*/
+	return 0;
+	
 }
 
 int Vibbelt::Set(char *serial_str){
