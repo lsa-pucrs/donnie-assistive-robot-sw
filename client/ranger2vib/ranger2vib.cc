@@ -5,6 +5,7 @@ using namespace std;
 int main(int argc, char** argv) {
     ranger2vib* belt = NULL;
 
+	cout << "[ranger2vib] connected to vibbelt ... ";
     // treatment for the arguments
     if (argc > 1){
         if (argv[1][0] == '-'){
@@ -28,8 +29,7 @@ int main(int argc, char** argv) {
         return -1;
 
 	}
-
-    cout << "done connected" << endl;
+    cout << "connection done!" << endl;
 
     while (1){
 		usleep(500); //controls the update frequency
