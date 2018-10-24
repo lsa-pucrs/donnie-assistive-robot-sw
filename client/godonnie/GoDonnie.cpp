@@ -50,7 +50,9 @@ COMMAND comandos[] = {
   { (char*)"som", (char*)"Liga ou desliga o som" },
   { (char*)"histórico", (char*)"Histórico de comandos de movimento" },
   { (char*)"cinto", (char*)"Liga ou desliga o cinto" },
+  { (char*)"vibrar", (char*)"Aciona individualmente os motores de vibração quando o cinto é utilizado" },
   { (char *)NULL, (char *)NULL }
+
 };
 
 // Comandos em en_US
@@ -75,6 +77,7 @@ COMMAND commands[] = {
   { (char*)"sound", (char*)"Turns the sound on and off" },
   { (char*)"history", (char*)"Movement command history" },
   { (char*)"belt", (char*)"Turns the belt on and off" },
+  { (char*)"vibrate", (char*)"Individually activate the vibration motors when the belt is used" },
   { (char *)NULL, (char *)NULL }
 };
 
@@ -118,6 +121,7 @@ int main(int argc, char* argv[])
 	int c=0, argcnt=0;
 	/// this is from getopt lib. it is used to reset de idx of the parameter list
 	extern int optind; 
+	extern char *optarg; // used by getopt
 	
     if ( argc <= 1 ) {  // there is NO input...
         //Compiler.speak("No argument provided!");
@@ -127,7 +131,9 @@ int main(int argc, char* argv[])
     }
 
   // the arguments are case insensitive
-   while ((c = getopt (argc, argv, "mMlLtThHfF:")) != -1){
+   while ((c = getopt (argc, argv, "mMlLtThHf:F:")) != -1){
+   // a single : means that the argument is required. double :: means the argument is optional
+   //while ((c = getopt (argc, argv, "mlthf:")) != -1){
     switch (c){
       case 'T': 
       case 't': // terminal mode
@@ -142,6 +148,10 @@ int main(int argc, char* argv[])
         break;
       case 'F':
       case 'f': // script file  mode
+		if (optarg == NULL){
+			cerr << translate("Erro inesperado no argumento de nome do arquivo") << endl;
+			exit(1);			
+		}
         filename = optarg;
         scriptMode=1;
         /*

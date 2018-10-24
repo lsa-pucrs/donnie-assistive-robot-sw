@@ -40,6 +40,7 @@ DonnieClient::DonnieClient()
 	if(host.size()==0) host = "localhost";
 	if(port==0) port = 6665;
 	muted = false;
+	belt_status = false;
 
 	// Set up language environment
 	generator gen;
@@ -71,6 +72,7 @@ DonnieClient::DonnieClient()
 		sonarProxy = new RangerProxy(robot,0);
 		headSonarProxy = new RangerProxy(robot,1);
 		speechProxy = new SpeechProxy(robot,0);
+		dioProxy = new DioProxy(robot,0);
 	}catch (PlayerError e){
 		#ifndef NDEBUG
 			cerr << e << endl;
@@ -1117,3 +1119,19 @@ void DonnieClient::muteTTS(bool m)
 {
 	muted = m;
 }
+
+void DonnieClient::belt(bool m)
+{
+	belt_status = m;
+}
+
+void DonnieClient::vibrate(int idx, char val)
+{
+	// usual values are P for stop, A for intense vibration, and B for mild vibration
+	// the index must be 0 and 35, but the belt has only 14 motors.
+	if (belt_status)
+		dioProxy->SetOutput(idx,(int)val);
+	else
+		speak(string(translate("O cinto deve ser ligado")));
+}
+ 

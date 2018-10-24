@@ -95,7 +95,9 @@ floorplan
 #	color "red"
 #)
 
-donnie(name "donnie" pose [0 0 0 90] color "red")
+donnie(name "donnie01" color "red"  pose [0.0 0.0 0.000 0.000])
+donnie(name "donnie02" color "blue" pose [0.8 0.8 0.000 0.000])
+
 
 
 chair(name "chair1" color "green3"  pose [1.5 1.25 0 90])
