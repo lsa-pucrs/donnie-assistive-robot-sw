@@ -417,6 +417,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case VIBRATE:
           {
             int arg;
+            char intensity='P'; // P is stoped, A is strong, B is medium, C is week
             vector<string> tokens;
             split((char*)getText(tree),' ',tokens);
 			//if (tokens.size() != 2)
@@ -435,19 +436,32 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 				arg = 4;
 			else if (tokens[1] == RANGER_SE)
 				arg = 5;
-			//else if (tokens[1] == RANGER_HEAD)
-			//	arg = 6;
-			//else
-				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");
+			else
+				// should never throw this.
+				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");
+
+			// check intensity
+			if (tokens[2] == "medio" or tokens[2] == "medium") // TODO check when there is accent
+				intensity = 'B';
+			else if (tokens[2] == "fraco" or tokens[2] == "week")
+				intensity = 'C';
+			else if (tokens[2] == "forte" or tokens[2] == "strong")
+				intensity = 'A';
+			else{
+				// should never throw this.
+				intensity = 'P';
+				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");
+				// should 
+			}
 
 			// generate a vibration pulse of 1 second
 			//TODO test this pulse strategy . 1 second seem to be too long.
-            Donnie->vibrate(arg,'A');
+            Donnie->vibrate(arg,intensity);
             sleep(1);
             Donnie->vibrate(arg,'P');
             sleep(1);
             #ifndef NDEBUG
-            cout << "VIBRATE: " << arg << endl;
+            cout << "VIBRATE: " << arg << " " << intensity << endl;
             #endif
             break;
           }
