@@ -19,6 +19,7 @@ using std::stack;
 using std::string;
 using std::cout;
 using std::endl;
+using std::string;
 
 /// definition of the ranger tokens in Portuguese
 #define RANGER_N "f"   // 0
@@ -220,7 +221,27 @@ int ExprTreeEvaluator::parseGD(char* textIn)
   	return done;
 }
 
-
+//const char* reservedWords[] = {"sair", "criar", "falar", "som", "pf", "pt", "gd", "fe", "espiar", "estado", "distancia", "pos", "cor", "se", "entao", "senao", "fim", "para", "faça", "repita", "vezes", "enquanto", "aprender", "esperar" };
+std::vector<std::string> reservedWords = {"vibrar", "vibrate", "distance", "scan", "tl", "tr", "bw", "fw", "quit", "exit", 
+	                                      "sair", "criar", "falar", "som", "pf", "pt", "gd", "fe", "espiar", "estado", 
+	                                      "distancia", "pos", "position", "posicao", "cor", "se", "entao", "senao", "fim",
+	                                      "para", "faça", "repita", "vezes", "enquanto", "aprender", "esperar", "var", "wait",
+	                                      "repeat", "end", "if", "else", "times", "then", "belt", "sound", "color", "state",
+	                                       "historico", "history", "speak", "while", "for", "procedure"};
+bool reserved(char* str){
+	for(int i = 0; i < reservedWords.size(); i++){
+		
+		//cout << i << ": " << reservedWords.size() << " " << str << " " << reservedWords[i] << endl;
+		//if(strcmp(str, reservedWords[i]) == 0){
+		if(string(str) == reservedWords[i]){
+			//cout << "Entrou " <<  str << endl;
+			//cout << reservedWords[i] << endl;
+			//cout << "ENTROU" << endl;
+			return true;
+		}
+	}
+	return false;
+}
 
 int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 {
@@ -706,8 +727,14 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case MAKE:
           {
 
-	    char* var = (char*)getText(getChild(tree,0));
-
+			char* var = (char*)getText(getChild(tree,0));
+			if (reserved(var)){
+				//cout << "nome da var: " << var << endl;
+				sayStr << translate("Nome da variável não é válido");
+				Donnie->speak(sayStr.str());
+				break;
+			}
+			
             int val;
             if (tree->getChildCount(tree) < 2)
             {
@@ -718,8 +745,10 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
             if(for_itFlag == WAITING)
               for_itFlag = DonnieMemory::getInstance()->addForVar(var,val);
-            else
+            else{
+			  //cout << "Estou criando a var ... " << endl;
               DonnieMemory::getInstance()->addVar(var,val);
+		    }
 
             break;
             }

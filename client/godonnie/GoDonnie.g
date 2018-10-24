@@ -602,17 +602,9 @@ whilee	:	WHILEE^ comparison whileblock ;
 
 repeat	:	REPEAT^ expression reptblock;
 
-/*
-make	:	MAKE^ ID (EQ! expression)?;
-*/
 
-/*
-Here are defined the reserved Words. So only words defined here are acceptable as commands
-*/
-make  : MAKE^ ~(BELTCMD| COLORCMD| SOUNDCMD| QUIT| PROCDEC| PROCINV| FORE| DOIT| ENDFOR| WHILEE| ENDWHILE| SPEAKE| HIST|
-               STATE| FW| BW| RTURN| LTURN| SCAN| RANGER| VIBRATE | POS| COLOR| SOUND| BELT|
-               THEN| IFE| ENDIF| ELSEE| REPTB| REPEAT| ENDREPT| WAIT| MAKE| STRINGE| COMENT|
-               MINUS| MULT| DIV| PLUS| EQ| COMP| SEMICOLON| INT| EOL| WS) (EQ! expression)?;
+make	:	MAKE^ ID (EQ! expression)?;
+
 
 assign	:	ID EQ^ expression;
 
@@ -749,15 +741,15 @@ POS	:	(('P'|'p')('O'|'o')('S'|'s')
 		//|((('P'|'p')('O'|'o')('S'|'s')('I'|'i')('T'|'t')('I'|'i')('O'|'o')('N'|'n'))?) ((' ')+ (('X'|'x') | ('Y'|'y') | ('A'|'a')))?
 		//|((('P'|'p')('O'|'o')('S'|'s')('I'|'i')('Ç'|'ç'|'C'|'c')('Ã'|'ã'|'A'|'a')('O'|'o'))?) ((' ')+ (('X'|'x') | ('Y'|'y') | ('A'|'a')))?
 		;
-COLORCMD:       (('C'|'c')('O'|'o')('R'|'r')) |(('C'|'c')('O'|'o')('L'|'l')('O'|'o')('R'|'r'));
+
 COLOR	:	(('C'|'c')('O'|'o')('R'|'r')) (' ')+ ((('A'|'a')('Z'|'z')('U'|'u')('L'|'l')) | (('V'|'v')('E'|'e')('R'|'r')('D'|'d')('E'|'e')) | (('V'|'v')('E'|'e')('R'|'r')('M'|'m')('E'|'e')('L'|'l')('H'|'h')('O'|'o')))
 			|(('C'|'c')('O'|'o')('L'|'l')('O'|'o')('R'|'r')) (' ')+ ((('B'|'b')('L'|'l')('U'|'u')('E'|'e')) | (('G'|'g')('R'|'r')('E'|'e')('N'|'n')) | (('R'|'r')('E'|'e')('D'|'d')))
 		;
-SOUNDCMD:       (('S'|'s')('O'|'o')('M'|'m')) | (('S'|'s')('O'|'o')('U'|'u')('N'|'n')('D'|'d'));
+
 SOUND	:	(('S'|'s')('O'|'o')('M'|'m')) (' ')+ ((('L'|'l')('I'|'i')('G'|'g')('A'|'a')('D'|'d')('O'|'o')) | (('D'|'d')('E'|'e')('S'|'s')('L'|'l')('I'|'i')('G'|'g')('A'|'a')('D'|'d')('O'|'o')))
 			|(('S'|'s')('O'|'o')('U'|'u')('N'|'n')('D'|'d')) (' ')+ ((('O'|'o')('N'|'n')) | (('O'|'o')('F'|'f')('F'|'f')))
 		;
-BELTCMD   : (('C'|'c')('I'|'i')('N'|'n')('T'|'t')('O'|'o')) |(('B'|'b')('E'|'e')('L'|'l')('T'|'t'));
+
 BELT	:	(('C'|'c')('I'|'i')('N'|'n')('T'|'t')('O'|'o')) (' ')+ ((('L'|'l')('I'|'i')('G'|'g')('A'|'a')('D'|'d')('O'|'o')) | (('D'|'d')('E'|'e')('S'|'s')('L'|'l')('I'|'i')('G'|'g')('A'|'a')('D'|'d')('O'|'o')))
 			|(('B'|'b')('E'|'e')('L'|'l')('T'|'t')) (' ')+ ((('O'|'o')('N'|'n')) | (('O'|'o')('F'|'f')('F'|'f')))
 		;
