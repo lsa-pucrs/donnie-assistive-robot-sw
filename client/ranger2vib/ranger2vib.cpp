@@ -36,7 +36,7 @@ ranger2vib::ranger2vib(const char* hostname, int port) {
 	try{
 		this->robot = new PlayerClient(this->host, this->port);
 		this->ranger = new RangerProxy(this->robot, 0);
-		this->speech = new SpeechProxy(this->robot, 1);
+		this->speech = new SpeechProxy(this->robot, 1);  // this is the speech interface for the vib_belt, not the Gtts
 	} catch (PlayerError e){
 		#ifndef NDEBUG
 			cerr << e << endl;
@@ -73,7 +73,7 @@ bool ranger2vib::loop() {
 
 	// TODO comment this line when it works 
 	cout << "[ranger2vib] printing the serial port content: " << this->P << endl;
-	speech->Say(this->P);
+	speech->Say(this->P); // this is the speech interface for the vib_belt, not the Gtts
     return true;
 }
 

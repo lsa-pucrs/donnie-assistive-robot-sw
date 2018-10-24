@@ -135,7 +135,7 @@ define donnie_head position
 
 	obstacle_return 0
 
-	color "red"
+	#color "green"
 	
 	donnie_head_arrow()
 	donnie_HS()

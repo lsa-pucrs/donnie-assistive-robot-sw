@@ -70,6 +70,8 @@ class Gtts : public ThreadedDriver{
 		player_devaddr_t speech_addr;  //speech interface
 		player_devaddr_t sound_addr;  //sound interface
 		Device *sound_dev; //sound device
+		// set 1 to enable debug mode
+		uint8_t debug;
 
 		virtual int MainSetup();
 		virtual void MainQuit();
@@ -100,6 +102,8 @@ Gtts::Gtts(ConfigFile* cf, int section) : ThreadedDriver(cf, section){
 		SetError(-1);
 		return;
 	}
+	
+	debug = cf->ReadInt(section, "debug",0 );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -152,9 +156,9 @@ int Gtts::ProcessMessage(QueuePointer & resp_queue, player_msghdr * hdr, void * 
 void Gtts::ProcessSpeechCmd(player_msghdr_t* hdr, player_speech_cmd_t &data){
 
 	char *palavra = data.string;
-	#ifndef NDEBUG
+	if (this->debug == 1){
 	  PLAYER_MSG1(MESSAGE_INFO,"[Gtts] Receiving phrase [%s] to be transformed to speech",palavra);
-	#endif
+	}
 	//treat the white spaces ' '->%
 	int i = 0;
 	for(i = 0; i < data.string_count; i++)
@@ -183,9 +187,9 @@ void Gtts::ProcessSpeechCmd(player_msghdr_t* hdr, player_speech_cmd_t &data){
 	strcat(url,langurl.c_str());  // TODO. Assuming pt-br, this must change for internationalization
 	strcat(url,"&q=");
 	strcat(url, palavra);
-	#ifndef NDEBUG
+	if (this->debug == 1){
 	  PLAYER_MSG1(MESSAGE_INFO,"[Gtts] URL for GoogleTTS [%s]",url);
-	#endif	
+	}
 	
 	//Download do arquivo com curl
     //file = fopen("download.mp3", "w");
@@ -228,9 +232,9 @@ void Gtts::Play(char *fileAddr){
 	memset(&sfile,0,sizeof(sfile));
 
 	strcpy(sfile.filename, fileAddr);
-	#ifndef NDEBUG
+	if (this->debug == 1){
 	  PLAYER_MSG1(MESSAGE_INFO,"[Gtts] Sending filename [%s] to be played by sox",sfile.filename);
-	#endif	
+	}	
 
 	//send sox command
 	this->sound_dev->PutMsg(this->InQueue, 
