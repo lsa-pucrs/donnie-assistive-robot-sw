@@ -1,5 +1,7 @@
 #include "floor_desc.h"
 
+#include "yaml-cpp/node/type.h"
+
 // TODO: amory. criar include donnie_defs.h com todas as definicoes de tamanho do donnie
 #define STEP_YAW 10 //gradianos
 #define STEP_LENGHT 0.05
@@ -51,7 +53,25 @@ FloorClient::FloorClient()
 	
 	cout << "loading parser" << endl;
 	doc = YAML::LoadFile("house_donnie.yaml");
-	cout << doc;
+	
+	
+	cout << "1" << endl;
+	//this->floorplan.name = doc["name"].as<string>();
+	//this->floorplan.description = doc["description"].as<string>();
+	//this->floorplan.area = doc["area"].as<float>();
+	//cout << "---- " << this->floorplan.name << " " << this->floorplan.description  << " " << this->floorplan.area << endl;
+	cout << "2" << endl;
+	//YAML::Node ff = doc.begin();
+	cout << "3" << endl;
+	//cout << "---- " << ff["name"] << endl;
+	cout << "4" << endl;
+	doc >> this->floorplan;
+	cout << "5" << endl;
+	cout << "---- " << this->floorplan.name << " " << this->floorplan.description  << " " << this->floorplan.area << endl;
+	cout << "6" << endl;
+	cout << this->floorplan.bl_pos.x << " " << this->floorplan.bl_pos.y << endl;
+	
+	//cout << doc;
 	cout << endl << endl << "loaded" << endl;
 	cout << doc["name"] << endl;
 	cout << doc["description"] << endl;
@@ -74,9 +94,33 @@ FloorClient::FloorClient()
 
 	std::string key, value;
     for (YAML::const_iterator it = doc.begin(); it != doc.end(); ++it){
-        std::cout << "First: " << it->first.as<std::string>() << "\n";
-         // it->second.as<std::string>(); // can't do this until it's type is checked!!
-    }	
+		key = it->first.as<std::string>();
+        cout << "First: "  << key << endl;
+        if (key == "name") {
+			cout << "Second size: "  << it->second.size() << endl;
+			cout << "Second: " << it->second.as<std::string>() << endl;; // can't do this until it's type is checked!!
+		} else	if (key == "bl_pos") {
+			cout << "Second size: "  << it->second.size() << endl;
+			//cout << "Second: " << it->second.as<std::string>() << endl;; // can't do this until it's type is checked!!
+		} else if (key == "rooms") {
+			cout << "entrei no rooms" << endl;
+			cout << "size1: "  << it->second.size() << endl;
+			YAML::Node rooms = it->second;
+			//cout << "Second size: "  << it->second.size() << endl;
+			cout << "size2: "  << rooms.size() << endl;
+			if (YAML::NodeType::Sequence == rooms.Type()) {
+				cout << "eh sequence "  << endl;
+				//for (std::size_t i_rooms = 0; i_rooms < rooms.size(); i_rooms++) {
+				//  cout << "rooms 2 pos: " << rooms[i_rooms]->first.as<std::string>() << endl;
+				//}				
+				for (YAML::const_iterator it_rooms = rooms.begin(); it_rooms != rooms.end(); ++it_rooms){
+					cout << "rooms pos: " << it_rooms->first.as<string>() << endl;
+					//cout << "Second: " << it->second.as<std::string>() << endl;; // can't do this until it's type is checked!!
+				}
+			}else
+				cout << "unespected node type for 'doors' key" << endl;
+		}
+    }
 	/*
 	for(YAML::const_iterator it=doc.begin();it!=doc.end();++it) {
 		it->first.as<std::string>() >> key;
@@ -115,6 +159,64 @@ FloorClient::FloorClient()
 void FloorClient::getPos(){
 	//p2d->GetXPos(),p2d->GetYPos()
     //return pos;
+}
+
+void operator >> (const YAML::Node& node, PosXY& v) {
+   v.x = node[0].as<float>();
+   v.y = node[1].as<float>();
+   //node[0] >> v.x;
+   //node[1] >> v.y;
+}
+
+void operator >> (const YAML::Node& node, Room& r) {
+   r.name = node["name"].as<string>();
+   r.description = node["description"].as<string>();
+   r.area = node["area"].as<float>();
+   node["bl_pos"] >> r.bl_pos;
+   node["tr_pos"] >> r.tr_pos;
+   //node["objects"] >> r.objects;
+   const YAML::Node& objects = node["objects"];
+   cout << "OBJETOS:" << endl;
+   for(unsigned i=0;i<objects.size();i++) {
+      //string obj;
+      //objects[i] >> obj;
+      cout << objects[i].as<string>() << endl;
+      r.objects.push_back(objects[i].as<string>());
+   }
+   //node["doors"] >> r.doors;
+   const YAML::Node& doors = node["doors"];
+   cout << "PORTAS:" << endl;
+   for(unsigned i=0;i<doors.size();i++) {
+      PosXY pos;
+      doors[i] >> pos;
+      cout << pos.x << ", " << pos.y << endl;
+      r.doors.push_back(pos);
+   } 
+}
+
+void operator >> (const YAML::Node& node, Floorplan& r) {
+	
+   //cout << it["name"].second.as<string>() << endl;
+   //cout << node["name"].as<string>() << endl;
+   r.name = node["name"].as<string>();
+   r.description = node["description"].as<string>();
+   r.area = node["area"].as<float>();
+   node["bl_pos"] >> r.bl_pos;
+   node["tr_pos"] >> r.tr_pos;
+   /*
+   node["name"] >> r.name;
+   node["description"] >> r.description;
+   node["bl_pos"] >> r.bl_pos;
+   node["tr_pos"] >> r.tr_pos;
+   node["area"] >> r.area;
+   */    
+   //node["rooms"] >> r.rooms;
+   const YAML::Node& rooms = node["rooms"];
+   for(unsigned i=0;i<rooms.size();i++) {
+      Room room;
+      rooms[i] >> room;
+      r.rooms.push_back(room);
+   } 
 }
 
 

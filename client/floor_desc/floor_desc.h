@@ -20,6 +20,37 @@ using namespace boost::locale;
 using boost::locale::translate;
 using boost::locale::format;
 
+struct PosXY{
+	float x,y;
+};
+
+struct Room{
+   string name;
+   string description;
+   PosXY bl_pos;
+   PosXY tr_pos;
+   float area;
+   vector<string> objects;
+   vector<PosXY> doors;
+   // TODO preciso fazer um destrutor p os vectors ?
+};
+
+struct Floorplan{
+   string name;
+   string description;
+   PosXY bl_pos;
+   PosXY tr_pos;
+   float area;
+   vector<Room> rooms;
+   // TODO preciso fazer um destrutor p os vectors ?
+};
+
+// extraction of data from the YAML files
+void operator >> (const YAML::Node& node, PosXY& v);
+void operator >> (const YAML::Node& node, Room& r);
+void operator >> (const YAML::Node& node, Floorplan& r);
+
+
 class FloorClient{
   PlayerClient *robot;
   Position2dProxy *p2d;
@@ -28,6 +59,7 @@ class FloorClient{
   ifstream fin;
   YAML::Parser parser;
   YAML::Node doc;
+  Floorplan floorplan;
 
   void getPos();
   void up();
