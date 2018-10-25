@@ -45,11 +45,15 @@ struct Floorplan{
    // TODO preciso fazer um destrutor p os vectors ?
 };
 
+// cout operator for debug purposes
+std::ostream& operator<<(std::ostream& os, const PosXY& m);
+std::ostream& operator<<(std::ostream& os, const Room& m);
+std::ostream& operator<<(std::ostream& os, const Floorplan& m);
+
 // extraction of data from the YAML files
 void operator >> (const YAML::Node& node, PosXY& v);
 void operator >> (const YAML::Node& node, Room& r);
 void operator >> (const YAML::Node& node, Floorplan& r);
-
 
 class FloorClient{
   PlayerClient *robot;
@@ -60,6 +64,7 @@ class FloorClient{
   YAML::Parser parser;
   YAML::Node doc;
   Floorplan floorplan;
+  PosXY  current_robot_pos;
 
   void getPos();
   void up();
@@ -69,5 +74,5 @@ class FloorClient{
   
 public:
   FloorClient();
-  void checkArrowKeys();
+  void checkKeys();
 };
