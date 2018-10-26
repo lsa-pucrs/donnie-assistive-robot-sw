@@ -33,6 +33,10 @@ struct Room{
    vector<string> objects;
    vector<PosXY> doors;
    // TODO preciso fazer um destrutor p os vectors ?
+   ~Room(){
+	   objects.clear();
+	   doors.clear();
+   }   
 };
 
 struct Floorplan{
@@ -43,6 +47,10 @@ struct Floorplan{
    float area;
    vector<Room> rooms;
    // TODO preciso fazer um destrutor p os vectors ?
+   
+   ~Floorplan(){
+	   rooms.clear();
+   }
 };
 
 // cout operator for debug purposes
@@ -55,6 +63,10 @@ void operator >> (const YAML::Node& node, PosXY& v);
 void operator >> (const YAML::Node& node, Room& r);
 void operator >> (const YAML::Node& node, Floorplan& r);
 
+// get keyboard code
+int getch(void);
+
+
 class FloorClient{
   PlayerClient *robot;
   Position2dProxy *p2d;
@@ -65,14 +77,18 @@ class FloorClient{
   YAML::Node doc;
   Floorplan floorplan;
   PosXY  current_robot_pos;
+  
+  bool muted;
 
+ 
+public:
+  FloorClient();
+  ~FloorClient();
+
+  void say(const char *c);
   void getPos();
   void up();
   void down();
   void child();
   void parent();
-  
-public:
-  FloorClient();
-  void checkKeys();
 };

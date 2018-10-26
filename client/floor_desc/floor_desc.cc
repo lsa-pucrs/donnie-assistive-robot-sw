@@ -1,20 +1,23 @@
 #include "floor_desc.h"
-
-//#include "yaml-cpp/node/type.h"
 #include <termios.h>
 
+#define KEY_UP 		56 // # 8 in the numeric keyboard
+#define KEY_DOWN 	50 // # 2
+#define KEY_LEFT 	52 // # 4
+#define KEY_RIGHT 	54 // # 6
+#define KEY_ENTER 	10 // real enter code
+#define KEY_POS 	53 // # 5
+#define KEY_HOME    48 // # 0
+#define KEY_ESC     27 // real ESC code
 
-#define KEY_UP 		65
-#define KEY_DOWN 	66
-#define KEY_LEFT 	68
-#define KEY_RIGHT 	67
-#define KEY_ENTER 	10
-#define KEY_HOME    72
-#define KEY_END     70
 
-//variables to get the console in raw mode
-//int kfd = 0;
-//struct termios cooked, raw;
+FloorClient::~FloorClient()
+{
+	delete robot;
+	delete p2d;
+	delete speech;
+}
+
 
 FloorClient::FloorClient()
 {
@@ -41,6 +44,10 @@ FloorClient::FloorClient()
     locale::global(loc);
     cout.imbue(loc);
     cerr.imbue(loc);
+    
+    // set to true to stay silent
+    // TODO read parameter to set muted
+    muted = false;
 
 	// setup yaml
 	cout << "loading YAML parser" << endl;
@@ -121,6 +128,7 @@ void FloorClient::getPos(){
 	//p2d->GetXPos(),p2d->GetYPos()
 	current_robot_pos.x = p2d->GetXPos();
 	current_robot_pos.y = p2d->GetYPos();
+	cout << "Posicao: " << current_robot_pos << endl;
 }
 
 
@@ -211,23 +219,33 @@ void operator >> (const YAML::Node& node, Floorplan& r) {
    } 
 }
 
+void FloorClient::say(const char *str){
+	if (muted)
+		cout << str << endl;
+	else
+		speech->Say(str);
+}
+
 
 void FloorClient::up(){
 	cout << endl << "Up" << endl;//key up
+	say("up");
 }
 
 void FloorClient::down(){
 	cout << endl << "Down" << endl;   // key down
+	say("down");
 }
 
 void FloorClient::child(){
 	cout << endl << "Right - child" << endl;  // key right
+	say("Right - child");
 }
 
 void FloorClient::parent(){
 	cout << endl << "Left - parent" << endl;  // key left
+	say("Left - parent");
 }
-
 
 
 int getch(void)
@@ -244,85 +262,55 @@ int getch(void)
  return ch; /*return received char */
 }
 
-char getKey(){
- char x,y,z;
- printf("Press any key to continue...\n");
- x = getch();
- printf("Key code x is %d\n", x);
- if (x == 27)
- {
-  y = getch();
-  z = getch();
-  printf("Key code y is %d\n", y);
-  printf("Key code z is %d\n", z);
-  return z;
- }
-}
-
-void FloorClient::checkKeys(){
-	
-    int c = 0;
-
-	// get robot position
-	this->getPos();
-	
-	// read the key
-	c = getKey();
-	
-	/*	
-	if(read(kfd, &c, 1) < 0)
-	{
-	  perror("read():");
-	  exit(-1);
-	}*/
-
-	switch(c) {
-	case KEY_UP:
-		this->up();
-		break;
-	case KEY_DOWN:
-		this->down();
-		break;
-	case KEY_LEFT:
-		this->parent();
-		break;
-	case KEY_RIGHT:
-		this->child();
-		break;
-	case KEY_ENTER:
-		cout << "enter" << endl;
-		break;
-	case KEY_HOME:
-		cout << "home" << endl;
-		break;
-	case KEY_END:
-		cout << "end" << endl;
-		break;
-	default:
-		cout << endl << "null " << c << endl;  // not arrow
-		break;
-	}
-	//this->speak();
-	
-	
-}
-
 
 int main(int argc, char *argv[]){
     FloorClient *donnie1 = new FloorClient();
-/*    
-	// get the console in raw mode
-	tcgetattr(kfd, &cooked);
-	memcpy(&raw, &cooked, sizeof(struct termios));
-	raw.c_lflag &=~ (ICANON | ECHO);
-	raw.c_cc[VEOL] = 1;
-	raw.c_cc[VEOF] = 2;
-	tcsetattr(kfd, TCSANOW, &raw);    
-  */ 
+	int c = 0;
     
     while(1){
         usleep(100); //little delay
-        donnie1->checkKeys();
+
+		// get robot position
+		donnie1->getPos();
+
+		switch(c=getch()) {
+		case KEY_UP:    // go up in the same hier level
+			donnie1->up();
+			break;
+		case KEY_DOWN:  // go down in the same hier level
+			donnie1->down();
+			break;
+		case KEY_LEFT:  // go up into hierachy, up to the parent item. 
+			donnie1->parent();
+			break;
+		case KEY_RIGHT: // enter in the subitem, the child item
+			donnie1->child();
+			break;
+		case KEY_POS: // describe the room based on the current robot position
+			donnie1->say("position");
+			cout << "position" << endl;
+			break;
+		case KEY_ENTER: // say the current position
+			donnie1->say("enter");
+			cout << "enter" << endl;
+			break;
+		case KEY_HOME: // go to the initial position
+			donnie1->say("home");
+			cout << "home" << endl;
+			break;
+		case KEY_ESC: // end of the program
+			donnie1->say("end");
+			cout << "end" << endl;
+			usleep(100); //give some time to finish to say 
+			delete donnie1;
+			return 0;
+		default:
+			donnie1->say("invalid key");
+			cout << endl << "in " << c << endl;  // not arrow
+		}
+		//this->speak();
+
+
     }
     return 0;
 }
