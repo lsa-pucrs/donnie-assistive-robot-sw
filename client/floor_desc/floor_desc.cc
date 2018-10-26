@@ -51,7 +51,9 @@ FloorClient::FloorClient()
 
 	// setup yaml
 	cout << "loading YAML parser" << endl;
+	ifstream fin;
 	doc = YAML::LoadFile("house_donnie.yaml");
+	curr_node = doc;
 	
 	// dump all YAML file
 	//cout << doc;
@@ -61,12 +63,12 @@ FloorClient::FloorClient()
 	// https://www.gamedev.net/articles/programming/engines-and-middleware/yaml-basics-and-parsing-with-yaml-cpp-r3508/
 	cout << "loading YAML into memory" << endl;
 	doc >> this->floorplan;
-	cout << "---- " << this->floorplan.name << " " << this->floorplan.description  << " " << this->floorplan.area << endl;
-	cout << this->floorplan.bl_pos.x << " " << this->floorplan.bl_pos.y << endl;
-	cout << "1=====" << endl;
-	cout << floorplan.bl_pos << endl;
-	cout << "2=====" << endl;
-	cout << floorplan.rooms[0] << endl;
+	//cout << "---- " << this->floorplan.name << " " << this->floorplan.description  << " " << this->floorplan.area << endl;
+	//cout << this->floorplan.bl_pos.x << " " << this->floorplan.bl_pos.y << endl;
+	//cout << "1=====" << endl;
+	//cout << floorplan.bl_pos << endl;
+	//cout << "2=====" << endl;
+	//cout << floorplan.rooms[0] << endl;
 	cout << "3=====" << endl;
 	cout << floorplan << endl;
 	cout << "=====" << endl;
@@ -226,26 +228,46 @@ void FloorClient::say(const char *str){
 		speech->Say(str);
 }
 
-
 void FloorClient::up(){
-	cout << endl << "Up" << endl;//key up
-	say("up");
+	if (it != curr_node.begin()) {
+		say("down");
+		it--;
+	}else{
+		say("at the start position");
+	}
 }
 
 void FloorClient::down(){
-	cout << endl << "Down" << endl;   // key down
-	say("down");
+	if (it != curr_node.end()) {
+		say("down");
+		it++;
+	}else{
+		say("at the final.");
+	}
 }
 
 void FloorClient::child(){
-	cout << endl << "Right - child" << endl;  // key right
-	say("Right - child");
+	if (it->second.size() > 0) {
+		say("child");
+		curr_node = it->second;
+		it = curr_node.begin();
+	}else{
+		say("has no child.");
+	}
 }
 
 void FloorClient::parent(){
 	cout << endl << "Left - parent" << endl;  // key left
 	say("Left - parent");
 }
+
+void FloorClient::home(){
+	say("home");
+	curr_node = doc;
+	it = doc.begin(); // point to the beginnig of the yaml doc
+}
+
+
 
 
 int getch(void)
@@ -295,8 +317,7 @@ int main(int argc, char *argv[]){
 			cout << "enter" << endl;
 			break;
 		case KEY_HOME: // go to the initial position
-			donnie1->say("home");
-			cout << "home" << endl;
+			donnie1->home();
 			break;
 		case KEY_ESC: // end of the program
 			donnie1->say("end");

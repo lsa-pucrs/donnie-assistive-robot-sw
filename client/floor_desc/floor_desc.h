@@ -68,13 +68,16 @@ int getch(void);
 
 
 class FloorClient{
+  // player stuff
   PlayerClient *robot;
   Position2dProxy *p2d;
   SpeechProxy *speech;
   
-  ifstream fin;
+  // yaml stuff
   YAML::Parser parser;
   YAML::Node doc;
+  YAML::const_iterator it;
+  YAML::Node curr_node;
   Floorplan floorplan;
   PosXY  current_robot_pos;
   
@@ -91,4 +94,5 @@ public:
   void down();
   void child();
   void parent();
+  void home();
 };
