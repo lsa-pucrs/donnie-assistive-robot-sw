@@ -175,44 +175,86 @@ std::ostream& operator<<(std::ostream& os, const Floorplan& m)
 
 
 void operator >> (const YAML::Node& node, PosXY& v) {
-   v.x = node[0].as<float>();
-   v.y = node[1].as<float>();
+	try {
+		v.x = node[0].as<float>();
+		v.y = node[1].as<float>();
+    } catch (YAML::Exception& yamlException) {
+	   cout << "Error: expecting sequence [x,y] for position typed keys" << endl;
+	   exit(1);		
+		// for any invalid input, it will assume position [0,0]. it will create some weird
+		//v.x = 0.0;
+		//v.y = 0.0;
+    }
 }
 
 void operator >> (const YAML::Node& node, Room& r) {
-   r.name = node["name"].as<string>();
-   r.description = node["description"].as<string>();
-   r.area = node["area"].as<float>();
+	try {
+		r.name = node["name"].as<string>();
+    } catch (YAML::Exception& yamlException) {
+		r.name = "";
+    }	
+	try {
+		r.description = node["description"].as<string>();
+    } catch (YAML::Exception& yamlException) {
+		r.description = "";
+    }	
+	try {
+		r.area = node["area"].as<float>();
+    } catch (YAML::Exception& yamlException) {
+		r.area = 0.0;
+    }	
    node["bl_pos"] >> r.bl_pos;
    node["tr_pos"] >> r.tr_pos;
-   //node["objects"] >> r.objects;
+   // if there is objects key, then it must be a sequence
    const YAML::Node& objects = node["objects"];
-   cout << "OBJETOS:" << endl;
-   for(unsigned i=0;i<objects.size();i++) {
-      //string obj;
-      //objects[i] >> obj;
-      cout << objects[i].as<string>() << endl;
-      r.objects.push_back(objects[i].as<string>());
+   if ((objects != NULL) && (YAML::NodeType::Sequence != objects.Type())) {
+	   cout << "Error: expecting sequence for 'objects' key" << endl;
+	   exit(1);
    }
-   //node["doors"] >> r.doors;
+   //cout << "OBJETOS:" << endl;
+   for(unsigned i=0;i<objects.size();i++) {
+      //cout << objects[i].as<string>() << endl;
+		try {
+			r.objects.push_back(objects[i].as<string>());
+		} catch (YAML::Exception& yamlException) {
+		}      
+   }
+   // if there is doors key, then it must be a sequence
    const YAML::Node& doors = node["doors"];
-   cout << "PORTAS:" << endl;
+   if ((doors != NULL) && (YAML::NodeType::Sequence != doors.Type())) {
+	   cout << "Error: expecting sequence for 'doors' key" << endl;
+	   exit(1);
+   }
+   //cout << "PORTAS:" << endl;
    for(unsigned i=0;i<doors.size();i++) {
       PosXY pos;
       doors[i] >> pos;
-      cout << pos.x << ", " << pos.y << endl;
+      //cout << pos.x << ", " << pos.y << endl;
       r.doors.push_back(pos);
    } 
 }
 
 void operator >> (const YAML::Node& node, Floorplan& r) {
 	
-   r.name = node["name"].as<string>();
-   r.description = node["description"].as<string>();
-   r.area = node["area"].as<float>();
+	try {
+		r.name = node["name"].as<string>();
+    } catch (YAML::Exception& yamlException) {
+		r.name = "";
+    }	
+	try {
+		r.description = node["description"].as<string>();
+    } catch (YAML::Exception& yamlException) {
+		r.description = "";
+    }	
+	try {
+		r.area = node["area"].as<float>();
+    } catch (YAML::Exception& yamlException) {
+		r.area = 0.0;
+    }	
    node["bl_pos"] >> r.bl_pos;
    node["tr_pos"] >> r.tr_pos;
-   //node["rooms"] >> r.rooms;
+
+   //allows floorplan with no rooms
    const YAML::Node& rooms = node["rooms"];
    for(unsigned i=0;i<rooms.size();i++) {
       Room room;
@@ -231,7 +273,7 @@ void FloorClient::say(const char *str){
 void FloorClient::up(){
 	if (it != curr_node.begin()) {
 		say("down");
-		it--;
+		//it--;
 	}else{
 		say("at the start position");
 	}
