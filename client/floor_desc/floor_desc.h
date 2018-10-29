@@ -95,4 +95,6 @@ public:
   void child();
   void parent();
   void home();
+  void say_value();
+  void say_curr_pos();
 };

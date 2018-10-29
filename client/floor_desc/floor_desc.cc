@@ -47,13 +47,15 @@ FloorClient::FloorClient()
     
     // set to true to stay silent
     // TODO read parameter to set muted
-    muted = false;
+    muted = true;
 
 	// setup yaml
 	cout << "loading YAML parser" << endl;
 	ifstream fin;
 	doc = YAML::LoadFile("house_donnie.yaml");
 	curr_node = doc;
+	// point iterator to the start position
+	it = doc.begin();
 	
 	// dump all YAML file
 	//cout << doc;
@@ -130,7 +132,7 @@ void FloorClient::getPos(){
 	//p2d->GetXPos(),p2d->GetYPos()
 	current_robot_pos.x = p2d->GetXPos();
 	current_robot_pos.y = p2d->GetYPos();
-	cout << "Posicao: " << current_robot_pos << endl;
+	//cout << "Posicao: " << current_robot_pos << endl;
 }
 
 
@@ -263,6 +265,12 @@ void operator >> (const YAML::Node& node, Floorplan& r) {
    } 
 }
 
+template <typename T> string tostr(const T& t) { 
+   ostringstream os; 
+   os<<t; 
+   return os.str(); 
+} 
+
 void FloorClient::say(const char *str){
 	if (muted)
 		cout << str << endl;
@@ -280,19 +288,41 @@ void FloorClient::up(){
 }
 
 void FloorClient::down(){
-	if (it != curr_node.end()) {
-		say("down");
-		it++;
-	}else{
-		say("at the final.");
+	string key;
+	it++;
+	if (it == curr_node.end()){
+		say("down: at the final");
+		home();
+	}else {
+		try {
+			key = it->first.as<std::string>();
+		} catch (YAML::Exception& yamlException) {
+			key = "error reading key name";
+		}
+		say(std::string(std::string("down: ") + key).c_str());
 	}
 }
 
 void FloorClient::child(){
+	string key;
 	if (it->second.size() > 0) {
-		say("child");
-		curr_node = it->second;
-		it = curr_node.begin();
+		
+		try {
+			key = it->first.as<std::string>();
+		} catch (YAML::Exception& yamlException) {
+			key = "error reading key name";
+		}		
+		if (key == "rooms"){
+			say("child");
+			YAML::Node rooms = doc["rooms"];
+			it=rooms.begin();
+			try {
+				key = it->first.as<std::string>();
+			} catch (YAML::Exception& yamlException) {
+				key = "error reading key name2";
+			}
+			say(std::string(std::string("down: ") + key).c_str());		
+		}		
 	}else{
 		say("has no child.");
 	}
@@ -309,6 +339,53 @@ void FloorClient::home(){
 	it = doc.begin(); // point to the beginnig of the yaml doc
 }
 
+void FloorClient::say_value(){
+	string key, value;
+	try {
+		key = it->first.as<std::string>();
+    } catch (YAML::Exception& yamlException) {
+		key = "";
+    }
+    if ((key == "name") || (key == "description")){
+		try {
+			value = it->second.as<std::string>();
+		} catch (YAML::Exception& yamlException) {
+			value = "error reading value";
+		}
+	}
+    if (key == "area"){
+		try {
+			// requires c11
+			value = tostr(it->second.as<float>());
+		} catch (YAML::Exception& yamlException) {
+			value = "error reading value";
+		}
+	}
+    if ((key == "bl_pos") || (key == "tr_pos")){
+		try {
+			// TODO complete
+			value = "[0,0]";
+		} catch (YAML::Exception& yamlException) {
+			value = "error reading value";
+		}
+	}
+	// TODO complete
+    if (key == "rooms"){
+		value = "rooms not implemented";
+	}
+    if (key == "objects"){
+		value = "objects not implemented";
+	}
+    if (key == "doors"){
+		value = "doors not implemented";
+	}
+		
+	say(std::string(std::string("value: ") + value).c_str());
+}
+
+void FloorClient::say_curr_pos(){
+	say("current position");
+}
 
 
 
@@ -351,19 +428,16 @@ int main(int argc, char *argv[]){
 			donnie1->child();
 			break;
 		case KEY_POS: // describe the room based on the current robot position
-			donnie1->say("position");
-			cout << "position" << endl;
+			donnie1->say_curr_pos();
 			break;
-		case KEY_ENTER: // say the current position
-			donnie1->say("enter");
-			cout << "enter" << endl;
+		case KEY_ENTER: // say the current key name
+			donnie1->say_value();
 			break;
 		case KEY_HOME: // go to the initial position
 			donnie1->home();
 			break;
 		case KEY_ESC: // end of the program
 			donnie1->say("end");
-			cout << "end" << endl;
 			usleep(100); //give some time to finish to say 
 			delete donnie1;
 			return 0;
