@@ -1110,6 +1110,8 @@ void DonnieClient::speak(string text)
 		cout << text << endl;
 	else{
 		speechProxy->Say(text.c_str());
+		//Descomentar linha abaixo para Donnie printar na tela com o som ligado também.
+		//cout << text << endl;
 		//wait to complete speech (9 chars/seg)
 		sleep(text.length()/9.0);
 	}
