@@ -227,7 +227,7 @@ std::vector<std::string> reservedWords = {"vibrar", "vibrate", "distance", "scan
 	                                      "distancia", "pos", "position", "posicao", "cor", "se", "entao", "senao", "fim",
 	                                      "para", "faça", "repita", "vezes", "enquanto", "aprender", "esperar", "var", "wait",
 	                                      "repeat", "end", "if", "else", "times", "then", "belt", "sound", "color", "state",
-	                                       "historico", "history", "speak", "while", "for", "procedure"};
+	                                       "historico", "history", "speak", "while", "for", "procedure", "cinto"};
 bool reserved(char* str){
 	for(int i = 0; i < reservedWords.size(); i++){
 		
@@ -536,12 +536,14 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
 			// sound on or off
 			if ((tokens[1] == "ligado") || (tokens[1] == "on")){
-				Donnie->speak(translate("O som foi ligado com sucesso"));
 				Donnie->muteTTS(false);
+				Donnie->speak(translate("O som foi ligado com sucesso"));
+				
 			}
 			else if ((tokens[1] == "desligado") || (tokens[1] == "off")){
-				Donnie->speak(translate("O som foi desligado com sucesso"));
 				Donnie->muteTTS(true);
+				Donnie->speak(translate("O som foi desligado com sucesso"));
+				
 			}
 			// error treatmet is performed at the parser level. it is not necessary to test for error here
 			//else {
