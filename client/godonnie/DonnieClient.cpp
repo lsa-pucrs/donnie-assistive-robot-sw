@@ -13,9 +13,6 @@ const double  SIDE_RANGER = 0.05;
 const double  FRONT_RANGER = 0.06;
 const double  BACK_RANGER = 0.05;
 
-#ifndef LANG
-#define LANG "pt-br"
-#endif
 
 //Singleton. init pointer withou allocations
 DonnieClient *DonnieClient::singleton = NULL;
@@ -128,7 +125,6 @@ string DonnieClient::value_to_color(int color_value)
 	string color;
 	ostringstream oss;
 	unsigned int file_value;
-
 	ifstream file;
 	string donnie_path = GetEnv("DONNIE_PATH");
 
@@ -184,12 +180,12 @@ int DonnieClient::color_to_value(string input_color)
 	string color;
 	ostringstream oss;
 	unsigned int file_value;
-
+  string lang = GetEnv("DONNIE_LANG");
 	// Set up language environment
 	generator gen;
 	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
 	gen.add_messages_domain("DonnieClient");
-	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
+	locale loc = gen(lang + ".UTF-8");
 	locale::global(loc);
 	cout.imbue(loc);
 	cerr.imbue(loc);
@@ -197,9 +193,9 @@ int DonnieClient::color_to_value(string input_color)
 	string donnie_path = GetEnv("DONNIE_PATH");
 
 	// read the color file according to the language
-	if(LANG == "pt-br")
+	if(lang == "pt_BR")
 		donnie_path = donnie_path + "/resources/color_files/rgb-pt-br.txt";
-	else if (LANG == "eng")
+	else if (lang == "en_US")
 		donnie_path = donnie_path + "/resources/color_files/rgb-en.txt";
 	else
 		donnie_path = donnie_path + "/resources/color_files/rgb-pt-br.txt";
@@ -215,7 +211,6 @@ int DonnieClient::color_to_value(string input_color)
 			str_buff << std::hex << color; //convert
 			str_buff >> file_value;
 			getline(file,color, '\n');
-
 
 			if(input_color == color)
 				return file_value;
@@ -1134,4 +1129,3 @@ void DonnieClient::vibrate(int idx, char val)
 	else
 		speak(string(translate("O cinto deve ser ligado")));
 }
- 

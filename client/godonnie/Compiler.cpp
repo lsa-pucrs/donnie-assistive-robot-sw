@@ -231,12 +231,12 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
     locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
     locale::global(loc);
     cout.imbue(loc);
-
+	pANTLR3_COMMON_TOKEN tok = tree->getToken(tree);
     string crash_str = translate("bateu");
     string ncrash_str = translate("não bateu");
 
 	std::ostringstream sayStr;
-    pANTLR3_COMMON_TOKEN tok = tree->getToken(tree);
+
     //printf("%d", tok->type);
     if(tok) {
         switch(tok->type) {
@@ -450,7 +450,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             #endif
             break;
           }
-          
+
           case POS:
           {
             int arg;
@@ -497,7 +497,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");
 
 			arg = Donnie->color_to_value(tokens[1]);
-			if(arg == 0xFFFFFFFF)
+			//cout << arg << endl;
+			if(arg == -1)
 				throw sintaxeException(string(translate("Sintaxe não conhecida para comando '"))+tokens[0]+"'\n");
 
 			// only report when there are blobs with the selected color
@@ -726,6 +727,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case PROCINV:
           {
+
             char* name = (char*)getText(getChild(tree,0));
             mem local;                                      // Inicia dicionário local
 
@@ -733,20 +735,17 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
             if(procedure.argNum == tree->getChildCount(tree)-1)
             {
+
               for (int f = 1; f <= procedure.argNum ; f++)
                 local.memory[procedure.args[f-1]] = run(getChild(tree,f));   // Atribui as variaveis de argumento no dicionário
 
               DonnieMemory::getInstance()->stackMemory(local);                      // Empilha dicionário
-
               run(procedure.node);                      // Executa procedimento
-
-              DonnieMemory::getInstance()->unstackMemory();                            // Desempilha dicionário
+              DonnieMemory::getInstance()->unstackMemory();
             }
             else
             {
               sayStr << translate("Número de argumentos invalido.");
-              Donnie->speak(sayStr.str());
-              cout << sayStr.str() << endl;
 
             }
 
@@ -802,7 +801,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 				   "," << Donnie->GetPos("body",2) << "]"; //POSITION_YAW in degrees
 				   // dont add newline here !
 			  }
-				
+
 				//cout << output.str() << endl;
 				Donnie->speak(output.str());
 				break;
