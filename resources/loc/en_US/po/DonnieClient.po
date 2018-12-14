@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-09 23:03-0300\n"
+"POT-Creation-Date: 2018-12-14 16:44-0200\n"
 "PO-Revision-Date: 2018-03-09 23:03-0300\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,159 +17,167 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../client/godonnie/DonnieClient.cpp:541
+#: ../../client/godonnie/DonnieClient.cpp:535
 msgid " Houve colisão."
 msgstr " There was a collision."
 
-#: ../client/godonnie/DonnieClient.cpp:847
+#: ../../client/godonnie/DonnieClient.cpp:842
 msgid " a "
 msgstr " at "
 
-#: ../client/godonnie/DonnieClient.cpp:313
+#: ../../client/godonnie/DonnieClient.cpp:307
 msgid " e virado para "
 msgstr " and turned to the "
 
-#: ../client/godonnie/DonnieClient.cpp:843
+#: ../../client/godonnie/DonnieClient.cpp:838
 msgid " graus a direita: "
 msgstr " degrees to the right: "
 
-#: ../client/godonnie/DonnieClient.cpp:845
+#: ../../client/godonnie/DonnieClient.cpp:840
 msgid " graus a esquerda: "
 msgstr " degrees to the left: "
 
-#: ../client/godonnie/DonnieClient.cpp:539
+#: ../../client/godonnie/DonnieClient.cpp:533
 msgid " graus para "
 msgstr " degrees to the "
 
-#: ../client/godonnie/DonnieClient.cpp:313
+#: ../../client/godonnie/DonnieClient.cpp:307
 msgid " graus."
 msgstr " degrees."
 
-#: ../client/godonnie/DonnieClient.cpp:180
-#: ../client/godonnie/DonnieClient.cpp:232
+#: ../../client/godonnie/DonnieClient.cpp:174
+#: ../../client/godonnie/DonnieClient.cpp:226
 msgid " não encontrado"
 msgstr " not found"
 
-#: ../client/godonnie/DonnieClient.cpp:1090
+#: ../../client/godonnie/DonnieClient.cpp:1085
 msgid " objetos encontrados com a cor "
-msgstr " objetos encontrados com a cor "
+msgstr " objects found of color "
 
-#: ../client/godonnie/DonnieClient.cpp:847
+#: ../../client/godonnie/DonnieClient.cpp:842
 msgid " passos"
 msgstr " steps"
 
-#: ../client/godonnie/DonnieClient.cpp:406
+#: ../../client/godonnie/DonnieClient.cpp:400
 msgid " passos para frente."
 msgstr " steps forward."
 
-#: ../client/godonnie/DonnieClient.cpp:497
+#: ../../client/godonnie/DonnieClient.cpp:491
 msgid " passos para trás."
 msgstr " steps backward."
 
-#: ../client/godonnie/DonnieClient.cpp:59
+#: ../../client/godonnie/DonnieClient.cpp:60
 msgid " porta "
 msgstr " door "
 
-#: ../client/godonnie/DonnieClient.cpp:847
+#: ../../client/godonnie/DonnieClient.cpp:842
 msgid " um objeto de cor "
 msgstr " an object of color "
 
-#: ../client/godonnie/DonnieClient.cpp:313
+#: ../../client/godonnie/DonnieClient.cpp:307
 msgid ", no y "
 msgstr ", at y "
 
-#: ../client/godonnie/DonnieClient.cpp:1087
+#: ../../client/godonnie/DonnieClient.cpp:1082
 msgid "1 objeto encontrado com a cor "
 msgstr "1 object found with the color "
 
-#: ../client/godonnie/DonnieClient.cpp:406
-#: ../client/godonnie/DonnieClient.cpp:497
+#: ../../client/godonnie/DonnieClient.cpp:400
+#: ../../client/godonnie/DonnieClient.cpp:491
 msgid "Andei "
 msgstr "I walked "
 
-#: ../client/godonnie/DonnieClient.cpp:410
-#: ../client/godonnie/DonnieClient.cpp:501
+#: ../../client/godonnie/DonnieClient.cpp:404
+#: ../../client/godonnie/DonnieClient.cpp:495
 msgid "Encontrei obstáculo."
 msgstr "I found an obstacle."
 
-#: ../client/godonnie/DonnieClient.cpp:180
-#: ../client/godonnie/DonnieClient.cpp:232
+#: ../../client/godonnie/DonnieClient.cpp:174
+#: ../../client/godonnie/DonnieClient.cpp:226
 msgid "Erro: arquivo de cores "
 msgstr "Error: color file "
 
-#: ../client/godonnie/DonnieClient.cpp:637
-#: ../client/godonnie/DonnieClient.cpp:906
+#: ../../client/godonnie/DonnieClient.cpp:632
+#: ../../client/godonnie/DonnieClient.cpp:901
 msgid "Espiando"
 msgstr "Scanning"
 
-#: ../client/godonnie/DonnieClient.cpp:313
+#: ../../client/godonnie/DonnieClient.cpp:307
 msgid "Estou no x "
 msgstr "I am at x "
 
-#: ../client/godonnie/DonnieClient.cpp:539
+#: ../../client/godonnie/DonnieClient.cpp:533
 msgid "Girei "
 msgstr "I turned "
 
-#: ../client/godonnie/DonnieClient.cpp:408
-#: ../client/godonnie/DonnieClient.cpp:499
+#: ../../client/godonnie/DonnieClient.cpp:402
+#: ../../client/godonnie/DonnieClient.cpp:493
 msgid "Houve colisão;"
 msgstr "There was a collision;"
 
-#: ../client/godonnie/DonnieClient.cpp:59
+#: ../../client/godonnie/DonnieClient.cpp:60
 msgid "Não foi possivel conectar no robô com IP "
 msgstr "Unable to connect to the robot with IP "
 
-#: ../client/godonnie/DonnieClient.cpp:86
+#: ../../client/godonnie/DonnieClient.cpp:80
 msgid "Não foi possível conectar no robô "
 msgstr "Unable to connect to the robot "
 
-#: ../client/godonnie/DonnieClient.cpp:558
-#: ../client/godonnie/DonnieClient.cpp:564
+#: ../../client/godonnie/DonnieClient.cpp:1135
+msgid "O cinto deve ser ligado"
+msgstr "The belt must be on"
+
+#: ../../client/godonnie/DonnieClient.cpp:552
+#: ../../client/godonnie/DonnieClient.cpp:558
 msgid "PARCIAL"
 msgstr "PARTIAL"
 
-#: ../client/godonnie/DonnieClient.cpp:61
-msgid "Possivelmente o Player não foi executado ou as variaveis DONNIE_IP e DONNIE_PORT estão erradas"
-msgstr "Possibly Player is not running or the DONNIE_IP and DONNIE_PORT variables are wrong"
+#: ../../client/godonnie/DonnieClient.cpp:62
+msgid ""
+"Possivelmente o Player não foi executado ou as variaveis DONNIE_IP e "
+"DONNIE_PORT estão erradas"
+msgstr ""
+"Possibly Player is not running or the DONNIE_IP and DONNIE_PORT variables "
+"are wrong"
 
-#: ../client/godonnie/DonnieClient.cpp:87
+#: ../../client/godonnie/DonnieClient.cpp:81
 msgid "Possivelmente o arquivo cfg está incorreto."
 msgstr "Possibly the cfg file is wrong."
 
-#: ../client/godonnie/DonnieClient.cpp:872
+#: ../../client/godonnie/DonnieClient.cpp:867
 msgid "Procurando cor "
 msgstr "Searching color "
 
-#: ../client/godonnie/DonnieClient.cpp:556
+#: ../../client/godonnie/DonnieClient.cpp:550
 msgid "ROTACAO:"
 msgstr "ROTATION:"
 
-#: ../client/godonnie/DonnieClient.cpp:843
-#: ../client/godonnie/DonnieClient.cpp:845
+#: ../../client/godonnie/DonnieClient.cpp:838
+#: ../../client/godonnie/DonnieClient.cpp:840
 msgid "a "
 msgstr "to the "
 
-#: ../client/godonnie/DonnieClient.cpp:841
+#: ../../client/godonnie/DonnieClient.cpp:836
 msgid "a frente: "
 msgstr "forward: "
 
-#: ../client/godonnie/DonnieClient.cpp:825
+#: ../../client/godonnie/DonnieClient.cpp:820
 msgid "desconhecido"
 msgstr "unknown"
 
-#: ../client/godonnie/DonnieClient.cpp:530
+#: ../../client/godonnie/DonnieClient.cpp:524
 msgid "direita"
 msgstr "right"
 
-#: ../client/godonnie/DonnieClient.cpp:533
+#: ../../client/godonnie/DonnieClient.cpp:527
 msgid "esquerda"
 msgstr "left"
 
-#: ../client/godonnie/DonnieClient.cpp:1084
+#: ../../client/godonnie/DonnieClient.cpp:1079
 msgid "nenhum objeto encontrado com a cor "
 msgstr "no object found with the color "
 
-#: ../client/godonnie/DonnieClient.cpp:405
-#: ../client/godonnie/DonnieClient.cpp:496
+#: ../../client/godonnie/DonnieClient.cpp:399
+#: ../../client/godonnie/DonnieClient.cpp:490
 msgid "somente "
 msgstr "only "

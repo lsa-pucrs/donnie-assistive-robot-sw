@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-09 05:20-0300\n"
+"POT-Creation-Date: 2018-12-14 16:50-0200\n"
 "PO-Revision-Date: 2018-03-09 05:20-0300\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,32 +17,32 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../client/godonnie/DonnieMemory.cpp:55
-#: ../client/godonnie/DonnieMemory.cpp:129
+#: ../../client/godonnie/DonnieMemory.cpp:57
+#: ../../client/godonnie/DonnieMemory.cpp:158
 msgid "\" já existe."
 msgstr "\" already exists."
 
-#: ../client/godonnie/DonnieMemory.cpp:156
+#: ../../client/godonnie/DonnieMemory.cpp:194
 msgid "\" já foi declarado."
 msgstr "\" has already been declared."
 
-#: ../client/godonnie/DonnieMemory.cpp:87
-#: ../client/godonnie/DonnieMemory.cpp:105
-#: ../client/godonnie/DonnieMemory.cpp:174
+#: ../../client/godonnie/DonnieMemory.cpp:98
+#: ../../client/godonnie/DonnieMemory.cpp:125
+#: ../../client/godonnie/DonnieMemory.cpp:221
 msgid "\" não existe."
 msgstr "\" doesn't exist."
 
-#: ../client/godonnie/DonnieMemory.cpp:156
-#: ../client/godonnie/DonnieMemory.cpp:174
+#: ../../client/godonnie/DonnieMemory.cpp:194
+#: ../../client/godonnie/DonnieMemory.cpp:221
 msgid "Procedimento \""
 msgstr "Procedure \""
 
-#: ../client/godonnie/DonnieMemory.cpp:55
-#: ../client/godonnie/DonnieMemory.cpp:87
-#: ../client/godonnie/DonnieMemory.cpp:105
+#: ../../client/godonnie/DonnieMemory.cpp:57
+#: ../../client/godonnie/DonnieMemory.cpp:98
+#: ../../client/godonnie/DonnieMemory.cpp:125
 msgid "Variável \""
 msgstr "Variable \""
 
-#: ../client/godonnie/DonnieMemory.cpp:129
+#: ../../client/godonnie/DonnieMemory.cpp:158
 msgid "Variável PARA \""
 msgstr "FOR Variable \""
