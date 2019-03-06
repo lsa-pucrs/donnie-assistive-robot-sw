@@ -609,10 +609,11 @@ make	:	MAKE^ ID (EQ! expression)?;
 /*
 Here are defined the reserved Words. So only words defined here are acceptable as commands
 */
+
 make  : MAKE^ ~(QUIT| PROCDEC| PROCINV| FORE| DOIT| ENDFOR| WHILEE| ENDWHILE| SPEAKE|
                HIST| STATE| FW| BW| RTURN| LTURN| SCAN| RANGER| VIBRATE | POS| COLOR| SOUND| BELT|
-							 THEN| IFE| ENDIF| ELSEE| REPTB| REPEAT| ENDREPT| WAIT| MAKE| ID| STRINGE|
-							 COMENT| MINUS| MULT| DIV| PLUS| EQ| COMP| SEMICOLON| INT| EOL| WS) (EQ! expression)?;
+							 THEN| IFE| ENDIF| ELSEE| REPTB| REPEAT| ENDREPT| WAIT| MAKE| STRINGE|
+							 COMENT| MINUS| MULT| DIV| PLUS| EQ| COMP| SEMICOLON| INT| EOL) (EQ! expression)?;
 
 assign	:	ID EQ^ expression;
 
