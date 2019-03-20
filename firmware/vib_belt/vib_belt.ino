@@ -24,9 +24,9 @@ struct SGridCell {
 };*/
 SGridCell m_a2stGrid[GRID_LINES][GRID_COLUMNS] = { //usuing 2x7 hardware
 
-  { { 2, 0 }, { 3 , 0 }, { 4 , 0 }, {  5 , 0 }, { 6 , 0 }, { 7 , 0 }, { 8 , 0 } },//not implemented
-  { { 24,0 }, { 26, 0 }, { 28, 0 }, {  30, 0 }, { 32, 0 }, { 34, 0 }, { 36, 0 } },
-  { { 9, 0 }, { 10, 0 }, { 11, 0 }, {  12, 0 }, { 13, 0 }, { 14, 0 }, { 15, 0 } },//not implemented
+  { { 2, 0 }, { 3 , 0 }, { 4 , 0 }, {  5 , 0 }, { 6 , 0 }, { 7 , 0 }, { 24 , 0 } },//not implemented
+  { { 8,0 }, { 9, 0 }, { 28, 0 }, {  30, 0 }, { 32, 0 }, { 34, 0 }, { 36, 0 } },
+  { { 26, 0 }, { 10, 0 }, { 11, 0 }, {  12, 0 }, { 13, 0 }, { 14, 0 }, { 15, 0 } },//not implemented
   { { 40,0 }, { 42, 0 }, { 44, 0 }, {  46, 0 }, { 48, 0 }, { 50, 0 }, { 52, 0 } },
   { { 16,0 }, { 17, 0 }, { 18, 0 }, {  19, 0 }, { 20, 0 }, { 21, 0 }, { 22, 0 } },//not implemented
 };
@@ -43,11 +43,11 @@ void setup() {
     
     boolean bnFound = false;
     
-    for(int nY0 = 0; nY0 < GRID_LINES; nY0++) {
+    for(int nY0 = 0; nY0 < GRID_LINES; nY0++) { //Percorre as linhas
       
-      for(int nX0 = 0; nX0 < GRID_COLUMNS; nX0++) {
+      for(int nX0 = 0; nX0 < GRID_COLUMNS; nX0++) { //Percorre as colunas
         
-        if (bPin == m_a2stGrid[nY0][nX0].bLed) {
+        if (bPin == m_a2stGrid[nY0][nX0].bLed) { //Se o pino procurado for encontrado
           
           bnFound = true;
           break;
@@ -60,7 +60,7 @@ void setup() {
     
     if (bnFound == true) {
       
-      digitalWrite(bPin, LOW);    
+      digitalWrite(bPin, LOW);    //Inicializa em baixo
       
       if (bPin != 4)
         pinMode(bPin, OUTPUT);
@@ -88,33 +88,37 @@ int  m_nFrameDataPos = -1;
 
 void loop() {
 
-  int nSerialAvailable = Serial.available();
   
-  if (nSerialAvailable > 0) {
+  int nSerialAvailable = Serial.available(); //Vê quantos bytes tem aguardando na Serial
+  
+  if (nSerialAvailable > 0) { //Se tiver algo na Serial
     
     //\\Serial.println(nSerialAvailable);
     
-    for(int nCount = 0; nCount < nSerialAvailable; nCount++) {
-      
-      BYTE bNew = Serial.read();
+    for(int nCount = 0; nCount < nSerialAvailable; nCount++) { //Varrer cada byte na Serial
+      Serial.println(nCount);
+      BYTE bNew = Serial.read(); //Ler um byte da Serial
       
       //Serial.print(bNew);
         
-      if (m_nFrameDataPos >= 0) {
+      //Primeira coisa que faz é procurar 'Z', entrando no else do if seguinte
+      if (m_nFrameDataPos >= 0) { //Verificando os comandos
         
-        if ((bNew >= 'A') && (bNew < 'A' + OUTPUT_LEVELS)) {
+        if ((bNew >= 'A') && (bNew < 'A' + OUTPUT_LEVELS)) { //Verifica se está dentro dos niveis aceitos de OUTPUT - 'A    Serial.println("while");    Serial.println("while");' até 'P'
         
+          //Determinar nivel numerico do OUTPUT
           if (bNew != ('A' + OUTPUT_LEVELS - 1))
             m_abFrameData[m_nFrameDataPos] = 1 + bNew - 'A';
-          else
+          else //Caso 'P'
             m_abFrameData[m_nFrameDataPos] = 255;
           
-          m_nFrameDataPos++;
+          m_nFrameDataPos++; //Próxima posição da Serial
           
-          if (m_nFrameDataPos == GRID_LINES * GRID_COLUMNS) {
+          if (m_nFrameDataPos == GRID_LINES * GRID_COLUMNS) { //Após ultima posição da Serial ser verificada 
             
             int nPos = 0;
             
+            //Percorre a tabela de pinos modificando os valores de OUTPUT
             for(int nY = 0; nY < GRID_LINES; nY++) {
               
               for(int nX = 0; nX < GRID_COLUMNS; nX++) {
@@ -130,17 +134,17 @@ void loop() {
           }
         }
         else {
-          
+          Serial.println("Novo");
           Serial.println("E2");
           
           m_nFrameDataPos = -1; //error
         }
       }
-      else {
+      else { //Procurando inicio dos comandos pros motores
         
         if (bNew == 'Z') {
           
-          m_nFrameDataPos = 0; //sync ok
+          m_nFrameDataPos = 0; //sync ok - prepara para poder verificar os comandos
           
           //Serial.println("START");
         }
@@ -161,7 +165,7 @@ void loop() {
       for(int nX = 0; nX < GRID_COLUMNS; nX++) {
         
         if ((m_a2stGrid[nY][nX].bOutputLevel != 255) &&
-            ((m_wwFrameCount % m_a2stGrid[nY][nX].bOutputLevel) == 0)) {
+            ((m_wwFrameCount % m_a2stGrid[nY][nX].bOutputLevel) == 0)) { //Duty cicle baseado no nivel do OUTPUT de cada pino
           
           digitalWrite(m_a2stGrid[nY][nX].bLed, HIGH);
         }
@@ -172,7 +176,7 @@ void loop() {
       }
     }
   }
-  else {
+  else { //Caso tenha passado determinado tempo sem receber instruções pela Serial
     
     for(int nY = 0; nY < GRID_LINES; nY++) {
       
