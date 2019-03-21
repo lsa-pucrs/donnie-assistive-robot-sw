@@ -1061,12 +1061,9 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <net name="N$2" class="0">
 <segment>
 <pinref part="J1" gate="G$1" pin="3"/>
-<pinref part="ARDUINO_NANO1" gate="G$1" pin="5V"/>
-<wire x1="55.88" y1="12.7" x2="45.72" y2="12.7" width="0.1524" layer="91"/>
 <pinref part="JP2" gate="G$1" pin="2"/>
 <wire x1="63.5" y1="0" x2="55.88" y2="0" width="0.1524" layer="91"/>
 <wire x1="55.88" y1="0" x2="55.88" y2="12.7" width="0.1524" layer="91"/>
-<junction x="55.88" y="12.7"/>
 </segment>
 </net>
 <net name="N$4" class="0">

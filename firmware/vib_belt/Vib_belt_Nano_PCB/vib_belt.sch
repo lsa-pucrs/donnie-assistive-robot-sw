@@ -661,36 +661,36 @@ Type: &lt;b&gt;SPC4077 / SPC 4078&lt;/b&gt;&lt;p&gt;</description>
 
 &lt;a href="http://www.gravitech.us/arna30wiatp.html"&gt;Gravitech Arduino Nano V3.0&lt;/a&gt;&lt;/p&gt;</description>
 <hole x="-22.86" y="-7.62" drill="1.778"/>
-<pad name="1" x="-20.32" y="-7.62" drill="0.8" shape="square"/>
-<pad name="2" x="-17.78" y="-7.62" drill="0.8"/>
-<pad name="3" x="-15.24" y="-7.62" drill="0.8"/>
-<pad name="4" x="-12.7" y="-7.62" drill="0.8"/>
-<pad name="5" x="-10.16" y="-7.62" drill="0.8"/>
-<pad name="6" x="-7.62" y="-7.62" drill="0.8"/>
-<pad name="7" x="-5.08" y="-7.62" drill="0.8"/>
-<pad name="8" x="-2.54" y="-7.62" drill="0.8"/>
-<pad name="9" x="0" y="-7.62" drill="0.8"/>
-<pad name="10" x="2.54" y="-7.62" drill="0.8"/>
-<pad name="11" x="5.08" y="-7.62" drill="0.8"/>
-<pad name="12" x="7.62" y="-7.62" drill="0.8"/>
-<pad name="13" x="10.16" y="-7.62" drill="0.8"/>
-<pad name="14" x="12.7" y="-7.62" drill="0.8"/>
-<pad name="15" x="15.24" y="-7.62" drill="0.8"/>
-<pad name="16" x="15.24" y="7.62" drill="0.8"/>
-<pad name="17" x="12.7" y="7.62" drill="0.8"/>
-<pad name="18" x="10.16" y="7.62" drill="0.8"/>
-<pad name="19" x="7.62" y="7.62" drill="0.8"/>
-<pad name="20" x="5.08" y="7.62" drill="0.8"/>
-<pad name="21" x="2.54" y="7.62" drill="0.8"/>
-<pad name="22" x="0" y="7.62" drill="0.8"/>
-<pad name="23" x="-2.54" y="7.62" drill="0.8"/>
-<pad name="24" x="-5.08" y="7.62" drill="0.8"/>
-<pad name="25" x="-7.62" y="7.62" drill="0.8"/>
-<pad name="26" x="-10.16" y="7.62" drill="0.8"/>
-<pad name="27" x="-12.7" y="7.62" drill="0.8"/>
-<pad name="28" x="-15.24" y="7.62" drill="0.8"/>
-<pad name="29" x="-17.78" y="7.62" drill="0.8"/>
-<pad name="30" x="-20.32" y="7.62" drill="0.8"/>
+<pad name="1" x="-20.32" y="-7.62" drill="0.8" diameter="1.778" shape="square"/>
+<pad name="2" x="-17.78" y="-7.62" drill="0.8" diameter="1.778"/>
+<pad name="3" x="-15.24" y="-7.62" drill="0.8" diameter="1.778"/>
+<pad name="4" x="-12.7" y="-7.62" drill="0.8" diameter="1.778"/>
+<pad name="5" x="-10.16" y="-7.62" drill="0.8" diameter="1.778"/>
+<pad name="6" x="-7.62" y="-7.62" drill="0.8" diameter="1.778"/>
+<pad name="7" x="-5.08" y="-7.62" drill="0.8" diameter="1.778"/>
+<pad name="8" x="-2.54" y="-7.62" drill="0.8" diameter="1.778"/>
+<pad name="9" x="0" y="-7.62" drill="0.8" diameter="1.778"/>
+<pad name="10" x="2.54" y="-7.62" drill="0.8" diameter="1.778"/>
+<pad name="11" x="5.08" y="-7.62" drill="0.8" diameter="1.778"/>
+<pad name="12" x="7.62" y="-7.62" drill="0.8" diameter="1.778"/>
+<pad name="13" x="10.16" y="-7.62" drill="0.8" diameter="1.778"/>
+<pad name="14" x="12.7" y="-7.62" drill="0.8" diameter="1.778"/>
+<pad name="15" x="15.24" y="-7.62" drill="0.8" diameter="1.778"/>
+<pad name="16" x="15.24" y="7.62" drill="0.8" diameter="1.778"/>
+<pad name="17" x="12.7" y="7.62" drill="0.8" diameter="1.778"/>
+<pad name="18" x="10.16" y="7.62" drill="0.8" diameter="1.778"/>
+<pad name="19" x="7.62" y="7.62" drill="0.8" diameter="1.778"/>
+<pad name="20" x="5.08" y="7.62" drill="0.8" diameter="1.778"/>
+<pad name="21" x="2.54" y="7.62" drill="0.8" diameter="1.778"/>
+<pad name="22" x="0" y="7.62" drill="0.8" diameter="1.778"/>
+<pad name="23" x="-2.54" y="7.62" drill="0.8" diameter="1.778"/>
+<pad name="24" x="-5.08" y="7.62" drill="0.8" diameter="1.778"/>
+<pad name="25" x="-7.62" y="7.62" drill="0.8" diameter="1.778"/>
+<pad name="26" x="-10.16" y="7.62" drill="0.8" diameter="1.778"/>
+<pad name="27" x="-12.7" y="7.62" drill="0.8" diameter="1.778"/>
+<pad name="28" x="-15.24" y="7.62" drill="0.8" diameter="1.778"/>
+<pad name="29" x="-17.78" y="7.62" drill="0.8" diameter="1.778"/>
+<pad name="30" x="-20.32" y="7.62" drill="0.8" diameter="1.778"/>
 <hole x="-22.86" y="7.62" drill="1.778"/>
 <hole x="17.78" y="7.62" drill="1.778"/>
 <hole x="17.78" y="-7.62" drill="1.778"/>

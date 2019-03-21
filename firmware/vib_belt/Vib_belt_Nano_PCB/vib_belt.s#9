@@ -13329,6 +13329,31 @@ ULN and UDN Series&lt;p&gt;
 <wire x1="-53.34" y1="-5.08" x2="-55.88" y2="-5.08" width="0.1524" layer="91"/>
 </segment>
 </net>
+<net name="N$16" class="0">
+<segment>
+<pinref part="IC1" gate="G$1" pin="(AD0)PA0"/>
+<pinref part="IC1" gate="G$1" pin="(AD7)PA7"/>
+<wire x1="76.2" y1="101.6" x2="76.2" y2="99.06" width="0.1524" layer="91"/>
+<pinref part="IC1" gate="G$1" pin="(AD6)PA6"/>
+<wire x1="76.2" y1="99.06" x2="76.2" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="76.2" y1="96.52" x2="76.2" y2="93.98" width="0.1524" layer="91"/>
+<wire x1="76.2" y1="93.98" x2="76.2" y2="91.44" width="0.1524" layer="91"/>
+<wire x1="76.2" y1="91.44" x2="76.2" y2="88.9" width="0.1524" layer="91"/>
+<wire x1="76.2" y1="88.9" x2="76.2" y2="86.36" width="0.1524" layer="91"/>
+<wire x1="76.2" y1="86.36" x2="76.2" y2="83.82" width="0.1524" layer="91"/>
+<junction x="76.2" y="86.36"/>
+<pinref part="IC1" gate="G$1" pin="(AD5)PA5"/>
+<junction x="76.2" y="88.9"/>
+<pinref part="IC1" gate="G$1" pin="(AD4)PA4"/>
+<junction x="76.2" y="91.44"/>
+<pinref part="IC1" gate="G$1" pin="(AD3)PA3"/>
+<junction x="76.2" y="93.98"/>
+<pinref part="IC1" gate="G$1" pin="(AD2)PA2"/>
+<junction x="76.2" y="96.52"/>
+<pinref part="IC1" gate="G$1" pin="(AD1)PA1"/>
+<junction x="76.2" y="99.06"/>
+</segment>
+</net>
 </nets>
 </sheet>
 </sheets>
