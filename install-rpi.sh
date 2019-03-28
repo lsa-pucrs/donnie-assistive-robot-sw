@@ -47,6 +47,8 @@ echo -e "DONNIE_PATH=${DONNIE_PATH}\n"
 export DONNIE_SOURCE_PATH=${PWD}/donnie-assistive-robot-sw
 echo -e "DONNIE_SOURCE_PATH=${DONNIE_SOURCE_PATH}\n"
 
+sudo apt-get update
+sudo apt-get install -y lsb-release
 
 ##################################################
 # check the supported OS version and distribution
@@ -106,8 +108,6 @@ echo -e "${GREEN}Raspberry Pi Set Up Completed !!!!${NC}\n"
 ##################################################
 # install commom packages
 ##################################################
-sudo apt-get update
-
 # nice to have, not mandatory
 sudo apt-get install -y geany
 
@@ -119,14 +119,46 @@ sudo apt-get install -y build-essential autoconf git pkg-config
 # this gives some weird warnings when running cmake 3.0 on rpi.
 # so we downgraded the cmake to 2.8, used in wheezy
 # https://www.raspbian.org/RaspbianRepository
-wget https://archive.raspbian.org/raspbian.public.key -O - | sudo apt-key add -
-echo "deb http://archive.raspbian.org/raspbian wheezy main contrib non-free" |  sudo tee --append /etc/apt/sources.list > /dev/null
-echo "deb-src http://archive.raspbian.org/raspbian wheezy main contrib non-free"  |  sudo tee --append /etc/apt/sources.list > /dev/null
-sudo apt-get update
+# <=========================
+#wget https://archive.raspbian.org/raspbian.public.key -O - | sudo apt-key add -
+#echo "deb http://archive.raspbian.org/raspbian wheezy main contrib non-free" |  sudo tee --append /etc/apt/sources.list > /dev/null
+#echo "deb-src http://archive.raspbian.org/raspbian wheezy main contrib non-free"  |  sudo tee --append /etc/apt/sources.list > /dev/null
+#sudo apt-get update
+
 #apt-cache madison cmake
-sudo apt-get install -y cmake-data=2.8.9-1
-sudo apt-get install -y cmake=2.8.9-1
-sudo apt-get install -y cmake-curses-gui=2.8.9-1
+sudo apt-get install -y cmake
+
+#sudo apt-get install -y cmake-data=2.8.9-1
+#sudo apt-get install -y cmake=2.8.9-1
+#sudo apt-get install -y cmake-curses-gui=2.8.9-1
+
+
+##################################################
+# set environment variables
+##################################################
+#required to run donnie
+export PATH=${PATH}:${DONNIE_PATH}/bin
+export LD_LIBRARY_PATH=/usr/lib:/usr/local/lib/:${LD_LIBRARY_PATH}
+# Opencv lib path
+export LD_LIBRARY_PATH=/usr/lib/arm-linux-gnueabihf/:${LD_LIBRARY_PATH}
+# Player lib path
+export LD_LIBRARY_PATH=/usr/local/lib/:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=${DONNIE_PATH}/lib/player:${LD_LIBRARY_PATH}
+
+# required to compile donnie
+# run 'sudo find / -name "*.pc" -type f' to find all the pc files for pkg-config
+# run 'sudo find / -name "*.cmake" -type f' to find all the cmake files for cmake
+case "${VER}" in 
+	8.0)
+		export 	CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-2.8/Modules/:/usr/share/cmake-2.8/Modules/Platform/:/usr/share/cmake-2.8/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib/cmake/:/usr/lib/fltk/:/usr/local/share/OpenCV/:/usr/share/OpenCV/
+		;;
+
+	*)
+		export CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-3.5/Modules/:/usr/share/cmake-3.5/Modules/Platform/:/usr/share/cmake-3.5/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib/cmake/Stage/:/usr/lib/fltk/
+		;;
+esac
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig/:/usr/lib/pkgconfig:/usr/lib/arm-linux-gnueabihf/pkgconfig/:/usr/share/pkgconfig/:${PKG_CONFIG_PATH}
+
 
 ##################################################
 # install Player depedencies
@@ -173,7 +205,7 @@ sudo apt-get install -y libcurl4-openssl-dev
 #Instalar o TIMIDITY para poder usar os canais virtuais de MIDI (Virtual MIDI Port) e usar notas musicais no autofalante 
 sudo apt-get install -y timidity
 # std terminal used in several linux distributions
-apt-get install xterm
+sudo apt-get install xterm
 
 #Testando saida do auto falante
 #$speaker-test -t sine -f 1000 -c 2
@@ -193,14 +225,20 @@ apt-get install xterm
 ##################################################
 # Donwloading source code 
 ##################################################
-echo -e "${GREEN}Downloading Player source code from GitHub... ${NC}\n"
-git clone https://github.com/lsa-pucrs/Player.git
+if [ ! -d "./Player" ]; then
+	echo -e "${GREEN}Downloading Player source code from GitHub... ${NC}\n"
+	git clone https://github.com/lsa-pucrs/Player.git
+fi
 
-echo -e "${GREEN}Downloading Raspicam source code from GitHub... ${NC}\n"
-git clone https://github.com/lsa-pucrs/raspicam.git
+if [ ! -d "./raspicam" ]; then
+	echo -e "${GREEN}Downloading Raspicam source code from GitHub... ${NC}\n"
+	git clone https://github.com/lsa-pucrs/raspicam.git
+fi
 
-echo -e "${GREEN}Downloading Donnie source code from GitHub... ${NC}\n"
-git clone -b devel https://github.com/lsa-pucrs/donnie-assistive-robot-sw.git
+if [ ! -d "./donnie-assistive-robot-sw" ]; then
+	echo -e "${GREEN}Downloading Donnie source code from GitHub... ${NC}\n"
+	git clone -b devel https://github.com/lsa-pucrs/donnie-assistive-robot-sw.git
+fi
 
 ##################################################
 # Compile and install Player
@@ -296,6 +334,7 @@ cmake -DCMAKE_INSTALL_PREFIX=/usr/local \
 	-DENABLE_DRIVER_SEGWAYRMP400:BOOL=OFF \
 	-DENABLE_DRIVER_SERIALSTREAM:BOOL=OFF \
 	-DENABLE_DRIVER_SERIO:BOOL=OFF \
+	-DENABLE_DRIVER_SHAPETRACKER:BOOL=OFF \
 	-DENABLE_DRIVER_SICKLDMRS:BOOL=OFF \
 	-DENABLE_DRIVER_SICKLMS200:BOOL=OFF \
 	-DENABLE_DRIVER_SICKLMS400:BOOL=OFF \
@@ -305,6 +344,7 @@ cmake -DCMAKE_INSTALL_PREFIX=/usr/local \
 	-DENABLE_DRIVER_SKYETEKM1:BOOL=OFF \
 	-DENABLE_DRIVER_SONYEVID30:BOOL=OFF \
 	-DENABLE_DRIVER_SPHEREPTZ:BOOL=OFF \
+	-DENABLE_DRIVER_STATGRAB:BOOL=OFF \
 	-DENABLE_DRIVER_SUPPRESSOR:BOOL=OFF \
 	-DENABLE_DRIVER_UPCBARCODE:BOOL=OFF \
 	-DENABLE_DRIVER_WBR914:BOOL=OFF \
