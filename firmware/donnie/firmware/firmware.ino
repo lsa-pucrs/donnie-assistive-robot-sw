@@ -264,6 +264,7 @@ void sendData(){
 
 void driver_config(){
 	neckServo.attach(PIN_SERVO_NECK);
+  neckServo.write(90);
 	Timer3.initialize(10000); //10ms = 10000
 	Timer3.attachInterrupt(updateActuators);
 
