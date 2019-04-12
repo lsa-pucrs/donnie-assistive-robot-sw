@@ -96,10 +96,8 @@ Change the PCB Design
 If you want to change the PCB design, we recommend to use Eagle version
 XYZ.
 
-..|Meet Donnie Brain!!!| image:: donnie-elet3.png
+.. |Meet Donnie Brain!!!| image:: donnie-elet3.png
 
-.. image:: ArduinoShield.jpg
-.. image:: RaspShield.jpg
 
 
 Arduino Firmware
