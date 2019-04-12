@@ -80,3 +80,16 @@ the following steps:
    to manufacture to Seeedstudio. You should use the following tutorial
    `Fusion PCB Order Submission
    Guidelines <http://support.seeedstudio.com/knowledgebase/articles/422482-fusion-pcb-order-submission-guidelines>`__
+
+Assembly
+~~~~~~~~
+
+After you receive the PCBs, then follow these steps to assemble the
+boards:
+
+1. First of all, separe and buy the components indicated in BOM file
+   (`ard-shield <ard-shield/BOM.txt>`__ and
+   `rasp-shield <rasp-shield/BOM.txt>`__);
+2. Print the PDF schemmatic and BOM file;
+3. Place and weld the componnects in the PCB with the BOM's indicated
+   PART.
