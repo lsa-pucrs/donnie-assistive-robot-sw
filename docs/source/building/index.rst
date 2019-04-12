@@ -49,11 +49,6 @@ como carregar o firmware
 
 Assembly the Arduino Part
 -------------
-
-Arduino Firmware
--------------
-
-explicar brevemente a organizacao do firmware
 Donnie's PCB
 ============
 
@@ -100,3 +95,9 @@ If you want to change the PCB design, we recommend to use Eagle version
 XYZ.
 
 .. |Meet Donnie Brain!!!| image:: donnie-elet3.png
+
+
+Arduino Firmware
+-------------
+
+explicar brevemente a organizacao do firmware
