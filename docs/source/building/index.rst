@@ -93,3 +93,10 @@ boards:
 2. Print the PDF schemmatic and BOM file;
 3. Place and weld the componnects in the PCB with the BOM's indicated
    PART.
+Change the PCB Design
+---------------------
+
+If you want to change the PCB design, we recommend to use Eagle version
+XYZ.
+
+.. |Meet Donnie Brain!!!| image:: donnie-elet3.png
