@@ -7,7 +7,7 @@
 #include "Historic.h"
 
 // this parser uses antlr 3.4, with support to C code generation
-// manual is available at 
+// manual is available at
 //https://theantlrguy.atlassian.net/wiki/display/ANTLR3/ANTLR+v3+printable+documentation
 //http://www.antlr3.org/api/C/index.html
 // this is the source code of -lantlr3 library. run doxygen to generate the docs
@@ -38,13 +38,13 @@ using std::endl;
 #define POSITION_YAW_CAP "A"
 
 /// definition of the color tokens in Portuguese
-#define COLOR_BLUE "azul"
-#define COLOR_RED "vermelho"
-#define COLOR_GREEN "verde"
+//#define COLOR_BLUE "azul"
+//#define COLOR_RED "vermelho"
+//#define COLOR_GREEN "verde"
 
 /// definition of the on/off tokens in Portuguese
-#define SOUND_ON "ligado"
-#define SOUND_OFF "desligado"
+//#define TOKEN_ON "ligado"
+//#define TOKEN_OFF "desligado"
 
 /// definition of variable return tokens
 #define IDLE 4
@@ -53,6 +53,8 @@ using std::endl;
 #define CREATED 1
 #define NEXIST 0
 #define EXIST -1
+
+#define ARRAY_SIZE(array) (sizeof((array))/sizeof((array[0]))) //retorna o tamanho do array
 
 DonnieMemory *DonnieMemory::singleton = 0;
 
@@ -69,13 +71,14 @@ ExprTreeEvaluator::ExprTreeEvaluator()
   	for_itFlag = IDLE;
     done = 0;
     log = NULL;
+    enable_log = false;
 }
 
 ExprTreeEvaluator::~ExprTreeEvaluator()
 {
 	DonnieClient::ResetInstance();
 	Donnie = NULL;
-	
+
 	Historic::ResetInstance();
 	History = NULL;
 }
@@ -85,22 +88,43 @@ void ExprTreeEvaluator::logFile(FILE *file)
   log = file;
 }
 
-int ExprTreeEvaluator::parseGD(char* textIn, bool enable_log)
+
+void ExprTreeEvaluator::setLog(bool log)
 {
+  enable_log = log;
+}
+
+
+bool ExprTreeEvaluator::getLog()
+{
+  return enable_log;
+}
+
+
+int ExprTreeEvaluator::parseGD(char* textIn)
+{
+  // Set up language environment
+  generator gen;
+  gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
+  gen.add_messages_domain("Compiler");
+  locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
+  locale::global(loc);
+  cout.imbue(loc);
+
   // remove accented characters
   string code = cleanAccents(string(textIn));
-  uint8_t* bufferData = (uint8_t*)code.c_str();  
+  uint8_t* bufferData = (uint8_t*)code.c_str();
   uint32_t bufferSize = strlen(code.c_str());
   //uint8_t* bufferData = (uint8_t*)textIn;
   //uint32_t bufferSize = strlen(textIn);
   pANTLR3_UINT8 bufferName = (pANTLR3_UINT8)"INPUT text";
   pANTLR3_INPUT_STREAM input = antlr3NewAsciiStringInPlaceStream( bufferData, bufferSize, bufferName);
   if (input == NULL) {
-      cout << "Out of memory trying to allocate ANTLR input stream\n";
+      cout << translate("Out of memory trying to allocate ANTLR input stream\n");
 	  exit(ANTLR3_ERR_NOMEM);
   }
 
-  //TODO: amory. com esta funcao eu acredito que eh possivel tornar a linguagem case insentive, 
+  //TODO: amory. com esta funcao eu acredito que eh possivel tornar a linguagem case insentive,
   // simplificando o arquivo .g
   //https://github.com/antlr/antlr3/blob/master/runtime/C/include/antlr3input.h#L152
   //https://track.hpccsystems.com/browse/WSSQL-118
@@ -109,23 +133,23 @@ int ExprTreeEvaluator::parseGD(char* textIn, bool enable_log)
   	pGoDonnieLexer lex = GoDonnieLexerNew(input);
   	if (lex == NULL)
   	{
-      cout << "Unable to create the lexer due to malloc() failure\n";
+      cout << translate("Unable to create the lexer due to malloc() failure\n");
 	  exit(ANTLR3_ERR_NOMEM);
-  	  
-  	} 
+
+  	}
 
   	pANTLR3_COMMON_TOKEN_STREAM tokens = antlr3CommonTokenStreamSourceNew(ANTLR3_SIZE_HINT, TOKENSOURCE(lex));
   	if (tokens == NULL)
   	{
-      cout << "Out of memory trying to allocate token stream\n";
-	  exit(ANTLR3_ERR_NOMEM);  	  
+      cout << translate("Out of memory trying to allocate token stream\n");
+	  exit(ANTLR3_ERR_NOMEM);
   	}
 
   	// Finally, now that we have our lexer constructed, we can create the parser
   	pGoDonnieParser parser = GoDonnieParserNew(tokens);
   	if (parser == NULL)
   	{
-  	  cout << "Out of memory trying to allocate parser\n";
+  	  cout << translate("Out of memory trying to allocate parser\n");
 	  exit(ANTLR3_ERR_NOMEM);
   	}
 
@@ -137,12 +161,12 @@ int ExprTreeEvaluator::parseGD(char* textIn, bool enable_log)
 		r = parser->start_rule(parser);
 		if (r.tree == NULL)
 		{
-		  cout << "Parse error" << endl;
+		  cout << translate("Parse error") << endl;
 		  exit(ANTLR3_ERR_NOMEM);
-		}		
+		}
 		// print the parse tree
 		#ifndef NDEBUG
-			cout << "Tree : " << r.tree->toStringTree(r.tree)->chars << endl;
+			cout << translate("Tree : ") << r.tree->toStringTree(r.tree)->chars << endl;
 		#endif
 	}
 	catch(exception& e)
@@ -150,7 +174,7 @@ int ExprTreeEvaluator::parseGD(char* textIn, bool enable_log)
 		cout << e.what();
 		return -1;
 	}
-	
+
     // If the parser ran correctly, we will have a tree to parse. In general I recommend
     // keeping your own flags as part of the error trapping, but here is how you can
     // work out if there were errors if you are using the generic error messages
@@ -160,23 +184,26 @@ int ExprTreeEvaluator::parseGD(char* textIn, bool enable_log)
     if (errors > 0)
     {
 		cout << messageError << endl; //messageError is a global variable from GoDonnieParser.c. It contains the errors messages generated by antlr in GoDonnie.g
-		Donnie->speak(messageError); 
+
+		Donnie->speak(messageError);
 		flagMsgError = 1; //flag to clean the 'messageError' string in grammar file (GoDonnie.g) after it is printed here
-	}	
-    
+	}
+
     else{
+      //cout << translate("Tree : ") << r.tree->toStringTree(r.tree)->chars << endl;
+
 		// if text is parsed without error and logging is enabled, then save log
 		// log is enabled only in terminal mode and not in the script mode
-		if (enable_log){
+		if (getLog()){
 		  if(log != NULL)
 		  {
-			if(fprintf(log, "%s", textIn) == EOF)
-			  cout << "Erro ao salvar comando no log" << endl;
+			if(fprintf(log, "%s\n", textIn) == EOF)
+			  cout << translate("Erro ao salvar comando no log") << endl;
 			else
 			  fflush(log);
 		  }
-		}  	
-		
+		}
+
 		//if all tests passed, try to run the GoDonnie code
 		try{
 			this->run(r.tree);
@@ -186,19 +213,33 @@ int ExprTreeEvaluator::parseGD(char* textIn, bool enable_log)
 			Donnie->speak(e.what());
 		}
 	}
-	
+
   	parser->free(parser);
   	tokens->free(tokens);
   	lex->free(lex);
   	input->close(input);
-  	
+
   	return done;
 }
 
+
+
 int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 {
-	  std::ostringstream sayStr;
+    // Set up language environment
+    generator gen;
+    gen.add_messages_path(string(getenv("DONNIE_PATH")) + "/resources/loc");
+    gen.add_messages_domain("Compiler");
+    locale loc = gen(string(getenv("DONNIE_LANG")) + ".UTF-8");
+    locale::global(loc);
+    cout.imbue(loc);
+
+    string crash_str = translate("bateu");
+    string ncrash_str = translate("não bateu");
+
+	std::ostringstream sayStr;
     pANTLR3_COMMON_TOKEN tok = tree->getToken(tree);
+    printf("%d", tok->type);
     if(tok) {
         switch(tok->type) {
 
@@ -210,9 +251,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case ID:
           {
             return DonnieMemory::getInstance()->getVar(getText(tree));
-            break;              
+            break;
           }
-  
+
           case STRINGE:
           {
             break;
@@ -243,22 +284,26 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           {
             return run(getChild(tree,0)) / run(getChild(tree,1));
           }
-		
+
           case FW:
           { // forward
+			  //printf("TESTE");
 			#ifndef NDEBUG
-            cout << "PF: " << run(getChild(tree,0)) << endl;
+            cout << translate("PF: ") << run(getChild(tree,0)) << endl;
             #endif
             // run the command
             int distance = (int)run(getChild(tree,0));
             int steps_taken = Donnie->moveForward(distance);
             // if less steps were taken, then report a bump
             std::ostringstream distanceStr;
-            distanceStr << "andou " << steps_taken;
+
+            distanceStr.imbue(loc);
+
+            distanceStr << translate("andou ") << steps_taken;
             if ((steps_taken < distance) || Donnie->bumped()){
-              distanceStr << ", bateu";
+              distanceStr << translate(", bateu");
             }else{
-		      distanceStr << ", não bateu";
+		      distanceStr << translate(", não bateu");
             }
 			// save into history
             string command = string(getText(tree)) + " " + to_string(int(distance));
@@ -269,18 +314,21 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case BW:
           { // backward
 			#ifndef NDEBUG
-            cout << "PT: " << run(getChild(tree,0)) << endl;
+            cout << translate("PT: ") << run(getChild(tree,0)) << endl;
             #endif
             // run the command
             int distance = (int)run(getChild(tree,0));
             int steps_taken = Donnie->moveBackward(distance);
             // if less steps were taken, then report a bump
             std::ostringstream distanceStr;
-            distanceStr << "andou " << steps_taken;
+
+            distanceStr.imbue(loc);
+
+            distanceStr << translate("andou ") << steps_taken;
             if ((steps_taken < distance) || Donnie->bumped()){
-              distanceStr << ", bateu";
+              distanceStr << translate(", bateu");
             }else{
-		      distanceStr << ", não bateu";
+		      distanceStr << translate(", não bateu");
             }
 			// save into history
             string command = string(getText(tree)) + " " + to_string(int(distance));
@@ -292,7 +340,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           { // right turn
 			int exp = run(getChild(tree,0));
 			#ifndef NDEBUG
-            cout << "PD: " << exp << endl;
+            cout << translate("PD: ") << exp << endl;
             #endif
             // run the command
             float distance = (float)exp;
@@ -301,7 +349,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			// TODO: o comando pode ser interrompido por uma colizao.
 			// assim, está errado assumir que a distancia pedida será a distancia percorrida
             string command = string(getText(tree)) + " " + to_string(int(distance));
-            History->addCommand(command,(Donnie->bumped() ? "bateu" : "não bateu"));            
+            History->addCommand(command,(Donnie->bumped() ? crash_str : ncrash_str));
             break;
           }
 
@@ -309,7 +357,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           { // left turn
 			int exp = run(getChild(tree,0));
 			#ifndef NDEBUG
-            cout << "PE: " << exp << endl;
+            cout << translate("PE: ") << exp << endl;
             #endif
             // run the command
             float distance = (float)exp;
@@ -318,13 +366,14 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			// TODO: o comando pode ser interrompido por uma colizao.
 			// assim, está errado assumir que a distancia pedida será a distancia percorrida
             string command = string(getText(tree)) + " " + to_string(int(distance));
-            History->addCommand(command,(Donnie->bumped() ? "bateu" : "não bateu"));            
+            History->addCommand(command,(Donnie->bumped() ? crash_str : ncrash_str));
             break;
 
           }
 
           case SCAN:
           {
+
 			// get 7 sonar and blob readings by moving the head from 0o to 180o
 			// every 30 degrees
 			Donnie->Scan();
@@ -338,7 +387,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             vector<string> tokens;
             split((char*)getText(tree),' ',tokens);
 			//if (tokens.size() != 2)
-				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
+				//throw sintaxeException("Sintaxe não conhecida ild(trepara comando '"+tokens[0]+"'\n");
 
 			// get the ranger id
 			if (tokens[1] == RANGER_N)
@@ -355,8 +404,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 				arg = 5;
 			//else if (tokens[1] == RANGER_HEAD)
 			//	arg = 6;
-			//else 
-				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");        
+			//else
+				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");
 
             range  = Donnie->GetRange(arg);
 			#ifndef NDEBUG
@@ -372,9 +421,9 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             char* tokens;
             //tokens = strtok((char*)getText(tree)," ");
             tokens = strpbrk((char*)getText(tree), "xyaXYA"); //verifica qual é o argumento de POS: x, y, a ou NULL
-			
+
 		//if (tokens.size() != 2)
-			//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
+			//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");
 
 		// get the ranger id
 		if (tokens != NULL){
@@ -386,12 +435,12 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 				arg = 2;
 		}
 		    else
-				arg = 3;	
-			
-			//else  
-				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
+				arg = 3;
 
-	    pos = Donnie->GetPos("body",arg);       
+			//else
+				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");
+
+	    pos = Donnie->GetPos("body",arg);
             #ifndef NDEBUG
                cout << "POS: " << arg << " " << (int)pos << endl;
             #endif
@@ -400,51 +449,80 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case COLOR:
           {
+
             int arg;
 			// get 7 sonar and blob readings by moving the head from 0o to 180o
 			// every 30 degrees. report only the blobs with requested color (r,g, or b)
-			
+
             vector<string> tokens;
             split((char*)getText(tree),' ',tokens);
 			//if (tokens.size() != 2)
-				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
+				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");
 
 			arg = Donnie->color_to_value(tokens[1]);
 			if(arg == 0xFFFFFFFF)
-				throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");     
+				throw sintaxeException(string(translate("Sintaxe não conhecida para comando '"))+tokens[0]+"'\n");
 
 			// only report when there are blobs with the selected color
             return Donnie->Color(arg);
             break;
           }
-          
+
           case SOUND:
           {
+
             vector<string> tokens;
             split((char*)getText(tree),' ',tokens);
 			//if (tokens.size() != 2)
-				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n"); 
+				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");
 
 			// sound on or off
-			if (tokens[1] == SOUND_ON){
-				Donnie->speak("O som foi ligado com sucesso");
+			if ((tokens[1] == "ligado") || (tokens[1] == "on")){
+				Donnie->speak(translate("O som foi ligado com sucesso"));
 				Donnie->muteTTS(false);
 			}
-			else if (tokens[1] == SOUND_OFF){
-				Donnie->speak("O som foi desligado com sucesso");
+			else if ((tokens[1] == "desligado") || (tokens[1] == "off")){
+				Donnie->speak(translate("O som foi desligado com sucesso"));
 				Donnie->muteTTS(true);
 			}
-			//else 
-				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");        
+			// error treatmet is performed at the parser level. it is not necessary to test for error here
+			//else {
+				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");
+				//Donnie->speak(translate("Sintaxe não conhecida para comando 'som'"));
+			//}
 
             return 0;
             break;
           }
-                    
+
+          case BELT:
+          {
+            vector<string> tokens;
+            split((char*)getText(tree),' ',tokens);
+			//if (tokens.size() != 2)
+				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");
+
+			// sound on or off
+			if ((tokens[1] == "ligado") || (tokens[1] == "on")){
+				Donnie->speak(translate("O cinto foi ligado com sucesso"));
+			}
+			else if ((tokens[1] == "desligado") || (tokens[1] == "off")){
+				Donnie->speak(translate("O cinto foi desligado com sucesso"));
+			}
+			// error treatmet is performed at the parser level. it is not necessary to test for error here
+			//else{
+				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");
+				//Donnie->speak(translate("Sintaxe não conhecida para comando 'cinto'"));
+			//}
+
+            return 0;
+            break;
+          }
+
           case COMENT:
           {
 			#ifndef NDEBUG
-			cout << "COMMENT: " << getText(tree) << endl; 
+			cout << translate("COMMENT: ") << getText(tree) << endl;
 			#endif
             break;
           }
@@ -466,7 +544,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			  arg << run(getChild(tree,0));
 		    }
 		    #ifndef NDEBUG
-			cout << "SPEAK: " << arg.str() << endl; 
+			cout << translate("SPEAK: ") << arg.str() << endl;
 			#endif
             Donnie->speak(arg.str());
             break;
@@ -477,10 +555,10 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 			if(tree->getToken(getChild(tree,0))->type != STRINGE){
 				int wait = run(getChild(tree,0));
 				#ifndef NDEBUG
-				cout << "WAIT: " << wait << endl;
-				#endif				
+				cout << translate("WAIT: ") << wait << endl;
+				#endif
 				sleep(wait);
-				Donnie->speak("esperando " +  to_string (wait) + " segundos.");
+				Donnie->speak(string(translate("esperando ")) +  to_string (wait) + string(translate(" segundos.")));
 			}
             break;
           }
@@ -502,8 +580,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
             bool ok = compare(a,b,c);       // Compara variaveis
 
-            while (ok == true)  
-            { 
+            while (ok == true)
+            {
               run(getChild(tree,5));                                        //Executa bloco
               run(getChild(tree,4));                                        //Executa operação de incremento
               ok = compare(run(getChild(tree,1)),run(getChild(tree,3)),c);  //Realiza comparação novamente
@@ -519,7 +597,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case WHILEE:
           {
 			#ifndef NDEBUG
-            cout << "while" << endl;
+            cout << translate("while") << endl;
 			#endif
             int a = run(getChild(tree,0));                      // Retorna o valor das variáveis na condição
             int b = run(getChild(tree,2));                      // #
@@ -527,8 +605,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
             bool ok = compare(a,b,c);       // Compara variaveis
 
-            while (ok == true)  
-            { 
+            while (ok == true)
+            {
               run(getChild(tree,3));                                        //Executa bloco
               ok = compare(run(getChild(tree,0)),run(getChild(tree,2)),c);  //Realiza comparação novamente
             }
@@ -585,18 +663,18 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
               }
             break;
           }
-          
+
           case MAKE:
           {
-                        
-            char* var = (char*)getText(getChild(tree,0));
+
+	    char* var = (char*)getText(getChild(tree,0));
 
             int val;
             if (tree->getChildCount(tree) < 2)
             {
-              val = 0;                           // Se não for atribuido valor, variável começa com zero 
+              val = 0;                           // Se não for atribuido valor, variável começa com zero
             }
-            else 
+            else
               val = run(getChild(tree,1));
 
             if(for_itFlag == WAITING)
@@ -619,17 +697,17 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
               for (int f = 1; f <= procedure.argNum ; f++)
                 local.memory[procedure.args[f-1]] = run(getChild(tree,f));   // Atribui as variaveis de argumento no dicionário
 
-              DonnieMemory::getInstance()->stackMemory(local);                      // Empilha dicionário 
+              DonnieMemory::getInstance()->stackMemory(local);                      // Empilha dicionário
 
-              run(procedure.node);                      // Executa procedimento 
+              run(procedure.node);                      // Executa procedimento
 
               DonnieMemory::getInstance()->unstackMemory();                            // Desempilha dicionário
             }
             else
             {
-              sayStr << "Número de argumentos invalido.";
+              sayStr << translate("Número de argumentos invalido.");
               Donnie->speak(sayStr.str());
-              cout << sayStr << endl;
+              cout << sayStr.str() << endl;
 
             }
 
@@ -639,11 +717,11 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case PROCDEC:
           {
             char* name = (char*)getText(getChild(tree,0));
-  
+
             int childNum = tree->getChildCount(tree);
 
             procDec procedure;
-  
+
             if(childNum < 3)
             {
               procedure.argNum = 0;                    // Caso procedimento não apresente parametros salva bloco do procedimento
@@ -652,8 +730,8 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             else
             {
               for(int f = 1; f < childNum - 1; f++)
-                procedure.args.push_back(getText(getChild(tree,f)));   // Caso tenha parametros salva numa lista 
-  
+                procedure.args.push_back(getText(getChild(tree,f)));   // Caso tenha parametros salva numa lista
+
               procedure.argNum = childNum - 2;
               procedure.node = getChild(tree,childNum - 1);      // Salva bloco do procedimento
             }
@@ -661,7 +739,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             DonnieMemory::getInstance()->addProc(name, procedure);
             break;
           }
-          
+
           case HIST:
           {
 				//TODO (amory): implementar um clear para o historico
@@ -673,24 +751,27 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case STATE:
           {
 			  std::ostringstream output;
-			  
+
+			  output.imbue(loc);
+
 			  if (History->size()>0){
 				output << History->getLast();
 			  }else{
-				output << "Nenhum comando executado, posição [" 
+				output << translate("Nenhum comando executado, posição [")
 				       << Donnie->GetPos("body",0)  <<  //POSITION_X in steps
 				   "," << Donnie->GetPos("body",1)  <<  //POSITION_Y in steps
-				   "," << Donnie->GetPos("body",2) << "]"; //POSITION_YAW in degrees 
+				   "," << Donnie->GetPos("body",2) << "]"; //POSITION_YAW in degrees
 				   // dont add newline here !
 			  }
-				cout << output.str() << endl;
+				
+				//cout << output.str() << endl;
 				Donnie->speak(output.str());
 				break;
 		  }
 
           case SEMICOLON:
           {
-  
+
               //int fi = tree->getChildCount(tree);
               //cout << "COMMENT: " << fi << std::endl;
               break;
@@ -698,7 +779,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case WS:
           {
-  
+
               //int fi = tree->getChildCount(tree);
               //cout << "WS: " << fi << std::endl;
               break;
@@ -706,7 +787,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case COMP:
           {
-  
+
               //return getText(tree);
               break;
           }
@@ -714,7 +795,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
           case QUIT:
           {
             #ifndef NDEBUG
-            cout << "EXIT" << endl;
+            cout << translate("EXIT") << endl;
             #endif
             //fclose(log);
             done = 1;
@@ -723,17 +804,17 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
 
           case EQ:
           {
-  
+
             char* var = (char*)getText(getChild(tree,0));
             int val = run(getChild(tree,1));
 
             DonnieMemory::getInstance()->assignVar(var,val);
-            break;            
+            break;
           }
-  
+
           default:
               //cout << "Unhandled token: #" << tok->type << '\n';
-               throw sintaxeException("Sintaxe não conhecida\n");
+               throw sintaxeException(translate("Sintaxe não conhecida\n"));
                break;
         }
     }
@@ -747,22 +828,22 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
     }
 }
 
-void ExprTreeEvaluator::speak(string text) 
-{ 
+void ExprTreeEvaluator::speak(string text)
+{
 	Donnie->speak(text);
 }
 
-void ExprTreeEvaluator::muteTTS(bool m) 
+void ExprTreeEvaluator::muteTTS(bool m)
 {
 	Donnie->muteTTS(m);
 }
 
 pANTLR3_BASE_TREE getChild(pANTLR3_BASE_TREE tree, unsigned i)
 {
-	
+
     //assert(i < tree->getChildCount(tree));
     //if(!(i < tree->getChildCount(tree))) throw sintaxeException();
-    
+
     return (pANTLR3_BASE_TREE) tree->getChild(tree, i);
 }
 
@@ -799,22 +880,22 @@ bool compare (int a, int b, string comp)
   }
   else
   {
-    cout << "null comp" << endl;
+    cout << translate("null comp") << endl;
     //TODO: (amory) nao era p gerar uma excecao ?
     return false;
-  } 
+  }
 }
 
 void split(const std::string &s, char delim, std::vector<std::string> &elems) {
     std::stringstream ss;
-    
+
     std::string item, aux = s;
 
 	// remove extra spaces
 	aux.erase(std::unique(aux.begin(), aux.end(),
-			[](char a, char b) { return a == ' ' && b == ' '; } ), aux.end() ); 
+			[](char a, char b) { return a == ' ' && b == ' '; } ), aux.end() );
 	// tolower
-	transform(aux.begin(), aux.end(), aux.begin(), ::tolower);    
+	transform(aux.begin(), aux.end(), aux.begin(), ::tolower);
     ss.str(aux);
     while (std::getline(ss, item, delim)) {
         elems.push_back(item);
@@ -823,20 +904,20 @@ void split(const std::string &s, char delim, std::vector<std::string> &elems) {
 
 
 string cleanAccents(string code){
-	
+
 	//this function does not replace character if it is within double quotes, like in the Speak command
 	// note that acented character uses 2 bytes, thus, extra space is required for each accented character
-    size_t index = 0, index_aux1 = 0, index_aux2 = 0; 
+    size_t index = 0, index_aux1 = 0, index_aux2 = 0;
     string aux = code;
-        
-    //remove all sentences between double quotes from aux string 
+
+    //remove all sentences between double quotes from aux string
     while ((index_aux1 = aux.find('"', index_aux2)) != string::npos){
         if ((index_aux2 = aux.find('"', index_aux1+1)) != string::npos){
-			aux.replace(index_aux1, (index_aux2-index_aux1+1), (index_aux2-index_aux1+1), '-'); 
+			aux.replace(index_aux1, (index_aux2-index_aux1+1), (index_aux2-index_aux1+1), '-');
 			index_aux2++;
 		}
 	}
-    
+
 	int i=0, count_replaces=0;
 	//search in the aux string for the commands with accented characters and replace them for not accented characters in the code string
     while((index = aux.find_first_of("âãáçóÂÃÁÇÓ", index)) != string::npos){
@@ -857,6 +938,6 @@ string cleanAccents(string code){
     	index+=2; //accented characters have 2 bytes
     	count_replaces++;
     }
-		
+
 	return code;
 }

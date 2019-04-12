@@ -1,0 +1,18 @@
+site_name: Donnie Manual
+repo_url: https://github.com/lsa-pucrs/donnie-assistive-robot-sw/docs/wiki
+theme: readthedocs
+pages:
+- Home : index.md
+- 'Ch1 - Introduction': 'INTRO.md'
+- 'Ch2 - The Basics': 'BASICS.md'
+- 'Ch3 - Building a World': 'WORLDFILES.md'
+- 'Ch4 - Writing a Configuration (.cfg) File': 'CFGFILES.md'
+- 'Ch5 - Getting Your Simulation to Run your code': 'CONTROLLERS.md'
+- 'Ch6 - Controllers (C++)': 'CONTROLLER_CPP.md'
+- 'Ch7 - Controllers (C)': 'CONTROLLER_C.md'
+- 'Ch8 - Controllers (Python/playercpp)': 'CONTROLLER_PYCPP.md'
+- 'Ch9 - Controllers (Python/playerc)': 'CONTROLLER_PYC.md'
+
+markdown_extensions:
+- toc:
+    permalink: True

@@ -41,6 +41,12 @@ using std::string;
 using std::cout;
 using std::endl;
 
+// Localization libraries 
+#include <boost/locale.hpp>
+using namespace boost::locale;
+using boost::locale::translate;
+using boost::locale::format;
+
 typedef struct {
   char *name;     /* User printable name of the function. */
   char *doc;      /* Documentation for this function.  */
@@ -56,6 +62,9 @@ class ExprTreeEvaluator
 
 	/// this file pointer is used to log into file the commands executed in terminal mode
     FILE *log;
+    
+    /// when enabled, it generated a Log directory in the current path
+    bool enable_log;
 
     DonnieClient *Donnie; /// pointer to Donnie middleware class
     Historic *History;    /// pointer to History class
@@ -76,12 +85,18 @@ public:
     /// mute the TTS and just print the sentence on the stdout
     void muteTTS(bool m);
 
+    /// Enable logging when true
+    void setLog(bool m);
+
+    /// Get the logging status
+    bool getLog();
+
 	/// parse input stream in GoDonnie syntax
 	/*! build the ANTLR objects (lexer and parser), 
 	 * build the parse tree and run if no parse errors were found.
 	 * In Terminal mode, this also saves input stream into the log file
 	 */ 
-    int parseGD(char* textIn, bool enable_log);
+    int parseGD(char* textIn);
 
 };
 

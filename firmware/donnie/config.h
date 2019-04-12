@@ -52,9 +52,9 @@ USAR IDE ARDUINO 1.2 OU SUPERIOR
  //Motors standby mode
 #define STBY 7 //This pi9n must be driven high to take the driver out of standby mode.
  //encoder
-#define pololuAL 0 //pin 2
+#define pololuAL 2 //interrupt pin
 #define pololuBL 34
-#define pololuAR 1 //pin 3
+#define pololuAR 3 //interrupt pin
 #define pololuBR 33
 //#define kP 3
 //#define kI 0 // nao utilizado

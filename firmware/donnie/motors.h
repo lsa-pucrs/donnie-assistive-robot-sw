@@ -4,6 +4,34 @@
 #include <Arduino.h>
 #include <Wire.h>
 
+//! Ticks/Pulses counter var, updated in interrupt
+volatile int counterL;
+volatile int counterR;
+
+//! Routine called to set the digital outputs and anothers motors pre sets
+void motors_config();
+//! Routine called to update motor's data or PID control
+void motorsUpdate();
+//! Process the motor command that cames from donnie's protocol
+void motorsCommandProcess(uint8_t *data);
+//! Set Motors Turn from motor command 
+void setMotorsTurn(uint8_t newMotorRTurn, uint8_t newMotorLTurn);
+//! Set Motors speed from motor command 
+void setMotorsSpeed(uint8_t newMotorRSpeed, uint8_t newMotorLSpeed);
+//! Set Motors Turn on or off from motor command 
+void setMotorsActive(uint8_t newMotorRSpeed, uint8_t newMotorLSpeed);
+//! Set right wheel speed and direction
+/*! Speed range: 0 to 255
+    Direction = 1: Turn Clock-wise*/
+void setRightWheelSpeedAndDirection(int8_t speed, int8_t direction);
+void setLeftWheelSpeedAndDirection(int8_t speed, int8_t direction);
+//! Ticks/Pulses counter interruption procedure
+void pololuR();
+void pololuL();
+//! Stop the robot
+void stop();
+
+
 
 
 //?to daniel: tem algum motivo de nao comecar tudo setado em zero ??
@@ -16,11 +44,6 @@ int motorRTurn=0;
 int motorLActive=0;
 int motorLspeed=motorsDefaultSpeed;//setado a 195 
 int motorLTurn=0;
-
-
-
-
-
 
 class Motors
 {
@@ -60,23 +83,13 @@ class Motors
     */
 
 
-  public:
-
-    
-    int MOTOR_R;
-    int MOTOR_L;
-    volatile int counterL;//=0
-    volatile int counterR;//=0
-    
+  public:  
     void init_Motors(int defSpeed, int newSpeedMax, int newSpeedMin);
     void setSpeed(int SpeedL, int SpeedR, int newSpeedMax, int newSpeedMin);
     void turn_right(int PIDSpeedL, int PIDSpeedR);
     void turn_left(int PIDSpeedL, int PIDSpeedR);
     void move_backward(int PIDSpeedL, int PIDSpeedR);
     void move_forward(int SpeedLeft, int SpeedRight);
-    void stop();
-    void moveRightWheel(int motor, int speed, int direction);
-    void moveLeftWheel(int motor, int speed, int direction);
     void control_movement();
     int16_t getSpeedR();
     int16_t getSpeedL();
@@ -98,9 +111,6 @@ A method to initialize the motor control variables. The parameters are:
 */
 void Motors::init_Motors(int defSpeed, int newSpeedMax, int newSpeedMin)
 {
-
-  MOTOR_R=1;
-  MOTOR_L=1;
   counterL = 0;
   counterR = 0;
   defaultSpeed = defSpeed;
@@ -128,18 +138,6 @@ void Motors::init_Motors(int defSpeed, int newSpeedMax, int newSpeedMin)
   setpoint=5; // valor de ticks que a gente quer controlar o PID. o "padrão", o nosso 100%
   iterations=500;
   number_of_cicles_wanted=20;
-
-
-  pinMode(LBIN1,OUTPUT);
-  pinMode(LBIN2,OUTPUT);
-  pinMode(LPWMB,OUTPUT);
-  pinMode(RAIN1,OUTPUT);
-  pinMode(RAIN2,OUTPUT);
-  pinMode(RPWMA,OUTPUT);
-  //pinMode(pololuAL, INPUT);
-  pinMode(pololuBL, INPUT);
-  //pinMode(pololuAR, INPUT);
-  pinMode(pololuBR, INPUT);
 }
 /*
 This method will set the speed of the wheels and defines what are their max and min values. The parameters are:
@@ -178,15 +176,15 @@ void Motors::turn_right(int PIDSpeedL, int PIDSpeedR)// 1,-1 para direita, -1,1 
    {
      // if((1*counterL<number_of_ticks) || (-1*counterR<number_of_ticks))
      // {
-            //moveRightWheel(MOTOR_R, PIDSpeedR, 1);
-            //moveLeftWheel(MOTOR_L, PIDSpeedL, 1);
-            moveRightWheel(MOTOR_R, motorsDefaultAngularSpeed-3, 1);
-            moveLeftWheel(MOTOR_L, motorsDefaultAngularSpeed, 1);
+            //setLeftWheelSpeedAndDirection(PIDSpeedR, 1);
+            //setRightWheelSpeedAndDirection(PIDSpeedL, 1);
+            setLeftWheelSpeedAndDirection(motorsDefaultAngularSpeed-3, 1);
+            setRightWheelSpeedAndDirection(motorsDefaultAngularSpeed, 1);
     //  }
     //  else
     //  {
-    //        moveRightWheel(MOTOR_R, 0, 0);
-    //        moveLeftWheel(MOTOR_L, 0, 0); 
+    //        setLeftWheelSpeedAndDirection(0, 0);
+    //        setRightWheelSpeedAndDirection(0, 0); 
     //  }
    }  
 }
@@ -198,15 +196,15 @@ void Motors::turn_left(int PIDSpeedL, int PIDSpeedR)// 1,-1 para direita, -1,1 p
    {
      // if((-1*counterL<number_of_ticks) || (1*counterR<number_of_ticks))
       //{
-            //moveRightWheel(MOTOR_R, PIDSpeedR, 0);
-            //moveLeftWheel(MOTOR_L, PIDSpeedL, 0);
-            moveRightWheel(MOTOR_R, motorsDefaultAngularSpeed-3, 0);
-            moveLeftWheel(MOTOR_L, motorsDefaultAngularSpeed, 0);
+            //setLeftWheelSpeedAndDirection(PIDSpeedR, 0);
+            //setRightWheelSpeedAndDirection(PIDSpeedL, 0);
+            setLeftWheelSpeedAndDirection(motorsDefaultAngularSpeed-3, 0);
+            setRightWheelSpeedAndDirection(motorsDefaultAngularSpeed, 0);
   //    }
   //    else
   //    {
-  //          moveRightWheel(MOTOR_R, 0, 0);
-  //          moveLeftWheel(MOTOR_L, 0, 0); 
+  //          setLeftWheelSpeedAndDirection(0, 0);
+  //          setRightWheelSpeedAndDirection(0, 0); 
   //    }
    }  
 }
@@ -247,10 +245,10 @@ void Motors::move_backward(int PIDSpeedL, int PIDSpeedR)
 	{
 		i++;
 	}
-  //moveRightWheel(MOTOR_R, PIDSpeedR+-1*offsetR, 1);
-	//moveLeftWheel(MOTOR_L, PIDSpeedL+-1*offsetL, 0);
-  moveRightWheel(MOTOR_R, motorsDefaultSpeed, 1);
-  moveLeftWheel(MOTOR_L, motorsDefaultSpeed, 0);
+  //setLeftWheelSpeedAndDirection(PIDSpeedR+-1*offsetR, 1);
+	//setRightWheelSpeedAndDirection(PIDSpeedL+-1*offsetL, 0);
+  setLeftWheelSpeedAndDirection(motorsDefaultSpeed, 1);
+  setRightWheelSpeedAndDirection(motorsDefaultSpeed, 0);
 }
 
 
@@ -297,26 +295,26 @@ void Motors::move_forward(int SpeedL, int SpeedR)
 	{
 		i++;
 	}
-  //moveRightWheel(MOTOR_R, PIDSpeedR+offsetR, 0);
-	//moveLeftWheel(MOTOR_L, PIDSpeedL+offsetL, 1);
-  moveRightWheel(MOTOR_R, motorsDefaultSpeed-5, 0);
-  moveLeftWheel(MOTOR_L, motorsDefaultSpeed, 1);
+  //setLeftWheelSpeedAndDirection(PIDSpeedR+offsetR, 0);
+	//setRightWheelSpeedAndDirection(PIDSpeedL+offsetL, 1);
+  setLeftWheelSpeedAndDirection(motorsDefaultSpeed-5, 0);
+  setRightWheelSpeedAndDirection(motorsDefaultSpeed, 1);
 }
 
 void Motors::calibrate_motors(int Speed)
 {
 	if(i<iterations)
 	{
-		//moveLeftWheel(MOTOR_L, Speed, 1);
-    //moveRightWheel(MOTOR_R, Speed, 0);
-    moveLeftWheel(MOTOR_L, motorsDefaultSpeed, 1);
-    moveRightWheel(MOTOR_R, motorsDefaultSpeed, 0);
+		//setRightWheelSpeedAndDirection(Speed, 1);
+    //setLeftWheelSpeedAndDirection(Speed, 0);
+    setRightWheelSpeedAndDirection(motorsDefaultSpeed, 1);
+    setLeftWheelSpeedAndDirection(motorsDefaultSpeed, 0);
 		i++;
 	}
 	else
 	{
-    moveLeftWheel(MOTOR_L, 0, 1); //para motores
-    moveRightWheel(MOTOR_R, 0, 0);
+    setRightWheelSpeedAndDirection(0, 1); //para motores
+    setLeftWheelSpeedAndDirection(0, 0);
 		float control=iterations/number_of_cicles_wanted;
 		float mediaR = counterR/control;
 		float mediaL = counterL/control;
@@ -330,55 +328,6 @@ void Motors::calibrate_motors(int Speed)
 
 }
 
-void Motors::moveRightWheel(int motor, int speed, int direction) 
-{ 
-  boolean inPinR1;
-  boolean inPinR2; 
-  if(direction == 1) 
-  { 
-    inPinR1 = HIGH; 
-    inPinR2 = LOW; 
-  }
-  else
-  {
-    inPinR1 = LOW;
-    inPinR2 = HIGH; 
-  }
-
-      digitalWrite(RAIN1, inPinR1); 
-      digitalWrite(RAIN2, inPinR2);
-      analogWrite(RPWMA, speed); 
-      digitalWrite(STBY, HIGH); //disable standby
-      
-}
-void Motors::moveLeftWheel(int motor, int speed, int direction) 
-{ 
-  boolean inPinL1;
-  boolean inPinL2; 
-  if(direction == 0) 
-  { 
-    inPinL1 = HIGH; 
-    inPinL2 = LOW; 
-  }
-  else
-  {
-    inPinL1 = LOW;
-    inPinL2 = HIGH; 
-  }
-
-  digitalWrite(LBIN1, inPinL1); 
-  digitalWrite(LBIN2, inPinL2); 
-  analogWrite(LPWMB, speed); 
-
-      
-}
-
-void Motors::stop(){
-  //enable standby  
-  digitalWrite(STBY, LOW); 
-  //counterR=0;
-  //counterL=0;
-}
 
 /*
 This function controls how the robot moves. The turn of the wheel indicates if the robot is moving forward, backward,left or right*/
@@ -439,65 +388,59 @@ void Motors::setKD(float kD_){
 	kD = kD_;
 }
 
-
-
-
-
 Motors m;
 
-
 /*
- Pin interrupts for the two pololu encoders. When the wheels turns forward, the counter is incremented and when it turns backwards, is decremented.
- */
-void pololuL()//interrupcao pro encoder 1
-{
-  if(digitalRead(pololuBL)==1)
-   m.counterL++;
-  else
-   m.counterL--;
+void motorsUpdate(){
+  if(motorRActive){
+    if(motorRTurn==1 && motorLTurn==0){
+      moveFoward(255);
+    }
+    else if(motorRTurn==0 && motorLTurn==1){
+      moveBackward(255);
+    }
+    else if(motorRTurn==1 && motorLTurn==1){
+      rotateLeft(255);
+    }
+    else if(motorRTurn==0 && motorLTurn==0){
+      rotateRight(255);
+    }
+  }
+  else stop();
 }
-void pololuR() //interrupcao pro encoder2
-{ 
-    if(digitalRead(pololuBR)==1)
-     m.counterR--;//counter2++;
-    else
-     m.counterR++;//counter2--;
-}
-
-
 /*
- A function to setup the environmnet of the motors. This fucntion initialize the motor with the right values and the pin interrupts.
- */
-void setup_Environment(int interrup1, int interrup2)
-{
-  //Serial.begin(9600);
+void setNeckServoPos(uint8_t *data){
+  neckServo.write(data[1]);
+}*/
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//!A function to setup the environmnet of the motors. This fucntion initialize the motor with the right values and the pin interrupts.
+void motors_config(){
   //AFMS.begin();
-  m.init_Motors(motorsDefaultSpeed,10,10);
-  attachInterrupt(interrup1, pololuL, FALLING);
-  attachInterrupt(interrup2, pololuR, FALLING);
-}
+  pinMode(LBIN1,OUTPUT);
+  pinMode(LBIN2,OUTPUT);
+  pinMode(LPWMB,OUTPUT);
+  pinMode(RAIN1,OUTPUT);
+  pinMode(RAIN2,OUTPUT);
+  pinMode(RPWMA,OUTPUT);
+  attachInterrupt(digitalPinToInterrupt(pololuAL), pololuL, FALLING);
+  pinMode(pololuBL, INPUT);
+  attachInterrupt(digitalPinToInterrupt(pololuAR), pololuR, FALLING);
+  pinMode(pololuBR, INPUT);
 
+  counterL = 0; //reset ticks
+  counterR = 0; //reset ticks
 
-
-void motors_config()
-{
-  setup_Environment(pololuAL,pololuAR);
+  //m.init_Motors(motorsDefaultSpeed,10,10);
 }
 
 void motorsUpdate()
 {
   m.control_movement();
 }
-
-
-
-
-void motorsCommandProcess(uint8_t *data);
-void setMotorsTurn(uint8_t newMotorRTurn, uint8_t newMotorLTurn);
-//void setMotorsSpeed(uint8_t newMotorRSpeed, uint8_t newMotorLSpeed);
-void setMotorsActive(uint8_t newMotorRSpeed, uint8_t newMotorLSpeed);
-//void motorsUpdate();
-//void setNeckServoPos(uint8_t *data);
 
 void motorsCommandProcess(uint8_t *data){ 
     setMotorsTurn(data[0],data[2]); //determina o sentido dos motores 
@@ -507,15 +450,15 @@ void motorsCommandProcess(uint8_t *data){
 
 
 void setMotorsTurn(uint8_t newMotorRTurn, uint8_t newMotorLTurn){ 
-	if(newMotorRTurn==0x0F) motorLTurn=1;
-	else motorLTurn=0;
+  if(newMotorRTurn==0x0F) motorLTurn=1;
+  else motorLTurn=0;
 
-	if(newMotorLTurn==0x0F) motorRTurn=1;
-	else motorRTurn=0;
+  if(newMotorLTurn==0x0F) motorRTurn=1;
+  else motorRTurn=0;
 }
 /*
 void setMotorsSpeed(uint8_t newMotorRSpeed, uint8_t newMotorLSpeed){
-	/*motorRspeed = newMotorRSpeed; 
+  /*motorRspeed = newMotorRSpeed; 
     motorLspeed = newMotorLSpeed;
 }*/
 
@@ -526,27 +469,52 @@ void setMotorsActive(uint8_t newMotorRSpeed, uint8_t newMotorLSpeed){
     else motorLActive = 0;
 }
 
-/*
-void motorsUpdate(){
-	if(motorRActive){
-		if(motorRTurn==1 && motorLTurn==0){
-			moveFoward(255);
-		}
-		else if(motorRTurn==0 && motorLTurn==1){
-			moveBackward(255);
-		}
-		else if(motorRTurn==1 && motorLTurn==1){
-			rotateLeft(255);
-		}
-		else if(motorRTurn==0 && motorLTurn==0){
-			rotateRight(255);
-		}
-	}
-	else stop();
+//! Pin interrupts for the two pololu encoders. When the wheels turns forward, the counter is incremented and when it turns backwards, is decremented.
+void pololuL()//interrupcao pro encoder 1
+{
+  if(digitalRead(pololuBL)==1)
+   counterL++;
+  else
+   counterL--;
 }
-/*
-void setNeckServoPos(uint8_t *data){
-	neckServo.write(data[1]);
-}*/
+void pololuR() //interrupcao pro encoder2
+{ 
+    if(digitalRead(pololuBR)==1)
+     counterR--;//counter2++;
+    else
+     counterR++;//counter2--;
+}
+
+//TODO change name to setRightMotorPWMAndDirection, because the speed will be count in m/s
+void setRightWheelSpeedAndDirection(int8_t speed, int8_t direction) {  
+  if(direction == 0) { 
+    digitalWrite(LBIN1, HIGH); 
+    digitalWrite(LBIN2, LOW); 
+  }
+  else{
+    digitalWrite(LBIN1, LOW); 
+    digitalWrite(LBIN2, HIGH); 
+  }
+  analogWrite(LPWMB, speed); 
+  digitalWrite(STBY, HIGH); //disable standby  
+}
+
+//TODO change name to setLeftMotorPWMAndDirection
+void setLeftWheelSpeedAndDirection(int8_t speed, int8_t direction) { 
+  if(direction == 1) { 
+      digitalWrite(RAIN1, HIGH); 
+      digitalWrite(RAIN2, LOW);
+  }
+  else{
+      digitalWrite(RAIN1, LOW); 
+      digitalWrite(RAIN2, HIGH);
+  }
+  analogWrite(RPWMA, speed); 
+  digitalWrite(STBY, HIGH); //disable standby    
+}
+
+void stop(){
+  digitalWrite(STBY, LOW);   //enable standby   
+}
 
 #endif

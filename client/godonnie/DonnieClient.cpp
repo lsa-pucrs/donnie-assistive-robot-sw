@@ -13,8 +13,7 @@ const double  SIDE_RANGER = 0.05;
 const double  FRONT_RANGER = 0.06;
 const double  BACK_RANGER = 0.05;
 
-
-#ifndef LANG 
+#ifndef LANG
 #define LANG "pt-br"
 #endif
 
@@ -30,8 +29,8 @@ DonnieClient *DonnieClient::getInstance()
 
 void DonnieClient::ResetInstance()
 {
-      delete singleton; 
-      singleton = NULL; 
+      delete singleton;
+      singleton = NULL;
 }
 
 DonnieClient::DonnieClient()
@@ -42,22 +41,31 @@ DonnieClient::DonnieClient()
 	if(port==0) port = 6665;
 	muted = false;
 
+	// Set up language environment
+	generator gen;
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieClient");
+	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+	cout.imbue(loc);
+	cerr.imbue(loc);
+
 	try{
 		robot = new PlayerClient(host,port);
 	} catch (PlayerError e){
 		#ifndef NDEBUG
 			cerr << e << endl;
 		#endif
-		cerr << "Não foi possivel conectar no robô com IP " << host << " porta " << port << endl;
-		cerr << "Possivelmente o Player não foi executado ou as variaveis DONNIE_IP e DONNIE_PORT estão erradas" << endl;
+		cerr << translate("Não foi possivel conectar no robô com IP ") << host << translate(" porta ")
+			 << port << endl;
+		cerr << translate("Possivelmente o Player não foi executado ou as variaveis DONNIE_IP e DONNIE_PORT estão erradas")
+			 << endl;
 		exit(1);
 	}
-	
-	try{		
-		//head = new PlayerClient("localhost",6666);
+
+	try{
 		p2dProxy = new Position2dProxy(robot,0);
 		p2d_headProxy = new Position2dProxy(robot,1);
-		//actuator = new ActArrayProxy(robot,0);
 		bpProxy = new BumperProxy(robot,0);
 		bfinderProxy = new BlobfinderProxy(robot,0);
 		sonarProxy = new RangerProxy(robot,0);
@@ -67,11 +75,11 @@ DonnieClient::DonnieClient()
 		#ifndef NDEBUG
 			cerr << e << endl;
 		#endif
-		cerr << "Não foi possível conectar no robô " << endl;
-		cerr << "Possivelmente o arquivo cfg está incorreto." << endl;
+		cerr << translate("Não foi possível conectar no robô ") << endl;
+		cerr << translate("Possivelmente o arquivo cfg está incorreto.") << endl;
 		exit(1);
 	}
-	
+
 	robot->StartThread();
 }
 
@@ -80,7 +88,7 @@ DonnieClient::~DonnieClient()
 {
 
 }
-	
+
 int DonnieClient::FrontBumper()
 {
   robot->ReadIfWaiting();
@@ -123,9 +131,9 @@ string DonnieClient::value_to_color(int color_value)
 	string donnie_path = GetEnv("DONNIE_PATH");
 
 	// read the color file according to the language
-	if(LANG == "pt-br")
+	if(strcmp(getenv("DONNIE_LANG"),"pt_BR") == 0)
 		donnie_path = donnie_path + "/resources/color_files/rgb-pt-br.txt";
-	else if (LANG == "eng")
+	else if (strcmp(getenv("DONNIE_LANG"),"en_US") == 0)
 		donnie_path = donnie_path + "/resources/color_files/rgb-en.txt";
 	else
 		donnie_path = donnie_path + "/resources/color_files/rgb-pt-br.txt";
@@ -142,16 +150,16 @@ string DonnieClient::value_to_color(int color_value)
 		{
 
 			stringstream str_buff;
-			str_buff << std::hex << color; //get hex value and convert to string.. 
-			str_buff >> file_value;		   //then put on an unsigned int 
+			str_buff << std::hex << color; //get hex value and convert to string..
+			str_buff >> file_value;		   //then put on an unsigned int
 			getline(file,color, '\n');
-			
-			if(file_value == color_value || file_value == 0xFFFFFFFF) 
+
+			if(file_value == color_value || file_value == 0xFFFFFFFF)
 			{
 				return color;
 			}
 			//smaller =  color_value - file_value;
-			//if(smaller_buff < smaller) 
+			//if(smaller_buff < smaller)
 			//{
 			//	return color_buff;
 			//}
@@ -161,10 +169,10 @@ string DonnieClient::value_to_color(int color_value)
 		file.close();
 	}
 	else{
-		cout << "Erro: arquivo de cores " << donnie_path << " não encontrado" << endl;
+		cout << translate("Erro: arquivo de cores ") << donnie_path << translate(" não encontrado") << endl;
 		exit(1);
 	}
-	
+
 	return color;
 }
 
@@ -174,6 +182,15 @@ int DonnieClient::color_to_value(string input_color)
 	string color;
 	ostringstream oss;
 	unsigned int file_value;
+
+	// Set up language environment
+	generator gen;
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieClient");
+	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+	cout.imbue(loc);
+	cerr.imbue(loc);
 
 	string donnie_path = GetEnv("DONNIE_PATH");
 
@@ -193,7 +210,7 @@ int DonnieClient::color_to_value(string input_color)
 		{
 
 			stringstream str_buff;
-			str_buff << std::hex << color; //convert 
+			str_buff << std::hex << color; //convert
 			str_buff >> file_value;
 			getline(file,color, '\n');
 
@@ -204,13 +221,13 @@ int DonnieClient::color_to_value(string input_color)
 		file.close();
 	}
 	else{
-		cout << "Erro: arquivo de cores " << donnie_path << " não encontrado" << endl;
+		cout << translate("Erro: arquivo de cores ") << donnie_path << translate(" não encontrado") << endl;
 		exit(1);
 	}
 
 	// return unknown color
 	return 0xFFFFFFFF;
-	
+
 }
 
 
@@ -226,7 +243,7 @@ float DonnieClient::GetRange(int arg)
 			case 1: //tras - S
 				return sonarProxy->GetRange(4)/STEP_LENGHT;
 
-			case 2: //frente-esquerda - NW 
+			case 2: //frente-esquerda - NW
 				return sonarProxy->GetRange(2)/STEP_LENGHT;
 
 			case 3: //frente-direita - NE
@@ -241,7 +258,7 @@ float DonnieClient::GetRange(int arg)
 			case 6: //cabeca - head
 				//return sonarProxy->GetRange(6)/STEP_LENGHT;
 				return headSonarProxy->GetRange(0)/STEP_LENGHT;
-*/				
+*/
 			default: // invalid
 				ostringstream buf;
 				buf << "Range id "<< arg << "invalid" << endl;
@@ -268,6 +285,14 @@ float DonnieClient::GetPos(Position2dProxy *p2d, int arg)
 	robot->ReadIfWaiting();
 	std::ostringstream sayStr;
 
+	// Set up language environment
+	generator gen;
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieClient");
+	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+	sayStr.imbue(loc);
+
 	switch(arg)
 	{
 		case 0:
@@ -277,7 +302,7 @@ float DonnieClient::GetPos(Position2dProxy *p2d, int arg)
 		case 2:
 			return radTOdeg(p2d->GetYaw());
 		case 3:
-			sayStr << "Estou no x " << (int)(p2d->GetXPos()/STEP_LENGHT) << ", no y " << (int)(p2d->GetYPos()/STEP_LENGHT) << " e virado para " << (int)(radTOdeg(p2d->GetYaw())) << " graus.";
+			sayStr << string(translate("Estou no x ")) << (int)(p2d->GetXPos()/STEP_LENGHT) << string(translate(", no y ")) << (int)(p2d->GetYPos()/STEP_LENGHT) << string(translate(" e virado para ")) << (int)(radTOdeg(p2d->GetYaw())) << string(translate(" graus."));
 			speak(sayStr.str());
 			return 0;
 		default:
@@ -309,6 +334,13 @@ int DonnieClient::moveForward(int arg)
 	bool collision = false;
 
 	double targetHypot = STEP_LENGHT*Npassos;
+
+	// Set up language environment
+	generator gen;
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieClient");
+	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
 
 	//validate step number
 	if(Npassos != 0){
@@ -361,18 +393,20 @@ int DonnieClient::moveForward(int arg)
 
 	// say command
 	std::ostringstream sayStr;
-		sayStr << "Andei " << ((collision||obstacle)?"somente ":"")  << int(passos) << " passos para frente.";
+	sayStr.imbue(loc);
+	string aux1 = string(translate("somente "));
+	sayStr << string(translate("Andei ")) << ((collision||obstacle)?aux1:"")  << int(passos) << string(translate(" passos para frente."));
 	if (collision)
-		sayStr << "Houve colisão;"; //colisao frontal
+		sayStr << string(translate("Houve colisão;")); //colisao frontal
 	if (obstacle)
-		sayStr << "Encontrei obstáculo.";
+		sayStr << string(translate("Encontrei obstáculo."));
 	speak(sayStr.str());
-	cout << sayStr.str() << endl;
+	//cout << sayStr.str() << endl;
 
 	/*#ifndef NDEBUG
 	cout << "obstaculo: " << obstacle << endl;
 	#endif*/
-	
+
 	// number of steps actually taken
 	return passos;
 }
@@ -392,6 +426,13 @@ int DonnieClient::moveBackward(int arg)
 
 	double targetHypot = STEP_LENGHT*Npassos;
 
+	// Set up language environment
+	generator gen;
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieClient");
+	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+
 	//validate step number
 	if(Npassos != 0){
 		//initial collision prevent - check if not are nearby obstacle to start movement
@@ -400,7 +441,7 @@ int DonnieClient::moveBackward(int arg)
 			p2dProxy->SetSpeed(-0.05,0);
 		else obstacle = true;
 
-		// hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) <= targetHypot 
+		// hypotf(p2dProxy->GetXPos() - posxi, p2dProxy->GetYPos() - posyi) <= targetHypot
 		while(passos < Npassos && collision==false && obstacle==false)
 		{
 			//#ifndef NDEBUG
@@ -443,18 +484,20 @@ int DonnieClient::moveBackward(int arg)
 
 	// say command
 	std::ostringstream sayStr;
-		sayStr << "Andei " << ((collision||obstacle)?"somente ":"")  << int(passos) << " passos para trás.";
+	sayStr.imbue(loc);
+	string aux1 = string(translate("somente "));
+	sayStr << string(translate("Andei ")) << ((collision||obstacle)?aux1:"")  << int(passos) << string(translate(" passos para trás."));
 	if (collision)
-		sayStr << "Houve colisão;"; //colisao frontal
+		sayStr << string(translate("Houve colisão;")); //colisao frontal
 	if (obstacle)
-		sayStr << "Encontrei obstáculo.";
+		sayStr << string(translate("Encontrei obstáculo."));
 	speak(sayStr.str());
-	cout << sayStr.str() << endl;
+	//cout << sayStr.str() << endl;
 
 	/*#ifndef NDEBUG
 	cout << "obstaculo: " << obstacle << endl;
 	#endif*/
-	
+
 	// number of steps actually taken
 	return passos;
 }
@@ -464,36 +507,53 @@ int DonnieClient::GotoTTS(float pa){
 	// call recursive Goto and return the actual move
 	//float actual_move = Goto(pa);
 	Goto(pa);
-	
+	//make sure that robot are stopped while speech
+	p2dProxy->SetSpeed(0,0);
+
+	// Set up language environment
+	generator gen;
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieClient");
+	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+
 	string direction;
 	if (pa < 0){
-		direction = "direita";
+		direction = string(translate("direita"));
 		pa = -pa;
 	}else
-		direction = "esquerda";
+		direction = string(translate("esquerda"));
 	// say command
 	// TODO: o comando pode ser interrompido por uma colizao.
 	// assim, está errado assumir que a distancia pedida será a distancia percorrida
 	std::ostringstream sayStr;
-	sayStr << "Girei " << int(pa) << " graus para " << direction << ".";
+	sayStr.imbue(loc);
+	sayStr << string(translate("Girei ")) << int(pa) << string(translate(" graus para ")) << direction << ".";
 	if (bumped())
-		sayStr << " Houve colisão.";
+		sayStr << string(translate(" Houve colisão."));
 	speak(sayStr.str());
 
-	return 0;	
+	return 0;
 }
 
 int DonnieClient::Goto(float pa){
 	//faz com que o goto funcione girando para o lado correto
-	DEBUG_MSG("ROTACAO:" << pa);
+
+	generator gen;
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieClient");
+	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+
+	DEBUG_MSG(string(translate("ROTACAO:")) << pa);
 	if(pa>0 && pa>170){
-		DEBUG_MSG("PARCIAL");
+		DEBUG_MSG(string(translate("PARCIAL")));
 		if(Goto(170)) return 1; //se qualquer batida ou erro acontecer retorna imediatamente
 		if(Goto(pa-170)) return 1; //se qualquer batida ou erro acontecer retorna imediatamente
 		return 0;
 	}
-	if(pa<0 && pa<-170){	
-		DEBUG_MSG("PARCIAL");
+	if(pa<0 && pa<-170){
+		DEBUG_MSG(string(translate("PARCIAL")));
 		if(Goto(-170)) return 1; //se qualquer batida ou erro acontecer retorna imediatamente
 		if(Goto(pa+170)) return 1; //se qualquer batida ou erro acontecer retorna imediatamente
 		return 0;
@@ -508,8 +568,8 @@ int DonnieClient::Goto(float pa){
 		p2dProxy->GoTo(p2dProxy->GetXPos(),p2dProxy->GetYPos(),paTarget); //soma o angulo desejado com o angulo inicial do robo
 		//DEBUG_MSG("           "<< "TH POS:" << p2dProxy->GetYaw());
 		//DEBUG_MSG("           "<< "TARGET:" << (paTarget)<<endl);
-	}while (p2dProxy->GetYaw()<=(paTarget)-errorOffset || 
-			p2dProxy->GetYaw()>=(paTarget)+errorOffset); 
+	}while (p2dProxy->GetYaw()<=(paTarget)-errorOffset ||
+			p2dProxy->GetYaw()>=(paTarget)+errorOffset);
 	p2dProxy->SetSpeed(0,0);
 	return 0;
 }
@@ -524,27 +584,32 @@ int DonnieClient::headGoto(float pa){
 		p2d_headProxy->GoTo(p2dProxy->GetXPos(),p2dProxy->GetYPos(), paTarget+p2dProxy->GetYaw()); //soma a posicao desejada da cabeca em relacao a base
 		//DEBUG_MSG("           "<< "TH POS:" << p2d_headProxy->GetYaw());
 		//DEBUG_MSG("           "<< "TARGET:" << (paTarget+p2dProxy->GetYaw())-errorOffsetYaw<<endl);
-	}while (p2d_headProxy->GetYaw()<=(paTarget+p2dProxy->GetYaw())-errorOffsetYaw || 
+	}while (p2d_headProxy->GetYaw()<=(paTarget+p2dProxy->GetYaw())-errorOffsetYaw ||
 			p2d_headProxy->GetYaw()>=(paTarget+p2dProxy->GetYaw())+errorOffsetYaw);  //0.5 is the parameter to validate the speed more fast
 	p2d_headProxy->SetSpeed(0,0);
 	return 0;
 }
 
 void DonnieClient::Scan(void){
+
 	float head_yawi = -90; //in degree. +90 due the servo default pos is 90 degre
 	//GOTO -90 to 90 in 30 by 30 steps
 	float sonar_readings[7];
 	int blobs_found[7];
 	int yaw_cnt=0;
-	int blobs_counter_buffer;	
+	int blobs_counter_buffer;
 	std::ostringstream scanText;
 	string color_str;
 
-
-
+	// Set up language environment
+	generator gen;
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieClient");
+	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
 
 	bool blob_flag = false;
-	int camera_width = bfinderProxy->GetWidth() - 1;  
+	int camera_width = bfinderProxy->GetWidth() - 1;
 	int nro_blobs = 0;
 	int nro_blobs_buffer = 0;
 
@@ -562,21 +627,21 @@ void DonnieClient::Scan(void){
 	//playerc_blobfinder_blob_t teste;
 
 
-	speak("Espiando");
+	speak(string(translate("Espiando")));
 	do{
 		// move headd
 		headGoto(head_yawi);
 		robot->ReadIfWaiting();
 		sleep(1);
-
 		// read sonar
-		headSonarProxy->GetRange(0)/100; ///STEP_LENGHT;  // read head sonar 
-		sonar_readings[yaw_cnt] = headSonarProxy->GetRange(0)/STEP_LENGHT;  // read head sonar 
+		headSonarProxy->GetRange(0)/100; ///STEP_LENGHT;  // read head sonar
+
+		sonar_readings[yaw_cnt] = headSonarProxy->GetRange(0)/STEP_LENGHT;  // read head sonar
 		blobs_found[yaw_cnt] = bfinderProxy->GetCount(); // get the number of blobs found
 		blobs_counter_buffer = blobs_found[yaw_cnt];
 
 
-	
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -590,26 +655,20 @@ void DonnieClient::Scan(void){
 				total_blobs_found[total_counter] = blob_buffer;
 				total_yaws[total_counter] = yaw_buffer;
 				total_counter++;
-				//nro_blobs++; 
+				//nro_blobs++;
 				blob_flag = false;
-				//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") blob adicionado! no 0!"<<endl;
 			}
 		}
 		else
 		{
-			//nro_blobs += nro_blobs_buffer;
 			for(int b = 0; b<nro_blobs_buffer;b++)
 			{
 
 				usleep(100);
 				int buffer_color =bfinderProxy->GetBlob(b).color;
-				//cout<<"numero de blobs "<<nro_blobs_buffer<<" ["<<b<<"] cor da blob:"<< buffer_color<<endl;
-				//cout<<"blob buffered:" << blob_buffer.color<<endl;
-				//cout<<"testando "<<teste.color<<endl;
-
-				if(bfinderProxy->GetBlob(b).right != (camera_width) && bfinderProxy->GetBlob(b).left==0) /// inacabado na ESQUERDA. 
+				if(bfinderProxy->GetBlob(b).right != (camera_width) && bfinderProxy->GetBlob(b).left==0) /// inacabado na ESQUERDA.
 				{
-					if (blob_flag ==true) 
+					if (blob_flag ==true)
 					{
 						if(blob_buffer.color !=buffer_color) // blobs with same colors! Para evitar que pegue a mesma blob 2x. Pode ocorrer outros erros.
 						{
@@ -617,29 +676,16 @@ void DonnieClient::Scan(void){
 							total_blobs_found[total_counter] = blob_buffer;
 							total_yaws[total_counter] = yaw_buffer;
 							total_counter++;
-							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<")"<<" blob adicionado! left antigo"<<endl;
-							//nro_blobs++; //don't change the number of blobs. one in, one out.
-							//blob_flag = false; keep the flag true!
-	
-							//then buffers the current blob.
-							//blob_buffer = bfinderProxy->GetBlob(b);
-
-							//mod aqui
 							yaw_buffer  = head_yawi;
-							//yaw_buffer = graus;
 						}
-						
+
 					}
 					else
 					{
-						//blob_buffer = bfinderProxy->GetBlob(b);
-						//modificado aqui
-						//yaw_buffer = graus;				//cout<<"blob adicionado! 2x (right e cor diferente)"<<endl;
 						yaw_buffer = head_yawi;
-						//nro_blobs--;
-						blob_flag = true; 
+						blob_flag = true;
 					}
-				}	
+				}
 				else if(bfinderProxy->GetBlob(b).right == (camera_width) && bfinderProxy->GetBlob(b).left !=0) //inacabado na DIREITA.
 				{
 					if (blob_flag ==true)
@@ -648,13 +694,9 @@ void DonnieClient::Scan(void){
 						{
 							total_blobs_found[total_counter] = blob_buffer;
 							//mod aqui
-							//total_yaws[total_counter] = (graus+yaw_buffer)/2;
 							total_yaws[total_counter] = (head_yawi+yaw_buffer)/2;
 							total_counter++;
 							blob_flag = false;
-							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color )<<") blob adicionado! right"<<endl;
-							//blob_buffer = bfinderProxy->GetBlob(b);
-
 						}
 						else  // blobs with different colors!
 						{
@@ -669,8 +711,6 @@ void DonnieClient::Scan(void){
 							total_yaws[total_counter] = head_yawi;//graus;
 							total_counter++;
 							blob_flag = false;
-						//	cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<<" ("<<value_to_color(buffer_color)<<") blob adicionado! 2x (right e cor diferente)"<<endl;
-							//blob_buffer = bfinderProxy->GetBlob(b);
 						}
 					}
 					else
@@ -680,23 +720,18 @@ void DonnieClient::Scan(void){
 							total_blobs_found[total_counter] =  bfinderProxy->GetBlob(b);
 							//mod aqui
 							total_yaws[total_counter] = head_yawi;//graus;
-							//cout<<"do buffer! "<<blob_buffer.color<<"iaiaia"<<endl;
-							//cout<<buffer_color<<" ("<<value_to_color(buffer_color)<<") blob adicionado! right sozinho"<<endl;
 							total_counter++;
-							//blob_buffer = bfinderProxy->GetBlob(b);
 						}
 
 					}
 				}
-				else if(bfinderProxy->GetBlob(b).right == (camera_width) && bfinderProxy->GetBlob(b).left==0) // inacabado nas DUAS pontas. 
+				else if(bfinderProxy->GetBlob(b).right == (camera_width) && bfinderProxy->GetBlob(b).left==0) // inacabado nas DUAS pontas.
 				{
 					if (blob_flag ==true)
 					{
 						if(blob_buffer.color == bfinderProxy->GetBlob(b).color)
 						{
 							blob_buffer = bfinderProxy->GetBlob(b);
-							//cout<<"ueahieauhea"<<endl;kkk
-							//nro_blobs--;
 						}
 						else
 						{
@@ -704,30 +739,21 @@ void DonnieClient::Scan(void){
 							total_blobs_found[total_counter] = blob_buffer;
 							total_yaws[total_counter] = yaw_buffer;
 							total_counter++;
-							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<< " ("<<value_to_color(buffer_color)<<") blob adicionado! middle de outra cor"<<endl;
-
-
-							//blob_buffer = bfinderProxy->GetBlob(b);
 							//mod aqui
-							yaw_buffer = head_yawi;//graus; 
+							yaw_buffer = head_yawi;//graus;
 
 						}
 
 					}
 					else
 					{
-
-						//blob_buffer = bfinderProxy->GetBlob(b);
-						//mod aqui
 						yaw_buffer = head_yawi;//graus;
-					//	nro_blobs--;
-						blob_flag = true; 
-						
+						blob_flag = true;
 					}
 				}
 				else // ok, tudo certo :}
 				{
-					if (blob_flag ==true) 
+					if (blob_flag ==true)
 					{
 
 						if(blob_buffer.color == buffer_color)
@@ -737,9 +763,6 @@ void DonnieClient::Scan(void){
 							total_yaws[total_counter] = head_yawi;//graus;
 							total_counter++;
 							blob_flag = false;
-							//cout<<buffer_color<<" ("<<value_to_color(buffer_color)<<") adicionado! no meio e left, iguais"<<endl;
-							//blob_buffer =  bfinderProxy->GetBlob(b);
-
 						}
 						else
 						{
@@ -747,19 +770,14 @@ void DonnieClient::Scan(void){
 							total_blobs_found[total_counter] = blob_buffer;
 							total_yaws[total_counter] = yaw_buffer;
 							total_counter++;
-							//nro_blobs++; 
 							blob_flag = false;
-
-							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<<" (" <<value_to_color(buffer_color)<<") blob adicionado! 2x (left e sozinho)"<<endl;
-							//blob_buffer = bfinderProxy->GetBlob(b);
-
 							//then buffers the current blob.
 							total_blobs_found[total_counter] =  blob_buffer;
 							//mod aqui
 							total_yaws[total_counter] = head_yawi;//graus;
 							total_counter++;
 						}
-						
+
 					}
 					else
 					{
@@ -767,15 +785,10 @@ void DonnieClient::Scan(void){
 						//mod aqui
 						total_yaws[total_counter] = head_yawi;// graus;
 						total_counter++;
-						//cout<<buffer_color<<" "<<value_to_color(buffer_color)<<" blob adicionado!sozinho!!"<<endl;
-						//blob_buffer = bfinderProxy->GetBlob(b);
 					}
 				}
-			//cout<<"!!!!!!!!!!!!!!blob buffered:" << bfinderProxy->GetBlob(b).color<<endl;
 			blob_buffer = bfinderProxy->GetBlob(b);
-			//teste = blob_buffer;
-			//cout<<"!!!!!!!!!!!!!!blob buffered:" << blob_buffer.color<<endl;
-			}	
+			}
 		}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -786,7 +799,7 @@ void DonnieClient::Scan(void){
 		graus +=30;
 		// TODO gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
 		sleep(2);
-		head_yawi = head_yawi + 30; // more + 30 degree 
+		head_yawi = head_yawi + 30; // more + 30 degree
 		yaw_cnt++;
 	}while (head_yawi < (90+30));
 	if(blob_flag ==true)
@@ -796,76 +809,36 @@ void DonnieClient::Scan(void){
 		total_counter++;
 		blob_flag = false;
 	}
-
-
-//str1.compare(str2) != 0
-
-
-
-//for(int i=0; i<total_counter; i++)
-//	{
-//
-//			cout<<value_to_color(total_blobs_found[i].color)<<endl;
-//
-//	}
-
-
-
-
-
-
-
-
-
 	//gambiarra
 	nro_blobs= 0;
 
 	for(int i=0; i<total_counter; i++)
 	{
-		//if((total_blobs_found[i].color != 1)) 
 		string buff = value_to_color(total_blobs_found[i].color);
-		
-		//cout << buff<<endl;
-		//cout<<buff.compare("desconhecido")<<" "<<nro_blobs<<endl;
-
-		if((buff.compare("desconhecido") != 0) && (total_yaws[i] <360))
+		if((buff.compare(string(translate("desconhecido"))) != 0) && (total_yaws[i] <360))
 		{
 			_total_blobs_found[nro_blobs] = total_blobs_found[i];
 			_total_yaws[nro_blobs] = total_yaws[i];
 			nro_blobs++;
 		}
-		//contador++;
-
 	}
-
-//	#ifndef NDEBUG
-//	cout<<endl<<endl<< "total blobs:"<< nro_blobs<<endl<<endl;
-//	for(int i=0; i<nro_blobs; i++)
-//	{
-//		   cout<<_total_blobs_found[i].color<<endl;
-//		   cout<<"objeto "<<i<<" de cor " << value_to_color(_total_blobs_found[i].color) << " a " << int(sonar_readings[i]) << " passos no grau " << _total_yaws[i] << endl; 
-//	}
-//	#endif
-
-
 	// go back to the initial position
 	headGoto(0);
-	robot->ReadIfWaiting(); 
+	robot->ReadIfWaiting();
 
-
+	scanText.imbue(loc);
 	for(int i=0; i<nro_blobs; i++)
 	{
-		//cout<<"objeto "<<i<<" de cor " << value_to_color(_total_blobs_found[i].color) << " a " << " passos no grau " << _total_yaws[i] << endl; 
 		// build string
 		if (_total_yaws[i] == 0)
-			scanText << "a frente: ";
+			scanText << string(translate("a frente: "));
 		else if (_total_yaws[i] < 0)
-			scanText << "a " << -_total_yaws[i] << " graus a direita: ";
-		else 
-			scanText << "a " << _total_yaws[i] << " graus a esquerda: ";
+			scanText << string(translate("a ")) << -_total_yaws[i] << string(translate(" graus a direita: "));
+		else
+			scanText << string(translate("a ")) << _total_yaws[i] << string(translate(" graus a esquerda: "));
 
-		scanText << " um objeto de cor " << value_to_color(_total_blobs_found[i].color) << " a " << int(sonar_readings[i]) << " passos";
-	
+		scanText << string(translate(" um objeto de cor ")) << value_to_color(_total_blobs_found[i].color) << string(translate(" a ")) << int(sonar_readings[i]) << string(translate(" passos"));
+
 		speak(scanText.str());
 
 		// TODO gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
@@ -880,16 +853,18 @@ int DonnieClient::Color(int color_code){
 
 
 	float head_yawi = -90; //in degree. +90 due the servo default pos is 90 degre
-	//GOTO -90 to 90 in 30 by 30 steps
-	//int blobs_found = 0;
-	//int total_blobs_found = 0;
-
-	//std::ostringstream scanText;
 	std:string color_str;
 	color_str = value_to_color(color_code);
-	speak("Procurando cor " + color_str);
 
-	
+	generator gen;
+	gen.add_messages_path(string(GetEnv("DONNIE_PATH")) + "/resources/loc");
+	gen.add_messages_domain("DonnieClient");
+	locale loc = gen(string(GetEnv("DONNIE_LANG")) + ".UTF-8");
+	locale::global(loc);
+
+	speak(string(translate("Procurando cor ")) + color_str);
+
+
 
 
 
@@ -897,7 +872,7 @@ int DonnieClient::Color(int color_code){
 	//GOTO -90 to 90 in 30 by 30 steps
 	float sonar_readings[7];
 	int yaw_cnt=0;
-	int blobs_counter_buffer;	
+	int blobs_counter_buffer;
 	std::ostringstream scanText;
 	//string color_str;
 
@@ -905,7 +880,7 @@ int DonnieClient::Color(int color_code){
 
 
 	bool blob_flag = false;
-	int camera_width = bfinderProxy->GetWidth() - 1;  
+	int camera_width = bfinderProxy->GetWidth() - 1;
 	int nro_blobs = 0;
 	int nro_blobs_buffer = 0;
 
@@ -920,10 +895,8 @@ int DonnieClient::Color(int color_code){
 	int total_counter=0;
 	int graus = 0;
 
-	//playerc_blobfinder_blob_t teste;
 
-
-	speak("Espiando");
+	speak(string(translate("Espiando")));
 	do{
 		// move headd
 		headGoto(head_yawi);
@@ -931,72 +904,46 @@ int DonnieClient::Color(int color_code){
 		sleep(1);
 
 		// read sonar
-		headSonarProxy->GetRange(0)/100; ///STEP_LENGHT;  // read head sonar 
-		sonar_readings[yaw_cnt] = headSonarProxy->GetRange(0)/STEP_LENGHT;  // read head sonar 
-		//blobs_found[yaw_cnt] = bfinderProxy->GetCount(); // get the number of blobs found
-		//blobs_counter_buffer = blobs_found[yaw_cnt];
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		headSonarProxy->GetRange(0)/100; ///STEP_LENGHT;  // read head sonar
+		sonar_readings[yaw_cnt] = headSonarProxy->GetRange(0)/STEP_LENGHT;  // read head sonar
 
 		nro_blobs_buffer = bfinderProxy->GetCount();
 		if(nro_blobs_buffer == 0 ) // caso nao tenha blobs, ainda tem que analisar pra ver se tem algum incompleto.
 		{
 			if (blob_flag ==true)
 			{
-				if(color_str ==value_to_color(blob_buffer.color))
-				{
 					total_blobs_found[total_counter] = blob_buffer;
 					total_yaws[total_counter] = yaw_buffer;
 					total_counter++;
-					nro_blobs++; 
 					blob_flag = false;
-					//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") blob adicionado! no 0!"<<endl;
-				}
-
 			}
 		}
 		else
 		{
-			//nro_blobs += nro_blobs_buffer;
 			for(int b = 0; b<nro_blobs_buffer;b++)
 			{
 				usleep(100);
 				int buffer_color = bfinderProxy->GetBlob(b).color;
-				//cout<<"numero de blobs "<<nro_blobs_buffer<<" ["<<b<<"] cor da blob:"<< buffer_color<<endl;
-				//cout<<"blob buffered:" << blob_buffer.color<<endl;
-				//cout<<"testando "<<teste.color<<endl;
-				if(color_str ==value_to_color(buffer_color))				
+
+				if(bfinderProxy->GetBlob(b).right != (camera_width) && bfinderProxy->GetBlob(b).left==0) /// inacabado na ESQUERDA.
 				{
-				if(bfinderProxy->GetBlob(b).right != (camera_width) && bfinderProxy->GetBlob(b).left==0) /// inacabado na ESQUERDA. 
-				{
-					if (blob_flag ==true) 
+					if (blob_flag ==true)
 					{
 						if(blob_buffer.color !=buffer_color) // blobs with same colors! Para evitar que pegue a mesma blob 2x. Pode ocorrer outros erros.
 						{
-							//add the buffered blob.
 							total_blobs_found[total_counter] = blob_buffer;
 							total_yaws[total_counter] = yaw_buffer;
 							total_counter++;
-							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<")"<<" blob adicionado! left antigo"<<endl;
-							//nro_blobs++; //don't change the number of blobs. one in, one out.
-							//blob_flag = false; keep the flag true!
-	
-							//then buffers the current blob.
-							//blob_buffer = bfinderProxy->GetBlob(b);
 							yaw_buffer = graus;
 						}
-						
+
 					}
 					else
 					{
-						//blob_buffer = bfinderProxy->GetBlob(b);
-						yaw_buffer = graus;				//cout<<"blob adicionado! 2x (right e cor diferente)"<<endl;
-						//nro_blobs--;
-						blob_flag = true; 
+						yaw_buffer = graus;
+						blob_flag = true;
 					}
-				}	
+				}
 				else if(bfinderProxy->GetBlob(b).right == (camera_width) && bfinderProxy->GetBlob(b).left !=0) //inacabado na DIREITA.
 				{
 					if (blob_flag ==true)
@@ -1007,9 +954,6 @@ int DonnieClient::Color(int color_code){
 							total_yaws[total_counter] = (graus+yaw_buffer)/2;
 							total_counter++;
 							blob_flag = false;
-							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color )<<") blob adicionado! right"<<endl;
-							//blob_buffer = bfinderProxy->GetBlob(b);
-
 						}
 						else  // blobs with different colors!
 						{
@@ -1023,8 +967,6 @@ int DonnieClient::Color(int color_code){
 							total_yaws[total_counter] = graus;
 							total_counter++;
 							blob_flag = false;
-						//	cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<<" ("<<value_to_color(buffer_color)<<") blob adicionado! 2x (right e cor diferente)"<<endl;
-							//blob_buffer = bfinderProxy->GetBlob(b);
 						}
 					}
 					else
@@ -1033,23 +975,17 @@ int DonnieClient::Color(int color_code){
 						{
 							total_blobs_found[total_counter] =  bfinderProxy->GetBlob(b);
 							total_yaws[total_counter] = graus;
-							//cout<<"do buffer! "<<blob_buffer.color<<"iaiaia"<<endl;
-							//cout<<buffer_color<<" ("<<value_to_color(buffer_color)<<") blob adicionado! right sozinho"<<endl;
 							total_counter++;
-							//blob_buffer = bfinderProxy->GetBlob(b);
 						}
-
 					}
 				}
-				else if(bfinderProxy->GetBlob(b).right == (camera_width) && bfinderProxy->GetBlob(b).left==0) // inacabado nas DUAS pontas. 
+				else if(bfinderProxy->GetBlob(b).right == (camera_width) && bfinderProxy->GetBlob(b).left==0) // inacabado nas DUAS pontas.
 				{
 					if (blob_flag ==true)
 					{
 						if(blob_buffer.color == bfinderProxy->GetBlob(b).color)
 						{
 							blob_buffer = bfinderProxy->GetBlob(b);
-							//cout<<"ueahieauhea"<<endl;kkk
-							//nro_blobs--;
 						}
 						else
 						{
@@ -1057,28 +993,20 @@ int DonnieClient::Color(int color_code){
 							total_blobs_found[total_counter] = blob_buffer;
 							total_yaws[total_counter] = yaw_buffer;
 							total_counter++;
-							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<< " ("<<value_to_color(buffer_color)<<") blob adicionado! middle de outra cor"<<endl;
-
-
-							//blob_buffer = bfinderProxy->GetBlob(b);
-							yaw_buffer = graus; 
+							yaw_buffer = graus;
 
 						}
 
 					}
 					else
 					{
-
-						//blob_buffer = bfinderProxy->GetBlob(b);
 						yaw_buffer = graus;
-					//	nro_blobs--;
-						blob_flag = true; 
-						
+						blob_flag = true;
 					}
 				}
 				else // ok, tudo certo :}
 				{
-					if (blob_flag ==true) 
+					if (blob_flag ==true)
 					{
 
 						if(blob_buffer.color == buffer_color)
@@ -1087,9 +1015,6 @@ int DonnieClient::Color(int color_code){
 							total_yaws[total_counter] = graus;
 							total_counter++;
 							blob_flag = false;
-							//cout<<buffer_color<<" ("<<value_to_color(buffer_color)<<") adicionado! no meio e left, iguais"<<endl;
-							//blob_buffer =  bfinderProxy->GetBlob(b);
-
 						}
 						else
 						{
@@ -1097,55 +1022,40 @@ int DonnieClient::Color(int color_code){
 							total_blobs_found[total_counter] = blob_buffer;
 							total_yaws[total_counter] = yaw_buffer;
 							total_counter++;
-							//nro_blobs++; 
+
 							blob_flag = false;
-
-							//cout<<blob_buffer.color<<" ("<<value_to_color(blob_buffer.color)<<") e "<<buffer_color<<" (" <<value_to_color(buffer_color)<<") blob adicionado! 2x (left e sozinho)"<<endl;
-							//blob_buffer = bfinderProxy->GetBlob(b);
-
-							//then buffers the current blob.
 							total_blobs_found[total_counter] =  blob_buffer;
 							total_yaws[total_counter] = graus;
 							total_counter++;
 						}
-						
+
 					}
 					else
 					{
 						total_blobs_found[total_counter] =  bfinderProxy->GetBlob(b);
 						total_yaws[total_counter] = graus;
 						total_counter++;
-						//cout<<buffer_color<<" "<<value_to_color(buffer_color)<<" blob adicionado!sozinho!!"<<endl;
-						//blob_buffer = bfinderProxy->GetBlob(b);
 					}
 				}
-				}
-
-
-			//cout<<"!!!!!!!!!!!!!!blob buffered:" << bfinderProxy->GetBlob(b).color<<endl;
 			blob_buffer = bfinderProxy->GetBlob(b);
-			//teste = blob_buffer;
-			//cout<<"!!!!!!!!!!!!!!blob buffered:" << blob_buffer.color<<endl;
-			}	
+			}
 		}
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		graus +=30;
 		// TODO gambiarra. deveria ter um método WaitUntilPlayed p aguardar o fim do audio
 		sleep(2);
-		head_yawi = head_yawi + 30; // more + 30 degree 
+		head_yawi = head_yawi + 30; // more + 30 degree
 		yaw_cnt++;
 
 
 	}while (head_yawi < (90+30));
-	
 
+				//
+	nro_blobs =0;
 	//gambiarra
 	for(int i=0; i<total_counter; i++)
 	{
-		if(total_blobs_found[i].color != 1) 
+		if(color_str ==value_to_color(total_blobs_found[i].color))
 		{
 			_total_blobs_found[nro_blobs] = total_blobs_found[i];
 			_total_yaws[nro_blobs] = total_yaws[i];
@@ -1156,21 +1066,21 @@ int DonnieClient::Color(int color_code){
 
 	// go back to the initial position
 	headGoto(0);
-	robot->ReadIfWaiting(); 
+	robot->ReadIfWaiting();
 
 
 
 
-
+	scanText.imbue(loc);
 	if (nro_blobs == 0)
 	{
-		scanText << "nenhum objeto encontrado com a cor " << color_str;
+		scanText << string(translate("nenhum objeto encontrado com a cor ")) << color_str;
 	}else 	if (nro_blobs == 1)
 	{
-		scanText << "1 objeto encontrado com a cor " << color_str;
-	}else	
+		scanText << string(translate("1 objeto encontrado com a cor ")) << color_str;
+	}else
 	{
-		scanText << nro_blobs << " objetos encontrados com a cor " << color_str;
+		scanText << nro_blobs << string(translate(" objetos encontrados com a cor ")) << color_str;
 	}
 
 	speak(scanText.str());
@@ -1180,7 +1090,7 @@ int DonnieClient::Color(int color_code){
 	scanText.clear();
 
 
-	
+
 	return nro_blobs;
 }
 
@@ -1200,7 +1110,7 @@ void DonnieClient::speak(string text)
 		speechProxy->Say(text.c_str());
 		//wait to complete speech (9 chars/seg)
 		sleep(text.length()/9.0);
-	}	
+	}
 }
 
 void DonnieClient::muteTTS(bool m)

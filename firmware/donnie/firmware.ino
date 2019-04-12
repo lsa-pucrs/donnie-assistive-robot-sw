@@ -245,11 +245,11 @@ void sendData(){
 	if(millis() - sendEncoderLastPrd >= SEND_ENCODER_FRQ){
 		//sendEncoderLastPrd = millis();  //debug timestamp
 		//encoderTimestamp = micros() - encoderTimestamp; //debug timestamp
-		sendEncoderMsg(m.counterR,m.counterL,m.getSpeedR(),m.getSpeedL());
+		sendEncoderMsg(counterR,counterL,m.getSpeedR(),m.getSpeedL());
 		//systemMsg(String("Ec:")+String(encoderTimestamp)+",us\n"); //debug timestamp
 		//encoderTimestamp = micros(); //debug timestamp
-		//systemMsg(String("Enc_R:")+String(m.counterR));
-		//systemMsg(String("|Enc_L:")+String(m.counterL)+"\n");
+		//systemMsg(String("Enc_R:")+String(counterR));
+		//systemMsg(String("|Enc_L:")+String(counterL)+"\n");
 	}
 	if(millis() - sendSystemMsgLastPrd >= SEND_SYSTEMMSG_FRQ){
 		sendSystemMsgLastPrd = millis();
@@ -287,7 +287,7 @@ void driver_config(){
 void setup(){
 	protocol_config();
 	status_config();
-    driver_config(); //after status_config beacuse led connection
+    driver_config(); //after status_config because led connection
 	ranger_config();
 	bumper_config();
 	motors_config();

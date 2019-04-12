@@ -1,0 +1,149 @@
+# Portuguese translations for PACKAGE package.
+# Copyright (C) 2018 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Automatically generated, 2018.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-06-30 23:37-0300\n"
+"PO-Revision-Date: 2018-03-13 03:50-0300\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: ../../../client/godonnie/Compiler.cpp:549
+msgid " segundos."
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:295
+#: ../../../client/godonnie/Compiler.cpp:320
+msgid ", bateu"
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:297
+#: ../../../client/godonnie/Compiler.cpp:322
+msgid ", não bateu"
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:513
+msgid "COMMENT: "
+msgstr "COMENTÁRIO: "
+
+#: ../../../client/godonnie/Compiler.cpp:785
+msgid "EXIT"
+msgstr "SAIR"
+
+#: ../../../client/godonnie/Compiler.cpp:196
+msgid "Erro ao salvar comando no log"
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:748
+msgid "Nenhum comando executado, posição ["
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:696
+msgid "Número de argumentos invalido."
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:498
+msgid "O cinto foi desligado com sucesso"
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:495
+msgid "O cinto foi ligado com sucesso"
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:473
+msgid "O som foi desligado com sucesso"
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:469
+msgid "O som foi ligado com sucesso"
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:121
+msgid "Out of memory trying to allocate ANTLR input stream\n"
+msgstr "Falta de memória tentando alocar stream de entrada ANTLR\n"
+
+#: ../../../client/godonnie/Compiler.cpp:150
+msgid "Out of memory trying to allocate parser\n"
+msgstr "Falta de memória tentando alocar parser\n"
+
+#: ../../../client/godonnie/Compiler.cpp:142
+msgid "Out of memory trying to allocate token stream\n"
+msgstr "Falta de memória tentando alocar token stream\n"
+
+#: ../../../client/godonnie/Compiler.cpp:334
+msgid "PD: "
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:351
+msgid "PE: "
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:283
+msgid "PF: "
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:308
+msgid "PT: "
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:162
+msgid "Parse error"
+msgstr "Erro de parse"
+
+#: ../../../client/godonnie/Compiler.cpp:535
+msgid "SPEAK: "
+msgstr "FALAR: "
+
+#: ../../../client/godonnie/Compiler.cpp:804
+msgid "Sintaxe não conhecida\n"
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:453
+msgid "Sintaxe não conhecida para comando '"
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:167
+msgid "Tree : "
+msgstr "Árvore: "
+
+#: ../../../client/godonnie/Compiler.cpp:134
+msgid "Unable to create the lexer due to malloc() failure\n"
+msgstr "Não foi possível criar lexer devido a falha de malloc()\n"
+
+#: ../../../client/godonnie/Compiler.cpp:546
+msgid "WAIT: "
+msgstr "ESPERA: "
+
+#: ../../../client/godonnie/Compiler.cpp:293
+#: ../../../client/godonnie/Compiler.cpp:318
+msgid "andou "
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:230
+msgid "bateu"
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:549
+msgid "esperando "
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:870
+msgid "null comp"
+msgstr "comparação nula"
+
+#: ../../../client/godonnie/Compiler.cpp:231
+msgid "não bateu"
+msgstr ""
+
+#: ../../../client/godonnie/Compiler.cpp:588
+msgid "while"
+msgstr "enquanto"
