@@ -98,8 +98,8 @@ XYZ.
 
 .. |Meet Donnie Brain!!!| image:: donnie-elet3.png
 
-.. image:: ArduinoShield.pdf
-.. image:: RaspShield.pdf
+.. image:: ArduinoShield.jpg
+.. image:: RaspShield.jpg
 
 
 Arduino Firmware
