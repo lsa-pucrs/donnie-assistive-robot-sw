@@ -50,7 +50,7 @@ como carregar o firmware
 Assembly the Arduino Part
 -------------
 Donnie's PCB
-============
+------------
 
 This repository has all files related to Donnie's hardware (PCB design,
 schematics, eletrical diagrams, gerber files, BOM files). Donnie has two
