@@ -77,6 +77,15 @@ the following steps:
    `Fusion PCB Order Submission
    Guidelines <http://support.seeedstudio.com/knowledgebase/articles/422482-fusion-pcb-order-submission-guidelines>`__
 
+Arduino Shield
+~~~~~~~~~~~~~
+
+.. image:: ArduinoShield.jpg
+
+Rasp Shield
+~~~~~~~~~~~
+.. image:: RaspShield.jpg
+
 Assembly
 ~~~~~~~~
 
@@ -97,9 +106,6 @@ If you want to change the PCB design, we recommend to use Eagle version
 XYZ.
 
 .. |Meet Donnie Brain!!!| image:: donnie-elet3.png
-
-.. image:: ArduinoShield.jpg
-.. image:: RaspShield.jpg
 
 
 Arduino Firmware
