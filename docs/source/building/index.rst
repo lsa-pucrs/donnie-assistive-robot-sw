@@ -111,5 +111,14 @@ XYZ.
 Arduino Firmware
 -------------
 
-explicar brevemente a organizacao do firmware
+The arduino firmware it’s directly connected with the Raspberry Pi, 
+which sends commands to the arduino that causes the motors to move 
+and the sensors to function. Shortly thereafter the arduino sends back 
+to the Raspberry Pi the information obtained by the sensors. The 
+`Player <https://playerstage-manual.readthedocs.io/en/latest/>`__
+server runs in the Rasp, which is connected with the 
+`GoDonnie <https://donnie-user-manual.readthedocs.io/en/stable/docs/godonnie/index.html>`__ 
+through the computer. The robot’s camera is 
+also connected through the Rasp, that receives the image from the camera 
+and sends to the Player, which processes the images.
 
