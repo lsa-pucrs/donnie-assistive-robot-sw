@@ -33,7 +33,7 @@ Modifying Donnie's Body
 -----------------------
 
 We used the Solidworks 2014 to model the robot. All the source files are
-in the `solidworks directory <>`__.
+in the `solidworks directory <https://github.com/lsa-pucrs/donnie-assistive-robot-sw/tree/feature-docs-rtd/docs/source/building/solidworks>`__.
 
 Visualization
 -------------
@@ -47,15 +47,14 @@ You can visualize the 3D PDF files with `Adobe Reader
 
    Meet Donnie !!!
 
-explica o shield, e como conecta ele no arduino. colocar diagrama e descreve as pinagens.
-como carregar o firmware
 
 Assembly the Arduino Part
 -------------
 Donnie's PCB
 ------------
 
-This repository has all files related to Donnie's hardware (PCB design,
+The `repository <https://github.com/lsa-pucrs/donnie-assistive-robot-sw/tree/feature-docs-rtd/docs/source/building>`__ 
+has all files related to Donnie's hardware (PCB design,
 schematics, eletrical diagrams, gerber files, BOM files). Donnie has two
 daugther boards (or 'shields'). One for the Arduino Mega and the other for 
 the Raspberry Pi.
@@ -73,9 +72,9 @@ If you just want to manufacture these boards as they are, we recommend
 the following steps:
 
 1. Send the Gerber ZIP files
-   (`ard-shield <ard-shield/ard_shield-160322-gerbers.zip>`__
+   (`ard-shield <ard-shield/gerbers/ard_shield-160322-gerbers.zip>`__
    and
-   `rasp-shield <rasp-shield/rasp_shield-gerber_files-160118.zip>`__)
+   `rasp-shield <rasp-shield/gerber_files/rasp_shield-gerber_files-160118.zip>`__)
    to manufacture to Seeedstudio. You should use the following tutorial
    `Fusion PCB Order Submission
    Guidelines <http://support.seeedstudio.com/knowledgebase/articles/422482-fusion-pcb-order-submission-guidelines>`__
