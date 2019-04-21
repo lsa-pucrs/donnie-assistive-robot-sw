@@ -125,6 +125,9 @@ into lower level commands and then sends them to the arduino. The arduino,
 in turn, commands directly the sensors and the actuators of the physical robot.
 
 
+.. image:: schematic.png
+
+
 The firmware is the code that intermediate between the GoDonnie 
 language and the hardware device, and it runs in the arduino.
 The arduino firmware it’s directly connected with the Raspberry Pi, 
