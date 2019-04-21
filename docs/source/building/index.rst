@@ -54,8 +54,8 @@ Donnie's PCB
 
 This repository has all files related to Donnie's hardware (PCB design,
 schematics, eletrical diagrams, gerber files, BOM files). Donnie has two
-daugther boards (or 'shields'). One for the Arduino Mega (see ard-shield
-dir) and the other for the Raspberry Pi (see rasp-shield dir).
+daugther boards (or 'shields'). One for the Arduino Mega and the other for 
+the Raspberry Pi.
 
 | The following image shows Donnie's brain and its electronics.
 | |Meet Donnie Brain!!!|
