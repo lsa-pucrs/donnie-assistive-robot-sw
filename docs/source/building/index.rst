@@ -7,7 +7,10 @@ Building Your Donnie Robot
 Introduction
 -------------
 
-This manual has all files required to understand how to build the Donnie's body with a 3D printer.
+This manual has all files required to understand how to build the Donnie robot. 
+It explains how to print the Donnie's body with a 3D printer and manufacture the 
+necessary boards. It also tells you the operation of the firmware and teaches you 
+how to assembly the parts.
 
 Required Material
 -----------------
@@ -30,7 +33,7 @@ Modifying Donnie's Body
 -----------------------
 
 We used the Solidworks 2014 to model the robot. All the source files are
-in the solidworks directory.
+in the `solidworks directory <>`__.
 
 Visualization
 -------------
@@ -131,7 +134,7 @@ and the sensors to function. Shortly thereafter the arduino sends back
 to the Raspberry Pi the information obtained by the sensors. The 
 `Player <https://playerstage-manual.readthedocs.io/en/latest/>`__
 server runs in the Rasp, which is connected with the GoDonnie 
-through the computer. The robot’s camera is 
-also connected through the Rasp, that receives the image from the camera 
-and sends to the Player, which processes the images.
+through the computer. The robot’s camera is also connected through 
+the Rasp, that receives the image from the camera and sends to the 
+Player, which processes the images.
 
