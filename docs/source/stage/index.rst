@@ -30,10 +30,10 @@ data available to your code.
 
 A simulation then, is composed of three parts:
 
-- Your code. This talks to Player.
-- Player. This takes your code and sends instructions to a robot. From the 
+-   Your code. This talks to Player.
+-   Player. This takes your code and sends instructions to a robot. From the 
     robot it gets sensor data and sends it to your code.
-- Stage. Stage interfaces with Player in the same way as a robot's hardware 
+-   Stage. Stage interfaces with Player in the same way as a robot's hardware 
     would. It receives instructions from Player and moves a simulated robot in a 
     simulated world, it gets sensor data from the robot in the simulation and 
     sends this to Player.
