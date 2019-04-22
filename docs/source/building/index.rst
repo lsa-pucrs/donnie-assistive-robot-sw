@@ -56,6 +56,7 @@ This repository has all files related to Donnie's hardware (PCB design,
 schematics, eletrical diagrams, gerber files, BOM files). Donnie has two
 daugther boards (or 'shields'). One for the Arduino Mega (see ard-shield
 dir) and the other for the Raspberry Pi (see rasp-shield dir).
+
 | The following image shows Donnie's brain and its electronics.
 | |Meet Donnie Brain!!!|
 
@@ -69,12 +70,21 @@ If you just want to manufacture these boards as they are, we recommend
 the following steps:
 
 1. Send the Gerber ZIP files
-   (`ard-shield <ard-shield/gerbers/ard_shield-160322-gerbers.zip>`__
+   (`ard-shield <ard-shield/ard_shield-160322-gerbers.zip>`__
    and
-   `rasp-shield <rasp-shield/gerber_files/rasp_shield-gerber_files-160118.zip>`__)
+   `rasp-shield <rasp-shield/rasp_shield-gerber_files-160118.zip>`__)
    to manufacture to Seeedstudio. You should use the following tutorial
    `Fusion PCB Order Submission
    Guidelines <http://support.seeedstudio.com/knowledgebase/articles/422482-fusion-pcb-order-submission-guidelines>`__
+
+Arduino Shield
+~~~~~~~~~~~~~
+
+.. image:: ArduinoShield.jpg
+
+Rasp Shield
+~~~~~~~~~~~
+.. image:: RaspShield.jpg
 
 Assembly
 ~~~~~~~~
@@ -88,6 +98,7 @@ boards:
 2. Print the PDF schemmatic and BOM file;
 3. Place and weld the componnects in the PCB with the BOM's indicated
    PART.
+
 Change the PCB Design
 ---------------------
 
@@ -96,9 +107,11 @@ XYZ.
 
 .. |Meet Donnie Brain!!!| image:: donnie-elet3.png
 
+
 Arduino Firmware
 -------------
 
-explicar brevemente a organizacao do firmware
 
+
+explicar brevemente a organizacao do firmware
 
