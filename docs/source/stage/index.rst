@@ -119,7 +119,7 @@ Player/Stage model parameters, let's look at the ``map.inc`` file that comes wit
 contains the ``floorplan`` model, which is used to describe the basic environment of the simulation 
 (i.e. walls the robots can bump into):
 
- ::
+::
 
     define floorplan model
     (
