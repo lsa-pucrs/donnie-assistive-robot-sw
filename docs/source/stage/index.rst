@@ -32,11 +32,11 @@ A simulation then, is composed of three parts:
 
    - Your code. This talks to Player.
    - Player. This takes your code and sends instructions to a robot. From the 
-   robot it gets sensor data and sends it to your code.
+    robot it gets sensor data and sends it to your code.
    - Stage. Stage interfaces with Player in the same way as a robot's hardware 
-   would. It receives instructions from Player and moves a simulated robot in a 
-   simulated world, it gets sensor data from the robot in the simulation and 
-   sends this to Player.
+    would. It receives instructions from Player and moves a simulated robot in a 
+    simulated world, it gets sensor data from the robot in the simulation and 
+    sends this to Player.
 
 In Player/Stage there are 3 kinds of file that you need to understand to get 
 going with Player/Stage:
@@ -107,6 +107,7 @@ This includes the basic environment, robots and other objects. The basic type of
 called "model", and you define a model using the following syntax:
 
 ::
+
     define model_name model
     (
          # parameters
@@ -119,6 +120,7 @@ contains the ``floorplan`` model, which is used to describe the basic environmen
 (i.e. walls the robots can bump into):
 
  ::
+ 
     define floorplan model
     (
     # sombre, sensible, artistic
