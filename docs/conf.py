@@ -44,7 +44,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'Donnie Developer Manual'
+project = 'Donnie User Manual'
 copyright = '2018, Alexandre Amory'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -197,7 +197,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'donnie.tex', 'Donnie Developer Documentation',
+  ('index', 'donnie.tex', 'Donnie Robot User Documentation',
    'Alexandre Amory', 'manual'),
 ]
 
@@ -227,7 +227,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-  ('index', 'donnie.tex', 'Donnie Developer Documentation',
+  ('index', 'donnie.tex', 'Donnie Robot User Documentation',
    ['Alexandre Amory'], 1),
    
 ]
