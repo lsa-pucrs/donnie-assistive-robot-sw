@@ -7,7 +7,10 @@ Building Your Donnie Robot
 Introduction
 -------------
 
-This manual has all files required to understand how to build the Donnie's body with a 3D printer.
+This manual has all files required to understand how to build the Donnie robot. 
+It explains how to print the Donnie's body with a 3D printer and manufacture the 
+necessary boards. It also tells you the operation of the firmware and teaches you 
+how to assembly the parts.
 
 Required Material
 -----------------
@@ -30,7 +33,7 @@ Modifying Donnie's Body
 -----------------------
 
 We used the Solidworks 2014 to model the robot. All the source files are
-in the solidworks directory.
+in the `solidworks directory <https://github.com/lsa-pucrs/donnie-assistive-robot-sw/tree/feature-docs-rtd/docs/source/building/solidworks>`__.
 
 Visualization
 -------------
@@ -44,18 +47,17 @@ You can visualize the 3D PDF files with `Adobe Reader
 
    Meet Donnie !!!
 
-explica o shield, e como conecta ele no arduino. colocar diagrama e descreve as pinagens.
-como carregar o firmware
 
 Assembly the Arduino Part
 -------------
 Donnie's PCB
 ------------
 
-This repository has all files related to Donnie's hardware (PCB design,
+The `repository <https://github.com/lsa-pucrs/donnie-assistive-robot-sw/tree/feature-docs-rtd/docs/source/building>`__ 
+has all files related to Donnie's hardware (PCB design,
 schematics, eletrical diagrams, gerber files, BOM files). Donnie has two
-daugther boards (or 'shields'). One for the Arduino Mega (see ard-shield
-dir) and the other for the Raspberry Pi (see rasp-shield dir).
+daugther boards (or 'shields'). One for the Arduino Mega and the other for 
+the Raspberry Pi.
 
 | The following image shows Donnie's brain and its electronics.
 | |Meet Donnie Brain!!!|
@@ -109,9 +111,32 @@ XYZ.
 
 
 Arduino Firmware
--------------
+-----------------
+
+Before explaining how the arduino firmware arrangement works,
+it’s important to learn a little about where the firmware takes 
+place throughout the project.
+There is the high level language called 
+`GoDonnie <https://donnie-user-manual.readthedocs.io/en/stable/docs/godonnie/index.html>`__,
+which connects with the Stage and the simulated robot or with the physical robot. 
+When this connection is established with the physical robot the Raspberry Pi, 
+that communicates with the language, translates the high level commands 
+into lower level commands and then sends them to the arduino. The arduino, 
+in turn, commands directly the sensors and the actuators of the physical robot.
 
 
+.. image:: schematic.png
 
-explicar brevemente a organizacao do firmware
+
+The firmware is the code that intermediate between the GoDonnie 
+language and the hardware device, and it runs in the arduino.
+The arduino firmware it’s directly connected with the Raspberry Pi, 
+which sends commands to the arduino that causes the motors to move 
+and the sensors to function. Shortly thereafter the arduino sends back 
+to the Raspberry Pi the information obtained by the sensors. The 
+`Player <https://playerstage-manual.readthedocs.io/en/latest/>`__
+server runs in the Rasp, which is connected with the GoDonnie 
+through the computer. The robot’s camera is also connected through 
+the Rasp, that receives the image from the camera and sends to the 
+Player, which processes the images.
 
