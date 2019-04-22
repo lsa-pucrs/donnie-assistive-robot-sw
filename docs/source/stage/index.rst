@@ -141,7 +141,7 @@ contains the ``floorplan`` model, which is used to describe the basic environmen
 We can see from the first line that they are defining a ``model`` called ``floorplan``.
 
 -  ``color``: Tells Player/Stage what colour to render this model, 
-    in this case it is going to be a shade of grey.
+   in this case it is going to be a shade of grey.
 -  ``boundary``: Whether or not there is a bounding box around the
    model. This is an example of a binary parameter, which means the if
    the number next to it is 0 then it is false, if it is 1 or over then
