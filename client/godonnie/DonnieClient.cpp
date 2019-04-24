@@ -68,11 +68,9 @@ DonnieClient::DonnieClient()
 		p2dProxy = new Position2dProxy(robot,0);
 		p2d_headProxy = new Position2dProxy(robot,1);
 		bpProxy = new BumperProxy(robot,0);
-		bfinderProxy = new BlobfinderProxy(robot,0);
 		sonarProxy = new RangerProxy(robot,0);
 		headSonarProxy = new RangerProxy(robot,1);
 		speechProxy = new SpeechProxy(robot,0);
-		dioProxy = new DioProxy(robot,0);
 	}catch (PlayerError e){
 		#ifndef NDEBUG
 			cerr << e << endl;
@@ -81,6 +79,27 @@ DonnieClient::DonnieClient()
 		cerr << translate("Possivelmente o arquivo cfg está incorreto.") << endl;
 		exit(1);
 	}
+
+	try{
+		bfinderProxy = new BlobfinderProxy(robot,0);
+	}catch (PlayerError e){
+		#ifndef NDEBUG
+			cerr << e << endl;
+		#endif
+		cerr << translate("Godonnie nao tem blobfinder ") << endl;
+	}
+
+
+
+	try{
+		dioProxy = new DioProxy(robot,1);
+	}catch (PlayerError e){
+		#ifndef NDEBUG
+			cerr << e << endl;
+		#endif
+		cerr << translate("O cinto está desabilitado e não vai ser usado ") << endl;
+	}
+
 
 	robot->StartThread();
 }

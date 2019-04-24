@@ -13,14 +13,14 @@ struct MotorPin_Out {
 };
 
 //Arduino MEGA - 6 PWM Pins
-MotorPin_Out arduinoPins[PINOUT_LENGTH] = {
+/*MotorPin_Out arduinoPins[PINOUT_LENGTH] = {
   { 8 , 0 }, { 9 , 0 }, { 10 , 0 }, { 11 , 0 }, { 12 , 0 }, { 13 , 0 }
-};
+};*/
 
 //Arduino NANO - 6 PWM Pins
-/*MotorPin_Out arduinoPins[PINOUT_LENGTH] = {
+MotorPin_Out arduinoPins[PINOUT_LENGTH] = {
   { 3 , 0 }, { 5 , 0 }, { 6 , 0 }, { 9 , 0 }, { 10 , 0 }, { 11 , 0 }
-};*/
+};
 
 void setup() {
   
@@ -81,7 +81,7 @@ void loop() {
 
         //Verifica se está dentro dos niveis aceitos de OUTPUT - 'A' até 'P'
         if ( (newValue >= 'A') && (newValue < 'A' + OUTPUT_LEVELS)) {
-          
+        
           //Determinar nivel numerico do OUTPUT
           arduinoPins[m_nFrameDataPos - 7].motOutputLevel = 255 - (newValue - 'A') * (OUTPUT_LEVELS + 1);
         }

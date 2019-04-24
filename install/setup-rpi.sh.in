@@ -19,6 +19,13 @@ export DONNIE_PATH="@DONNIE_PATH@"
 export DONNIE_SOURCE_PATH="@DONNIE_SOURCE_PATH@"
 # dir used to run Donnie
 export DONNIE_EXEC_PATH="${DONNIE_PATH}/test/stage"
+# donnie IP address. Use localhost for simulation mode. When the robot 
+# is used, this variable should have the robot`s IP address
+export DONNIE_IP=localhost
+export DONNIE_PORT=6665
+# donnie language, default from system
+export DONNIE_LANG="$LANGUAGE"
+
 #required to run donnie
 export PATH=${PATH}:${DONNIE_PATH}/bin
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${DONNIE_PATH}/lib/player
@@ -31,12 +38,33 @@ export LD_LIBRARY_PATH=/usr/local/lib/:${LD_LIBRARY_PATH}
 # required to compile donnie
 # run 'sudo find / -name "*.pc" -type f' to find all the pc files for pkg-config
 # run 'sudo find / -name "*.cmake" -type f' to find all the cmake files for cmake
+VER=$(lsb_release -sr)
+case "${VER}" in 
+	8.0)	
+		export CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/OpenCV/:/usr/share/cmake-2.8/Modules/Compiler/:/usr/share/cmake-2.8/Modules/Platform/:/usr/share/cmake-2.8/Modules/:/usr/local/lib/cmake/:/usr/local/share/cmake/Modules/
+		;;
+	*)
+		echo "Versão do sistema não suportada"
+		;;
+esac
 export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/lib/arm-linux-gnueabihf/pkgconfig:/usr/share/pkgconfig
-export CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/OpenCV/:/usr/share/cmake-2.8/Modules/Compiler/:/usr/share/cmake-2.8/Modules/Platform/:/usr/share/cmake-2.8/Modules/:/usr/local/lib/cmake/:/usr/local/share/cmake/Modules/
 
-alias ll='ls -lah'
 
 function donnie_check_var {
+	if [ -z "$DONNIE_LANG" ]; then
+		echo -e "${RED}ERROR:${NC} Need to set DONNIE_LANG environment variable\n"
+		echo -e "Example: export DONNIE_LANG=pt_BR\n"
+		exit 1
+	fi
+	if [ "$DONNIE_LANG" = "en_US" ]; then
+		donnie_check_var_en
+	fi
+	if [ "$DONNIE_LANG" = "pt_BR" ]; then
+		donnie_check_var_pt
+	fi
+}
+
+function donnie_check_var_en {
 	if [ -z "$DONNIE_PATH" ]; then
 		echo -e "${RED}ERROR:${NC} Need to set DONNIE_PATH environment variable\n"
 		echo -e "Example: export DONNIE_PATH=/opt/donnie\n"
@@ -49,8 +77,53 @@ function donnie_check_var {
 	fi  	
 }
 
-function donnie_update {
+function donnie_check_var_pt {
+	if [ -z "$DONNIE_PATH" ]; then
+		echo -e "${RED}ERRO:${NC} É necessário configurar a variável de ambiente DONNIE_PATH\n"
+		echo -e "Examplo: export DONNIE_PATH=/opt/donnie\n"
+		exit 1
+	fi  
+	if [ -z "$DONNIE_SOURCE_PATH" ]; then
+		echo -e "${RED}ERRO:${NC} É necessário configurar a variável de ambiente DONNIE_SOURCE_PATH\n"
+		echo -e "Examplo: export DONNIE_SOURCE_PATH=~/donnie/donnie-assistive-robot-sw\n"
+		exit 1
+	fi  	
+}
+
+function donnie_login {
+	ssh_donnie
+}
+
+#function donnie_mount {
+#	sudo sshfs pi@$DONNIE_IP:/ $RPI_ROOT_PATH -o transform_symlinks -o allow_other
+#}
+
+#function donnie_umount {
+#	sudo umount $RPI_ROOT_PATH
+#}
+
+function donnie_desktop_update {
 	donnie_check_var
+	if [ "$DONNIE_LANG" = "en_US" ]; then
+		donnie_desktop_update_en
+	fi
+	if [ "$DONNIE_LANG" = "pt_BR" ]; then
+		donnie_desktop_update_pt
+	fi
+}
+
+function donnie_desktop_update_en {
+	echo "Updating donnie in directory ${DONNIE_SOURCE_PATH}"
+    cd "${DONNIE_SOURCE_PATH}/build"
+	git pull origin devel
+	cmake ..
+	make -j 8
+	sudo make install
+	cd -
+	echo "Update complete"
+}
+
+function donnie_desktop_update_pt {
 	echo "Atualizando o Donnie no diretório ${DONNIE_SOURCE_PATH}"
     cd "${DONNIE_SOURCE_PATH}/build"
 	git pull origin devel
@@ -62,17 +135,87 @@ function donnie_update {
 }
 
 function donnie_player(){
-  donnie_check_var
-  echo "Executando Donnie software no diretório ${DONNIE_EXEC_PATH}"
+	donnie_check_var
+	if [ "$DONNIE_LANG" = "en_US" ]; then
+		donnie_player_en
+	fi
+	if [ "$DONNIE_LANG" = "pt_BR" ]; then
+		donnie_player_pt
+	fi
+}
+
+function donnie_player_en(){
+  echo "Running Donnie software in directory ${DONNIE_EXEC_PATH}"
   #nohup player ${DONNIE_EXEC_PATH}/server_donnie.cfg &> /dev/null &
-  xterm -e "player ${DONNIE_EXEC_PATH}/server_donnie.cfg &> /dev/null" &
-  sleep 5
-  xterm -e "${DONNIE_PATH}/bin/alerts  &> /dev/null" &
-  sleep 3
-  echo "Donnie executando ..."
+  
+  #Parse options
+  if [ "$1" = "-nogui" ] 
+  then
+    xterm -e "player ${DONNIE_EXEC_PATH}/server_donnie_nogui.cfg &> /dev/null" &
+	sleep 5
+	xterm -e "${DONNIE_PATH}/bin/alerts  &> /dev/null" &
+	sleep 3
+	echo "Running Donnie ..."
+  elif [ "$1" = "--help" ] || [ "$1" = "-h" ] 
+  then
+	echo "Donnie Player launcher"
+	echo "USAGE:  donnie_player [options]"
+	echo -e "\nWhere [options] can be:"
+	echo "  -h, --help         : print this message."
+	echo "  --nogui            : launch player without the graphical interface."
+	#echo "  -c                : acess launch config."
+  else  #default
+	xterm -e "player ${DONNIE_EXEC_PATH}/server_donnie.cfg &> /dev/null" &
+	sleep 5
+	xterm -e "${DONNIE_PATH}/bin/alerts  &> /dev/null" &
+	sleep 3
+	echo "Running Donnie ..."
+  fi
+}
+
+function donnie_player_pt(){
+  echo "Executando software Donnie no diretório ${DONNIE_EXEC_PATH}"
+  #nohup player ${DONNIE_EXEC_PATH}/server_donnie.cfg &> /dev/null &
+  
+  #Parse options
+  if [ "$1" = "-nogui" ] 
+  then
+    xterm -e "player ${DONNIE_EXEC_PATH}/server_donnie_nogui.cfg &> /dev/null" &
+	sleep 5
+	xterm -e "${DONNIE_PATH}/bin/alerts  &> /dev/null" &
+	sleep 3
+	echo "Donnie executando ..."
+  elif [ "$1" = "--help" ] || [ "$1" = "-h" ] 
+  then
+	echo "Lançador Donnie Player"
+	echo "USAGEM:  donnie_player [opções]"
+	echo -e "\nOnde [opções] pode ser:"
+	echo "  -h, --help         : imprime esta mensagem."
+	echo "  --nogui            : lança player sem a interface gráfica."
+	#echo "  -c                : acess launch config."
+  else  #default
+	xterm -e "player ${DONNIE_EXEC_PATH}/server_donnie.cfg &> /dev/null" &
+	sleep 5
+	xterm -e "${DONNIE_PATH}/bin/alerts  &> /dev/null" &
+	sleep 3
+	echo "Donnie executando ..."
+  fi
 }
 
 function donnie_kill(){
-  killall player
-  echo "Fechando Donnie ..."
+	killall player
+	if [ -z "$DONNIE_LANG" ]; then
+		echo -e "${RED}ERROR:${NC} Need to set DONNIE_LANG environment variable\n"
+		echo -e "Example: export DONNIE_LANG=pt_BR\n"
+	fi
+	if [ "$DONNIE_LANG" = "en_US" ]; then
+		echo "Closing donnie..."
+	fi
+	if [ "$DONNIE_LANG" = "pt_BR" ]; then
+		echo "Fechando donnie..."
+	fi
+}
+
+function donnie_robot_update {
+	echo "TO BE DONE !!!"
 }

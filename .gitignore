@@ -91,3 +91,6 @@ Player
 Stage
 docs/_build
 donnie-assistive-robot-sw
+
+# VSCODE
+*.vscode*
