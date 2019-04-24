@@ -29,9 +29,11 @@ if [ -z "$DONNIE_PATH" ]; then
     exit 1
 fi  
 echo -e "DONNIE_PATH=${DONNIE_PATH}\n"
-export DONNIE_SOURCE_PATH=${PWD}
+export DONNIE_SOURCE_PATH=${PWD}/donnie-assistive-robot-sw
 echo -e "DONNIE_SOURCE_PATH=${DONNIE_SOURCE_PATH}\n"
 
+sudo apt-get update
+sudo apt-get install -y lsb-release
 
 ##################################################
 # check the supported OS version and distribution
