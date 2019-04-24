@@ -33,7 +33,7 @@ Modifying Donnie's Body
 -----------------------
 
 We used the Solidworks 2014 to model the robot. All the source files are
-in the `solidworks directory <https://github.com/lsa-pucrs/donnie-assistive-robot-sw/tree/feature-docs-rtd/docs/source/building/solidworks>`__.
+in the `solidworks directory <https://github.com/lsa-pucrs/donnie-assistive-robot-3d/tree/master/solidworks>`__.
 
 Visualization
 -------------
@@ -53,7 +53,7 @@ Assembly the Arduino Part
 Donnie's PCB
 ------------
 
-The `repository <https://github.com/lsa-pucrs/donnie-assistive-robot-sw/tree/feature-docs-rtd/docs/source/building>`__ 
+The `repository <https://github.com/lsa-pucrs/donnie-assistive-robot-hw>`__ 
 has all files related to Donnie's hardware (PCB design,
 schematics, eletrical diagrams, gerber files, BOM files). Donnie has two
 daugther boards (or 'shields'). One for the Arduino Mega and the other for 
@@ -72,9 +72,9 @@ If you just want to manufacture these boards as they are, we recommend
 the following steps:
 
 1. Send the Gerber ZIP files
-   (`ard-shield <ard-shield/gerbers/ard_shield-160322-gerbers.zip>`__
+   (`ard-shield <https://github.com/lsa-pucrs/donnie-assistive-robot-hw/blob/master/ard-shield/gerbers/ard_shield-160322-gerbers.zip>`__
    and
-   `rasp-shield <rasp-shield/gerber_files/rasp_shield-gerber_files-160118.zip>`__)
+   `rasp-shield <https://github.com/lsa-pucrs/donnie-assistive-robot-hw/blob/master/rasp-shield/gerber_files/rasp_shield-gerber_files-160118.zip>`__)
    to manufacture to Seeedstudio. You should use the following tutorial
    `Fusion PCB Order Submission
    Guidelines <http://support.seeedstudio.com/knowledgebase/articles/422482-fusion-pcb-order-submission-guidelines>`__
@@ -95,8 +95,8 @@ After you receive the PCBs, then follow these steps to assemble the
 boards:
 
 1. First of all, separe and buy the components indicated in BOM file
-   (`ard-shield <ard-shield/BOM.txt>`__ and
-   `rasp-shield <rasp-shield/BOM.txt>`__);
+   (`ard-shield <https://github.com/lsa-pucrs/donnie-assistive-robot-hw/blob/master/ard-shield/BOM.txt>`__ and
+   `rasp-shield <https://github.com/lsa-pucrs/donnie-assistive-robot-hw/blob/master/rasp-shield/BOM.txt>`__);
 2. Print the PDF schemmatic and BOM file;
 3. Place and weld the componnects in the PCB with the BOM's indicated
    PART.
