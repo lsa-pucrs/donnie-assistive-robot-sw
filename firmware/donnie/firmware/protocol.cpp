@@ -1,8 +1,11 @@
 #include <Arduino.h>
 #include "protocol.h"
 /*Define the serial used: Serial=PC communication and Serial3=Raspberry comm*/
-#define SERIAL Serial
+#define SERIAL Serial3
 
+/*TODO melhoria. Implementar um ping de mão-dupla para que não ocorra enchimento 
+    do buffer Rx do Arduino caso haja uma desconexão momentânea
+*/
 void protocol_config(){
     SERIAL.begin(115200,SERIAL_8N1); // initialize the Serial communication
 }
@@ -221,7 +224,7 @@ int Player::writeData(uint8_t *tx_data, unsigned int tx_data_count){
     for(i=0;i<tx_data_count+3;i++) temp[i+3]=tx_data[i];//passa mensagem para a variavel temp 
     temp[i]=checksum(tx_data,tx_data_count);
     i++;
-    len=i;
+    len=i;    
     SERIAL.write(temp,len);
     SERIAL.flush(); // espera o fim da transmissao
     //interrupts(); //reativa a possibilidade de interrupcoes

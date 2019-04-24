@@ -453,7 +453,7 @@ void setMotorsTurn(uint8_t newMotorRTurn, uint8_t newMotorLTurn){
   if(newMotorRTurn==0x0F) motorLTurn=1;
   else motorLTurn=0;
 
-  if(newMotorLTurn==0x0F) motorRTurn=1;
+  if(newMotorLTurn==0xF0) motorRTurn=1;
   else motorRTurn=0;
 }
 /*
