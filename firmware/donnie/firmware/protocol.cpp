@@ -3,6 +3,9 @@
 /*Define the serial used: Serial=PC communication and Serial3=Raspberry comm*/
 #define SERIAL Serial3
 
+/*TODO melhoria. Implementar um ping de mão-dupla para que não ocorra enchimento 
+    do buffer Rx do Arduino caso haja uma desconexão momentânea
+*/
 void protocol_config(){
     SERIAL.begin(115200,SERIAL_8N1); // initialize the Serial communication
 }
