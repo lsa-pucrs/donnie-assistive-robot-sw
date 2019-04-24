@@ -3,4 +3,4 @@ mkdir -p build # no error if existing
 cd build/
 cmake ../
 make
-mv client-test ../
+mv soxplayer-test ../

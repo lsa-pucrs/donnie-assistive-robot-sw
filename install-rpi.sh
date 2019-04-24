@@ -108,12 +108,18 @@ echo -e "${GREEN}Raspberry Pi Set Up Completed !!!!${NC}\n"
 ##################################################
 # install commom packages
 ##################################################
+sudo apt-get install -y build-essential
+
 # nice to have, not mandatory
 sudo apt-get install -y geany
 
 #compilation utils
 echo -e "${GREEN}Installing Compilation Utils ... ${NC}\n"
-sudo apt-get install -y build-essential autoconf git pkg-config
+sudo apt-get install -y autoconf
+sudo apt-get install -y cmake
+sudo apt-get install -y cmake-curses-gui
+sudo apt-get install -y git
+sudo apt-get install -y pkg-config
 
 # Jessie installs cmake 3.0 by the default, but lubuntu 14.04 uses cmake 2.8
 # this gives some weird warnings when running cmake 3.0 on rpi.
@@ -126,39 +132,10 @@ sudo apt-get install -y build-essential autoconf git pkg-config
 #sudo apt-get update
 
 #apt-cache madison cmake
-sudo apt-get install -y cmake
 
 #sudo apt-get install -y cmake-data=2.8.9-1
 #sudo apt-get install -y cmake=2.8.9-1
 #sudo apt-get install -y cmake-curses-gui=2.8.9-1
-
-
-##################################################
-# set environment variables
-##################################################
-#required to run donnie
-export PATH=${PATH}:${DONNIE_PATH}/bin
-export LD_LIBRARY_PATH=/usr/lib:/usr/local/lib/:${LD_LIBRARY_PATH}
-# Opencv lib path
-export LD_LIBRARY_PATH=/usr/lib/arm-linux-gnueabihf/:${LD_LIBRARY_PATH}
-# Player lib path
-export LD_LIBRARY_PATH=/usr/local/lib/:${LD_LIBRARY_PATH}
-export LD_LIBRARY_PATH=${DONNIE_PATH}/lib/player:${LD_LIBRARY_PATH}
-
-# required to compile donnie
-# run 'sudo find / -name "*.pc" -type f' to find all the pc files for pkg-config
-# run 'sudo find / -name "*.cmake" -type f' to find all the cmake files for cmake
-case "${VER}" in 
-	8.0)
-		export 	CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-2.8/Modules/:/usr/share/cmake-2.8/Modules/Platform/:/usr/share/cmake-2.8/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib/cmake/:/usr/lib/fltk/:/usr/local/share/OpenCV/:/usr/share/OpenCV/
-		;;
-
-	*)
-		export CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-3.5/Modules/:/usr/share/cmake-3.5/Modules/Platform/:/usr/share/cmake-3.5/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib/cmake/Stage/:/usr/lib/fltk/
-		;;
-esac
-export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig/:/usr/lib/pkgconfig:/usr/lib/arm-linux-gnueabihf/pkgconfig/:/usr/share/pkgconfig/:${PKG_CONFIG_PATH}
-
 
 ##################################################
 # install Player depedencies
@@ -239,6 +216,32 @@ if [ ! -d "./donnie-assistive-robot-sw" ]; then
 	echo -e "${GREEN}Downloading Donnie source code from GitHub... ${NC}\n"
 	git clone -b devel https://github.com/lsa-pucrs/donnie-assistive-robot-sw.git
 fi
+
+##################################################
+# set environment variables
+##################################################
+#required to run donnie
+export PATH=${PATH}:${DONNIE_PATH}/bin
+export LD_LIBRARY_PATH=/usr/lib:/usr/local/lib/:${LD_LIBRARY_PATH}
+# Opencv lib path
+export LD_LIBRARY_PATH=/usr/lib/arm-linux-gnueabihf/:${LD_LIBRARY_PATH}
+# Player lib path
+export LD_LIBRARY_PATH=/usr/local/lib/:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=${DONNIE_PATH}/lib/player:${LD_LIBRARY_PATH}
+
+# required to compile donnie
+# run 'sudo find / -name "*.pc" -type f' to find all the pc files for pkg-config
+# run 'sudo find / -name "*.cmake" -type f' to find all the cmake files for cmake
+case "${VER}" in 
+	8.0)
+		export 	CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-2.8/Modules/:/usr/share/cmake-2.8/Modules/Platform/:/usr/share/cmake-2.8/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib/cmake/:/usr/lib/fltk/:/usr/local/share/OpenCV/:/usr/share/OpenCV/
+		;;
+
+	*)
+		export CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-3.5/Modules/:/usr/share/cmake-3.5/Modules/Platform/:/usr/share/cmake-3.5/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib/cmake/Stage/:/usr/lib/fltk/
+		;;
+esac
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig/:/usr/lib/pkgconfig:/usr/lib/arm-linux-gnueabihf/pkgconfig/:/usr/share/pkgconfig/:${PKG_CONFIG_PATH}
 
 ##################################################
 # Compile and install Player
