@@ -116,6 +116,7 @@ sudo apt-get install -y geany
 #compilation utils
 echo -e "${GREEN}Installing Compilation Utils ... ${NC}\n"
 sudo apt-get install -y autoconf
+sudo apt-get install -y gdb
 sudo apt-get install -y cmake
 sudo apt-get install -y cmake-curses-gui
 sudo apt-get install -y git
@@ -149,18 +150,16 @@ sudo apt-get install -y libpng12-dev
 #sudo apt-get install -y libdb5.1-stl
 sudo apt-get install -y libgnomecanvasmm-2.6-dev
 #sudo apt-get install -y python-gnome2
-sudo apt-get install -y libboost-all-dev  # overkill, the actually required libraries are boostthread, boostsignal, boostsystem
-#sudo apt-get install -y libboost-dev
+#sudo apt-get install -y libboost-all-dev  # overkill, the actually required libraries are boostthread, boostsignal, boostsystem
+sudo apt-get install -y libboost-signals-dev libboost-system-dev libboost-thread-dev
 # old OpenCV for older Player drivers
-# sudo apt-get install -y libopencv-dev # <= install all packages ... not required
-# sudo apt-get install -y libopencv-dev libopencv-core-dev libcv-dev libcvaux-dev libhighgui-dev
-sudo apt-get install -y libopencv-core-dev libhighgui-dev libcv-dev libopencv-dev 
+sudo apt-get install -y libopencv-dev libopencv-core-dev libcv-dev libcvaux-dev libhighgui-dev
 # alsa - sound player
 # http://player-stage-gazebo.10965.n7.nabble.com/CCmake-cannot-find-the-existing-asoundlib-h-for-ALSA-driver-td11198.html
 sudo apt-get install -y libasound2-dev
 # alsa alsa-tools  alsa-utils
 # for pmap
-#sudo apt-get install -y libgsl0-dev libxmu-dev
+sudo apt-get install -y libgsl0-dev libxmu-dev
 # for python bindings for Player clients - 
 # It is not recommended to use python due to limitations in the bindings. 
 # Things that work on a C/C++ client might not work on a Python client.
@@ -256,8 +255,7 @@ then
 	echo -e "${GREEN}Patching Player ... ${NC}\n"
 	patch -p1 < patch/festival/festival.patch
 	patch -p1 < patch/install/player_3.0.2_14.04.patch
-	patch -p1 < ../donnie-assistive-robot-sw/proxies/instalationSoundProxy.patch
-	echo -e "${GREEN}Patching Player for Donnie ... ${NC}\n"
+	patch -p1 < patch/donnie/instalationSoundProxy.patch
 fi
 mkdir -p build # mkdir -p is safer !
 cd build
