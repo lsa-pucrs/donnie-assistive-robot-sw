@@ -69,7 +69,7 @@ download.mp3
 
 # binaries
 client_test
-client-test
+#client-test
 Blobfindertest
 main
 Logo

@@ -164,14 +164,14 @@ void* keyboard_handler(void* arg)
 		break;
 	  case KEYCODE_J:
 		speed = 0;
-		turn = 1;
+		turn = -1;
 		cont->dirty = true;
 		lastKey = 'j';
 		//puts("j");
 		break;
 	  case KEYCODE_L:
 		speed = 0;
-		turn = -1;
+		turn = 1;
 		cont->dirty = true;
 		lastKey = 'l';
 		//puts("l");

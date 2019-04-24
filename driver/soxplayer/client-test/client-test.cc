@@ -38,7 +38,7 @@ int main(int argc, char *argv[]){
 			std::cout << "DONNIE_PATH is: " << env_p << '\n';
                         char buff[80];
                         strcpy(buff, env_p);
-                        strcat(buff,"/resources/sounds/step.wav");
+                        strcat(buff,"/resources/sounds/Eureka_R2D2.mp3");
 			sound.play(buff);
 		}else{
 			std::cout << "variable DONNIE_PATH not defined. run 'export DONNIE_PATH=<path to donnie installation>'\n";
