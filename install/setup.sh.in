@@ -31,7 +31,7 @@ export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/:${LD_LIBRARY_PATH}
 export LD_LIBRARY_PATH=/usr/local/lib64/:${LD_LIBRARY_PATH}
 export LD_LIBRARY_PATH=${DONNIE_PATH}/lib/player:${LD_LIBRARY_PATH}
 
-# required to compile donnie 
+# required to compile donnie
 # run 'sudo find / -name "*.pc" -type f' to find all the pc files for pkg-config
 # run 'sudo find / -name "*.cmake" -type f' to find all the cmake files for cmake
 VER=$(lsb_release -sr)

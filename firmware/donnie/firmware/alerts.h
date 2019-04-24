@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "messages.h"
+#include "motors.h"
 
 float battery; //TODO deixar como int32_t
 uint8_t lostConnectionFlag = 0;
@@ -179,6 +180,8 @@ void waitingConfigSequence(){
 }
 
 void connectionLostSequence(){
+  stop(); //Stops the robot wheels
+  
 	connection_lost_sequence.time = millis();
 	connection_lost_sequence.wait = connection_lost_sequence.time - connection_lost_sequence.lastTime;
 
