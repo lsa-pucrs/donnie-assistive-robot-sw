@@ -53,9 +53,9 @@ int main(int argc, char *argv[])
 		cout << "escrevendo arquivo..." << endl;
     	imwrite("teste.jpg", frame);
     	
-    	//namedWindow("Frame",WINDOW_AUTOSIZE);
-        //imshow( "Frame", frame );
-        //waitKey(0);
+    	namedWindow("Frame",WINDOW_AUTOSIZE);
+        imshow( "Frame", frame );
+        waitKey(100);
     	c.Read();
     }
 }

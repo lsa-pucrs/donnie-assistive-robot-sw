@@ -15,11 +15,19 @@ driver
 
 )
 
+TODO when one tries to reconnect the client to this driver, it stops to work.
+* Apparently the camera is shutdown after the client is closed, and it is not possible 
+* to reopen another client. One has to restart the Player server to reexecute the client.
+
+
 */
 /*
  * A simple example of how to write a driver that will be built as a
  * shared object.
  */
+
+
+
 
 // ONLY if you need something that was #define'd as a result of configure 
 // (e.g., HAVE_CFMAKERAW), then #include <config.h>, like so:
@@ -214,13 +222,13 @@ int Raspicam_driver::MainSetup()
 // Shutdown the device
 void Raspicam_driver::MainQuit()
 {
-  puts("Shutting example driver down");
+  puts("Shutting Raspicam_driver down");
 
   // Here you would shut the device down by, for example, closing a
   frame.release();
   tCamera.release();
 
-  puts("Example driver has been shutdown");
+  puts("Raspicam_driver has been shutdown");
 }
 
 
@@ -343,9 +351,9 @@ void Raspicam_driver::Main()
 extern "C" {
   int player_driver_init(DriverTable* table)
   {
-    puts("Example driver initializing  " );
+    puts("Raspicam_driver initializing  " );
     Raspicam_driver_Register(table);
-    puts("Example driver done");
+    puts("Raspicam_driver done");
     return(0);
   }
 }

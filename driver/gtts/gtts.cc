@@ -171,8 +171,13 @@ void Gtts::ProcessSpeechCmd(player_msghdr_t* hdr, player_speech_cmd_t &data){
 
 	// Determine language from DONNIE_LANG environment variable
 	string lang = getenv("DONNIE_LANG");
-	if (lang == "en_US") lang = "EN_us";
-	if (lang == "pt_BR") lang = "PT_br";
+	// any english will be replaced by US eng
+	if (lang.find("en_")) lang = "EN_us";
+	// any portuguese will be replaced by pt br
+	else if (lang.find("pt_")) lang = "PT_br";
+	else {
+		PLAYER_ERROR("[Gtts] DONNIE_LANG is either not defined or not known");
+		}
 	string langurl = "&tl=" + lang;
 
 	char url[1000];

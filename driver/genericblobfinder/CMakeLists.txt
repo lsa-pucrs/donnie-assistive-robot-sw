@@ -24,7 +24,7 @@ endif()
 # check depedencies - opencv 2
 #########
 # https://raw.githubusercontent.com/opencv/opencv/2.4/cmake/OpenCVConfig.cmake
-FIND_PACKAGE(OpenCV 2 REQUIRED)
+FIND_PACKAGE(OpenCV 3 REQUIRED)
 MESSAGE(STATUS "OpenCV_DIR = ${OpenCV_DIR}")
 
 IF(OpenCV_FOUND)

@@ -152,8 +152,8 @@ sudo apt-get install -y libgnomecanvasmm-2.6-dev
 #sudo apt-get install -y python-gnome2
 #sudo apt-get install -y libboost-all-dev  # overkill, the actually required libraries are boostthread, boostsignal, boostsystem
 sudo apt-get install -y libboost-signals-dev libboost-system-dev libboost-thread-dev
-# old OpenCV for older Player drivers
-sudo apt-get install -y libopencv-dev libopencv-core-dev libcv-dev libcvaux-dev libhighgui-dev
+# The Player drivers were compiled with opencv 3.1, so, do not install the default opencv because it is 2.4
+#sudo apt-get install -y libopencv-dev libopencv-core-dev libcv-dev libcvaux-dev libhighgui-dev
 # alsa - sound player
 # http://player-stage-gazebo.10965.n7.nabble.com/CCmake-cannot-find-the-existing-asoundlib-h-for-ALSA-driver-td11198.html
 sudo apt-get install -y libasound2-dev
