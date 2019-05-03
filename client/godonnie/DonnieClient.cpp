@@ -654,10 +654,12 @@ void DonnieClient::Scan(void){
 		headGoto(head_yawi);
 		robot->ReadIfWaiting();
 		sleep(1);
+		//TODO: Mudar de sonarProxy(6) para headSonarProxy(0)
 		// read sonar
-		headSonarProxy->GetRange(0)/100; ///STEP_LENGHT;  // read head sonar
-
-		sonar_readings[yaw_cnt] = headSonarProxy->GetRange(0)/STEP_LENGHT;  // read head sonar
+		sonarProxy->GetRange(6)/100;
+		//headSonarProxy->GetRange(0)/100; ///STEP_LENGHT;  // read head sonar
+		sonar_readings[yaw_cnt] = sonarProxy->GetRange(0)/STEP_LENGHT;
+		//sonar_readings[yaw_cnt] = headSonarProxy->GetRange(0)/STEP_LENGHT;  // read head sonar
 		blobs_found[yaw_cnt] = bfinderProxy->GetCount(); // get the number of blobs found
 		blobs_counter_buffer = blobs_found[yaw_cnt];
 
@@ -924,9 +926,12 @@ int DonnieClient::Color(int color_code){
 		robot->ReadIfWaiting();
 		sleep(1);
 
+		//TODO: Mudar de sonarProxy(6) para headSonarProxy(0)
 		// read sonar
-		headSonarProxy->GetRange(0)/100; ///STEP_LENGHT;  // read head sonar
-		sonar_readings[yaw_cnt] = headSonarProxy->GetRange(0)/STEP_LENGHT;  // read head sonar
+		sonarProxy->GetRange(6)/100;
+		//headSonarProxy->GetRange(0)/100; ///STEP_LENGHT;  // read head sonar
+		sonar_readings[yaw_cnt] = sonarProxy->GetRange(0)/STEP_LENGHT;
+		//sonar_readings[yaw_cnt] = headSonarProxy->GetRange(0)/STEP_LENGHT;  // read head sonar
 
 		nro_blobs_buffer = bfinderProxy->GetCount();
 		if(nro_blobs_buffer == 0 ) // caso nao tenha blobs, ainda tem que analisar pra ver se tem algum incompleto.
