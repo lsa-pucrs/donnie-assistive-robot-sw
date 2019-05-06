@@ -435,7 +435,7 @@ void Donnie::ProcessNeckPos2dPosCmd(player_msghdr_t* hdr, player_position2d_cmd_
 	//std::cout << "Atual pos.px:" << m_neck_pos_data.pos.px << " pos.py:" << m_neck_pos_data.pos.py << " pos.pa:"<< m_neck_pos_data.pos.pa << std::endl; //bits qnt
 	//std::cout << std::endl;
 
-	uint8_t servoDegree = map(data.pos.pa,M_PI/2,-M_PI/2,0,180);
+	uint8_t servoDegree = map(data.pos.pa,-M_PI/2,M_PI/2,0,180);
 
 	//printf("servoDegree:%d,data.pos.pa:%.2f\n",servoDegree,data.pos.pa);
 	tx_data_count=3;

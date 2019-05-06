@@ -473,16 +473,16 @@ void setMotorsActive(uint8_t newMotorRSpeed, uint8_t newMotorLSpeed){
 void pololuL()//interrupcao pro encoder 1
 {
   if(digitalRead(pololuBL)==1)
-   counterL++;
-  else
    counterL--;
+  else
+   counterL++;
 }
 void pololuR() //interrupcao pro encoder2
 { 
-    if(digitalRead(pololuBR)==1)
-     counterR--;//counter2++;
-    else
-     counterR++;//counter2--;
+  if(digitalRead(pololuBR)==1)
+    counterR++;
+  else
+    counterR--;
 }
 
 //TODO change name to setRightMotorPWMAndDirection, because the speed will be count in m/s
