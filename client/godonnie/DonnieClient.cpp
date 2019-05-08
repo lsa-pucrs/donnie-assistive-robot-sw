@@ -589,6 +589,7 @@ int DonnieClient::Goto(float pa){
 		p2dProxy->GoTo(p2dProxy->GetXPos(),p2dProxy->GetYPos(),paTarget); //soma o angulo desejado com o angulo inicial do robo
 		//DEBUG_MSG("           "<< "TH POS:" << p2dProxy->GetYaw());
 		//DEBUG_MSG("           "<< "TARGET:" << (paTarget)<<endl);
+		usleep(5000);
 	}while (p2dProxy->GetYaw()<=(paTarget)-errorOffset ||
 			p2dProxy->GetYaw()>=(paTarget)+errorOffset);
 	p2dProxy->SetSpeed(0,0);
