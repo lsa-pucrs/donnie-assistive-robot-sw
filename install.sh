@@ -174,9 +174,27 @@ source ./3rd-party/player-stage.sh
 cd $PWD
 
 ##################################################
-# install openCV 3.1
+# install openCV 3.2
 ##################################################
-source ./3rd-party/opencv.sh
+case "${VER}" in 
+	14.04)
+		# for this OS version, one can either compile the entire OpenCV or download a pre-built package
+		#source ./3rd-party/opencv.sh
+		sudo add-apt-repository -y ppa:lkoppel/opencv
+        sudo apt-get --allow-unauthenticated update -qq
+		;;
+	16.04)
+		# for this OS version, one can either compile the entire OpenCV or download a pre-built package
+		#source ./3rd-party/opencv.sh
+		sudo add-apt-repository -y ppa:lkoppel/opencv
+        sudo apt-get --allow-unauthenticated update -qq
+		;;
+	18.04)
+		# opencv 3.2 is the default opencv version for this distribution. no need to compile it from scratch
+		sudo apt-get install -y libopencv-dev
+		;;
+esac
+
 
 # return to the base dir
 cd $PWD

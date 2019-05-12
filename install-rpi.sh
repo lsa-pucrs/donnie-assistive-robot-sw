@@ -223,9 +223,11 @@ source ./3rd-party/player.sh
 cd $PWD
 
 ##################################################
-# install openCV 3.1
+# install openCV 3.2
 ##################################################
 source ./3rd-party/opencv.sh
+# TODO Igor aparentemente esse link mostra como instalar uma versao pre-compilada do opencv 3
+# https://www.pyimagesearch.com/2018/09/19/pip-install-opencv/
 
 # return to the base dir
 cd $PWD
