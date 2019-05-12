@@ -228,6 +228,8 @@ cd $PWD
 source ./3rd-party/opencv.sh
 # TODO Igor aparentemente esse link mostra como instalar uma versao pre-compilada do opencv 3
 # https://www.pyimagesearch.com/2018/09/19/pip-install-opencv/
+# tem esse outro
+# https://github.com/jabelone/OpenCV-for-Pi
 
 # return to the base dir
 cd $PWD
