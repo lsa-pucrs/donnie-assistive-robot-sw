@@ -1,3 +1,15 @@
 [submodule "docs/wiki/player-stage"]
 	path = docs/wiki/player-stage
 	url = https://github.com/lsa-pucrs/Player-Stage-Manual
+[submodule "3rd-party/Player"]
+	path = 3rd-party/Player
+	url = https://github.com/lsa-pucrs/Player.git
+	branch = master
+[submodule "3rd-party/Stage"]
+	path = 3rd-party/Stage
+	url = https://github.com/lsa-pucrs/Stage.git
+	branch = master
+[submodule "3rd-party/raspicam"]
+	path = 3rd-party/raspicam
+	url = https://github.com/lsa-pucrs/raspicam.git
+	branch = master

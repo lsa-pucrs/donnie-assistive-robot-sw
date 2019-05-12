@@ -47,12 +47,15 @@ OSNAME=$(lsb_release -sc)
 case "${OS}" in 
 	Ubuntu)
 		echo -e "${GREEN}NOTE:${NC} Ubuntu is only recommended for Destop computer, not VMs, and not Raspberry Pi\n"
-		echo -e "${GREEN}NOTE:${NC} Ubuntu 14.04 (trusty) is the recommended version for ${OS}\n"
+		echo -e "${GREEN}NOTE:${NC} Ubuntu 14.04 (trusty), 16.04 (xenial), and 18.04 (bionic) are the recommended version for ${OS}\n"
 		case "${VER}" in 
 			14.04)
 				echo -e "${GREEN}NOTE:${NC} ${OS} - ${VER} (${OSNAME} is the recommended OS version.\n"
 				;;
 			16.04)
+				echo -e "${GREEN}NOTE:${NC} ${OS} - ${VER} (${OSNAME} is the recommended OS version.\n"
+				;;
+			18.04)
 				echo -e "${GREEN}NOTE:${NC} ${OS} - ${VER} (${OSNAME} is the recommended OS version.\n"
 				;;
 			*)
@@ -65,9 +68,15 @@ case "${OS}" in
 		;;
 	Lubuntu)
 		echo -e "${GREEN}NOTE:${NC} Lubuntu is recommended for both Destop computers and VMs, but not for Raspberry Pi\n"
-		echo -e "${GREEN}NOTE:${NC} Lubuntu 14.04 (trusty) is the recommended version for ${OS}\n"
+		echo -e "${GREEN}NOTE:${NC} Lubuntu 14.04 (trusty), 16.04 (xenial), and 18.04 (bionic) are the recommended version for ${OS}\n"
 		case "${VER}" in 
 			14.04)
+				echo -e "${GREEN}NOTE:${NC} ${OS} - ${VER} (${OSNAME} is the recommended OS version.\n"
+				;;
+			16.04)
+				echo -e "${GREEN}NOTE:${NC} ${OS} - ${VER} (${OSNAME} is the recommended OS version.\n"
+				;;
+			18.04)
 				echo -e "${GREEN}NOTE:${NC} ${OS} - ${VER} (${OSNAME} is the recommended OS version.\n"
 				;;
 			*)
@@ -117,42 +126,6 @@ sudo apt-get install -y git
 sudo apt-get install -y pkg-config
 
 ##################################################
-# install Player/Stage depedencies
-##################################################
-echo -e "${GREEN}Installing Player/Stage Dependencies ... ${NC}\n"
-sudo apt-get install -y libfltk1.1-dev 
-sudo apt-get install -y freeglut3-dev 
-sudo apt-get install -y libpng12-dev 
-sudo apt-get install -y libltdl-dev 
-#libltdl7 
-case "${VER}" in 
-	14.04)
-		sudo apt-get install -y libdb5.1-stl
-		;;
-	16.04)
-		sudo apt-get install -y libdb5.3-stl
-		;;
-esac
-sudo apt-get install -y libgnomecanvasmm-2.6-dev
-#sudo apt-get install -y python-gnome2
-#sudo apt-get install -y libboost-all-dev  # overkill, the actually required libraries are boostthread, boostsignal, boostsystem
-sudo apt-get install -y libboost-signals-dev libboost-system-dev libboost-thread-dev
-# old OpenCV for older Player drivers
-sudo apt-get install -y libopencv-dev libopencv-core-dev libcv-dev libcvaux-dev libhighgui-dev
-# alsa - sound player
-# http://player-stage-gazebo.10965.n7.nabble.com/CCmake-cannot-find-the-existing-asoundlib-h-for-ALSA-driver-td11198.html
-sudo apt-get install -y libasound2-dev
-# alsa alsa-tools  alsa-utils
-# for pmap
-sudo apt-get install -y libgsl0-dev libxmu-dev
-# for python bindings for Player clients - 
-# It is not recommended to use python due to limitations in the bindings. 
-# Things that work on a C/C++ client might not work on a Python client.
-#sudo apt-get install -y python-dev swig
-# PostGIS for a Player driver
-sudo apt-get install -y libpq-dev libpqxx-dev
-
-##################################################
 # Downloading source code 
 ##################################################
 echo -e "${GREEN}Downloading Player source code from GitHub... ${NC}\n"
@@ -186,49 +159,27 @@ case "${VER}" in
 	16.04)
 		export CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-3.5/Modules/:/usr/share/cmake-3.5/Modules/Platform/:/usr/share/cmake-3.5/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib/cmake/Stage/:/usr/lib/fltk/:/usr/share/OpenCV/
 		;;
+	18.04)
+		export CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-3.10/Modules/:/usr/share/cmake-3.10/Modules/Platform/:/usr/share/cmake-3.10/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib/cmake/Stage/:/usr/lib/fltk/:/usr/share/OpenCV/
+		;;
 esac
-export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig/:/usr/lib/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig/:/usr/share/pkgconfig/:${PKG_CONFIG_PATH}
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig/:/usr/local/lib64/pkgconfig/:/usr/lib/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig/:/usr/share/pkgconfig/:${PKG_CONFIG_PATH}
 
 ##################################################
-# Compile and install Player/Stage 
+# install Player/Stage 
 ##################################################
-cd Player
-patch -p1 -N --dry-run --silent < patch/festival/festival.patch 2>/dev/null
-#If the patch has not been applied then the $? which is the exit status 
-#for last command would have a success status code = 0
-if [ $? -eq 0 ];
-then
-    #apply the patch
-	echo -e "${GREEN}Patching Player ... ${NC}\n"
-	patch -p1 < patch/festival/festival.patch
-	patch -p1 < patch/install/player_3.0.2_14.04.patch
-	patch -p1 < patch/donnie/instalationSoundProxy.patch
-fi
-mkdir -p build # mkdir -p is safer !
-cd build
-# Mandatory
-# DEBUG_LEVEL=NONE <==== important !!!
-# Recommended: Build the Python bindings for the C client library
-# BUILD_PYTHONCPP_BINDINGS:BOOL=ON
-# BUILD_PYTHONC_BINDINGS:BOOL=ON
-echo -e "${GREEN}Configuring Player ... ${NC}\n"
-cmake -DCMAKE_BUILD_TYPE=Release -DDEBUG_LEVEL=NONE -BUILD_PYTHONC_BINDINGS:BOOL=OFF ..
-echo -e "${GREEN}Compiling Player ... ${NC}\n"
-make -j ${NUM_CORES} 
-sudo make install
-echo -e "${GREEN}Player installed !!!! ${NC}\n"
+source ./3rd-party/player-stage.sh
 
-cd ../../Stage
-mkdir -p build
-cd build
-# Mandatory
-# CMAKE_BUILD_TYPE=release <==== important !!!
-echo -e "${GREEN}Configuring Stage  ... ${NC}\n"
-cmake -DCMAKE_BUILD_TYPE=Release ..
-echo -e "${GREEN}Compiling Stage ... ${NC}\n"
-make -j ${NUM_CORES}
-sudo make install
-echo -e "${GREEN}Stage installed !!!! ${NC}\n"
+# return to the base dir
+cd $PWD
+
+##################################################
+# install openCV 3.1
+##################################################
+source ./3rd-party/opencv.sh
+
+# return to the base dir
+cd $PWD
 
 ##################################################
 # install Donnie depedencies
@@ -241,6 +192,9 @@ case "${VER}" in
 		sudo apt-get install -y openjdk-7-jdk
 		;;
 	16.04)
+		sudo apt-get install -y openjdk-8-jdk
+		;;
+	18.04)
 		sudo apt-get install -y openjdk-8-jdk
 		;;
 esac
