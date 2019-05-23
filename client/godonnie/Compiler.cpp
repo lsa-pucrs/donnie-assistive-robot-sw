@@ -21,13 +21,22 @@ using std::cout;
 using std::endl;
 
 /// definition of the ranger tokens in Portuguese
-#define RANGER_N "f"   // 0
-#define RANGER_S "t"   // 1
+#define RANGER_NE "fd" // 0
+#define RANGER_N "f"   // 1
 #define RANGER_NW "fe" // 2
-#define RANGER_NE "fd" // 3
-#define RANGER_SW "te" // 4
+#define RANGER_SW "te" // 3
+#define RANGER_S "t"   // 4
 #define RANGER_SE "td" // 5
 //#define RANGER_HEAD "c" // 6
+
+/// definition of the ranger tokens in English
+#define RANGER_NE_ENG "fr" // 0
+#define RANGER_N_ENG "f"   // 1
+#define RANGER_NW_ENG "fl" // 2
+#define RANGER_SW_ENG "bl" // 3
+#define RANGER_S_ENG "b"   // 4
+#define RANGER_SE_ENG "br" // 5
+//#define RANGER_HEAD_ENG "h" // 6
 
 /// definition of the position tokens in Portuguese
 #define POSITION_X "x"
@@ -384,30 +393,30 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             float range;
             vector<string> tokens;
             split((char*)getText(tree),' ',tokens);
-			//if (tokens.size() != 2)
-				//throw sintaxeException("Sintaxe não conhecida ild(trepara comando '"+tokens[0]+"'\n");
+            //if (tokens.size() != 2)
+              //throw sintaxeException("Sintaxe não conhecida ild(trepara comando '"+tokens[0]+"'\n");
 
-			// get the ranger id
-			if (tokens[1] == RANGER_N)
-				arg = 0;
-			else if (tokens[1] == RANGER_S)
-				arg = 1;
-			else if (tokens[1] == RANGER_NW)
-				arg = 2;
-			else if (tokens[1] == RANGER_NE)
-				arg = 3;
-			else if (tokens[1] == RANGER_SW)
-				arg = 4;
-			else if (tokens[1] == RANGER_SE)
-				arg = 5;
-			//else if (tokens[1] == RANGER_HEAD)
-			//	arg = 6;
-			//else
-				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");
+            // get the ranger id
+            if ((tokens[1] == RANGER_NE) || (tokens[1] == RANGER_NE_ENG))
+              arg = 0;
+            else if ((tokens[1] == RANGER_N) || (tokens[1] == RANGER_N_ENG))
+              arg = 1;
+            else if ((tokens[1] == RANGER_NW) || (tokens[1] == RANGER_NW_ENG))
+              arg = 2;
+            else if ((tokens[1] == RANGER_SW) || (tokens[1] == RANGER_SW_ENG))
+              arg = 3;
+            else if ((tokens[1] == RANGER_S) || (tokens[1] == RANGER_S_ENG))
+              arg = 4;
+            else if ((tokens[1] == RANGER_SE) || (tokens[1] == RANGER_SE_ENG))
+              arg = 5;
+            //else if ((tokens[1] == RANGER_HEAD) || (tokens[1] == RANGER_HEAD_ENG))
+            //	arg = 6;
+            //else
+              //throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");
 
             range  = Donnie->GetRange(arg);
-			#ifndef NDEBUG
-            cout << "RANGER: " << arg << " " << (int)range << endl;
+	    #ifndef NDEBUG
+              cout << "RANGER: " << arg << " " << (int)range << endl;
             #endif
             return (int)range;
           }
@@ -417,36 +426,35 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree)
             int arg;
             vector<string> tokens;
             split((char*)getText(tree),' ',tokens);
-			//if (tokens.size() != 2)
-				//throw sintaxeException("Sintaxe não conhecida ild(trepara comando '"+tokens[0]+"'\n");
+            //if (tokens.size() != 2)
+              //throw sintaxeException("Sintaxe não conhecida ild(trepara comando '"+tokens[0]+"'\n");
 
-			// get the ranger id
-			// TODO ajustar a numeracao dos motores de vibracao
-			if (tokens[1] == RANGER_N)
-				arg = 8;
-			else if (tokens[1] == RANGER_S)
-				arg = 9;
-			else if (tokens[1] == RANGER_NW)
-				arg = 10;
-			else if (tokens[1] == RANGER_NE)
-				arg = 11;
-			else if (tokens[1] == RANGER_SW)
-				arg = 12;
-			else if (tokens[1] == RANGER_SE)
-				arg = 13;
-			//else if (tokens[1] == RANGER_HEAD)
-			//	arg = 6;
-			//else
-				//throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");
+            // get the ranger id
+            if ((tokens[1] == RANGER_NE) || (tokens[1] == RANGER_NE_ENG))
+              arg = 8;
+            else if ((tokens[1] == RANGER_N) || (tokens[1] == RANGER_N_ENG))
+              arg = 9;
+            else if ((tokens[1] == RANGER_NW) || (tokens[1] == RANGER_NW_ENG))
+              arg = 10;
+            else if ((tokens[1] == RANGER_SW) || (tokens[1] == RANGER_SW_ENG))
+              arg = 11;
+            else if ((tokens[1] == RANGER_S) || (tokens[1] == RANGER_S_ENG))
+              arg = 12;
+            else if ((tokens[1] == RANGER_SE) || (tokens[1] == RANGER_SE_ENG))
+              arg = 13;
+            //else if ((tokens[1] == RANGER_HEAD) || (tokens[1] == RANGER_HEAD_ENG))
+            //	arg = 14;
+            //else
+              //throw sintaxeException("Sintaxe não conhecida para comando '"+tokens[0]+"'\n");
 
-			// generate a vibration pulse of 1 second
-			//TODO test this pulse strategy . 1 second seem to be too long.
+            // generate a vibration pulse of 1 second
+            //TODO test this pulse strategy . 1 second seem to be too long.
             Donnie->vibrate(arg,'A');
             //sleep(1);
             //Donnie->vibrate(arg,'P');
             //sleep(1);
             #ifndef NDEBUG
-            cout << "VIBRATE: " << arg << endl;
+              cout << "VIBRATE: " << arg << endl;
             #endif
             break;
           }

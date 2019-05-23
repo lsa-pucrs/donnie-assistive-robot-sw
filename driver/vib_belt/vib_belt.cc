@@ -265,6 +265,7 @@ int Vibbelt::SetSingle(player_dio_cmd_t *dio){
 	}	
 	this->P[dio->count] = dio->digout;
 	Send();
+	this->P[dio->count] = 'P'; //Gambiarra: Impedir que a coluna continue ligada após o comando
 }
 
 int Vibbelt::Send(){
