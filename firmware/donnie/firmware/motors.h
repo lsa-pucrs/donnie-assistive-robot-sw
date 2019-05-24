@@ -449,11 +449,11 @@ void motorsCommandProcess(uint8_t *data){
 }
 
 
-void setMotorsTurn(uint8_t newMotorRTurn, uint8_t newMotorLTurn){ 
-  if(newMotorRTurn==0x0F) motorLTurn=1;
+void setMotorsTurn(uint8_t newMotorLTurn, uint8_t newMotorRTurn){ 
+  if(newMotorLTurn==0x0F) motorLTurn=1;
   else motorLTurn=0;
 
-  if(newMotorLTurn==0xF0) motorRTurn=1;
+  if(newMotorRTurn==0xF0) motorRTurn=1;
   else motorRTurn=0;
 }
 /*
