@@ -258,20 +258,20 @@ float DonnieClient::GetRange(int arg)
 		robot->ReadIfWaiting();
 		switch(arg)
 		{   // The order is NE N  NW SW S  SE HEAD
-			case 0: //frente - N
-				return sonarProxy->GetRange(1)/STEP_LENGHT; // /STEP_LENGHT to convert from m to steps
+			case 0: //frente-direita - NE
+				return sonarProxy->GetRange(0)/STEP_LENGHT; // /STEP_LENGHT to convert from m to steps
 
-			case 1: //tras - S
-				return sonarProxy->GetRange(4)/STEP_LENGHT;
+			case 1: //frente - N
+				return sonarProxy->GetRange(1)/STEP_LENGHT;
 
 			case 2: //frente-esquerda - NW
 				return sonarProxy->GetRange(2)/STEP_LENGHT;
 
-			case 3: //frente-direita - NE
-				return sonarProxy->GetRange(0)/STEP_LENGHT;
-
-			case 4: //tras-esquerda - SW
+			case 3: //tras-esquerda - SW
 				return sonarProxy->GetRange(3)/STEP_LENGHT;
+
+			case 4: //tras - S
+				return sonarProxy->GetRange(4)/STEP_LENGHT;
 
 			case 5: //tras-direita - SE
 				return sonarProxy->GetRange(5)/STEP_LENGHT;

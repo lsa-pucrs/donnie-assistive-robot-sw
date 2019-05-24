@@ -21,9 +21,9 @@ define donnie_sonars ranger
   donnie_sonar( pose [ 0.045 -0.045 -0.06 -45])
   donnie_sonar( pose [ 0.06350 0 -0.06 0])
   donnie_sonar( pose [ 0.045 0.045 -0.06 45])
-  donnie_sonar( pose [ -0.045 -0.045 -0.06 225])
-  donnie_sonar( pose [ -0.06350 0 -0.06 -180])
   donnie_sonar( pose [ -0.045 0.045 -0.06 -225])
+  donnie_sonar( pose [ -0.06350 0 -0.06 -180])
+  donnie_sonar( pose [ -0.045 -0.045 -0.06 225])
   
 
 )
