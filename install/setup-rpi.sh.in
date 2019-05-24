@@ -43,6 +43,9 @@ case "${VER}" in
 	8.0)	
 		export CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/OpenCV/:/usr/share/cmake-2.8/Modules/Compiler/:/usr/share/cmake-2.8/Modules/Platform/:/usr/share/cmake-2.8/Modules/:/usr/local/lib/cmake/:/usr/local/share/cmake/Modules/
 		;;
+	9.8)	
+		export CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/OpenCV/:/usr/share/cmake-3.7/Modules/Compiler/:/usr/share/cmake-3.7/Modules/Platform/:/usr/share/cmake-3.7/Modules/:/usr/local/lib/cmake/:/usr/local/share/cmake/Modules/
+		;;
 	*)
 		echo "Versão do sistema não suportada"
 		;;
