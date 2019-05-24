@@ -21,3 +21,5 @@ sudo apt-get install -y vlc
 #2) Executar processo da camera
 #raspivid -o - -t 99999 -w 640 -h 360 -fps 5 -vf|cvlc -vvv stream:///dev/stdin --sout '#standard{access=http,mux=ts,dst=:8090}' :demux=h264
 #Obs: Para conectar entrar no endereço (pelo streaming do VLC no PC) http://192.168.0.XX:8090 
+
+cd ../..

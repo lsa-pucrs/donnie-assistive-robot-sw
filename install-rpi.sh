@@ -64,11 +64,15 @@ case ${OS} in
 			8.0)
 				echo -e "${GREEN}NOTE:${NC} ${OS} - ${VER} (${OSNAME}) is the recommended OS version.\n"
 				;;
+			9.8)
+				echo -e "${GREEN}NOTE:${NC} ${OS} - ${VER} (${OSNAME}) is the recommended OS version.\n"
+				;;
+
 			*)
 				# Handle other OS versions here
 				echo -e "${ORANGE}WARNING:${NC} ${OS} - ${VER} (${OSNAME}) is not a recommended OS version. You might get errors and some programming experience is required to compile Donnie. \n"
 				echo -e "${GREEN}NOTE:${NC} Raspbian Version 8 (Jessie) is the recommended version for ${OS}\n"
-				exit 1;
+				#exit 1;
 			 ;;
 		esac
 		;;	
@@ -93,7 +97,7 @@ sudo systemctl mask serialgetty@ttyAMA0.service
 
 #Configurando o desligamento da raspberry (Shutdown) por interrupção do pino GPIO4
 #Referencia(No link tem outros uso para a GPIO Zero também): http://bennuttall.com/gpio-zero-developing-a-new-friendly-python-api-for-physical-computing/ 
-sudo apt-get install python3-gpiozero python-gpiozero
+sudo apt-get install -y python3-gpiozero python-gpiozero
 
 # '$' means the last line, 'i' means insert before the current line, so '$i' means insert before the last line.
 sudo sed -i -e '$i \sleep 10\n' /etc/rc.local ## this sleep is required to play festival. sometimes rc.locals plays too early
@@ -153,7 +157,8 @@ sudo apt-get install -y libcurl4-openssl-dev
 #Instalar o TIMIDITY para poder usar os canais virtuais de MIDI (Virtual MIDI Port) e usar notas musicais no autofalante 
 sudo apt-get install -y timidity
 # std terminal used in several linux distributions
-sudo apt-get install xterm
+sudo apt-get install -y xterm
+sudo apt-get install -y libboost-locale-dev
 
 #Testando saida do auto falante
 #$speaker-test -t sine -f 1000 -c 2
@@ -207,6 +212,9 @@ case "${VER}" in
 	8.0)
 		export 	CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-2.8/Modules/:/usr/share/cmake-2.8/Modules/Platform/:/usr/share/cmake-2.8/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib/cmake/:/usr/lib/fltk/:/usr/local/share/OpenCV/:/usr/share/OpenCV/
 		;;
+	9.8)
+		export 	CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-3.7/Modules/:/usr/share/cmake-3.7/Modules/Platform/:/usr/share/cmake-3.7/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib/cmake/:/usr/lib/fltk/:/usr/local/share/OpenCV/:/usr/share/OpenCV/
+		;;
 
 	*)
 		export CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-3.5/Modules/:/usr/share/cmake-3.5/Modules/Platform/:/usr/share/cmake-3.5/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib/cmake/Stage/:/usr/lib/fltk/
@@ -214,33 +222,34 @@ case "${VER}" in
 esac
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig/:/usr/lib/pkgconfig:/usr/lib/arm-linux-gnueabihf/pkgconfig/:/usr/share/pkgconfig/:${PKG_CONFIG_PATH}
 
+cd ./3rd-party/
 ##################################################
 # Compile and install Player
 ##################################################
-source ./3rd-party/player.sh
+source ./player.sh
 
 # return to the base dir
-cd $PWD
 
 ##################################################
 # install openCV 3.2
 ##################################################
-source ./3rd-party/opencv.sh
+source ./opencv-rpi.sh
+# pre-built packages https://yoursunny.com/t/2018/install-OpenCV3-PiZero/
 # TODO Igor aparentemente esse link mostra como instalar uma versao pre-compilada do opencv 3
 # https://www.pyimagesearch.com/2018/09/19/pip-install-opencv/
 # tem esse outro
 # https://github.com/jabelone/OpenCV-for-Pi
 
 # return to the base dir
-cd $PWD
+#cd ..
 
 ##################################################
 # Compiling raspicam driver
 ##################################################
-source ./3rd-party/raspicam.sh
+source ./raspicam.sh
 
 # return to the base dir
-cd $PWD
+cd ..
 
 ##################################################
 # Compiling and installing Donnie

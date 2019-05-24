@@ -142,3 +142,5 @@ echo -e "${GREEN}Compiling Player ... ${NC}\n"
 make -j ${NUM_CORES} 
 sudo make install
 echo -e "${GREEN}Player installed !!!! ${NC}\n"
+cd ../..
+
