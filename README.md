@@ -86,7 +86,8 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
  Open a terminal, download this script, and execute it
  
 	mkdir ~/donnie; cd ~/donnie
-	wget https://github.com/lsa-pucrs/donnie-assistive-robot-sw/raw/devel/install.sh
+	git clone --recurse-submodules -b devel https://github.com/lsa-pucrs/donnie-assistive-robot-sw.git
+	cd donnie-assistive-robot-sw
 	chmod +x ./install.sh
 	export DONNIE_PATH=/opt/donnie 
 	./install.sh
@@ -159,13 +160,16 @@ To build your own Donnie robot, please refer to the following repositories (gith
 
   This option is for programmers with experience with Raspberry Pi. 
 
+  Before compiling the code, It is important to increase the RPI swapfile. Follow these [steps](https://www.bitpi.co/2015/02/11/how-to-change-raspberry-pis-swapfile-size-on-rasbian/) to do it.
+
  [**Raspbian 8.0**](https://www.raspberrypi.org/downloads/raspbian/) (Jessie) is the recommended OS distribution for Donnie robot.
  Logon the Donnie's embedded computer, open a terminal, download this script, and execute it
 
 	mkdir ~/donnie; cd ~/donnie
-	wget https://github.com/lsa-pucrs/donnie-assistive-robot-sw/raw/devel/install-rpi.sh
-	chmod +x ./install-rpi.sh 
-	export DONNIE_PATH=/opt/donnie
+	git clone --recurse-submodules -b devel https://github.com/lsa-pucrs/donnie-assistive-robot-sw.git
+	cd donnie-assistive-robot-sw
+	chmod +x ./install-rpi.sh
+	export DONNIE_PATH=/opt/donnie 
 	./install-rpi.sh
 
  Experienced programmers can configure the same paramerters presented before for the Raspberry Pi.
