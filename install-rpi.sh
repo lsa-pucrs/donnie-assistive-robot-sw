@@ -271,6 +271,26 @@ echo -e "${GREEN}Donnie installed !!!! ${NC}\n"
 echo "source $DONNIE_PATH/setup.sh" >> ~/.bashrc
 
 ##################################################
+# Raspberry configurations
+##################################################
+sudo sed -i '$i \# Enable audio (loads snd_bcm2835)' /boot/config.txt
+sudo sed -i '$i \dtparam=audio=on' /boot/config.txt
+sudo sed -i '$i \start_x=1' /boot/config.txt
+sudo sed -i '$i \gpu_mem=128\n' /boot/config.txt
+sudo sed -i '$i \# Enable Serial' /boot/config.txt
+sudo sed -i '$i \enable_uart=1\n' /boot/config.txt
+sudo sed -i '$i \# Disable the Bluetooth' /boot/config.txt
+sudo sed -i '$i \# Enable audio (loads snd_bcm2835)\n' /boot/config.txt
+# Disable console trough aSerial
+sudo sed -i 's/console=serial0,115200 //' /boot/cmdline.txt
+sudo sed -i 's/console=ttyAMA0,115200 //' /boot/cmdline.txt
+# Set volume to 0.00 dB gain
+echo -e "amixer set 'PCM' 0" >> ~/.bashrc
+#Change Serial port for Player config file
+sed -i '9s/port/#port/' ${DONNIE_SOURCE_PATH}/driver/donnie/server_donnie.cfg
+sed -i '10s/#port/port/' ${DONNIE_SOURCE_PATH}/driver/donnie/server_donnie.cfg
+
+##################################################
 # uninstall all dev packages to save space
 ##################################################
 echo -e "${GREEN}Cleaning the cache ... ${NC}\n"
