@@ -5,7 +5,7 @@
 echo -e "${GREEN}Installing Player Dependencies ... ${NC}\n"
 #sudo apt-get install -y libfltk1.1-dev 
 #sudo apt-get install -y freeglut3-dev  # <= talvez nao precise no player se desabilitar pmap
-sudo apt-get install -y libpng12-dev 
+sudo apt-get install -y libpng12-dev #Verificar com Amory, comando abaixo desinstala esse
 #sudo apt-get install -y libltdl-dev 
 #sudo apt-get install -y libdb5.1-stl
 sudo apt-get install -y libgnomecanvasmm-2.6-dev
@@ -32,6 +32,7 @@ sudo apt-get install -y libpq-dev libpqxx-dev
 ##################################################
 
 cd Player
+set +e #Continue the script if there's already a patch applied
 patch -p1 -N --dry-run --silent < patch/festival/festival.patch 2>/dev/null
 #If the patch has not been applied then the $? which is the exit status 
 #for last command would have a success status code = 0
@@ -43,6 +44,7 @@ then
 	patch -p1 < patch/install/player_3.0.2_14.04.patch
 	patch -p1 < patch/donnie/instalationSoundProxy.patch
 fi
+set -e
 mkdir -p build # mkdir -p is safer !
 cd build
 echo -e "${GREEN}Configuring Player ... ${NC}\n"
