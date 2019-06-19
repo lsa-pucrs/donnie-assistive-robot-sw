@@ -51,6 +51,7 @@ sudo apt-get install -y libpq-dev libpqxx-dev
 # Compile and install Player/Stage 
 ##################################################
 cd Player
+set +e #Continue the script if there's already a patch applied
 patch -p1 -N --dry-run --silent < patch/festival/festival.patch 2>/dev/null
 #If the patch has not been applied then the $? which is the exit status 
 #for last command would have a success status code = 0
@@ -62,6 +63,7 @@ then
 	patch -p1 < patch/install/player_3.0.2_14.04.patch
 	patch -p1 < patch/donnie/instalationSoundProxy.patch
 fi
+set -e
 mkdir -p build # mkdir -p is safer !
 cd build
 # Mandatory
@@ -94,4 +96,5 @@ echo -e "${GREEN}Compiling Stage ... ${NC}\n"
 make -j ${NUM_CORES}
 sudo make install
 echo -e "${GREEN}Stage installed !!!! ${NC}\n"
+cd ../..
 

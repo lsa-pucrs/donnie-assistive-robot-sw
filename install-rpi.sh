@@ -249,7 +249,7 @@ source ./opencv-rpi.sh
 source ./raspicam.sh
 
 # return to the base dir
-cd ..
+cd $PWD
 
 ##################################################
 # Compiling and installing Donnie

@@ -24,7 +24,7 @@ export DONNIE_EXEC_PATH="${DONNIE_PATH}/test/stage"
 export DONNIE_IP=localhost
 export DONNIE_PORT=6665
 # donnie language, default from system
-export DONNIE_LANG="$LANG"
+export DONNIE_LANG=$(echo $LANG | cut -d'.' -f1)
 
 #required to run donnie
 export PATH=${PATH}:${DONNIE_PATH}/bin

@@ -20,7 +20,7 @@ export DONNIE_EXEC_PATH="${DONNIE_PATH}/test/stage"
 export DONNIE_IP=localhost
 export DONNIE_PORT=6665
 # donnie language, default from system
-export DONNIE_LANG="$LANGUAGE"
+export DONNIE_LANG=$(echo $LANG | cut -d'.' -f1)
 
 #required to run donnie
 export PATH=${PATH}:${DONNIE_PATH}/bin
@@ -41,6 +41,12 @@ case "${VER}" in
 		;;
 	16.04)
 		export CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-3.5/Modules/:/usr/share/cmake-3.5/Modules/Platform/:/usr/share/cmake-3.5/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib/cmake/Stage/:/usr/lib/fltk/:/usr/share/OpenCV/
+		;;
+	18.04)
+		export CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}:/usr/share/cmake-3.10/Modules/:/usr/share/cmake-3.10/Modules/Platform/:/usr/share/cmake-3.10/Modules/Compiler/:/usr/local/share/cmake/Modules:/usr/local/lib/cmake/Stage/:/usr/lib/fltk/:/usr/share/OpenCV/
+		;;
+	*)
+		echo "Versão do sistema não suportada"
 		;;
 esac
 export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig/:/usr/lib/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig/:/usr/share/pkgconfig/:${PKG_CONFIG_PATH}

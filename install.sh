@@ -29,7 +29,7 @@ if [ -z "$DONNIE_PATH" ]; then
     exit 1
 fi  
 echo -e "DONNIE_PATH=${DONNIE_PATH}\n"
-export DONNIE_SOURCE_PATH=${PWD}/donnie-assistive-robot-sw
+export DONNIE_SOURCE_PATH=${PWD}
 echo -e "DONNIE_SOURCE_PATH=${DONNIE_SOURCE_PATH}\n"
 
 sudo apt-get update
@@ -128,14 +128,14 @@ sudo apt-get install -y pkg-config
 ##################################################
 # Downloading source code 
 ##################################################
-echo -e "${GREEN}Downloading Player source code from GitHub... ${NC}\n"
-git clone https://github.com/lsa-pucrs/Player.git
+#echo -e "${GREEN}Downloading Player source code from GitHub... ${NC}\n"
+#git clone https://github.com/lsa-pucrs/Player.git
 
-echo -e "${GREEN}Downloading Stage source code from GitHub... ${NC}\n"
-git clone https://github.com/lsa-pucrs/Stage.git
+#echo -e "${GREEN}Downloading Stage source code from GitHub... ${NC}\n"
+#git clone https://github.com/lsa-pucrs/Stage.git
 
-echo -e "${GREEN}Downloading Donnie source code from GitHub... ${NC}\n"
-git clone -b devel https://github.com/lsa-pucrs/donnie-assistive-robot-sw.git
+#echo -e "${GREEN}Downloading Donnie source code from GitHub... ${NC}\n"
+#git clone -b devel https://github.com/lsa-pucrs/donnie-assistive-robot-sw.git
 
 ##################################################
 # set environment variables
@@ -165,13 +165,14 @@ case "${VER}" in
 esac
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig/:/usr/local/lib64/pkgconfig/:/usr/lib/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig/:/usr/share/pkgconfig/:${PKG_CONFIG_PATH}
 
+cd ./3rd-party/
 ##################################################
 # install Player/Stage 
 ##################################################
-source ./3rd-party/player-stage.sh
+source ./player-stage.sh
 
 # return to the base dir
-cd $PWD
+#cd $PWD
 
 ##################################################
 # install openCV 3.2
@@ -201,7 +202,6 @@ cd $PWD
 
 ##################################################
 # install Donnie depedencies
-# compile and install Donnie
 ##################################################
 # Donnie's depedencies
 echo -e "${GREEN}Installing Donnie Dependencies ... ${NC}\n"
@@ -242,6 +242,9 @@ sudo locale-gen pt_BR
 # saves some 700MB in disk by removing docs
 #sudo apt-get --purge remove -y tex.\*-doc$
 
+##################################################
+# Compiling and installing Donnie
+##################################################
 cd "${DONNIE_SOURCE_PATH}"
 mkdir -p build
 cd build
