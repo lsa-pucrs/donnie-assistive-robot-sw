@@ -177,25 +177,28 @@ source ./player-stage.sh
 ##################################################
 # install openCV 3.2
 ##################################################
+echo -e "${GREEN}Installing OpenCV ... ${NC}\n"
 case "${VER}" in 
 	14.04)
 		# for this OS version, one can either compile the entire OpenCV or download a pre-built package
 		#source ./3rd-party/opencv.sh
 		sudo add-apt-repository -y ppa:lkoppel/opencv
-        sudo apt-get --allow-unauthenticated update -qq
+        	sudo apt-get --allow-unauthenticated update -qq
+		sudo apt-get install -y libopencv-dev
 		;;
 	16.04)
 		# for this OS version, one can either compile the entire OpenCV or download a pre-built package
 		#source ./3rd-party/opencv.sh
 		sudo add-apt-repository -y ppa:lkoppel/opencv
-        sudo apt-get --allow-unauthenticated update -qq
+        	sudo apt-get --allow-unauthenticated update -qq
+		sudo apt-get install -y libopencv-dev
 		;;
 	18.04)
 		# opencv 3.2 is the default opencv version for this distribution. no need to compile it from scratch
 		sudo apt-get install -y libopencv-dev
 		;;
 esac
-
+echo -e "${GREEN}OpenCV installed !!!! ${NC}\n"
 
 # return to the base dir
 cd $PWD
