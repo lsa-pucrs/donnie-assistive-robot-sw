@@ -222,3 +222,12 @@ function donnie_kill(){
 function donnie_robot_update {
 	echo "TO BE DONE !!!"
 }
+
+#Running Player and Alerts, checking whether they're already up or not.
+if ps -ef | grep 'player' | grep 'donnie'; then
+    echo "Donnie is already running in this Raspberry"
+else
+    player ~/donnie/donnie-assistive-robot-sw/driver/donnie/server_donnie.cfg &
+    alerts &
+fi
+
