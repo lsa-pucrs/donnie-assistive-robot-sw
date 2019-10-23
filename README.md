@@ -23,6 +23,8 @@ Donnie project proposes an inclusive robotic programming environment where all s
 
 Donnie comes with two usage options: simulated robot and physical robot. It is recommended to start with the simulated since it does not require building the robot. Moreover, currently the physical robot is functional, but it is still under test.
 
+Currently Donnie is working fine in Linux Operating System, it is not working on Windows Operating Sytem neither in MacOS.
+
 Contents
 --------
 
@@ -54,42 +56,40 @@ TODO colocar um link do Donnie no youtube
 alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 -->
 
-  The simulation is recommended if you want to known about Donnie but you dont have the required resources to build your own Donnie robot.
+ <!--The simulation is recommended if you want to known about Donnie but you dont have the required resources to build your own Donnie robot.-->
 
-## Run Donnie Software from a Virtual Machine
 
- Download this [VM](http://www.osboxes.org/linux-mint/), select the Linux Mint 17.3 'Rosa', and selected the [Mate](https://drive.google.com/file/d/0B_HAFnYs6Ur-NGFCZWNFV2dBN2M/view?usp=sharing) version. Finally, follow the instructions to install Donnie package.
+ <!--Download this [VM](http://www.osboxes.org/linux-mint/), select the Linux Mint 17.3 'Rosa', and selected the [Mate](https://drive.google.com/file/d/0B_HAFnYs6Ur-NGFCZWNFV2dBN2M/view?usp=sharing) version. Finally, follow the instructions to install Donnie package.
+ -->
 
-## Install Donnie Software on a Desktop Computer Using the Packages
-
+## Operating System Requirement
+ --------
+ 1. Currently this project requires Ubuntu 16.04.
  [**Ubuntu 16.04**](http://releases.ubuntu.com/16.04/) (Xenial Xerus) is the recommended OS distribution.
  For older computers or VMs, [Lubuntu 16.04](http://cdimage.ubuntu.com/lubuntu/releases/16.04/release/) or [Ubuntu Mate 16.04](https://ubuntu-mate.org/trusty/) are recommended.
-
- Download the [package](releases/latest) and execute the following steps in the terminal:
-
- * It is recommended to update your packages before the instalation:
+ 
+<!-- * It is recommended to update your packages before the instalation:
 > sudo apt-get update
 * To install, you can double-click it or execute:
 > sudo dpkg -i donnie-player-stage_0.1_amd64.deb
 * In case of missing dependencies, try: 
 > sudo apt-get -f install
 * To unistall:
-> sudo dpkg -r donnie-player-stage
+> sudo dpkg -r donnie-player-stage -->
 
 ## Compile and Install Donnie Software on a Desktop Computer
 
-  This option is recommended only for experienced Linux programmers. If it is not your case, please install Donnie using the pre-compiled packages.
-
- [**Ubuntu 16.04**](http://releases.ubuntu.com/16.04/) (Xenial Xerus) is the recommended OS distribution.
- For older computers or VMs, [Lubuntu 16.04](http://cdimage.ubuntu.com/lubuntu/releases/16.04/release/) or [Ubuntu Mate 16.04](https://ubuntu-mate.org/trusty/) are recommended.
-
- Open a terminal, download this script, and execute it
+1.Open a terminal, and execute the following commands:
 
 	mkdir ~/donnie; cd ~/donnie
-	wget https://github.com/lsa-pucrs/donnie-assistive-robot-sw/raw/devel/install.sh
+	git clone --recurse-submodules -b devel https://github.com/lsa-pucrs/donnie-assistive-robot-sw.git
+	cd donnie-assistive-robot-sw
 	chmod +x ./install.sh
 	export DONNIE_PATH=/opt/donnie 
 	./install.sh
+	
+2. After the execution of the last command  above, if the installation finished successfully you are ready to go! 
+note:The last command above, in general, requires a lot of time to finish.
 
 ### Configuring Donnie
 
