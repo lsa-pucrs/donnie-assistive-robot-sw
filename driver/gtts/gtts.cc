@@ -178,7 +178,7 @@ void Gtts::ProcessSpeechCmd(player_msghdr_t* hdr, player_speech_cmd_t &data){
 	else {
 		PLAYER_ERROR("[Gtts] DONNIE_LANG is either not defined or not known");
 		}
-	string langurl = "&tl=" + lang;
+	string langurl = "&tl=" + "EN_us";
 
 	char url[1000];
 	//FULL BASE URL strcpy(url,"http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&tl=PT-br&q=");
